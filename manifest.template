@@ -1,0 +1,7 @@
+Manifest-version: 1.0
+
+Name: org/rebioma
+Implementation-Title: rebioma
+Implementation-Version: @version@
+Implementation-Vendor:  University of California at Berkeley
+Implementation-Vendor-Id: org.rebioma

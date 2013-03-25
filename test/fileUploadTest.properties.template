@@ -1,0 +1,8 @@
+# Set these values before running the FileUploadServletTest.
+# these value is for testing missing headers in the csv file
+MissingHeadersFile: #csv file with missing required headers. each file separated  by a comma
+MissingHeaders: #list of list of missing header in each specified file above in. Each list separated by ; and each header separated by , 
+MissingHeadersDelimiter: # delimiters associated with each of the specified file above. Each delimiter separated by a -
+RequiredHeaderOnlyFiles = # same rule as MissingHeadersFile
+RequriedHeaderOnlyDelimeters = # same rule as MissingHeadersDelimiter
+ColumnMismatchFiles: # same rule as MissingHeadersFile

@@ -1,0 +1,2 @@
+INSERT INTO `ascdata` (`id`, `data_type`, `file_name`, `south_boundary`, `west_boundary`, `north_boundary`, `east_boundary`, `width`, `height`, `min_value`, `max_value`, `description`, `units`, `variable_type`, `year`, `env_data_type`, `env_data_subtype`, `metadata`) VALUES
+(35, 'elevation', 'topex.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 879, 1648, 0, 2864, 'Elevation', 'm', 'Continuous', '2000', 'Elevation', 'Madagascar', 'http://groups.google.com/group/rebioma/web/environmental-layers-metadata-text#dem');

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 21, 2008 10:07:07 AM by Hibernate Tools 3.2.2.GA -->
+<hibernate-mapping>
+    <class name="org.rebioma.client.bean.User" table="User" >
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="firstName" type="string">
+            <column name="first_name" length="128" />
+        </property>
+        <property name="lastName" type="string">
+            <column name="last_name" length="128" />
+        </property>
+        <property name="openId" type="string">
+            <column name="open_id" length="32" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="128" />
+        </property>
+        <property name="approved" type="java.lang.Boolean">
+            <column name="approved" />
+        </property>
+        <property name="vetter" type="java.lang.Integer">
+            <column name="vetter" />
+        </property>
+        <property name="dataProvider" type="java.lang.Integer">
+            <column name="data_provider" />
+        </property>
+        <property name="institution" type="string">
+            <column name="institution" length="128" />
+        </property>
+        <property name="passwordHash" type="string">
+            <column name="password_hash" length="256"/>
+        </property>
+        <property name="sessionId" type="string">
+            <column name="session_id" length="256"/>
+        </property>
+<!--        <set name="roles" table="UserRoles" lazy="false" inverse="false">-->
+<!--			<key column="userId" />-->
+<!--			<many-to-many class="org.rebioma.client.Role" column="roleId" />-->
+<!--		</set>-->
+    </class>
+    
+</hibernate-mapping>

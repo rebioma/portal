@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="Rebioma" default="dist" basedir=".">
+
+	<!-- Build properties: -->
+	<property file="ant.properties" />
+	<property name="version" value="0.0.1" />
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="build.out.dir" value="${build.dir}/out" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="web.dir" value="${basedir}/web" />
+	<property name="doc.dir" value="${build.dir}/doc" />
+	<property name="dist.jar" value="Rebioma-${version}.war" />
+	<property name="dist.dir" value="${build.dir}/dist" />
+	<property name="build.dir.gwt" value="${build.dir}/gwt" />
+	<property name="gwt.maps.jar" value="/Users/eighty/Java/GWT/gwt-google-apis-read-only/maps/build/lib/gwt-maps.jar" />
+
+	<!-- GWT build classpath: -->
+	<path id="gwt.classpath">
+		<pathelement location="${src.dir}" />
+		<pathelement location="${gwt.user.jar}" />
+		<pathelement location="${gwt.dev.jar}" />
+		<pathelement location="${gwt.maps.jar}" />
+	</path>
+
+
+	<!-- Application libs: -->
+	<path id="lib.path">
+		<pathelement location="${gwt.user.jar}" />
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${lib.dir}/hibernate">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${lib.dir}/guice">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${lib.dir}/JavaMail">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Tomcat tasks: -->
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
+	<taskdef name="list" classname="org.apache.catalina.ant.ListTask" />
+	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask" />
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
+
+	<!--
+    Creates the web deployment directory tree, copies jar files to WEB-INF/lib,
+    and copies web.xml to WEB-INF.
+  -->
+	<target name="init" depends="clean">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.out.dir}" />
+		<mkdir dir="${build.out.dir}/WEB-INF" />
+		<mkdir dir="${build.out.dir}/WEB-INF/lib" />
+		<mkdir dir="${build.out.dir}/WEB-INF/classes" />
+		<mkdir dir="${build.out.dir}/${doc.dir}" />
+
+		<copy file="${gwt.servlet.jar}" todir="${build.out.dir}/WEB-INF/lib" />
+
+		<copy todir="${build.out.dir}/WEB-INF/lib">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${lib.dir}/hibernate">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${lib.dir}/guice">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${lib.dir}/JavaMail">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.out.dir}/WEB-INF">
+			<fileset dir="${basedir}">
+				<include name="web.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Deletes the build directory: -->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!--
+    Compiles client code using GWTCompiler into the gwt build directory, then
+    copies it over to the build directory.
+  -->
+	<target name="gwt_build">
+		<java maxmemory="1800m" classpathref="gwt.classpath" classname="com.google.gwt.dev.Compiler" fork="true" failonerror="true">
+			<arg line="-logLevel INFO" />
+			<arg line="-style PRETTY" />
+			<arg line='-out "${build.dir.gwt}"' />
+			<arg value="${gwt.entrypoint.class}" />
+		</java>
+
+		<copy todir="${build.out.dir}">
+			<fileset dir="${build.dir.gwt}/${gwt.entrypoint.class}" />
+		</copy>
+	</target>
+
+	<!--
+    Compiles the Java code into WEB-INF/classes (includes source code), then
+    copies all resource files (properties, xml, etc) to WEB-INF/lib.
+  -->
+	<target name="build" depends="init">
+		<javac deprecation="off" includeAntRuntime="yes" debug="on" srcdir="${src.dir}" destdir="${build.out.dir}/WEB-INF/classes" source="1.5">
+			<include name="**/*.java" />
+			<classpath refid="lib.path" />
+		</javac>
+
+		<copy todir="${build.out.dir}/WEB-INF/classes">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.cfg" />
+				<include name="**/*.cfg.xml" />
+				<include name="**/*.hbm.xml" />
+				<include name="**/*.csv" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- 
+    -  setbuildstats - set the value of build info properties:
+    -  build.date: current date formatted as YYYY-MM-DD
+    -  build.date: current 24h time formatted as HH:MM:SS
+    -  build.rev: RCS revision info, e.g. 'Revision: 14'
+    -  loc: lines of code in all files ending with .java, .properties, or .xml
+  -->
+	<target name="setbuildstats">
+		<exec spawn="false" failifexecutionfails="no" executable="${executable.date}" outputproperty="build.date">
+			<arg value="+%F" />
+		</exec>
+		<exec spawn="false" failifexecutionfails="no" executable="${executable.date}" outputproperty="build.time">
+			<arg value="+%T" />
+		</exec>
+		<exec spawn="false" failifexecutionfails="no" executable="${executable.svnversion}" outputproperty="build.rev">
+		</exec>
+		<exec spawn="false" failifexecutionfails="no" executable="${exenewcutable.sh}" outputproperty="loc">
+			<arg value="-c" />
+			<arg value="find . \( -name '*.java' -o -name '*.properties'  -o -name '*.xml' \) -print0 | xargs -0 wc -l | tail -n 1" />
+		</exec>
+		<exec spawn="false" failifexecutionfails="no" executable="${executable.sh}" outputproperty="changelog">
+			<arg value="-c" />
+			<arg value="svn log" />
+		</exec>
+	</target>
+
+	<!--
+     Updates version:
+  -->
+	<target name="version_replace" depends="init, setbuildstats">
+		<replace file="${build.out.dir}/WorkBench.html" token="%VERSION%" value="${version}" />
+		<replace file="${build.out.dir}/version.html" token="%VERSION%" value="${version}" />
+		<replace file="${build.out.dir}/version.html" token="%BUILD.DATE%" value="${build.date}" />
+		<replace file="${build.out.dir}/version.html" token="%BUILD.TIME%" value="${build.time}" />
+		<replace file="${build.out.dir}/version.html" token="%BUILD.REV%" value="${build.rev}" />
+		<replace file="${build.out.dir}/version.html" token="%CHANGELOG%" value="${changelog}" />
+		<replace file="${build.out.dir}/version.html" token="%LOC%" value="${loc}" />
+	</target>
+
+	<!--
+	   Creates manifest:
+	-->
+	<target name="manifest">
+		<filter token="version" value="${version}" />
+		<copy file="manifest.template" tofile="manifest.mf" overwrite="true" filtering="true" />
+	</target>
+
+	<!--
+	 Creates distribution jar:
+  -->
+	<target name="dist" depends="init, gwt_build, build, manifest, javadoc">
+		<!--, manifest, version_replace"> -->
+		<jar jarfile="${dist.dir}/${dist.jar}" manifest="manifest.mf">
+			<fileset dir="${build.out.dir}" />
+		</jar>
+	</target>
+
+	<!--
+     Reinstalls application to Tomcat:
+  -->
+	<target name="tomcat-reinstall" depends="tomcat-remove, tomcat-install" />
+
+	<!--
+	   Installs application to Tomcat:
+	  -->
+	<target name="tomcat-install">
+		<deploy url="${tomcat.manager.url}" username="eighty" password="manager" path="${tomcat.path}" war="file://${dist.dir}/${dist.jar}" />
+	</target>
+
+	<!--
+    Reloads application via Tomcat:
+  -->
+	<target name="tomcat-reload">
+		<reload url="${manager.url}" username="${manager.username}" password="${manager.password}" path="${app.path}" />
+	</target>
+
+	<!--
+	 Removes application from Tomcat:
+	-->
+	<target name="tomcat-remove">
+		<undeploy url="${tomcat.manager.url}" username="eighty" password="manager" path="${tomcat.path}" />
+	</target>
+
+	<!-- 
+    Builds Javadocs:
+  -->
+	<target name="javadoc" depends="init">
+		<javadoc destdir="${doc.dir}" access="private" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" nodeprecatedlist="false" nodeprecated="false" packagenames="*" sourcepath="${src.dir}" doctitle="${project.name}">
+			<classpath refid="lib.path" />
+		</javadoc>
+	</target>
+</project>

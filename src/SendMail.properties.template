@@ -1,0 +1,13 @@
+#sample properties file for send mail, set these properties before starting the services
+mail.smtp.host = #stmp email host i.e smtp.gmail.com
+mail.smtp.port = 465
+mail.from = #admin email address
+mail.password = # email password 
+mail.displayname = # a display name for this email i.e "Tri Nguyen"
+mail.smtp.auth = true
+mail.smtp.starttls.enable = true
+mail.transport.protocol = smtp
+mail.smtp.socketFactory.port = stmtp
+mail.smtp.socketFactory.class = javax.net.ssl.SSLSocketFactory
+mail.smtp.socketFactory.fallback = false
+mail.smtp.quitwait = false

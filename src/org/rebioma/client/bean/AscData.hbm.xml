@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 23, 2008 11:56:58 AM by Hibernate Tools 3.2.2.GA -->
+<hibernate-mapping>
+    <class name="org.rebioma.client.bean.AscData" table="AscData">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="dataType" type="string">
+            <column name="data_type" length="16" />
+        </property>
+        <property name="fileName" type="string">
+            <column name="file_name" length="128" not-null="true" />
+        </property>
+        <property name="southBoundary" type="double">
+            <column name="south_boundary" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="westBoundary" type="double">
+            <column name="west_boundary" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="northBoundary" type="double">
+            <column name="north_boundary" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="eastBoundary" type="double">
+            <column name="east_boundary" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="width" type="string">
+            <column name="width" />
+        </property>
+        <property name="height" type="string">
+            <column name="height" />
+        </property>
+        <property name="minValue" type="double">
+            <column name="min_value" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="maxValue" type="double">
+            <column name="max_value" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="128" />
+        </property>
+        <property name="units" type="string">
+            <column name="units" length="16" />
+        </property>
+        <property name="variableType" type="string">
+            <column name="variable_type" length="16" />
+        </property>
+        <property name="year" type="string">
+            <column name="year" length="8" />
+        </property>
+        <property name="envDataType" type="string">
+            <column name="env_data_type" />
+        </property>
+        <property name="envDataSubtype" type="string">
+            <column name="env_data_subtype" />
+        </property>
+        <property name="metadata" type="string">
+            <column name="metadata" />
+        </property>
+    </class>
+</hibernate-mapping>

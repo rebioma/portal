@@ -1,0 +1,4 @@
+nameEn,nameFr,descriptionEn,DescriptionFr,comment - TOm,commrnt-Tri,possible tranlsation
+admin,admin,a role for system admininstators,un rôle pour les administrateurs système,,,utilisateur (user) 
+reviewer,examinateur,a role for taxonomic reviewers,un rôle pour les examinateurs taxonomiques
+researcher,chercheur,a role for regular users,un rôle pour les utilisateurs réguliers,"just call this ""user""?","every one is user so it not really intuitive what this role for.  researcher may not be the best name, so any one have a better idea?"

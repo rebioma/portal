@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 25, 2010 8:09:08 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="org.rebioma.client.bean.AscModel" table="asc_model">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="acceptedSpecies" type="string">
+            <column name="accepted_species" length="256" not-null="true" />
+        </property>
+        <property name="modelLocation" type="string">
+            <column name="model_location" length="256" not-null="true" />
+        </property>
+        <property name="indexFile" type="string">
+            <column name="index_file" length="256" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

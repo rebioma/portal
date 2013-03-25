@@ -1,0 +1,1 @@
+ALTER TABLE  `Occurrence` ADD  `stability` TINYINT( 1 ) NULL DEFAULT NULL

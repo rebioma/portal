@@ -1,0 +1,6 @@
+#the different between production mode and development mode is in development mode notification email will send to 
+#the email specified in testUserEmail instead of the actual user emails of the system for testing purpose.
+#This just to prevent the system sending test email to the actual user which is like spaming them.
+testUserEmail= #email in which the system is sending notification emails to instead of actual user email in the systems in development mode
+devmode= # true to operate the application in development mode false to operate the application in production mode
+

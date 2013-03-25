@@ -1,0 +1,447 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 18, 2008 11:43:58 AM by Hibernate Tools 3.2.2.GA -->
+<hibernate-mapping>
+    <class name="org.rebioma.client.bean.Occurrence" table="Occurrence" >
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="identity" />
+        </id>
+        <property name="owner" type="java.lang.Integer">
+            <column name="Owner" not-null="true" />
+        </property>
+        <property name="reviewed" type="java.lang.Boolean">
+            <column name="reviewed" not-null="false" />
+        </property>
+        <property name="emailVisible" type="java.lang.Boolean">
+            <column name="EmailVisible" not-null="true" />
+        </property>
+        <property name="obfuscated" type="java.lang.Boolean">
+            <column name="Obfuscated" not-null="true" />
+        </property>
+        <property name="public_" type="java.lang.Boolean">
+            <column name="Public" not-null="true" />
+        </property>
+        <property name="vettable" type="java.lang.Boolean">
+            <column name="Vettable" not-null="true" />
+        </property>
+        <property name="validated" type="java.lang.Boolean">
+            <column name="Validated" not-null="true" />
+        </property>
+        <property name="vetted" type="java.lang.Boolean">
+            <column name="Vetted" not-null="true" />
+        </property>
+        <property name="tapirAccessible" type="java.lang.Boolean">
+            <column name="TapirAccessible" not-null="true" />
+        </property>
+        <property name="stability" type="java.lang.Boolean">
+            <column name="stability" not-null="false" />
+        </property>
+        <property name="vettingError" type="string">
+            <column name="VettingError" length="65535" />
+        </property>
+        <property name="validationError" type="string">
+            <column name="ValidationError" length="65535" />
+        </property>
+        <property name="basisOfRecord" type="string">
+            <column name="BasisOfRecord" length="65535" />
+        </property>
+        <property name="yearCollected" type="string">
+            <column name="YearCollected" />
+        </property>
+        <property name="genus" type="string">
+            <column name="Genus" length="65535" />
+        </property>
+        <property name="specificEpithet" type="string">
+            <column name="SpecificEpithet" length="65535" /> 
+        </property>
+        <property name="decimalLatitude" type="string">
+            <column name="DecimalLatitude" precision="10" scale="7" />
+        </property>
+        <property name="decimalLongitude" type="string">
+            <column name="DecimalLongitude" precision="10" scale="7" />
+        </property>
+        <property name="geodeticDatum" type="string">
+            <column name="GeodeticDatum" length="65535" />
+        </property>
+        <property name="coordinateUncertaintyInMeters" type="string">
+            <column name="CoordinateUncertaintyInMeters" precision="22" scale="0" />
+        </property>
+        <property name="dateLastModified" type="string">
+            <column name="DateLastModified" length="65535" />
+        </property>
+        <property name="institutionCode" type="string">
+            <column name="InstitutionCode" length="65535" />
+        </property>
+        <property name="collectionCode" type="string">
+            <column name="CollectionCode" length="65535" />
+        </property>
+        <property name="catalogNumber" type="string">
+            <column name="CatalogNumber" length="65535" />
+        </property>
+        <property name="scientificName" type="string">
+            <column name="ScientificName" length="65535" />
+        </property>
+        <property name="globalUniqueIdentifier" type="string">
+            <column name="GlobalUniqueIdentifier" length="65535" />
+        </property>
+        <property name="informationWithheld" type="string">
+            <column name="InformationWithheld" length="65535" />
+        </property>
+        <property name="remarks" type="string">
+            <column name="Remarks" length="65535" />
+        </property>
+        <property name="higherTaxon" type="string">
+            <column name="HigherTaxon" length="65535" />
+        </property>
+        <property name="kingdom" type="string">
+            <column name="Kingdom" length="65535" />
+        </property>
+        <property name="phylum" type="string">
+            <column name="Phylum" length="65535" />
+        </property>
+        <property name="class_" type="string">
+            <column name="Class" length="65535" />
+        </property>
+        <property name="order_" type="string">
+            <column name="`Order`" length="65535" />
+        </property>
+        <property name="family" type="string">
+            <column name="Family" length="65535" />
+        </property>
+        <property name="infraspecificRank" type="string">
+            <column name="InfraspecificRank" length="65535" />
+        </property>
+        <property name="infraspecificEpithet" type="string">
+            <column name="InfraspecificEpithet" length="65535" />
+        </property>
+        <property name="authorYearOfScientificName" type="string">
+            <column name="AuthorYearOfScientificName" length="65535" />
+        </property>
+        <property name="nomenclaturalCode" type="string">
+            <column name="NomenclaturalCode" length="65535" />
+        </property>
+        <property name="identificationQualifer" type="string">
+            <column name="IdentificationQualifer" length="65535" />
+        </property>
+        <property name="higherGeography" type="string">
+            <column name="HigherGeography" length="65535" />
+        </property>
+        <property name="continent" type="string">
+            <column name="Continent" length="65535" />
+        </property>
+        <property name="waterBody" type="string">
+            <column name="WaterBody" length="65535" />
+        </property>
+        <property name="islandGroup" type="string">
+            <column name="IslandGroup" length="65535" />
+        </property>
+        <property name="island" type="string">
+            <column name="Island" length="65535" />
+        </property>
+        <property name="country" type="string">
+            <column name="Country" length="65535" />
+        </property>
+        <property name="stateProvince" type="string">
+            <column name="StateProvince" length="65535" />
+        </property>
+        <property name="county" type="string">
+            <column name="County" length="65535" />
+        </property>
+        <property name="locality" type="string">
+            <column name="Locality" length="65535" />
+        </property>
+        <property name="minimumElevationInMeters" type="string">
+            <column name="MinimumElevationInMeters" precision="22" scale="0" />
+        </property>
+        <property name="maximumElevationInMeters" type="string">
+            <column name="MaximumElevationInMeters" precision="22" scale="0" />
+        </property>
+        <property name="minimumDepthInMeters" type="string">
+            <column name="MinimumDepthInMeters" precision="22" scale="0" />
+        </property>
+        <property name="maximumDepthInMeters" type="string">
+            <column name="MaximumDepthInMeters" precision="22" scale="0" />
+        </property>
+        <property name="collectingMethod" type="string">
+            <column name="CollectingMethod" length="65535" />
+        </property>
+        <property name="validDistributionFlag" type="string">
+            <column name="ValidDistributionFlag" />
+        </property>
+        <property name="earliestDateCollected" type="string">
+            <column name="EarliestDateCollected" length="65535" />
+        </property>
+        <property name="latestDateCollected" type="string">
+            <column name="LatestDateCollected" length="65535" />
+        </property>
+        <property name="dayOfYear" type="string">
+            <column name="DayOfYear" />
+        </property>
+        <property name="monthCollected" type="string">
+            <column name="MonthCollected" />
+        </property>
+        <property name="dayCollected" type="string">
+            <column name="DayCollected" />
+        </property>
+        <property name="collector" type="string">
+            <column name="Collector" length="65535" />
+        </property>
+        <property name="sex" type="string">
+            <column name="Sex" length="65535" />
+        </property>
+        <property name="lifeStage" type="string">
+            <column name="LifeStage" length="65535" />
+        </property>
+        <property name="attributes" type="string">
+            <column name="Attributes" length="65535" />
+        </property>
+        <property name="imageUrl" type="string">
+            <column name="ImageURL" length="65535" />
+        </property>
+        <property name="relatedInformation" type="string">
+            <column name="RelatedInformation" length="65535" />
+        </property>
+        <property name="catalogNumberNumeric" type="string">
+            <column name="CatalogNumberNumeric" precision="22" scale="0" />
+        </property>
+        <property name="identifiedBy" type="string">
+            <column name="IdentifiedBy" length="65535" />
+        </property>
+        <property name="dateIdentified" type="string">
+            <column name="DateIdentified" length="65535" />
+        </property>
+        <property name="collectorNumber" type="string">
+            <column name="CollectorNumber" length="65535" />
+        </property>
+        <property name="fieldNumber" type="string">
+            <column name="FieldNumber" length="65535" />
+        </property>
+        <property name="fieldNotes" type="string">
+            <column name="FieldNotes" length="65535" />
+        </property>
+        <property name="verbatimCollectingDate" type="string">
+            <column name="VerbatimCollectingDate" length="65535" />
+        </property>
+        <property name="verbatimElevation" type="string">
+            <column name="VerbatimElevation" length="65535" />
+        </property>
+        <property name="verbatimDepth" type="string">
+            <column name="VerbatimDepth" length="65535" />
+        </property>
+        <property name="preparations" type="string">
+            <column name="Preparations" length="65535" />
+        </property>
+        <property name="typeStatus" type="string">
+            <column name="TypeStatus" length="65535" />
+        </property>
+        <property name="genBankNumber" type="string">
+            <column name="GenBankNumber" length="65535" />
+        </property>
+        <property name="otherCatalogNumbers" type="string">
+            <column name="OtherCatalogNumbers" length="65535" />
+        </property>
+        <property name="relatedCatalogedItems" type="string">
+            <column name="RelatedCatalogedItems" length="65535" />
+        </property>
+        <property name="disposition" type="string">
+            <column name="Disposition" length="65535" />
+        </property>
+        <property name="individualCount" type="string">
+            <column name="IndividualCount" />
+        </property>
+        <property name="pointRadiusSpatialFit" type="string">
+            <column name="PointRadiusSpatialFit" precision="22" scale="0" />
+        </property>
+        <property name="verbatimCoordinates" type="string">
+            <column name="VerbatimCoordinates" length="65535" />
+        </property>
+        <property name="verbatimLatitude" type="string">
+            <column name="VerbatimLatitude" length="65535" />
+        </property>
+        <property name="verbatimLongitude" type="string">
+            <column name="VerbatimLongitude" length="65535" />
+        </property>
+        <property name="verbatimCoordinateSystem" type="string">
+            <column name="VerbatimCoordinateSystem" length="65535" />
+        </property>
+        <property name="georeferenceProtocol" type="string">
+            <column name="GeoreferenceProtocol" length="65535" />
+        </property>
+        <property name="georeferenceSources" type="string">
+            <column name="GeoreferenceSources" length="65535" />
+        </property>
+        <property name="georeferenceVerificationStatus" type="string">
+            <column name="GeoreferenceVerificationStatus" length="65535" />
+        </property>
+        <property name="georeferenceRemarks" type="string">
+            <column name="GeoreferenceRemarks" length="65535" />
+        </property>
+        <property name="footprintWkt" type="string">
+            <column name="FootprintWKT" length="65535" />
+        </property>
+        <property name="footprintSpatialFit" type="string">
+            <column name="FootprintSpatialFit" precision="22" scale="0" />
+        </property>
+        <property name="verbatimSpecies" type="string">
+            <column name="VerbatimSpecies" length="65535" />
+        </property>
+        <property name="acceptedSpecies" type="string">
+            <column name="AcceptedSpecies" length="65535" />
+        </property>
+        <property name="acceptedNomenclaturalCode" type="string">
+            <column name="AcceptedNomenclaturalCode" length="65535" />
+        </property>
+        <property name="acceptedKingdom" type="string">
+            <column name="AcceptedKingdom" length="65535" />
+        </property>
+        <property name="acceptedPhylum" type="string">
+            <column name="AcceptedPhylum" length="65535" />
+        </property>
+        <property name="acceptedClass" type="string">
+            <column name="AcceptedClass" length="65535" />
+        </property>
+        <property name="acceptedOrder" type="string">
+            <column name="AcceptedOrder" length="65535" />
+        </property>
+        <property name="acceptedSuborder" type="string">
+            <column name="AcceptedSuborder" length="65535" />
+        </property>
+        <property name="acceptedFamily" type="string">
+            <column name="AcceptedFamily" length="65535" />
+        </property>
+        <property name="acceptedSubfamily" type="string">
+            <column name="AcceptedSubfamily" length="65535" />
+        </property>
+        <property name="acceptedGenus" type="string">
+            <column name="AcceptedGenus" length="65535" />
+        </property>
+        <property name="acceptedSubgenus" type="string">
+            <column name="AcceptedSubgenus" length="65535" />
+        </property>
+        <property name="acceptedSpecificEpithet" type="string">
+            <column name="AcceptedSpecificEpithet" length="65535" />
+        </property>
+        <property name="decLatInWgs84" type="string">
+            <column name="DecLatInWGS84" precision="10" scale="7" />
+        </property>
+        <property name="decLongInWgs84" type="string">
+            <column name="DecLongInWGS84" precision="10" scale="7" />
+        </property>
+        <property name="adjustedCoordinateUncertaintyInMeters" type="string">
+            <column name="AdjustedCoordinateUncertaintyInMeters" />
+        </property>
+        <property name="demelevation" type="string">
+            <column name="DEMElevation" precision="22" scale="0" />
+        </property>
+        <property name="etpTotal2000" type="string">
+            <column name="EtpTotal2000" precision="22" scale="0" />
+        </property>
+        <property name="etpTotalfuture" type="string">
+            <column name="EtpTotalfuture" precision="22" scale="0" />
+        </property>
+        <property name="etpTotal1950" type="string">
+            <column name="EtpTotal1950" precision="22" scale="0" />
+        </property>
+        <property name="geolStrech" type="string">
+            <column name="GeolStrech" precision="22" scale="0" />
+        </property>
+        <property name="maxPerc2000" type="string">
+            <column name="MaxPerc2000" precision="22" scale="0" />
+        </property>
+        <property name="maxPercfuture" type="string">
+            <column name="MaxPercfuture" precision="22" scale="0" />
+        </property>
+        <property name="maxPerc1950" type="string">
+            <column name="MaxPerc1950" precision="22" scale="0" />
+        </property>
+        <property name="maxTemp2000" type="string">
+            <column name="MaxTemp2000" precision="22" scale="0" />
+        </property>
+        <property name="maxTempfuture" type="string">
+            <column name="MaxTempfuture" precision="22" scale="0" />
+        </property>
+        <property name="maxtemp1950" type="string">
+            <column name="Maxtemp1950" precision="22" scale="0" />
+        </property>
+        <property name="minPerc2000" type="string">
+            <column name="MinPerc2000" precision="22" scale="0" />
+        </property>
+        <property name="minPercfuture" type="string">
+            <column name="MinPercfuture" precision="22" scale="0" />
+        </property>
+        <property name="minPerc1950" type="string">
+            <column name="MinPerc1950" precision="22" scale="0" />
+        </property>
+        <property name="minTemp2000" type="string">
+            <column name="MinTemp2000" precision="22" scale="0" />
+        </property>
+        <property name="minTempfuture" type="string">
+            <column name="MinTempfuture" precision="22" scale="0" />
+        </property>
+        <property name="minTemp1950" type="string">
+            <column name="MinTemp1950" precision="22" scale="0" />
+        </property>
+        <property name="pfc1950" type="string">
+            <column name="PFC1950" precision="22" scale="0" />
+        </property>
+        <property name="pfc1970" type="string">
+            <column name="PFC1970" precision="22" scale="0" />
+        </property>
+        <property name="pfc1990" type="string">
+            <column name="PFC1990" precision="22" scale="0" />
+        </property>
+        <property name="pfc2000" type="string">
+            <column name="PFC2000" precision="22" scale="0" />
+        </property>
+        <property name="realMar2000" type="string">
+            <column name="RealMar2000" precision="22" scale="0" />
+        </property>
+        <property name="realMarfuture" type="string">
+            <column name="RealMarfuture" precision="22" scale="0" />
+        </property>
+        <property name="realMar1950" type="string">
+            <column name="RealMar1950" precision="22" scale="0" />
+        </property>
+        <property name="realMat2000" type="string">
+            <column name="RealMat2000" precision="22" scale="0" />
+        </property>
+        <property name="realMatfuture" type="string">
+            <column name="RealMatfuture" precision="22" scale="0" />
+        </property>
+        <property name="realMat1950" type="string">
+            <column name="RealMat1950" precision="22" scale="0" />
+        </property>
+        <property name="wbpos2000" type="string">
+            <column name="WBPos2000" precision="22" scale="0" />
+        </property>
+        <property name="wbposfuture" type="string">
+            <column name="WBPosfuture" precision="22" scale="0" />
+        </property>
+        <property name="wbpos1950" type="string">
+            <column name="WBPos1950" precision="22" scale="0" />
+        </property>
+        <property name="wbyear2000" type="string">
+            <column name="WBYear2000" precision="22" scale="0" />
+        </property>
+        <property name="wbyearfuture" type="string">
+            <column name="WBYearfuture" precision="22" scale="0" />
+        </property>
+        <property name="wbyear1950" type="string">
+            <column name="WBYear1950" precision="22" scale="0" />
+        </property>
+        <property name="ownerEmail" type="string">
+            <column name="email"></column>
+        </property>
+        <property name="timeCreated" type="string">
+        	<column name="TimeCreated"/>
+        </property>
+        <property name="lastUpdated" type="string">
+        	<column name="LastUpdated"/>
+        </property>
+        <property name="sharedUsersCSV" type="string">
+        	<column name="SharedUsers" />
+        </property>
+    </class>
+</hibernate-mapping>

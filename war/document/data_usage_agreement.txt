@@ -1,0 +1,6 @@
+
+By downloading and/or viewing data on the REBIOMA portal, you are agreeing to the following conditions: 
+    * Species occurrence records and models served by REBIOMA are to be utilized by individual researchers or research groups for scholarly, educational or research purposes only and not for any commercial purpose.  
+    * If any records or models derived from these records are used in an analysis, report, presentation, etc., the provenance of the original data must be acknowledged (see "Acknowledgment" below) and the data-provider or the curatorial staff of specific institutions should be notified. Please also notify the REBIOMA project.
+    * The data-providers, institutions, REBIOMA, and their staff supply this data with no warranties, express or implied, concerning its fitness for any particular purpose, and are not responsible for damages, injury or loss due to the use of these data or models.
+    *  Recipients of data or models from the REBIOMA portal shall be solely responsible for the use and presentation of the data and will ensure that the use and presentation of the data are correct and that the data are accurately reproduced and not taken out of context. 

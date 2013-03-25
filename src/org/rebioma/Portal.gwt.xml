@@ -1,0 +1,72 @@
+<module rename-to='rebioma'>
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name="com.google.gwt.http.HTTP" />
+	<inherits name='com.google.gwt.json.JSON' />
+	<!-- inherits name="com.googlecode.gwtx.Java"/-->
+	<inherits name='org.form.Form'/>
+ 	<inherits name='edu.berkeley.mvz.rebioma.ModelBuilder' /> 
+
+	<inherits name='com.google.gwt.user.theme.standard.Standard' />
+	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+
+	<!-- Other module inherits                                      -->
+	<inherits name="com.google.gwt.maps.GoogleMaps" />
+<!--	<inherits name="org.form.FormWidget" />-->
+  	<inherits name="com.extjs.gxt.ui.GXT" />
+
+	<!--
+		localhost:
+		ABQIAAAAQmTfPsuZgXDEr012HM6trBQ9h4JNsDBcIOxh6bSLCe_wOSHYmhSu62PHB913KvcHTa2D6cm8TEbEsQ
+	-->
+	<script
+		src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAQmTfPsuZgXDEr012HM6trBTHgvh5vptFouDZv4jHffqseCingxR4WSZRKG0RC9b4bHWwrHqhdsRRdg"
+		/>
+
+
+	<!--
+		rebiomaportal.org:
+		ABQIAAAAQmTfPsuZgXDEr012HM6trBTsoIIRGyI2JMfA-ODGGQaA3kWtqhQWqv597yph-vMjOcEPAEWBVAHIlw
+	-->
+	<!-- eighty.berkeley.edu
+	<script
+    src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAQmTfPsuZgXDEr012HM6trBTHgvh5vptFouDZv4jHffqseCingxR4WSZRKG0RC9b4bHWwrHqhdsRRdg" />
+	-->
+	
+	<!--http://data.rebioma.net:8080/latest-->
+	 <!--  
+	<script
+    src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAUa8581ELeZmqBHGPtzgLbhSSd3U6wIy5SzIc7sUwpqYC7iTh4hTG1ivAS5V2Mv78aFMP-w4SaM6DCg" />
+    -->
+    <!--
+	*.rebioma.net/*
+    AIzaSyCxm8tujepkRsAkqgNI9jAvAbbG2mUDClU
+    
+	<script
+    src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyCxm8tujepkRsAkqgNI9jAvAbbG2mUDClU" />
+	-->
+
+	<!-- test.rebioma.net     
+    <script
+    src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAUa8581ELeZmqBHGPtzgLbhSQdxRW3WH_n5J80l96rCb4TOYruhRUVL-JVnC1WXdWrbZKV_MoF8uoQA" />
+    -->
+    <!-- http://192.168.123.251:8080/local/ -->  
+    <!--
+    <script
+    src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAAGV8R1anz0xbVwhZdGf0fhQPAULY0gTwUsgeoKWCWXESus1rExRnLb2gMF_q4XewAe-oiMVK4Rwkbg" />
+    -->
+    
+	<!-- Specify the app entry point class.                         -->
+	<entry-point class='org.rebioma.client.Portal' />
+
+	<!-- Specify the application specific style sheet.              -->
+	<stylesheet src='../Portal.css' />
+	<inherits name="gwtupload.GWTUpload"/>
+ 	<stylesheet src="Upload.css"/>
+	<!-- Internationalization support. -->
+	<extend-property name="locale" values="en" />
+	<extend-property name="locale" values="fr" />
+
+</module>

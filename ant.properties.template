@@ -1,0 +1,13 @@
+http://www.asiacinema.org/out.php?link=top&to=asianlassie.com# GWT properties.
+gwt.user.jar=
+gwt.dev.jar=
+gwt.servlet.jar=
+
+# Tomcat properties.
+tomcat.manager.url=http://localhost:8080/manager
+tomcat.path=/rebioma-dev
+
+# Executable properties.
+executable.svnversion=svn
+executable.date=date
+executable.sh=sh

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 15, 2010 9:51:42 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="org.rebioma.server.services.TaxonomicReviewer" table="taxonomic_reviewer">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="userId" type="java.lang.Integer">
+            <column name="userId" not-null="true" />
+        </property>
+        <property name="taxonomicField" type="string">
+            <column name="taxonomicField" not-null="true" />
+        </property>
+        <property name="taxonomicValue" type="string">
+            <column name="taxonomicValue" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

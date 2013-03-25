@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 15, 2010 7:33:20 PM by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="org.rebioma.client.bean.RecordReview" table="record_review">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="userId" type="java.lang.Integer">
+            <column name="userId" not-null="true" />
+        </property>
+        <property name="occurrenceId" type="java.lang.Integer">
+            <column name="occurrenceId" not-null="true" />
+        </property>
+        <property name="reviewed" type="java.lang.Boolean">
+            <column name="reviewed" />
+        </property>
+        <property name="reviewedDate" type="java.util.Date">
+            <column name="reviewed_date" length="19" not-null="false" />
+        </property>
+    </class>
+</hibernate-mapping>
