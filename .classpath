@@ -7,5 +7,45 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/activation.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/aopalliance.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/dsn.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/formWidget.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/google-collect-snapshot-20071022.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guice-servlet-snapshot.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guice-snapshot.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guiceberry-1.2.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-api-rebioma-modeling.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-datepicker-r30.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-dev.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps-javadoc.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps-noredist.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtupload-0.6.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gxt-2.2.5-gwt2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/imap.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/javassist-3.4.GA.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/JBCrypt.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/mail.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/mailapi.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/mysql-connector-java-5.1.6-bin.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/opencsv-2.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/pop3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/postgresql-9.2-1002.jdbc4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/sal-0.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-api-1.4.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-log4j12-1.5.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/smtp.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/taxonomic-auth.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/tl4j-1.1.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
