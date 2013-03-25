@@ -12,7 +12,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- */
+ 
 package org.rebioma.server.util;
 
 import java.io.File;
@@ -24,17 +24,17 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.rebioma.client.Occurrence;
 
-/**
+*//**
  * The CsvUtilTest class provides unit testing for {@link CsvUtil}.
  * 
- */
+ *//*
 public class CsvUtilTest extends TestCase {
 
   private static final Logger log = Logger.getLogger(CsvUtilTest.class);
 
-  /**
+  *//**
    * Loads {@link Occurrence} objects from a CSV file.
-   */
+   *//*
   public void testLoad() {
     File csvFile = new File(CsvUtilTest.class.getResource(
             "MaNISMadagascarDwC14.txt").getFile());
@@ -51,3 +51,4 @@ public class CsvUtilTest extends TestCase {
     }
   }
 }
+*/

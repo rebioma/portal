@@ -1,4 +1,4 @@
-package org.rebioma.server.services;
+/*package org.rebioma.server.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,3 +94,4 @@ public class UserServiceTest extends GuiceBerryJunit3TestCase {
     }
   }
 }
+*/

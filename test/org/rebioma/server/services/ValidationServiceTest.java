@@ -12,7 +12,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- */
+ 
 package org.rebioma.server.services;
 
 import java.io.File;
@@ -27,35 +27,35 @@ import org.rebioma.client.Occurrence;
 import org.rebioma.server.util.CsvUtil;
 import org.rebioma.server.util.CsvUtilTest;
 
-/**
+*//**
  * Unit tests for {@link ValidationServiceImpl}.
  * 
- */
+ *//*
 public class ValidationServiceTest extends TestCase {
 
-  /**
+  *//**
    * The {@link Logger} used to log test messages.
-   */
+   *//*
   private static final Logger log = Logger
           .getLogger(ValidationServiceTest.class);
 
-  /**
+  *//**
    * Set of {@link Occurrence} objects to use for testing.
-   */
+   *//*
   private static Set<Occurrence> INVALID_TEST_DATA;
 
-  /**
+  *//**
    * The {@link ValidationService}.
-   */
+   *//*
   ValidationService validationService;
 
   OccurrenceDb occurrenceService;
 
   private Set<Occurrence> VALID_TEST_DATA;
 
-  /**
+  *//**
    * Creates the {@link ValidationService} and data used for testing.
-   */
+   *//*
   @Override
   public void setUp() {
     validationService = new ValidationServiceImpl();
@@ -121,10 +121,10 @@ public class ValidationServiceTest extends TestCase {
     }
   }
 
-  /**
+  *//**
    * Tests invalid {@link Occurrence} data by validating it and then checking
    * that the occurrence validation error is not null.
-   */
+   *//*
   public void testInvalidData() {
     validationService.validate(INVALID_TEST_DATA);
     for (Occurrence occurrence : INVALID_TEST_DATA) {
@@ -135,10 +135,10 @@ public class ValidationServiceTest extends TestCase {
     log.info("Passed testInvalidData()");
   }
 
-  /**
+  *//**
    * Tests taxonomic validation by adding a known genus, specific epithet, and
    * nomenclatural code to the occurence prior to validation.
-   */
+   *//*
   public void testTaxonomicValidation() {
     Occurrence occurrence = VALID_TEST_DATA.iterator().next();
     occurrence.setGenus("Coeliades");
@@ -150,10 +150,10 @@ public class ValidationServiceTest extends TestCase {
     log.info("Passed testTaxonomicValidation()");
   }
 
-  /**
+  *//**
    * Tests valid {@link Occurrence} data by validating it and then checking that
    * the occurrence validation error is null.
-   */
+   *//*
   public void testValidData() {
     validationService.validate(VALID_TEST_DATA);
     for (Occurrence occurrence : VALID_TEST_DATA) {
@@ -163,3 +163,4 @@ public class ValidationServiceTest extends TestCase {
     log.info("Passed testValidData()");
   }
 }
+*/

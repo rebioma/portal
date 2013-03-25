@@ -12,7 +12,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- */
+ 
 package org.rebioma.client;
 
 import org.rebioma.client.services.OccurrenceService;
@@ -23,22 +23,22 @@ import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-/**
+*//**
  * Unit testing of {@link OccurrenceService} and related classes.
- */
+ *//*
 public class OccurrenceServiceTest extends GWTTestCase {
 
-  /**
+  *//**
    * Must refer to a valid module that sources this class.
-   */
+   *//*
   @Override
   public String getModuleName() {
     return "org.rebioma.Portal";
   }
 
-  /**
+  *//**
    * Tests caching and the {@link DataSwitch} fetch method.
-   */
+   *//*
   public void testDataSwitch() {
     double start = System.currentTimeMillis();
     run(getTestRunnable());
@@ -48,9 +48,9 @@ public class OccurrenceServiceTest extends GWTTestCase {
     System.out.println(System.currentTimeMillis() - start + " ms");
   }
 
-  /**
+  *//**
    * Tests the Proxy fetch method.
-   */
+   *//*
   public void testProxFetch() {
     run(new Runnable() {
       public void run() {
@@ -85,9 +85,9 @@ public class OccurrenceServiceTest extends GWTTestCase {
     });
   }
 
-  /**
+  *//**
    * Tests the {@link OccurrenceService.Proxy} constructor.
-   */
+   *//*
   public void testProxyConstructors() {
     OccurrenceServiceAsync service = OccurrenceService.Proxy.get();
     assertNotNull(service);
@@ -126,12 +126,12 @@ public class OccurrenceServiceTest extends GWTTestCase {
     };
   }
 
-  /**
+  *//**
    * Helper method that runs a {@link Runnable} task in a {@link Timer} delayed
    * sufficiently for an asynchronous test.
    * 
    * @param task the task to run
-   */
+   *//*
   private void run(final Runnable task) {
     Timer timer = new Timer() {
       @Override
@@ -143,3 +143,4 @@ public class OccurrenceServiceTest extends GWTTestCase {
     timer.schedule(100);
   }
 }
+*/

@@ -1,4 +1,4 @@
-package org.rebioma.server.services;
+/*package org.rebioma.server.services;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -277,7 +277,7 @@ public class OccurrenceDbTest extends GuiceBerryJunit3TestCase {
     }
   }
 
-  /*
+  
    * private void checkMultipleAdvanceSearchsResult(OccurrenceQuery query,
    * Set<String> baseFilters, ResultFilter resultFilter) throws Exception {
    * String fieldNames[] = getPropertyValues("searchField"); String fieldTypes[]
@@ -299,7 +299,7 @@ public class OccurrenceDbTest extends GuiceBerryJunit3TestCase {
    * " >= " + validValues1[0]); query.addSearchFilter(fieldName1 + " <= " +
    * validValues1[1]); // this.checkResult(query, new String[] { fieldName }, //
    * new String[][] { validValue }, new String"<="); } } } }
-   */
+   
 
   private void checkResult(OccurrenceQuery query, String fieldNames[],
           String values[][], String operators[]) throws Exception {
@@ -661,3 +661,4 @@ public class OccurrenceDbTest extends GuiceBerryJunit3TestCase {
     checkSingleAdvanceSearchResult(query, filters, resultFilter);
   }
 }
+*/

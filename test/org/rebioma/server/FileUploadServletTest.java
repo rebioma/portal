@@ -1,4 +1,4 @@
-package org.rebioma.server;
+/*package org.rebioma.server;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,13 +25,13 @@ import com.google.inject.testing.guiceberry.TestScopeListener;
 import com.google.inject.testing.guiceberry.junit3.GuiceBerryJunit3Env;
 import com.google.inject.testing.guiceberry.junit3.GuiceBerryJunit3TestCase;
 
-/**
+*//**
  * These tests are reading file that specified in fileUploadTest.properties
  * file. Read fileUploadTest.properties.template for more info. Before run this
  * test rename fileUploadTest.properties.template to fileUploadTest.properties
  * and set all necessary values there.
  * 
- */
+ *//*
 @GuiceBerryEnv("org.rebioma.server.FileUploadServletTest$FileUploadEnv")
 public class FileUploadServletTest extends GuiceBerryJunit3TestCase {
   public static final class FileUploadEnv extends GuiceBerryJunit3Env {
@@ -393,4 +393,4 @@ public class FileUploadServletTest extends GuiceBerryJunit3TestCase {
     }
     return propertyValues.split(valueDelimeter);
   }
-}
+}*/
