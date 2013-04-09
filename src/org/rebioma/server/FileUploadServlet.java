@@ -315,7 +315,7 @@ public class FileUploadServlet extends UploadAction {
         if (fileName.length() < 3) {
           fileName += "xx";
         }
-        file = new File("f:/"+fileName);//*/File.createTempFile(fileName, ".csv");
+        file = /*new File("f:/"+fileName);//*/File.createTempFile(fileName, ".csv");
         logger.info(file.getAbsolutePath());
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         BufferedReader reader = new BufferedReader(new InputStreamReader(uploadInputStream));
@@ -324,7 +324,7 @@ public class FileUploadServlet extends UploadAction {
         	writer.write(line + "\n");lineNbr++;
         }
         writer.close();
-        File _file = new File("f:/_"+fileName);//*/File.createTempFile("_"+fileName, ".csv");
+        File _file = /*new File("f:/_"+fileName);//*/File.createTempFile("_"+fileName, ".csv");
         logger.info(_file.getAbsolutePath());
         List<String> missingHeaders = fileValidation.validateCsvInputStream(
             _file, new FileInputStream(file), delimiter.charAt(0), null,traitement,lineNbr);
