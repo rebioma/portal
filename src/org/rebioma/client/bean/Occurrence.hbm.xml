@@ -9,7 +9,7 @@
             <generator class="identity" />
         </id>
         <property name="owner" type="java.lang.Integer">
-            <column name="Owner" not-null="true" />
+            <column name='"owner"' not-null="true" />
         </property>
         <property name="reviewed" type="java.lang.Boolean">
             <column name="reviewed" not-null="false" />
@@ -102,13 +102,13 @@
             <column name="Phylum" length="65535" />
         </property>
         <property name="class_" type="string">
-            <column name="Class" length="65535" />
+            <column name='"class"' length="65535" />
         </property>
         <property name="order_" type="string">
-            <column name="`Order`" length="65535" />
+            <column name='"order"' length="65535" />
         </property>
         <property name="family" type="string">
-            <column name="Family" length="65535" />
+            <column name='"family"' length="65535" />
         </property>
         <property name="infraspecificRank" type="string">
             <column name="InfraspecificRank" length="65535" />
@@ -348,7 +348,7 @@
             <column name="GeolStrech" precision="22" scale="0" />
         </property>
         <property name="maxPerc2000" type="string">
-            <column name="MaxPerc2000" precision="22" scale="0" />
+            <column name="MaxPerc2000" precision="22" scale="0" ></column>
         </property>
         <property name="maxPercfuture" type="string">
             <column name="MaxPercfuture" precision="22" scale="0" />
