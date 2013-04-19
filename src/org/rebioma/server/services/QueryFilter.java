@@ -64,6 +64,14 @@ public abstract class QueryFilter {
     }
     QueryFilter f;
     Constructor<?> queryConstructor = filterClass.getConstructors()[0];
+    if(queryConstructor.getParameterTypes().length != 1){
+    	Constructor<?> queryConstructors[] = filterClass.getConstructors();
+        for(Constructor<?> qc:queryConstructors){
+        	if(qc.getParameterTypes().length ==1 && qc.getParameterTypes()[0]==String.class){
+        		queryConstructor = qc;
+        	}
+        }
+    }
     for (String filter : filters) {
       if (filter.equals("")) {
         continue;
