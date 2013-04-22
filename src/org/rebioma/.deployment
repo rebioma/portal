@@ -1,5 +1,5 @@
-#Fri Mar 22 18:35:50 EAT 2013
-war.name=latest.war
+#Fri Apr 19 12:44:01 AST 2013
+war.name=latestTrunk.war
 compiler.style=OBFUSCATED
-server.path=C\:\\Documents and Settings\\Consultant\\Bureau
+server.path=D\:\\admin\\Desktop
 compiler.memory.max=256m

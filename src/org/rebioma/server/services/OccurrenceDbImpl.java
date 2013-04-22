@@ -1631,11 +1631,6 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         filters.add(myreviewPublicFilter);
       }
       filters.remove(userReviewFilter);
-      // Sets the start, limit, and order by accepted species:
-      criteria.setFirstResult(query.getStart());
-      if (query.getLimit() != OccurrenceQuery.UNLIMITED) {
-        criteria.setMaxResults(query.getLimit());
-      }
       OccurrenceFilter idsFilter = null;
       if (userReviewFilter != null) {
         Boolean reviewed = null;
@@ -1661,6 +1656,22 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       }
       List<OrderKey> orderingMap = query.getOrderingMap();
       log.info("order map = " + orderingMap);
+      if (query.isCountTotalResults()) {
+          criteria.setFirstResult(0);
+          criteria.setProjection(Projections.count("id"));
+          Integer count = (Integer) criteria.uniqueResult();
+          if (count != null) {
+            query.setCount(count);
+          }
+      } else {
+          query.setCount(-1);
+      }
+      // Sets the start, limit, and order by accepted species:
+      criteria.setFirstResult(query.getStart());
+      if (query.getLimit() != OccurrenceQuery.UNLIMITED) {
+        criteria.setMaxResults(query.getLimit());
+      }
+      criteria.setProjection(null);
       for (OrderKey orderKey : orderingMap) {
         String property = orderKey.getAttributeName();
         String occAttribute = getOccurrencePropertyName(property);
@@ -1673,16 +1684,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         }
       }
       results = criteria.list();
-      if (query.isCountTotalResults()) {
-        criteria.setFirstResult(0);
-        criteria.setProjection(Projections.count("id"));
-        Integer count = (Integer) criteria.uniqueResult();
-        if (count != null) {
-          query.setCount(count);
-        }
-      } else {
-        query.setCount(-1);
-      }
+      
       // filters.addAll(removedFilters);
       log.debug("find by example successful, result size: " + results.size());
       if (isFirstTransaction) {

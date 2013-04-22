@@ -18,6 +18,7 @@ public class MySqlPing {
    * Pings mysql server every 5 minutes (300000 ms).
    */
   public static void startPingTimer() {
+	  if(true)return;
     if (initialized) {
       return;
     }

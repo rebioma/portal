@@ -322,11 +322,11 @@ public class ListView extends ComponentView implements
    * An red "X" image for column with boolean value false/no
    */
   public static final String X_IMG_URL = "images/redX.png";
-  private static final String WAITING_IMG_URL = "images/waiting.jpg";
+  private static final String WAITING_IMG_URL = "images/waiting.png";
 
-  private static final String THUMB_UP_URL = "images/thumb_up.jpg";
+  private static final String THUMB_UP_URL = "images/thumb_up.png";
 
-  private static final String THUMB_DOWN_URL = "images/question_mark.jpg";
+  private static final String THUMB_DOWN_URL = "images/question_mark.png";
 
   /**
    * Default style for this OccurrenceListView Widget
@@ -1308,7 +1308,7 @@ public class ListView extends ComponentView implements
 	@Override
 	public void onPageSizeChange(int newPageSize) {
 	  ApplicationView.getApplication().getOccurrenceView().setPageSize(newPageSize);
-      //on recharge les données
+      //on recharge les donnï¿½es
       requestData(1);
 	}
 

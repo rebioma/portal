@@ -15,7 +15,9 @@
  */
 package org.rebioma.server.services;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -402,6 +404,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
       Collection<Integer> occurrenceIds, String comment) {
     int count = 0;
     log.info("reviewing records: " + occurrenceIds);
+    Date date = new Date();
     Map<Integer, Set<Integer>> ownerChangeToNegRecordReviewedMap = new HashMap<Integer, Set<Integer>>();
     for (Integer id : occurrenceIds) {
       RecordReview recordReview = recordReviewDb.getRecordReview(user.getId(),
@@ -422,10 +425,12 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
           }
           recordsReviewChanges.add(id);
         }
-        if (comment != null && !comment.isEmpty()) {
+        if (comment != null && !comment.isEmpty() && !comment.equals("")) {
+        	System.out.println("comment" + comment);
           //comment += "\n\n comment left when reviewed";
           OccurrenceComments occurrenceComment = new OccurrenceComments(id,
               user.getId(), comment);
+          occurrenceComment.setDateCommented(date);
           commentService.attachDirty(occurrenceComment);
         }
       }

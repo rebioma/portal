@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Aug 21, 2008 10:07:07 AM by Hibernate Tools 3.2.2.GA -->
 <hibernate-mapping>
-    <class name="org.rebioma.client.bean.User" table="User" >
+    <class name="org.rebioma.client.bean.User" table='"user"' >
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />

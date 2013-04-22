@@ -587,8 +587,8 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						}
 						
 						/*
-						 * Tantely:J'ai ajouté ces deux lignes codes pour
-						 * réinitialiser l'occurrence et puis le revalider
+						 * Tantely:J'ai ajoutï¿½ ces deux lignes codes pour
+						 * rï¿½initialiser l'occurrence et puis le revalider
 						 */
 						occurrenceDb.resetRecordReview(o, false,session);
 						validateTaxonomy(session, o);
@@ -663,12 +663,12 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		      log.info("sending email with subject: " + sujet + " to "+ destinataire.getEmail());
 			try {
 				logFileWriter.write("\n ----------------------------------------------------------");
-				logFileWriter.write("\n Début d'envoie de mail pour: " + destinataire.getFirstName() );
+				logFileWriter.write("\n Dï¿½but d'envoie de mail pour: " + destinataire.getFirstName() );
 				logFileWriter.write("\n Adresse :" + destinataire.getEmail());
 				logFileWriter.write("\n Sujet: "+sujet);
 				logFileWriter.write("\n Nombre d'occurences: "+ occurenceIds.size());
 				EmailUtil.notifyUserForRevalidation(destinataire,  occurenceIds, sujet, body);
-				logFileWriter.write("\n Mail envoyé avec succès à " + destinataire.getEmail());
+				logFileWriter.write("\n Mail envoyï¿½ avec succï¿½s ï¿½ " + destinataire.getEmail());
 				logFileWriter.write("\n ----------------------------------------------------------");
 			} catch (EmailException e) {
 				log.error(
@@ -786,6 +786,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				    
 				    Map<Integer, Set<Integer>> ownerOccurrencesForCase5 = new HashMap<Integer, Set<Integer>>();
 					Set<OccurrenceComments> allComments = new HashSet<OccurrenceComments>();
+					Date date = new Date();
 					for (Occurrence o : subOccurrences) {
 						String uneLigne = getLogTemplate(MAIL_SUBJECT_CASE5, o);
 						logFileWriter.write(uneLigne);
@@ -797,6 +798,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						Classification c = taxonomicAuthority.classify(genus, se, ie, nc);
 						String oComment = c.getNotes();
 						OccurrenceComments comment = new OccurrenceComments(o.getId(),ADMIN_ID, oComment);
+						comment.setDateCommented(date);
 						allComments.add(comment);
 						List<RecordReview> recordReviews = recordReviewDb
 								.getRecordReviewsByOcc(session,o.getId());

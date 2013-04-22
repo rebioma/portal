@@ -92,7 +92,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		}
 		if(obj!=null && obj.get(SpeciesTreeModel.ORDER)!=null && !obj.get(SpeciesTreeModel.ORDER).toString().isEmpty() ) {
 			where+=" AND Acceptedorder='"+obj.getOrder()+"' ";
-			whereTaxonomy+=" AND `order`='"+obj.getOrder()+"' ";
+			whereTaxonomy+=" AND \"order\"='"+obj.getOrder()+"' ";
 			concerne="family ";
 			colonne+="Acceptedfamily,";
 			level=LEVELS.get("FAMILY");
@@ -129,21 +129,21 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		if(concerneTaxonomy.equalsIgnoreCase("species "))
 			concerneTaxonomy="accepted"+concerneTaxonomy;
 		if(concerneTaxonomy.equalsIgnoreCase("order "))
-			concerneTaxonomy="`order` ";
-		
-		ret="SELECT DISTINCT t."+concerneTaxonomy+" as concerne, IFNULL( public,0) as publics, IFNULL(private,0) as privates,"+colonneSource+" as source  "+
+			concerneTaxonomy="\"order\" ";
+		String colonneUpper = colonne.replaceAll("Accepted", "upper(Accepted").replaceAll(",", "),");
+		ret="SELECT DISTINCT t."+concerneTaxonomy+" as concerne, COALESCE( public,0) as publics, COALESCE(private,0) as privates, upper("+colonneSource+") as source  "+
 		" from taxonomy t LEFT JOIN \n" +
 		"(\n" +
-		"SELECT sum(public)  as public  ,sum(private)  as private, Accepted"+concerne+"  as concerne FROM(\n" +
-		"SELECT DISTINCT "+colonne+" count(*) as private, 0 as public FROM Occurrence o WHERE o.Public=0 \n" +
+		"SELECT sum(public)  as public  ,sum(private)  as private, upper(Accepted"+concerne+")  as concerne FROM(\n" +
+		"SELECT DISTINCT "+colonne+" count(*) as private, 0 as public FROM Occurrence o WHERE o.Public=false \n" +
 		where +
 		"GROUP BY "+colonne.substring(0, colonne.length()-1) + " \n "+
 		"UNION\n" +
-		" SELECT DISTINCT "+colonne+"  0 as private,count(*) as public FROM Occurrence o WHERE o.Public=1 \n" +
+		" SELECT DISTINCT " + colonneUpper +"  0 as private,count(*) as public FROM Occurrence o WHERE o.Public=true \n" +
 		where +
-		" GROUP BY "+colonne.substring(0, colonne.length()-1)  + " \n "+
+		" GROUP BY " + colonneUpper.substring(0, colonneUpper.length()-1)  + " \n "+
 		")tb\n" +
-		"GROUP BY " +colonne.substring(0, colonne.length()-1)  + " \n "+
+		"GROUP BY " +colonneUpper.substring(0, colonneUpper.length()-1)  + " \n "+
 		")tt\n" +
 		"ON t." +concerneTaxonomy+" = tt.concerne " + whereTaxonomy;
 		tabs[0]=ret;

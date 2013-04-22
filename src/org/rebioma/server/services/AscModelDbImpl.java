@@ -63,14 +63,15 @@ public class AscModelDbImpl implements AscModelDb {
       Criteria criteria = session.createCriteria(AscModel.class);
       criteria.add(Restrictions.ilike("acceptedSpecies", acceptedSpecies,
           MatchMode.ANYWHERE));
+      criteria.setFirstResult(0);
+      criteria.setProjection(Projections.count("id"));
+      Integer count = (Integer) criteria.uniqueResult();
+      criteria.setProjection(null);
       criteria.addOrder(Order.asc("acceptedSpecies"));
       criteria.setFirstResult(start);
       criteria.setMaxResults(limit);
       List<AscModel> results = criteria.list();
       /*Tax: Reset the firstResult to 0 for the projection*/
-      criteria.setFirstResult(0);
-      criteria.setProjection(Projections.count("id"));
-      Integer count = (Integer) criteria.uniqueResult();
       if (isFirstTransaction) {
         HibernateUtil.commitCurrentTransaction();
       }
