@@ -15,15 +15,12 @@
  */
 package org.rebioma.client.maps;
 
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.control.ControlAnchor;
-import com.google.gwt.maps.client.control.ControlPosition;
-import com.google.gwt.maps.client.control.Control.CustomControl;
-import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class TileLayerLegend extends CustomControl {
+public abstract class TileLayerLegend extends HTMLPanel {
 
   public interface LegendCallback {
     public void onLookup(LatLng point, String value);
@@ -32,12 +29,12 @@ public abstract class TileLayerLegend extends CustomControl {
   protected DialogBox details;
 
   public TileLayerLegend() {
-    super(new ControlPosition(ControlAnchor.TOP_RIGHT, 7, 90));
+	  super("");
   }
-
-  @Override
-  public boolean isSelectable() {
-    return true;
+  
+  protected void addLegend(){
+	  Widget legendWidget = getLegendWidget(); 
+	  this.add(legendWidget);
   }
 
   public abstract void lookupValue(LatLng point, LegendCallback callback);
@@ -55,9 +52,4 @@ public abstract class TileLayerLegend extends CustomControl {
   protected abstract DialogBox getDetails();
 
   protected abstract Widget getLegendWidget();
-
-  @Override
-  protected Widget initialize(MapWidget map) {
-    return getLegendWidget();
-  }
 }

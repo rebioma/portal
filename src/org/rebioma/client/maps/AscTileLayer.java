@@ -15,14 +15,15 @@
  */
 package org.rebioma.client.maps;
 
-import com.google.gwt.maps.client.CopyrightCollection;
-import com.google.gwt.maps.client.TileLayer;
-import com.google.gwt.maps.client.overlay.TileLayerOverlay;
+import com.google.gwt.maps.client.maptypes.ImageMapType;
+import com.google.gwt.maps.client.maptypes.ImageMapTypeOptions;
 
 /**
  * An abstract class that represents ASC tile layers.
  */
-public abstract class AscTileLayer extends TileLayer {
+public abstract class AscTileLayer {
+	
+	protected final ImageMapTypeOptions imageMapTypeOptions;
 
   /**
    * Allows {@link AscTileLayer} objects to be lazy loaded.
@@ -41,26 +42,40 @@ public abstract class AscTileLayer extends TileLayer {
 
     protected abstract AscTileLayer get();
   }
+  
+  private int mapIndex;
 
   protected String baseUrl;
 
-  protected TileLayerOverlay overlay;
+  protected ImageMapType overlay;
 
   public AscTileLayer() {
-    super(new CopyrightCollection(), 0, 20);
+    super();
+    imageMapTypeOptions = ImageMapTypeOptions.newInstance();
   }
 
-  public TileLayerOverlay asOverlay() {
+  public ImageMapType asOverlay() {
     if (overlay == null) {
-      overlay = new TileLayerOverlay(this);
+      overlay = ImageMapType.newInstance(imageMapTypeOptions);
     }
     return overlay;
   }
 
   public abstract TileLayerLegend getLegend();
-
-  @Override
-  public boolean isPng() {
-    return true;
+  
+  public int getMapIndex(){
+	  return mapIndex;
   }
+  /**
+   * On memorise l'index de l'imageMapType quand il est ajouté au map
+   * @param idx
+   */
+  public void setMapIndex(int idx){
+	  this.mapIndex = idx;
+  }
+  
+  public ImageMapTypeOptions getImageMapTypeOptions(){
+	  return imageMapTypeOptions;
+  }
+
 }

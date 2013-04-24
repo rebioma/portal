@@ -13,10 +13,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.rebioma.client.bean.SpeciesStatisticModel;
 import org.rebioma.client.bean.SpeciesTreeModel;
+import org.rebioma.client.bean.SpeciesTreeModelInfoItem;
 import org.rebioma.client.bean.Taxonomy;
 import org.rebioma.client.services.SpeciesExplorerService;
 import org.rebioma.server.util.HibernateUtil;
@@ -36,12 +39,12 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 	
 	private static final HashMap<String, String> LEVELS=new HashMap<String, String>(){
         {
-            put("KINGDOM", "Kingdom");
-            put("PHYLUM", "Phylum");
-            put("CLASS", "Class");
-            put("GENUS", "Genus");
-            put("ORDER", "Order");
-            put("FAMILY", "Family");
+            put("KINGDOM", SpeciesTreeModel.KINGDOM);
+            put("PHYLUM", SpeciesTreeModel.PHYLUM);
+            put("CLASS", SpeciesTreeModel.CLASS_);
+            put("GENUS", SpeciesTreeModel.GENUS);
+            put("ORDER", SpeciesTreeModel.ORDER);
+            put("FAMILY", SpeciesTreeModel.FAMILY);
             put("ACCEPTEDSPECIES", "Species");
         }
 	};
@@ -58,13 +61,13 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		String colonneSynonym="";
 		String whereTaxonomy=" WHERE 1=1 ";
 		
-		if(obj==null || obj.get(SpeciesTreeModel.KINGDOM)==null || obj.get(SpeciesTreeModel.KINGDOM).toString().isEmpty()) {
+		if(obj==null || obj.getKingdom()==null || obj.getKingdom().toString().isEmpty()) {
 			concerne="kingdom ";
 			colonne+="AcceptedKingdom,";
 			level=LEVELS.get("KINGDOM");
 			//colonneSource=" getInfosKingdom(t.Kingdom)  ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.KINGDOM)!=null && !obj.get(SpeciesTreeModel.KINGDOM).toString().isEmpty()) {
+		if(obj!=null && obj.getKingdom()!=null && !obj.getKingdom().toString().isEmpty()) {
 			concerne="Phylum ";
 			colonne+="AcceptedKingdom,";
 			where+=" AND Acceptedkingdom='"+obj.getKingdom()+"' ";
@@ -74,7 +77,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("PHYLUM");
 			//colonneSource=" getInfosPhylum(t.phylum) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.PHYLUM)!=null && !obj.get(SpeciesTreeModel.PHYLUM).toString().isEmpty() ) {
+		if(obj!=null && obj.getPhylum()!=null && !obj.getPhylum().toString().isEmpty() ) {
 			where+=" AND AcceptedPhylum='"+obj.getPhylum()+"' ";
 			whereTaxonomy+=" AND Phylum='"+obj.getPhylum()+"' ";
 			concerne="Class ";
@@ -82,7 +85,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("CLASS");
 			//colonneSource=" getInfosClass(t.class) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.CLASS_)!=null && !obj.get(SpeciesTreeModel.CLASS_).toString().isEmpty() ) {
+		if(obj!=null && obj.getClass_()!=null && !obj.getClass_().toString().isEmpty() ) {
 			where+=" AND Acceptedclass='"+obj.getClass_()+"' ";
 			whereTaxonomy+=" AND class='"+obj.getClass_()+"' ";
 			concerne="order ";
@@ -90,7 +93,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("ORDER");
 			//colonneSource=" getInfosGenus(t.genus) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.ORDER)!=null && !obj.get(SpeciesTreeModel.ORDER).toString().isEmpty() ) {
+		if(obj!=null && obj.getOrder()!=null && !obj.getOrder().toString().isEmpty() ) {
 			where+=" AND Acceptedorder='"+obj.getOrder()+"' ";
 			whereTaxonomy+=" AND \"order\"='"+obj.getOrder()+"' ";
 			concerne="family ";
@@ -98,7 +101,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("FAMILY");
 			//colonneSource=" getInfosFamily(t.family) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.FAMILY)!=null && !obj.get(SpeciesTreeModel.FAMILY).toString().isEmpty() ) {
+		if(obj!=null && obj.getFamily()!=null && !obj.getFamily().toString().isEmpty() ) {
 			where+=" AND Acceptedfamily='"+obj.getFamily()+"' ";
 			whereTaxonomy+=" AND family='"+obj.getFamily()+"' ";
 			concerne="genus ";
@@ -106,7 +109,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("GENUS");
 			//colonneSource=" getInfosFamily(t.family) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.GENUS)!=null && !obj.get(SpeciesTreeModel.GENUS).toString().isEmpty() ) {
+		if(obj!=null && obj.getGenus()!=null && !obj.getGenus().toString().isEmpty() ) {
 			where+=" AND Acceptedgenus='"+obj.getGenus()+"' ";
 			whereTaxonomy+=" AND genus='"+obj.getGenus()+"' ";
 			concerne="species ";
@@ -429,6 +432,53 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		     if(session!=null) session.close();
 		 }
 	    
+	}
+	@Override
+	public List<SpeciesStatisticModel> getStatistics(SpeciesTreeModel model) {
+		
+//		try {
+//			Thread.sleep(15000);//15 sec
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		//TODO à dynamyser !
+		int nbRecords = model.getNbPrivateOccurence() + model.getNbPublicOccurence();
+		final List<SpeciesStatisticModel> stats = new ArrayList<SpeciesStatisticModel>();
+		SpeciesStatisticModel m1 = new SpeciesStatisticModel();
+		m1.setKindOfData("Reliable(" + model.getLabel() + ")");
+		m1.setNbRecords(nbRecords);
+		m1.setObservations("Occurrence.reviewed = 1");
+		stats.add(m1);
+		
+		SpeciesStatisticModel m2 = new SpeciesStatisticModel();
+		m2.setKindOfData("Awaiting review(" + model.getLabel() + ")");
+		m2.setNbRecords(nbRecords);
+		m2.setObservations("Occurrence.reviewed = NULL AND Occurrence.validated = 1");
+		stats.add(m2);
+		
+		SpeciesStatisticModel m3 = new SpeciesStatisticModel();
+		m3.setKindOfData("Questionable(" + model.getLabel() + ")");
+		m3.setNbRecords(nbRecords);
+		m3.setObservations("Occurrence.reviewed = 1");
+		stats.add(m3);
+		
+		SpeciesStatisticModel m4 = new SpeciesStatisticModel();
+		m4.setKindOfData("Invalidated(" + model.getLabel() + ") ");
+		m4.setNbRecords(nbRecords);
+		m4.setObservations("Occurrence.reviewed = 0");
+		stats.add(m4);
+		return stats;
+	}
+	@Override
+	public List<SpeciesTreeModelInfoItem> getInfomations(SpeciesTreeModel source) {
+		List<SpeciesTreeModelInfoItem> informations = new ArrayList<SpeciesTreeModelInfoItem>();
+		String sourceName = source.getLabel();
+		for(int i=0;i< 10;i++){
+			informations.add(new SpeciesTreeModelInfoItem("Libele Information(" + sourceName + ") " + (i + 1), "Valeur de l'information numéro " + (i + 1)));
+		}
+		return informations;
 	}
 	
 

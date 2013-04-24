@@ -1,8 +1,11 @@
 package org.rebioma.client.services;
 
 import java.util.List;
+import java.util.Set;
 
+import org.rebioma.client.bean.SpeciesStatisticModel;
 import org.rebioma.client.bean.SpeciesTreeModel;
+import org.rebioma.client.bean.SpeciesTreeModelInfoItem;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -20,6 +23,23 @@ public interface SpeciesExplorerService extends RemoteService {
 	 */
 	public List<SpeciesTreeModel> getChildren(SpeciesTreeModel parent);
 	
+	/**
+	 * 
+	 * @param model
+	 * @return
+	 */
+	public List<SpeciesStatisticModel> getStatistics(SpeciesTreeModel model);
 	
+	/**
+	 * 
+	 */
 	public void loadCsv();
+	
+	/**
+	 * 
+	 * @param source
+	 * @return
+	 */
+	List<SpeciesTreeModelInfoItem> getInfomations(SpeciesTreeModel source);
+	
 }

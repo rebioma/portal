@@ -21,7 +21,7 @@ import org.rebioma.client.bean.AscData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -49,6 +49,7 @@ public class EnvLayerLegend extends TileLayerLegend {
     img.setUrl(GWT.getModuleBaseURL() + "ascOverlay?legend=1");
     minLabel.setText("" + data.getMinValue());
     maxLabel.setText("" + data.getMaxValue());
+    this.addLegend();
   }
 
   /**
@@ -77,12 +78,13 @@ public class EnvLayerLegend extends TileLayerLegend {
     if (value == null) {
       value = "";
     }
-    String pointText = point.toUrlValue(7);
+    String pointText = point.getToUrlValue(7);
     if (value.length() < 1) {
       valueHtml.setHTML("No Data @ " + pointText);
     } else {
       valueHtml.setHTML(value + " " + data.getUnits() + " @ " + pointText);
     }
+    this.setVisible(true);
   }
 
   @Override
@@ -147,10 +149,10 @@ public class EnvLayerLegend extends TileLayerLegend {
   }
 
   /**
-   * Arrondi d'un double avec n éléments après la virgule.
-   * @param a La valeur à convertir.
-   * @param n Le nombre de décimales à conserver.
-   * @return La valeur arrondi à n décimales.
+   * Arrondi d'un double avec n ï¿½lï¿½ments aprï¿½s la virgule.
+   * @param a La valeur ï¿½ convertir.
+   * @param n Le nombre de dï¿½cimales ï¿½ conserver.
+   * @return La valeur arrondi ï¿½ n dï¿½cimales.
    */
   public static double floor(double a, int n) {
   	double p = Math.pow(10.0, n);

@@ -29,7 +29,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -501,7 +501,7 @@ public abstract class View extends Composite implements
 
     public GeocoderResult(LatLng point, String address) {
       vp.add(new Label(address));
-      vp.add(new Label(point.toUrlValue(7)));
+      vp.add(new Label(point.getToUrlValue(7)));
       initWidget(vp);
     }
   }

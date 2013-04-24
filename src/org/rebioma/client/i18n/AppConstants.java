@@ -1,5 +1,7 @@
 package org.rebioma.client.i18n;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+
 /**
  * Interface to represent the constants contained in resource bundle:
  * 	'/home/rebioma/workspace/Rebioma/war/WEB-INF/classes/org/rebioma/client/i18n/AppConstants.properties'.
@@ -3029,6 +3031,18 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @DefaultStringValue(" to date:")
   @Key("labelToDate")
   String labelToDate();
+  
+  @DefaultStringValue("Show Statistic")
+  @Key("ShowStatistic")
+  String ShowStatistic();
+  
+  @DefaultStringValue("Clear all selected")
+  @Key("ClearAllSelected")
+  String ClearAllSelected();
+
+  @DefaultStringValue("More informations")
+  @Key("MoreInformations")
+  String MoreInformations();
 
   /**
    * Translated "Occurrence Comment".
