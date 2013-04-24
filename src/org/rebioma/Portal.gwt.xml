@@ -13,18 +13,19 @@
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
 	<!-- Other module inherits                                      -->
-	<inherits name="com.google.gwt.maps.Maps" />
+	<inherits name="com.google.gwt.maps.GoogleMaps" />
 <!--	<inherits name="org.form.FormWidget" />-->
-  	<inherits name="com.sencha.gxt.ui.GXT" />
+  	<inherits name="com.extjs.gxt.ui.GXT" />
 
 	<!--
 		localhost:
 		ABQIAAAAQmTfPsuZgXDEr012HM6trBQ9h4JNsDBcIOxh6bSLCe_wOSHYmhSu62PHB913KvcHTa2D6cm8TEbEsQ
 	
-	-->
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
+	<script
+		src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAQmTfPsuZgXDEr012HM6trBTHgvh5vptFouDZv4jHffqseCingxR4WSZRKG0RC9b4bHWwrHqhdsRRdg"
+		/>
 
-	
+	-->
 	<!--
 		rebiomaportal.org:
 		ABQIAAAAQmTfPsuZgXDEr012HM6trBTsoIIRGyI2JMfA-ODGGQaA3kWtqhQWqv597yph-vMjOcEPAEWBVAHIlw
@@ -42,10 +43,10 @@
     <!--
 	*.rebioma.net/*
     AIzaSyCxm8tujepkRsAkqgNI9jAvAbbG2mUDClU
-    
+    -->
 	<script
     src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyCxm8tujepkRsAkqgNI9jAvAbbG2mUDClU" />
-	-->
+	
 
 	<!-- test.rebioma.net     
     <script

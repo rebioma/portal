@@ -2,6 +2,16 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="C:/tools/springsource/sts-2.9.1.RELEASE/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201203300216-rel-r37/gwt-2.4.0/gwt-user.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/tools/springsource/sts-2.9.1.RELEASE/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201203300216-rel-r37/gwt-2.4.0/doc/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/tools/springsource/sts-2.9.1.RELEASE/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201203300216-rel-r37/gwt-2.4.0/gwt-dev.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/tools/springsource/sts-2.9.1.RELEASE/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201203300216-rel-r37/gwt-2.4.0/doc/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/activation.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aopalliance.jar"/>
@@ -17,7 +27,11 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guiceberry-1.2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-api-rebioma-modeling.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-datepicker-r30.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps-javadoc.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps-noredist.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtupload-0.6.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gxt-2.2.5-gwt2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/imap.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/javassist-3.4.GA.jar"/>
@@ -36,11 +50,12 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/smtp.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/taxonomic-auth.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/tl4j-1.1.0.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gxt-3.0.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps-api-3.10.0-alpha-6.jar" sourcepath="C:/Mikajy/UTILITAIRE_PROJET/MAVEN/REPOSITORY/com/github/branflake2267/gwt-maps-api/3.10.0-alpha-6/gwt-maps-api-3.10.0-alpha-6-sources.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-ajaxloader-javadoc.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-ajaxloader.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/tools/springsource/sts-2.9.1.RELEASE/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201203300216-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA-sources.jar"/>
+	<classpathentry kind="lib" path="C:/tools/springsource/sts-2.9.1.RELEASE/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201203300216-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA.jar" sourcepath="C:/tools/springsource/sts-2.9.1.RELEASE/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201203300216-rel-r37/gwt-2.4.0/validation-api-1.0.0.GA-sources.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

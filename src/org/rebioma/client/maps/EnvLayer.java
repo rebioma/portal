@@ -18,9 +18,7 @@ package org.rebioma.client.maps;
 import org.rebioma.client.bean.AscData;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.maps.client.base.Point;
-import com.google.gwt.maps.client.base.Size;
-import com.google.gwt.maps.client.maptypes.TileUrlCallBack;
+import com.google.gwt.maps.client.geom.Point;
 
 /**
  * Represents an environmental layer that backed by an {@link AscData} that can
@@ -45,7 +43,7 @@ public class EnvLayer extends AscTileLayer {
 
       @Override
       protected AscTileLayer get() {
-        return EnvLayer.newInstance(data);
+        return new EnvLayer(data);
       }
     };
   }
@@ -55,32 +53,20 @@ public class EnvLayer extends AscTileLayer {
         + data.getYear();
   }
 
-  private AscData data;
+  private final AscData data;
+  private final double opacity;
 
   private TileLayerLegend legend;
 
-  protected EnvLayer() {
-    super();
+  public EnvLayer(AscData data) {
+    this(data, .5);
   }
-  
-  public static EnvLayer newInstance(AscData data){
-	  final EnvLayer envLayer = new EnvLayer();
-	  envLayer.data = data;
-	  envLayer.imageMapTypeOptions.setTileSize(Size.newInstance(256, 256));
-	  envLayer.imageMapTypeOptions.setOpacity(0.5);
-	  //envLayer.setOpacity(opacity);
-	  envLayer.baseUrl = GWT.getModuleBaseURL() + "ascOverlay?f=" + data.getFileName();
-	    envLayer.imageMapTypeOptions.setTileUrl(new TileUrlCallBack() {
-			@Override
-			public String getTileUrl(Point point, int zoomLevel) {
-				 String tileUrl = envLayer.baseUrl;
-			    tileUrl += "&x=" + new Double(Math.rint(point.getX())).intValue();
-			    tileUrl += "&y=" + new Double(Math.rint(point.getY())).intValue();
-			    tileUrl += "&z=" + zoomLevel;
-			    return tileUrl;
-			}
-		});
-	    return envLayer;
+
+  public EnvLayer(AscData data, double opacity) {
+    super();
+    this.data = data;
+    this.opacity = opacity;
+    baseUrl = GWT.getModuleBaseURL() + "ascOverlay?f=" + data.getFileName();
   }
 
   @Override
@@ -90,4 +76,19 @@ public class EnvLayer extends AscTileLayer {
     }
     return legend;
   }
+
+  @Override
+  public double getOpacity() {
+    return opacity;
+  }
+
+  @Override
+  public String getTileURL(Point tile, int zoomLevel) {
+    String tileUrl = baseUrl;
+    tileUrl += "&x=" + tile.getX();
+    tileUrl += "&y=" + tile.getY();
+    tileUrl += "&z=" + zoomLevel;
+    return tileUrl;
+  }
+
 }

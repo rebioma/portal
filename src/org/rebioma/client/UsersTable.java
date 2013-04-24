@@ -9,8 +9,6 @@ import org.rebioma.client.bean.User;
 import org.rebioma.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -208,7 +206,7 @@ public class UsersTable extends Composite implements ResizeHandler,
     initWidget(mainSp);
     userPager.addPageListener(this);
     Window.addResizeHandler(this);
-    Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+    DeferredCommand.addCommand(new Command() {
       public void execute() {
         resize(Window.getClientWidth(), Window.getClientHeight());
 

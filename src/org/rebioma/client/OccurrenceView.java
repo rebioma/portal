@@ -37,8 +37,6 @@ import org.rebioma.client.services.ServerPingService;
 import org.rebioma.client.services.ServerPingServiceAsync;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -727,7 +725,7 @@ public class OccurrenceView extends ComponentView implements
 				// publicRb.setValue(true);
 			}
 			if (activeViewInfo != null) {
-				Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+				DeferredCommand.addCommand(new Command() {
 					public void execute() {
 						resize(Window.getClientWidth(),
 								Window.getClientHeight());
@@ -1096,7 +1094,7 @@ public class OccurrenceView extends ComponentView implements
 		listLink.addClickHandler(this);
 		uploadLink.addClickHandler(this);
 		revalidateLink.addClickHandler(this);
-		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+		DeferredCommand.addCommand(new Command() {
 			public void execute() {
 				resize(Window.getClientWidth(), Window.getClientHeight());
 			}
@@ -1488,7 +1486,7 @@ public class OccurrenceView extends ComponentView implements
 		}
 		switchViewPanel.clear();
 		activeViewInfo = switchViewInfo;
-		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+		DeferredCommand.addCommand(new Command() {
 			public void execute() {
 				CustomPopupPanel view = getPopupView(activeViewInfo.getName());
 				if (isLoadRecord) {
@@ -2126,7 +2124,7 @@ public class OccurrenceView extends ComponentView implements
 	public void setPageSize(int ps){
 		this.queryPageSize = ps;
 		query.setLimit(ps);
-		//on partage ï¿½ ses enfants
+		//on partage à ses enfants
 		for(Map.Entry<String, ViewInfo> entry: viewInfos.entrySet()){
 			if(entry.getKey().equalsIgnoreCase(MAP) || entry.getKey().equalsIgnoreCase(LIST) || entry.getKey().equalsIgnoreCase(DETAIL)){
 				View v = entry.getValue().getView();

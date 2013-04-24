@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodeEvent;
@@ -128,7 +126,7 @@ public class SearchFieldSuggestion extends Composite implements
       listener.onTermSelected(event.getSelectedItem().getReplacementString());
     }
     suggestionBox.setText("");
-    Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+    DeferredCommand.addCommand(new Command() {
       public void execute() {
         suggestionBox.hideSuggestionList();
 

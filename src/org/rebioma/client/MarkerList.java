@@ -24,7 +24,7 @@ import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceSummary;
 import org.rebioma.client.bean.OccurrenceSummary.OccurrenceFieldItem;
 import org.rebioma.client.i18n.AppConstants;
-import org.rebioma.client.maps.OccurrenceMarkerManager;
+import org.rebioma.client.maps.OccurrenceMarker;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -101,7 +101,7 @@ public class MarkerList extends Composite {
      * 
      * @return
      */
-    OccurrenceMarkerManager getOccurrenceMarker();
+    OccurrenceMarker getOccurrenceMarker();
 
     void showDetail();
   }
@@ -116,9 +116,9 @@ public class MarkerList extends Composite {
       ClickHandler {
 
     /**
-     * The {@link OccurrenceMarkerManager}
+     * The {@link OccurrenceMarker}
      */
-    private final OccurrenceMarkerManager occurrenceMarkerManager;
+    private final OccurrenceMarker occurrenceMarker;
 
     /**
      * The marker {@link Image} for the occurrence marker which is the same as
@@ -149,17 +149,17 @@ public class MarkerList extends Composite {
     private final HTML showLayersLink;
 
     /**
-     * Initializes this MarkerItem with a {@link OccurrenceMarkerManager}
+     * Initializes this MarkerItem with a {@link OccurrenceMarker}
      * 
      * @param occurrenceMarker
      */
-    public MarkerItem(OccurrenceMarkerManager occurrenceMarker) {
-      this.occurrenceMarkerManager = occurrenceMarker;
+    public MarkerItem(OccurrenceMarker occurrenceMarker) {
+      this.occurrenceMarker = occurrenceMarker;
       Occurrence occurrence = occurrenceMarker.getOccurrence();
       OccurrenceFieldItem item = OccurrenceSummary.getDisplayField(occurrence);
       String displayText = item == null ? "----" : item.toString();
       taxonimicValue = new HTML(item == null ? "----" : item.toString());
-      markerImg = new Image(OccurrenceMarkerManager.getSpeciesMarkerUrlsMap().get(
+      markerImg = new Image(OccurrenceMarker.getSpeciesMarkerUrlsMap().get(
           displayText));
       markerImg.addClickHandler(this);
       taxonimicValue.setStyleName("Taxonomic");
@@ -197,8 +197,8 @@ public class MarkerList extends Composite {
       mainHp.setStyleName(MARKER_ITEM_STYLE);
     }
 
-    public OccurrenceMarkerManager getOccurrenceMarker() {
-      return occurrenceMarkerManager;
+    public OccurrenceMarker getOccurrenceMarker() {
+      return occurrenceMarker;
     }
 
     /**
@@ -223,7 +223,7 @@ public class MarkerList extends Composite {
         fireOnCheckedSelect();
       } else if (source == showLayersLink) {
         LayerInfoPopup layerInfoPopup = LayerInfoPopup.getInstance();
-        layerInfoPopup.loadLayersInfo(occurrenceMarkerManager.getOccurrence());
+        layerInfoPopup.loadLayersInfo(occurrenceMarker.getOccurrence());
       }
 
     }
@@ -235,7 +235,7 @@ public class MarkerList extends Composite {
 
     public void showDetail() {
       if (occurrenceListener != null) {
-        occurrenceListener.onOccurrenceSelected(occurrenceMarkerManager
+        occurrenceListener.onOccurrenceSelected(occurrenceMarker
             .getOccurrence());
       }
 
@@ -246,7 +246,7 @@ public class MarkerList extends Composite {
      * otherwise.
      */
     private void showOrHideMarker() {
-      occurrenceMarkerManager.getMarker().setVisible(checkBox.getValue());
+      occurrenceMarker.setVisible(checkBox.getValue());
     }
 
   }
@@ -280,7 +280,7 @@ public class MarkerList extends Composite {
             .get(occurrenceKey);
         if (occurrence != null) {
           fireOnDetailSelect(new OccurrenceItem() {
-            public OccurrenceMarkerManager getOccurrenceMarker() {
+            public OccurrenceMarker getOccurrenceMarker() {
               return null;
             }
 
@@ -300,7 +300,7 @@ public class MarkerList extends Composite {
 
   }
 
-  public void addItem(OccurrenceMarkerManager item) {
+  public void addItem(OccurrenceMarker item) {
     itemsVp.add(new MarkerItem(item));
   }
 
@@ -335,14 +335,14 @@ public class MarkerList extends Composite {
   }
 
   /**
-   * Gets all {@link OccurrenceMarkerManager} currently checked.
+   * Gets all {@link OccurrenceMarker} currently checked.
    * 
-   * @return @{@link List} of {@link OccurrenceMarkerManager} where marker item check
+   * @return @{@link List} of {@link OccurrenceMarker} where marker item check
    *         box is checked.
    */
-  public List<OccurrenceMarkerManager> getCheckedMarkers() {
+  public List<OccurrenceMarker> getCheckedMarkers() {
     int startIndex = (unmappableListBox.isAttached()) ? 1 : 0;
-    List<OccurrenceMarkerManager> occurrenceMarkers = new ArrayList<OccurrenceMarkerManager>();
+    List<OccurrenceMarker> occurrenceMarkers = new ArrayList<OccurrenceMarker>();
     for (int i = startIndex; i < itemsVp.getWidgetCount(); i++) {
       MarkerItem markerItem = (MarkerItem) itemsVp.getWidget(i);
       if (markerItem.isChecked()) {
@@ -398,21 +398,21 @@ public class MarkerList extends Composite {
    * @param checksMap: {@link Map} indexes to its checked value.
    */
   public void setCheckedFromMap(Map<Integer, Boolean> checksMap) {
-//    int startIndex = (unmappableListBox.isAttached()) ? 1 : 0;
-//    if (checksMap == null || checksMap.isEmpty()) {
-//      for (int index = startIndex; index < itemsVp.getWidgetCount(); index++) {
-//        MarkerItem item = (MarkerItem) itemsVp.getWidget(index);
-//        item.setChecked(true);
-//      }
-//    }
-//    for (Integer index : checksMap.keySet()) {
-//      try {
-//        MarkerItem item = (MarkerItem) itemsVp.getWidget(index + startIndex);
-//        item.setChecked(checksMap.get(index));
-//      } catch (IndexOutOfBoundsException e) {
-//        // do nothing
-//      }
-//    }
+    int startIndex = (unmappableListBox.isAttached()) ? 1 : 0;
+    if (checksMap == null || checksMap.isEmpty()) {
+      for (int index = startIndex; index < itemsVp.getWidgetCount(); index++) {
+        MarkerItem item = (MarkerItem) itemsVp.getWidget(index);
+        item.setChecked(true);
+      }
+    }
+    for (Integer index : checksMap.keySet()) {
+      try {
+        MarkerItem item = (MarkerItem) itemsVp.getWidget(index + startIndex);
+        item.setChecked(checksMap.get(index));
+      } catch (IndexOutOfBoundsException e) {
+        // do nothing
+      }
+    }
   }
 
   public void setOccurrenceListener(OccurrenceListener occurrenceListener) {

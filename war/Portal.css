@@ -1565,22 +1565,6 @@ div#content {
 #closeButton {
   margin: 15px 6px 6px;
 }
-
-.table-right td > div {
-	float: right;
-	margin-right: 5px;
-	margin-bottom: 5px;
-}
-	
-.table-right td > select{
-	float: right;
-	margin-right: 5px;
-}
-
-.btn-right{
-	float: right;
-/* 	margin-right: 3px; */
-}
 	
 	
 	

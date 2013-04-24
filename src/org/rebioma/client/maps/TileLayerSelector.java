@@ -25,16 +25,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.base.LatLng;
-import com.google.gwt.maps.client.controls.ControlPosition;
-import com.google.gwt.maps.client.events.tiles.TilesLoadedMapEvent;
-import com.google.gwt.maps.client.events.tiles.TilesLoadedMapHandler;
-import com.google.gwt.maps.client.maptypes.ImageMapType;
+import com.google.gwt.maps.client.control.ControlAnchor;
+import com.google.gwt.maps.client.control.ControlPosition;
+import com.google.gwt.maps.client.control.Control.CustomControl;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Widget;
 
-public abstract class TileLayerSelector extends ListBox {
+public abstract class TileLayerSelector extends CustomControl {
 
   public interface TileLayerCallback {
     public void onLayerCleared(LayerInfo layerInfo);
@@ -47,6 +46,8 @@ public abstract class TileLayerSelector extends ListBox {
   protected static final String CLEAR = "--- Clear Layers ---";
 
   private static final String LOADING = "Loading...";
+
+  protected final ListBox lb = new ListBox();
 
   protected Map<String, LayerInfo> layerInfos = new HashMap<String, LayerInfo>();
 
@@ -69,27 +70,36 @@ public abstract class TileLayerSelector extends ListBox {
   protected Map<Integer, String> selectionIndices = new HashMap<Integer, String>();
 
   public TileLayerSelector(TileLayerCallback callback) {
-    super();
+    super(new ControlPosition(ControlAnchor.TOP_RIGHT, 7, 60));
     this.callback = callback;
   }
 
   public void clearSelection() {
-    if (getItemCount() <= 0 || getItemText(0).equals(LOADING)) {
+    if (lb.getItemCount() <= 0 || lb.getItemText(0).equals(LOADING)) {
       return;
     }
     if (selectedLayer != null) {
-    	map.getOverlayMapTypes().removeAt(map.getOverlayMapTypes().getLength() - 1);
+      map.removeOverlay(selectedLayer.asOverlay());
     }
     if (layerLegend != null) {
-    	layerLegend.removeFromParent();
+      map.removeControl(layerLegend);
     }
-    setSelectedIndex(selectionNames.get(SELECT));
+    lb.setSelectedIndex(selectionNames.get(SELECT));
     selectedLayer = null;
     layerLegend = null;
   }
 
+  public Widget getControlWidget() {
+    return lb;
+  }
+
   public int getSelectionIndex(String selectionName) {
     return selectionNames.get(selectionName);
+  }
+
+  @Override
+  public boolean isSelectable() {
+    return true;
   }
 
   public void removeLayer(String layerName, TileLayerCallback callback) {
@@ -140,7 +150,7 @@ public abstract class TileLayerSelector extends ListBox {
       Timer t = new Timer() {
         @Override
         public void run() {
-          if (!getItemText(0).equals(LOADING)) {
+          if (!lb.getItemText(0).equals(LOADING)) {
             cancel();
             selectLayer(layerSelected, callback);
           }
@@ -151,26 +161,24 @@ public abstract class TileLayerSelector extends ListBox {
     }
     LayerInfo layerInfo = null;
     if (selectedLayer != null) {
-    	map.getOverlayMapTypes().removeAt(selectedLayer.getMapIndex());
+      map.removeOverlay(selectedLayer.asOverlay());
     }
     if (layerLegend != null) {
-    	layerLegend.removeFromParent();
+      map.removeControl(layerLegend);
     }
     if (layerSelected.equals(SELECT) || layerSelected.equals(CLEAR)) {
-      setSelectedIndex(selectionNames.get(SELECT));
+      lb.setSelectedIndex(selectionNames.get(SELECT));
       selectedLayer = null;
       layerLegend = null;
       callback.onLayerCleared(layerInfos.get(selectedLayer));
     } else {
-      setSelectedIndex(selectionNames.get(layerSelected));
+      lb.setSelectedIndex(selectionNames.get(layerSelected));
       layerInfo = layerInfos.get(layerSelected);
       selectedLayer = layerInfo.getInstance();
-      ImageMapType overlay = selectedLayer.asOverlay();
-      map.getOverlayMapTypes().push(overlay);
-      selectedLayer.setMapIndex(map.getOverlayMapTypes().getLength() - 1);
+      map.addOverlay(selectedLayer.asOverlay());
       layerLegend = layerInfos.get(layerSelected).getInstance().getLegend();
       if (layerLegend != null) {
-    	  map.setControls(ControlPosition.RIGHT_BOTTOM, layerLegend);
+        map.addControl(layerLegend);
       }
       callback.onLayerSelected(layerInfo);
     }
@@ -178,42 +186,37 @@ public abstract class TileLayerSelector extends ListBox {
   }
 
   protected String currentSelection() {
-    return getItemText(getSelectedIndex());
+    return lb.getItemText(lb.getSelectedIndex());
   }
-  
-  /**
-   * Ajouter le control au "map" à la position "position"
-   * @param map
-   * @param position
-   * @return
-   */
-  public void setMap(final MapWidget map /*, com.google.gwt.maps.client.controls.ControlPosition position*/) {
+
+  @Override
+  protected Widget initialize(final MapWidget map) {
     this.map = map;
-//    map.setControls(position, this);
-    addItem(LOADING);
+    lb.addItem(LOADING);
     loadLayers(new AsyncCallback<List<LayerInfo>>() {
       public void onFailure(Throwable caught) {
         GWT.log(this.getClass().getName(), caught);
       }
 
       public void onSuccess(List<LayerInfo> result) {
-        addChangeHandler(changeHandler);
-        clear();
+        lb.addChangeHandler(changeHandler);
+        lb.clear();
         int index = 0;
-        addItem(SELECT);
+        lb.addItem(SELECT);
         selectionNames.put(SELECT, index++);
-        addItem(CLEAR);
+        lb.addItem(CLEAR);
         selectionNames.put(CLEAR, index++);
         String name;
         for (LayerInfo layerInfo : result) {
           name = layerInfo.getName();
-          addItem(name);
+          lb.addItem(name);
           selectionNames.put(name, index++);
           selectionIndices.put(selectionNames.get(name), name);
           layerInfos.put(name, layerInfo);
         }
       }
     });
+    return lb;
   }
 
   protected abstract void loadLayers(

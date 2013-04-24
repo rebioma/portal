@@ -10,8 +10,6 @@ import org.rebioma.client.UsersTable.CheckedClickListener;
 import org.rebioma.client.UsersTable.Criteria;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
@@ -207,7 +205,7 @@ public class UserProfilesView extends ComponentView {
     if (!hisToken.equals("")) {
       handleOnValueChange(hisToken);
     }
-    Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+    DeferredCommand.addCommand(new Command() {
       public void execute() {
         resize(Window.getClientWidth(), Window.getClientHeight());
       }

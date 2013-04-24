@@ -10,6 +10,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.maps.client.MapWidget;
+import com.google.gwt.maps.client.control.ControlAnchor;
+import com.google.gwt.maps.client.control.ControlPosition;
+import com.google.gwt.maps.client.control.Control.CustomControl;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -20,20 +24,22 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import edu.berkeley.mvz.rebioma.client.Model;
 import edu.berkeley.mvz.rebioma.client.ModelService;
 import edu.berkeley.mvz.rebioma.client.ModelSpec;
 
-public class ModelingControl extends Button {
+public class ModelingControl extends CustomControl {
   private static final String SELECT_SPECIES = "Select Species...";
   private final DialogBox dialog;
+  private final Button modelButton = new Button("Models");
   private final Map<String, Model> modelCache = new HashMap<String, Model>();
   private final int xOffset = 110;
   private final int yOffset = 5;
 
   public ModelingControl() {
-    super("Models");
+    super(new ControlPosition(ControlAnchor.TOP_RIGHT, 110, 5));
     dialog = new DialogBox();
     ModelService.Proxy.service().getModelNames(
         new AsyncCallback<List<String>>() {
@@ -44,12 +50,14 @@ public class ModelingControl extends Button {
             loadListBox(result);
           }
         });
-    addClickHandler(new ClickHandler() {
-        public void onClick(ClickEvent event) {
-          dialog.center();
-          dialog.show();
-        }
-      });
+  }
+
+  public Widget getControlWidget() {
+    return modelButton;
+  }
+
+  public ControlPosition getPosition() {
+    return getDefaultPosition();
   }
 
   public int getXOffset() {
@@ -60,8 +68,25 @@ public class ModelingControl extends Button {
     return yOffset;
   }
 
+  @Override
+  public boolean isSelectable() {
+    return false;
+  }
+
   protected void downloadModel(Model model) {
     Window.open(model.getDowloadUrl(), "", "");
+  }
+
+  @Override
+  protected Widget initialize(MapWidget map) {
+    modelButton.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
+        dialog.center();
+        dialog.show();
+      }
+
+    });
+    return modelButton;
   }
 
   protected void loadListBox(List<String> result) {
