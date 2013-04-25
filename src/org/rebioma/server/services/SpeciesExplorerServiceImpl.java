@@ -67,48 +67,48 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		if(obj!=null && obj.get(SpeciesTreeModel.KINGDOM)!=null && !obj.get(SpeciesTreeModel.KINGDOM).toString().isEmpty()) {
 			concerne="Phylum ";
 			colonne+="AcceptedKingdom,";
-			where+=" AND Acceptedkingdom='"+obj.getKingdom()+"' ";
-			whereTaxonomy+=" AND kingdom='"+obj.getKingdom()+"' ";
+			where+=" AND upper(Acceptedkingdom)=upper('"+obj.getKingdom()+"') ";
+			whereTaxonomy+=" AND upper(kingdom)=upper('"+obj.getKingdom()+"') ";
 			
 			colonne+="AcceptedPhylum,";
 			level=LEVELS.get("PHYLUM");
 			//colonneSource=" getInfosPhylum(t.phylum) ";
 		}
 		if(obj!=null && obj.get(SpeciesTreeModel.PHYLUM)!=null && !obj.get(SpeciesTreeModel.PHYLUM).toString().isEmpty() ) {
-			where+=" AND AcceptedPhylum='"+obj.getPhylum()+"' ";
-			whereTaxonomy+=" AND Phylum='"+obj.getPhylum()+"' ";
+			where+=" AND upper(AcceptedPhylum)=upper('"+obj.getPhylum()+"') ";
+			whereTaxonomy+=" AND upper(Phylum)=upper('"+obj.getPhylum()+"') ";
 			concerne="Class ";
 			colonne+="AcceptedClass,";
 			level=LEVELS.get("CLASS");
 			//colonneSource=" getInfosClass(t.class) ";
 		}
 		if(obj!=null && obj.get(SpeciesTreeModel.CLASS_)!=null && !obj.get(SpeciesTreeModel.CLASS_).toString().isEmpty() ) {
-			where+=" AND Acceptedclass='"+obj.getClass_()+"' ";
-			whereTaxonomy+=" AND class='"+obj.getClass_()+"' ";
+			where+=" AND upper(Acceptedclass)=upper('"+obj.getClass_()+"') ";
+			whereTaxonomy+=" AND upper(class)=upper('"+obj.getClass_()+"') ";
 			concerne="order ";
 			colonne+="Acceptedorder,";
 			level=LEVELS.get("ORDER");
 			//colonneSource=" getInfosGenus(t.genus) ";
 		}
 		if(obj!=null && obj.get(SpeciesTreeModel.ORDER)!=null && !obj.get(SpeciesTreeModel.ORDER).toString().isEmpty() ) {
-			where+=" AND Acceptedorder='"+obj.getOrder()+"' ";
-			whereTaxonomy+=" AND \"order\"='"+obj.getOrder()+"' ";
+			where+=" AND upper(Acceptedorder)=upper('"+obj.getOrder()+"') ";
+			whereTaxonomy+=" AND upper(\"order\")=upper('"+obj.getOrder()+"') ";
 			concerne="family ";
 			colonne+="Acceptedfamily,";
 			level=LEVELS.get("FAMILY");
 			//colonneSource=" getInfosFamily(t.family) ";
 		}
 		if(obj!=null && obj.get(SpeciesTreeModel.FAMILY)!=null && !obj.get(SpeciesTreeModel.FAMILY).toString().isEmpty() ) {
-			where+=" AND Acceptedfamily='"+obj.getFamily()+"' ";
-			whereTaxonomy+=" AND family='"+obj.getFamily()+"' ";
+			where+=" AND upper(Acceptedfamily)=upper('"+obj.getFamily()+"') ";
+			whereTaxonomy+=" AND upper(family)=upper('"+obj.getFamily()+"') ";
 			concerne="genus ";
 			colonne+="Acceptedgenus,";
 			level=LEVELS.get("GENUS");
 			//colonneSource=" getInfosFamily(t.family) ";
 		}
 		if(obj!=null && obj.get(SpeciesTreeModel.GENUS)!=null && !obj.get(SpeciesTreeModel.GENUS).toString().isEmpty() ) {
-			where+=" AND Acceptedgenus='"+obj.getGenus()+"' ";
-			whereTaxonomy+=" AND genus='"+obj.getGenus()+"' ";
+			where+=" AND upper(Acceptedgenus)=upper('"+obj.getGenus()+"') ";
+			whereTaxonomy+=" AND upper(genus)=upper('"+obj.getGenus()+"') ";
 			concerne="species ";
 			colonne+="Acceptedspecies,";
 			level=LEVELS.get("ACCEPTEDSPECIES"); 
@@ -145,7 +145,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		")tb\n" +
 		"GROUP BY " +colonneUpper.substring(0, colonneUpper.length()-1)  + " \n "+
 		")tt\n" +
-		"ON t." +concerneTaxonomy+" = tt.concerne " + whereTaxonomy;
+		"ON upper(t." +concerneTaxonomy+") = upper(tt.concerne) " + whereTaxonomy;
 		tabs[0]=ret;
 		tabs[1]=level;
 		return tabs;
