@@ -462,8 +462,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	      user = (User) session.createCriteria(User.class).add(
 	          Restrictions.eq("email", email)).uniqueResult();
 	      if (user != null) {
-	        if (BCrypt.checkpw(email+"redirection",password)) {
-	          String sessionId = RandomUtil.generateSessionId();
+	    	  //if (BCrypt.checkpw(user.getPasswordHash()+"redirection",password)) {
+	    	  if (user.getPasswordHash().equals(password)) {
+	    		  String sessionId = RandomUtil.generateSessionId();
 
 	          // TODO: Check for duplicate session id.
 

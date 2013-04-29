@@ -106,7 +106,7 @@ public class Portal implements EntryPoint {
 		  String email = Window.Location.getParameter("emailc");
 		  final String id = Window.Location.getParameter("id");
 		  final String dev = Window.Location.getParameter("gwt.codesvr")==null?
-				  "":"Portal.html?gwt.codesvr=127.0.0.1:9997";
+				  "":"Portal.html?gwt.codesvr="+Window.Location.getParameter("gwt.codesvr");
 		  Cookies.removeCookie(ApplicationView.SESSION_ID_NAME);
 		  DataSwitch.get().signInC(email, sign, new AsyncCallback<User>() {
 
@@ -119,9 +119,12 @@ public class Portal implements EntryPoint {
 			@Override
 			public void onSuccess(User result) {
 				// TODO Auto-generated method stub
-				Cookies.setCookie(ApplicationView.SESSION_ID_NAME, result.getSessionId(),new Date(System
+				if(result.getSessionId()==null)initApplication(null);
+				else{
+					Cookies.setCookie(ApplicationView.SESSION_ID_NAME, result.getSessionId(),new Date(System
 				          .currentTimeMillis() + 86400000));
-				Window.Location.replace(GWT.getHostPageBaseURL()+dev+"#tab=occ&view=Detail&id="+id+"&p=false&page=1&asearch=Id = "+id+"&type=all pos reviewed");
+					Window.Location.replace(GWT.getHostPageBaseURL()+dev+"#tab=occ&view=Detail&id="+id+"&p=false&page=1&asearch=Id = "+id+"&type=all pos reviewed");
+				}
 			}
 		});
 	}else if (!isSessionIdInBrowser()) {

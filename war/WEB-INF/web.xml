@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app>
+
+<listener>
+	<listener-class>org.rebioma.server.daemon.StartUp</listener-class>
+</listener>
+  
 <context-param>
     <param-name>maxSize</param-name>
     <param-value>25600000</param-value>
@@ -20,6 +25,15 @@
       org.rebioma.server.inject.GuiceServletContextListener
     </listener-class>
   </listener>
+  
+  <servlet>
+    <servlet-name>Mailing</servlet-name>
+    <servlet-class>org.rebioma.server.services.MailingServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Mailing</servlet-name>
+    <url-pattern>/rebioma/mailingService</url-pattern>
+  </servlet-mapping>
   
   <servlet>
     <servlet-name>RevalidationService</servlet-name>
