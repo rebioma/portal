@@ -5,164 +5,164 @@
 <hibernate-mapping>
     <class name="org.rebioma.client.bean.Taxonomy" table="taxonomy">
         <id name="id" type="int">
-            <column name="ID" />
+            <column name="id" />
             <generator class="assigned" />
         </id>
         <property name="taId" type="java.lang.Double">
-            <column name="TA_ID" precision="22" scale="0" />
+            <column name="ta_id" precision="22" scale="0" />
         </property>
         <property name="idAccepted" type="java.lang.Double">
-            <column name="ID_ACCEPTED" precision="22" scale="0" />
+            <column name="id_accepted" precision="22" scale="0" />
         </property>
         <property name="nomenclaturalCode" type="string">
-            <column name="NomenclaturalCode" />
+            <column name="nomenclaturalcode" />
         </property>
         <property name="kingdom" type="string">
-            <column name="Kingdom" />
+            <column name="kingdom" />
         </property>
         <property name="kingdomSource" type="string">
-            <column name="KingdomSource" />
+            <column name="Kingdomsource" />
         </property>
         <property name="phylum" type="string">
             <column name="Phylum" />
         </property>
         <property name="phylumSource" type="string">
-            <column name="PhylumSource" />
+            <column name="phylumsource" />
         </property>
         <property name="subPhylum" type="string">
-            <column name="SubPhylum" />
+            <column name="subphylum" />
         </property>
         <property name="subPhylumSource" type="string">
-            <column name="SubPhylumSource" />
+            <column name="subphylumSource" />
         </property>
         <property name="class_" type="string">
-            <column name="Class" />
+            <column name="class" />
         </property>
         <property name="classSource" type="string">
-            <column name="ClassSource" />
+            <column name="classsource" />
         </property>
         <property name="subclass" type="string">
-            <column name="Subclass" />
+            <column name="subclass" />
         </property>
         <property name="subclassSource" type="string">
-            <column name="SubclassSource" />
+            <column name="subclasssource" />
         </property>
         <property name="superOrder" type="string">
-            <column name="SuperOrder" />
+            <column name="superorder" />
         </property>
         <property name="superOrderSource" type="string">
-            <column name="SuperOrderSource" />
+            <column name="superordersource" />
         </property>
         <property name="order" type="string">
-            <column name="`Order`" />
+            <column name="`order`" />
         </property>
         <property name="orderSource" type="string">
-            <column name="OrderSource" />
+            <column name="ordersource" />
         </property>
         <property name="suborder" type="string">
-            <column name="Suborder" />
+            <column name="suborder" />
         </property>
         <property name="suborderSource" type="string">
-            <column name="SuborderSource" />
+            <column name="subordersource" />
         </property>
         <property name="infraOrder" type="string">
-            <column name="InfraOrder" />
+            <column name="infraorder" />
         </property>
         <property name="infraOrderSource" type="string">
-            <column name="InfraOrderSource" />
+            <column name="infraordersource" />
         </property>
         <property name="superFamily" type="string">
-            <column name="SuperFamily" />
+            <column name="superfamily" />
         </property>
         <property name="superfamilySource" type="string">
-            <column name="SuperfamilySource" />
+            <column name="superfamilysource" />
         </property>
         <property name="family" type="string">
-            <column name="Family" />
+            <column name="family" />
         </property>
         <property name="familySource" type="string">
-            <column name="FamilySource" />
+            <column name="familysource" />
         </property>
         <property name="subfamily" type="string">
-            <column name="Subfamily" />
+            <column name="subfamily" />
         </property>
         <property name="subfamilySource" type="string">
-            <column name="SubfamilySource" />
+            <column name="subfamilysource" />
         </property>
         <property name="genus" type="string">
-            <column name="Genus" />
+            <column name="genus" />
         </property>
         <property name="genusSource" type="string">
-            <column name="GenusSource" />
+            <column name="genussource" />
         </property>
         <property name="subgenus" type="string">
-            <column name="Subgenus" />
+            <column name="subgenus" />
         </property>
         <property name="subgenusSource" type="string">
-            <column name="SubgenusSource" />
+            <column name="subgenussource" />
         </property>
         <property name="specificEpithet" type="string">
-            <column name="SpecificEpithet" />
+            <column name="specificepithet" />
         </property>
         <property name="specificEpithetSource" type="string">
-            <column name="SpecificEpithetSource" />
+            <column name="specificepithetsource" />
         </property>
         <property name="infraspecificRank" type="string">
-            <column name="InfraspecificRank" />
+            <column name="infraspecificrank" />
         </property>
         <property name="infraspecificEpithet" type="string">
-            <column name="InfraspecificEpithet" />
+            <column name="infraspecificepithet" />
         </property>
         <property name="infraspecificEpithetSource" type="string">
-            <column name="InfraspecificEpithetSource" />
+            <column name="infraspecificepithetsource" />
         </property>
         <property name="acceptedSpecies" type="string">
-            <column name="AcceptedSpecies" />
+            <column name="acceptedspecies" />
         </property>
         <property name="verbatimSpecies" type="string">
-            <column name="VerbatimSpecies" />
+            <column name="verbatimspecies" />
         </property>
         <property name="verbatimSpeciesSource" type="string">
-            <column name="VerbatimSpeciesSource" />
+            <column name="verbatimspeciessource" />
         </property>
         <property name="isMarine" type="java.lang.Double">
-            <column name="IsMarine" precision="22" scale="0" />
+            <column name="ismarine" precision="22" scale="0" />
         </property>
         <property name="isTerrestrial" type="java.lang.Double">
-            <column name="IsTerrestrial" precision="22" scale="0" />
+            <column name="isterrestrial" precision="22" scale="0" />
         </property>
         <property name="comments" type="string">
-            <column name="Comments" />
+            <column name="comments" />
         </property>
         <property name="reviewedBy" type="string">
-            <column name="ReviewedBy" />
+            <column name="reviewedby" />
         </property>
         <property name="reviewDate" type="string">
-            <column name="ReviewDate" />
+            <column name="reviewdate" />
         </property>
         <property name="notes" type="string">
-            <column name="Notes" />
+            <column name="notes" />
         </property>
         <property name="status" type="string">
-            <column name="Status" />
+            <column name="status" />
         </property>
         <property name="changedBy" type="string">
-            <column name="ChangedBy" />
+            <column name="changedby" />
         </property>
         <property name="changeDate" type="timestamp">
-            <column name="ChangeDate" length="19" />
+            <column name="changedate" length="19" />
         </property>
         <property name="validation" type="string">
-            <column name="Validation" />
+            <column name="validation" />
         </property>
         <property name="validatedBy" type="string">
-            <column name="ValidatedBy" />
+            <column name="validatedby" />
         </property>
         <property name="validationDate" type="timestamp">
-            <column name="ValidationDate" length="19" />
+            <column name="validationdate" length="19" />
         </property>
         <property name="stability" type="java.lang.Double">
-            <column name="Stability" precision="22" scale="0" />
+            <column name="stability" precision="22" scale="0" />
         </property>
     </class>
 </hibernate-mapping>

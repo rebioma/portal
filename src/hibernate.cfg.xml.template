@@ -27,6 +27,7 @@
         <mapping resource="org/rebioma/client/bean/Role.hbm.xml" />
         <mapping resource="org/rebioma/client/bean/RecordReview.hbm.xml" />
         <mapping resource="org/rebioma/client/bean/AscModel.hbm.xml" />
+        <mapping resource="org/rebioma/client/bean/Taxonomy.hbm.xml" />
         <mapping resource="org/rebioma/server/services/OccurrenceUpdates.hbm.xml" />
         <mapping resource="org/rebioma/server/services/Collaborators.hbm.xml" />
         <mapping resource="org/rebioma/server/services/UserRoles.hbm.xml" />

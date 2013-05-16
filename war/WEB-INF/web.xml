@@ -20,20 +20,25 @@
     <welcome-file>Portal.html</welcome-file>
   </welcome-file-list>
  
+ <!-- 
  <listener>
     <listener-class>
       org.rebioma.server.inject.GuiceServletContextListener
     </listener-class>
   </listener>
+-->
   
   <servlet>
     <servlet-name>Mailing</servlet-name>
     <servlet-class>org.rebioma.server.services.MailingServiceImpl</servlet-class>
   </servlet>
+
   <servlet-mapping>
     <servlet-name>Mailing</servlet-name>
     <url-pattern>/rebioma/mailingService</url-pattern>
   </servlet-mapping>
+  
+  
   
   <servlet>
     <servlet-name>RevalidationService</servlet-name>

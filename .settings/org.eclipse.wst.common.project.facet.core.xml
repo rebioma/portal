@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-  <installed facet="java" version="1.6"/>
+  <runtime name="jre7"/>
+  <secondary-runtime name="VMware vFabric tc Server Developer Edition (Runtime) v2.6"/>
+  <installed facet="java" version="1.7"/>
 </faceted-project>
