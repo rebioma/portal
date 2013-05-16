@@ -21,10 +21,10 @@
             <column name="kingdom" />
         </property>
         <property name="kingdomSource" type="string">
-            <column name="Kingdomsource" />
+            <column name="kingdomsource" />
         </property>
         <property name="phylum" type="string">
-            <column name="Phylum" />
+            <column name="phylum" />
         </property>
         <property name="phylumSource" type="string">
             <column name="phylumsource" />
