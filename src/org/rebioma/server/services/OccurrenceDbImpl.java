@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -1279,7 +1280,11 @@ public class OccurrenceDbImpl implements OccurrenceDb {
               criterion = Restrictions.eq(filter.column, value);
             }
           } else {
-            criterion = Restrictions.eq(filter.column, filter.getValue());
+        	// {wilfried} on utilise "upper()" si type column = String 
+          	if(StringUtil.isType(Occurrence.class, filter.column, String.class))
+          		criterion = Restrictions.sqlRestriction("upper({alias}." + filter.column + ") = upper(?)", filter.getValue(), Hibernate.STRING);
+              else
+          		criterion = Restrictions.eq(filter.column, filter.getValue());
           }
           break;
         case NOT_CONTAIN:
