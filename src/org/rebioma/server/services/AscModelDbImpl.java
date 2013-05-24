@@ -12,7 +12,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.AscModelResult;
 import org.rebioma.client.bean.AscModel;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 public class AscModelDbImpl implements AscModelDb {
   /**
@@ -23,8 +23,9 @@ public class AscModelDbImpl implements AscModelDb {
 
   public static void initDatabase() {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      //Session session = HibernateUtil.getCurrentSession();
+      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       session.createQuery("delete from AscModel").executeUpdate();
       File file = new File("war" + MODEL_OUTPUT);
       for (File f : file.listFiles()) {
@@ -40,12 +41,13 @@ public class AscModelDbImpl implements AscModelDb {
           session.save(ascModel);
         }
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      //if (isFirstTransaction) {
+      //  HibernateUtil.commitCurrentTransaction();
+      //}
+      ManagedSession.commitTransaction(session);
 
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       throw re;
     }
   }
@@ -58,8 +60,9 @@ public class AscModelDbImpl implements AscModelDb {
       int limit) {
     log.debug("finding AscModels of " + acceptedSpecies);
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      //Session session = HibernateUtil.getCurrentSession();
+      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       Criteria criteria = session.createCriteria(AscModel.class);
       criteria.add(Restrictions.ilike("acceptedSpecies", acceptedSpecies,
           MatchMode.ANYWHERE));
@@ -72,9 +75,10 @@ public class AscModelDbImpl implements AscModelDb {
       criteria.setMaxResults(limit);
       List<AscModel> results = criteria.list();
       /*Tax: Reset the firstResult to 0 for the projection*/
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      //if (isFirstTransaction) {
+      //  HibernateUtil.commitCurrentTransaction();
+      //}
+      ManagedSession.commitTransaction(session);
       log.info("Ato izy alou eh!  "+results.size()+"  count:"+count+"  acceptsps:"+acceptedSpecies+"  start:"+start+"  limit:"+limit);
       int i_count;
       if(count == null)i_count = 0;
@@ -84,7 +88,7 @@ public class AscModelDbImpl implements AscModelDb {
     } catch (RuntimeException re) {
       log.error("find failed", re);
       re.printStackTrace();
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       throw re;
     }
   }

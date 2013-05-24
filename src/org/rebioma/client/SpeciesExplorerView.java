@@ -148,7 +148,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 //			
 //		});
 		speciesExplorerPanel = new SpeciesExplorerPanel(sm);
-		speciesExplorerPanel.setStyleAttribute("margin", "10px 0px");
+		speciesExplorerPanel.setStyleAttribute("margin", "2px 0px");
 		//speciesExplorerPanel.setWidth(700);
 		speciesExplorerPanel.setHeight(450);
 		vp.add(toolHp); 

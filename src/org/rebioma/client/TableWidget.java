@@ -24,6 +24,7 @@ import org.rebioma.client.i18n.AppConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -358,6 +359,7 @@ public class TableWidget extends Composite {
       rowPanel.clear();
       assert (srcRowData.length == destColCount) : " "
               + constants.ColMismatch();
+      rowPanel.setStyleName("table-row");
       for (int srcColIndex = 0; srcColIndex < destColCount; ++srcColIndex) {
         Widget cellWidget = srcRowData[srcColIndex];
         cellWidget.setStyleName("col-"

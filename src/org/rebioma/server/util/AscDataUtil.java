@@ -54,18 +54,20 @@ public class AscDataUtil {
   private static Map<String, AscData> ascsData;
   static {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      //Session session = HibernateUtil.getCurrentSession();
+      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       List<AscData> ascDatas = session.createQuery("from AscData").list();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      //if (isFirstTransaction) {
+      //  HibernateUtil.commitCurrentTransaction();
+      //}
+      ManagedSession.commitTransaction(session);
       ascsData = new HashMap<String, AscData>();
       for (AscData ascData : ascDatas) {
         ascsData.put(ascData.getFileName(), ascData);
       }
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       re.printStackTrace();
     }
   }
@@ -117,8 +119,9 @@ public class AscDataUtil {
       command = args[0];
     }
     List<Occurrence> occurrences = null;
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    //Session session = HibernateUtil.getCurrentSession();
+    //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       occurrences = session.createQuery("from Occurrence").list();
       if (command.equalsIgnoreCase("load")) {
@@ -133,11 +136,12 @@ public class AscDataUtil {
           session.update(occurrence);
         }
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      //if (isFirstTransaction) {
+      //  HibernateUtil.commitCurrentTransaction();
+      //}
+      ManagedSession.commitTransaction(session);
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       e.printStackTrace();
       return;
     }

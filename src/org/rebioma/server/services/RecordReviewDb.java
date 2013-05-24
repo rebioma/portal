@@ -6,7 +6,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.rebioma.client.bean.RecordReview;
-import org.rebioma.server.util.HibernateUtil;
 
 public interface RecordReviewDb {
 

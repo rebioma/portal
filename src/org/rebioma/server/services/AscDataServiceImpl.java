@@ -28,7 +28,7 @@ import org.rebioma.server.overlays.ASCFileReader;
 import org.rebioma.server.overlays.ASCReaderProvider;
 import org.rebioma.server.overlays.StoragePathManager;
 import org.rebioma.server.util.AscDataUtil;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -60,8 +60,9 @@ public class AscDataServiceImpl extends RemoteServiceServlet implements
   public Double getValue(int ascDataId, double lat, double lng)
       throws AscDataServiceException {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      //Session session = HibernateUtil.getCurrentSession();
+      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       AscData evd = (AscData) session
           .get(AscData.class, new Integer(ascDataId));
 
@@ -70,18 +71,20 @@ public class AscDataServiceImpl extends RemoteServiceServlet implements
           || evd.getNorthBoundary() < lat || evd.getWestBoundary() > lng
           || evd.getEastBoundary() < lng;
       if (outsideBounds) {
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        //if (isFirstTransaction) {
+        //  HibernateUtil.commitCurrentTransaction();
+        //}
+    	ManagedSession.commitTransaction(session);
         return null;
       }
 
       String ascPath = StoragePathManager.getStoragePath(evd.getFileName(),
           super.getServletContext().getRealPath("/"));
       ASCFileReader asc = ASCReaderProvider.getReader(ascPath);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      //if (isFirstTransaction) {
+      //  HibernateUtil.commitCurrentTransaction();
+      //}
+      ManagedSession.commitTransaction(session);
       // session.close();
       double val = asc.getValue(lat, lng);
       if (val == asc.noDataValue()) {
@@ -90,10 +93,10 @@ public class AscDataServiceImpl extends RemoteServiceServlet implements
         return new Double(val);
       }
     } catch (HibernateException e) {
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       throw new AscDataServiceException("DB error, see server log");
     } catch (IOException e) {
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       throw new AscDataServiceException("File error, see server log");
     }
   }

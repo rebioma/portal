@@ -105,8 +105,13 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
    */
   public static final String REVIEWER_REQUIRED_HEADERS[] = { " ", "ReBioMa Id",
       constants.Taxonomy(), constants.Public(), constants.Validated(),
-      constants.MyReviewed(), constants.Reviewed(), constants.Owner(),
-      constants.Collaborators(), constants.ValidationError() };
+      /*constants.MyReviewed(),*/ constants.Reviewed(), constants.Owner(),
+      /*constants.Collaborators(), constants.ValidationError()*/
+      "Basis of record" , "Institution code",
+       /*"Genus","Specific epithet", "Infraspecific epithet", */"StateProvince",
+      "County", "Locality", "Collecting method",
+      "Collector", "Attributes", "Verbatim collecting Date", 
+      "Verbatim elevation", constants.YearCollected().replace(":", ""), "Related information"};
 
   public static final String MY_REVIEWED = "my reviewed";
 
@@ -320,13 +325,30 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
         getTaxonomic(),
         booleanToString(occurrence.isPublic_()),
         booleanToString(occurrence.isValidated()),
-        MY_REVIEWED,
+       /* MY_REVIEWED,*/
         getReviewedStatus(occurrence.getReviewed()),
-        occurrence.getOwnerEmail(),
+        occurrence.getOwnerEmail(),/*
         occurrence.getSharedUsersCSV(),
         occurrence.getValidationError() == null
             || occurrence.getValidationError().equals("") ? constants.None()
-            : occurrence.getValidationError() };
+            : occurrence.getValidationError()*/
+        occurrence.getBasisOfRecord(), 
+        occurrence.getInstitutionCode(),
+        /*occurrence.getGenus(), 
+        occurrence.getSpecificEpithet(),
+        occurrence.getInfraspecificEpithet(), */
+        occurrence.getStateProvince(),
+        occurrence.getCountry(),
+        occurrence.getLocality(), 
+        occurrence.getCollectingMethod(),
+        occurrence.getCollector(),
+        occurrence.getAttributes(),
+        occurrence.getVerbatimCollectingDate(), 
+        occurrence.getVerbatimElevation(),
+        occurrence.getYearCollected(),
+        occurrence.getRelatedInformation()
+        
+    };
   }
 
   /**

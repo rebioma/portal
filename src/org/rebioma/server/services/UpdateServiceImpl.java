@@ -20,7 +20,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 /**
  * Default implementation of {@link UpdateService}.
@@ -37,20 +37,17 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
   public Date getLastUpdate() {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria updateCriteria = session.createCriteria(OccurrenceUpdates.class);
       OccurrenceUpdates instance = (OccurrenceUpdates) updateCriteria
           .uniqueResult();
       Date currentUpdate = instance.getLastupdate();
       // this is needed to clear out the current Transaction
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return currentUpdate;
     } catch (RuntimeException r) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error(r.getMessage(), r);
       return null;
     } finally {
@@ -58,19 +55,16 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
   public void update() {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria updateCriteria = session.createCriteria(OccurrenceUpdates.class);
       OccurrenceUpdates instance = (OccurrenceUpdates) updateCriteria
           .uniqueResult();
       instance.setLastupdate(new Date(System.currentTimeMillis()));
       session.update(instance);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
     } catch (RuntimeException r) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error(r.getMessage(), r);
     } finally {
     }

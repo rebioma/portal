@@ -36,7 +36,6 @@ import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService;
 import org.rebioma.server.MySqlPing;
 import org.rebioma.server.util.EmailUtil;
-import org.rebioma.server.util.HibernateUtil;
 import org.rebioma.server.util.OccurrenceUtil;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -267,7 +266,6 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
             "Invalid request. No user associated with session id.");
       }
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
       OccurrenceServiceException oe = new OccurrenceServiceException(
           "unable to reviewed records by query because of error: "
               + e.getMessage());
@@ -296,7 +294,6 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
             "Invalid request. No user associated with session id.");
       }
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
       OccurrenceServiceException oe = new OccurrenceServiceException(
           "unable to reviewed records because of error: " + e.getMessage());
       oe.initCause(e);
@@ -369,7 +366,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
 
   public int updateComments(String sessionId, Set<OccurrenceComments> comments)
       throws OccurrenceServiceException {
-  	System.out.println("####### updateComments");
+  	//System.out.println("####### updateComments");
     try {
       int updatedCount = 0;
       User user = sessionService.getUserBySessionId(sessionId);
@@ -426,7 +423,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
           recordsReviewChanges.add(id);
         }
         if (comment != null && !comment.isEmpty() && !comment.equals("")) {
-        	System.out.println("comment" + comment);
+        	//System.out.println("comment" + comment);
           //comment += "\n\n comment left when reviewed";
           OccurrenceComments occurrenceComment = new OccurrenceComments(id,
               user.getId(), comment);
@@ -437,7 +434,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
 
     }
 
-    if (!ownerChangeToNegRecordReviewedMap.isEmpty()) {
+    /*if (!ownerChangeToNegRecordReviewedMap.isEmpty()) {
       log.info("sending email notification of reviewed changes to users");
       for (Integer userId : ownerChangeToNegRecordReviewedMap.keySet()) {
         User owner = userDb.findById(userId);
@@ -450,7 +447,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
                   + user.getEmail(), e);
         }
       }
-    }
+    }*/
     updateService.update();
     return count;
   }

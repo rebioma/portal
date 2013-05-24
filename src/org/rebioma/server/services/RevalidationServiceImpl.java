@@ -24,7 +24,7 @@ import org.rebioma.client.bean.RevalidationResult;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.RevalidationService;
 import org.rebioma.server.util.EmailUtil;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 import org.rebioma.server.util.RevalidationFileUtil;
 import org.rebioma.server.util.RevalidationMailNotification;
 import org.taxonomy.Classification;
@@ -83,9 +83,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		log.debug("finding all Occurrences invalids");
 		List<Occurrence> results = new ArrayList<Occurrence>();
 		try {
-			Session session = HibernateUtil.getCurrentSession();
-			boolean isFirstTransaction = HibernateUtil
-					.beginTransaction(session);
+			Session session = ManagedSession.createNewSessionAndTransaction();
 
 			// Query query = session.createSQLQuery(
 			// "select * from occurrence where id not in(select occurrenceid from record_review)")
@@ -101,14 +99,11 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			results = query.list();
 			log.debug("all Occurrences invalids successful, result size: "
 					+ results.size());
-			if (isFirstTransaction) {
-				HibernateUtil.commitCurrentTransaction();
-			}
+			ManagedSession.commitTransaction(session);
 			log.info("Occurrences invalids : " + results.size());
 			return results;
 		} catch (RuntimeException re) {
 			log.error("find all occurrences invalids failed", re);
-			HibernateUtil.rollbackTransaction();
 			throw re;
 		}
 	}
@@ -119,9 +114,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		log.info("finding valids Occurrences ");
 		List<Occurrence> results = new ArrayList<Occurrence>();
 		try {
-			Session session = HibernateUtil.getCurrentSession();
-			boolean isFirstTransaction = HibernateUtil
-					.beginTransaction(session);
+			Session session = ManagedSession.createNewSessionAndTransaction();
 
 			/*
 			 * Query query = session.createSQLQuery(
@@ -136,14 +129,11 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			results = query.list();
 			log.debug("all Occurrences invalids successful, result size: "
 					+ results.size());
-			if (isFirstTransaction) {
-				HibernateUtil.commitCurrentTransaction();
-			}
+			ManagedSession.commitTransaction(session);
 			log.info("valids Occurrences  : " + results.size());
 			return results;
 		} catch (RuntimeException re) {
 			log.error("find valids occurrences  failed", re);
-			HibernateUtil.rollbackTransaction();
 			throw re;
 		}
 	}
@@ -219,9 +209,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 																				 * nc
 																				 */
 
-			Session session = HibernateUtil.getCurrentSession();
-			boolean isFirstTransaction = HibernateUtil
-					.beginTransaction(session);
+			Session session = ManagedSession.createNewSessionAndTransaction();
 			if (c != null) {
 				String ok = c.getValidation();
 				if (ok.equals("OK")) {
@@ -258,13 +246,10 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						"Taxonomic classification unknown");
 			}
 
-			HibernateUtil.getCurrentSession().saveOrUpdate(occurrence);
-			if (isFirstTransaction) {
-				HibernateUtil.commitCurrentTransaction();
-			}
+			session.saveOrUpdate(occurrence);
+			ManagedSession.commitTransaction(session);
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
-			HibernateUtil.rollbackTransaction();
 			throw re;
 		}
 
@@ -511,16 +496,16 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				Session session=null;
 				Transaction tx=null;
 				try {
-					session = HibernateUtil.getSessionFactory().openSession();
-					tx=session.beginTransaction();				    
+					session = ManagedSession.createNewSessionAndTransaction();
+					//tx=session.beginTransaction();				    
 					
 					for (Occurrence o : subOccurrences) {						
 						occurrenceDb.resetRecordReview(o, true,session);
 						String uneLigne = getLogTemplate(MAIL_SUBJECT_CASE2, o);
 						logFileWriter.write(uneLigne);
 					}	
-					
-					tx.commit();
+					ManagedSession.commitTransaction(session);
+					//tx.commit();
 					nbtotal+=subOccurrences.size();
 		  	    }catch (IOException e) {
 					e.printStackTrace();
@@ -530,11 +515,12 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(2, nbtotal);
 					exc.setResult(result);
-		  	      if(tx!=null)tx.rollback();
+		  	      	if(session!=null)ManagedSession.rollbackTransaction(session);
+					//if(tx!=null)tx.rollback();
 		  	      throw exc;
 		  	    } 
 				finally {					 
-				     if(session!=null) session.close();
+				     //if(session!=null) session.close();
 				 }
 		  	    
 				indice++;
@@ -571,10 +557,8 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				Set<Occurrence> subOccurrences=getSubList(occurrences, j, idx);
 				
 				Session session=null;
-				Transaction tx=null;
 				try {
-					session = HibernateUtil.getSessionFactory().openSession();
-					tx=session.beginTransaction();
+					session = ManagedSession.createNewSessionAndTransaction();
 					
 					validationService.validate(subOccurrences);
 					for (Occurrence o : subOccurrences) {
@@ -622,7 +606,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					      }
 					}
 					
-					tx.commit();	
+					ManagedSession.commitTransaction(session);	
 					nbtotal+=subOccurrences.size();
 		  	    }catch (IOException e) {
 					e.printStackTrace();
@@ -632,7 +616,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(3, nbtotal);
 					exc.setResult(result);
-		  	      if(tx!=null)tx.rollback();
+		  	      	ManagedSession.rollbackTransaction(session);
 		  	      throw exc;
 		  	    } 
 				finally {					 
@@ -711,10 +695,8 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				 
 				
 				Session session=null;
-				Transaction tx=null;
 				try {
-					session = HibernateUtil.getSessionFactory().openSession();
-					tx=session.beginTransaction();
+					session = ManagedSession.createNewSessionAndTransaction();
 				    
 				    for (Occurrence o : subOccurrences) {
 						validateTaxonomy(session,o);
@@ -724,7 +706,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 
 					}
 					
-				    tx.commit();
+				    ManagedSession.commitTransaction(session);
 				    nbtotal+=subOccurrences.size();
 		  	    }catch (IOException e) {
 					e.printStackTrace();
@@ -734,7 +716,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(4, nbtotal);
 					exc.setResult(result);
-		  	      if(tx!=null)tx.rollback();
+					ManagedSession.commitTransaction(session);
 		  	      throw exc;
 		  	    } 
 				finally {					 
@@ -778,10 +760,8 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				Set<Occurrence> subOccurrences=getSubList(occurrences, j, idx);
 				 
 				Session session=null;
-				Transaction tx=null;
 				try {
-					session = HibernateUtil.getSessionFactory().openSession();
-					tx=session.beginTransaction();
+					session = ManagedSession.createNewSessionAndTransaction();
 				    
 				    
 				    Map<Integer, Set<Integer>> ownerOccurrencesForCase5 = new HashMap<Integer, Set<Integer>>();
@@ -821,7 +801,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						
 					}
 					commentsService.attachDirty(session,allComments);
-					 tx.commit();
+					ManagedSession.commitTransaction(session);
 					 if (!ownerOccurrencesForCase5.isEmpty()) {
 					      for (Integer userId : ownerOccurrencesForCase5.keySet()) {
 						    if(mailNotificationUserMap.containsKey(userId) && mailNotificationUserMap.get(userId) != null){
@@ -846,7 +826,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(5, nbtotal);
 					exc.setResult(result);
-		  	      if(tx!=null)tx.rollback();
+		  	      	ManagedSession.rollbackTransaction(session);
 		  	      throw exc;
 		  	    } 
 				finally {					 

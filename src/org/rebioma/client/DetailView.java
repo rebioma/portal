@@ -2170,7 +2170,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
       height = 1;
     }
     final int h = height;
-    final int w = width;
+    final int w = width -22;
     DeferredCommand.addCommand(new Command() {
 
       public void execute() {
@@ -2298,7 +2298,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
     toolPanel.add(csvPanel);
     toolPanel.setCellHorizontalAlignment(csvPanel, HorizontalPanel.ALIGN_RIGHT);
     toolPanel.setWidth("100%");
-    toolPanel.setSpacing(5);
+    toolPanel.setSpacing(0);
   }
 
   /**

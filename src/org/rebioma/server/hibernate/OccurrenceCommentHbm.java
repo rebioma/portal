@@ -17,7 +17,7 @@ import org.rebioma.client.bean.CommentTable;
 import org.rebioma.client.bean.OccurrenceCommentModel;
 import org.rebioma.client.bean.RecapTable;
 import org.rebioma.server.util.EmailUtil;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 import BCrypt.BCrypt;
 
@@ -53,14 +53,14 @@ public class OccurrenceCommentHbm {
 				"\"user\".password_hash";
 		log.info(sql);
 		
-		Session sess = null;
-		
-		Connection conn =null;
-		Statement st=null;
-		ResultSet rst=null;
 		List<OccurrenceCommentModel> lists = new ArrayList<OccurrenceCommentModel>();
 		try {
-			sess=HibernateUtil.getSessionFactory().openSession();
+			Session sess = null;
+			
+			Connection conn =null;
+			Statement st=null;
+			ResultSet rst=null;
+			sess= ManagedSession.createNewSessionAndTransaction();
 			conn=sess.connection();
 			
 			st = conn.createStatement();
@@ -76,49 +76,8 @@ public class OccurrenceCommentHbm {
 						);
 				
 				lists.add(temp);
-				/*
-				temp = hashList.get(rst.getString(1));
-				log.info(rst.getString("reviewed")+
-						rst.getString("comments"));
-				if(temp != null){
-					HashMap<String, RecapTable> recap = temp.getTrbReviewed();
-					RecapTable recapTemp = recap.get(rst.getString("idTRB"));
-					if(recapTemp != null){
-						recapTemp.setComments(rst.getString("reviewed")+
-								rst.getString("comments"));
-						recap.put(rst.getString("idTRB"), recapTemp);
-					}else{
-						recap.put(rst.getString("idTRB"), new RecapTable(
-								rst.getInt("idTRB"),
-								rst.getString("first_nameTRB"),
-								rst.getString("last_nameTRB"),
-								rst.getString("emailTRB"),
-								rst.getString("reviewed") +
-								rst.getString("comments")
-								));
-					}
-					temp.setTrbReviewed(recap);
-				}else{
-					temp = new OccurrenceCommentModel(
-							rst.getInt(1),
-							rst.getString(2),
-							rst.getString(3),
-							rst.getString(4)
-							);
-					HashMap<String, RecapTable> recap = new HashMap<String, RecapTable>();
-					
-					recap.put(rst.getString("idTRB"), new RecapTable(
-							rst.getInt("idTRB"),
-							rst.getString("first_nameTRB"),
-							rst.getString("last_nameTRB"),
-							rst.getString("emailTRB"),
-							rst.getString("reviewed") +
-							rst.getString("comments")
-							));
-					temp.setTrbReviewed(recap);
-				}
-				hashList.put(rst.getString(1), temp);*/
 			}
+			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -168,14 +127,15 @@ public class OccurrenceCommentHbm {
 				"\"user\".id <> '" + oc.getUId() +"'";
 		log.info(sql);
 		//if(true)return "";
-		Session sess = null;
-	
-		Connection conn =null;
-		Statement st=null;
-		ResultSet rst=null;
+		
 		String mail = "";
 		try {
-			sess=HibernateUtil.getSessionFactory().openSession(); 
+			Session sess = null;
+	
+			Connection conn =null;
+			Statement st=null;
+			ResultSet rst=null;
+			sess = ManagedSession.createNewSessionAndTransaction(); 
 			conn=sess.connection();
 			st = conn.createStatement();
 			rst = st.executeQuery(sql);
@@ -198,6 +158,7 @@ public class OccurrenceCommentHbm {
 			conn.commit();
 			conn.close();
 			sess.close();
+			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			e.printStackTrace();
@@ -212,15 +173,15 @@ public class OccurrenceCommentHbm {
 				"FROM Occurrence " +
 				"WHERE Owner = " + userId +
 				" GROUP BY reviewed, Validated";
-		Session sess = null;
 		log.info(sql);
 		//System.out.println(sql);
-		Connection conn =null;
-		Statement st=null;
-		ResultSet rst=null;
 		String [] validated = {"0","0","0","0"};
 		try {
-			sess=HibernateUtil.getSessionFactory().openSession(); 
+			Session sess = null;
+			Connection conn =null;
+			Statement st=null;
+			ResultSet rst=null;
+			sess = ManagedSession.createNewSessionAndTransaction(); 
 			conn=sess.connection();
 			st = conn.createStatement();
 			rst = st.executeQuery(sql);
@@ -236,6 +197,7 @@ public class OccurrenceCommentHbm {
 			conn.commit();
 			conn.close();
 			sess.close();
+			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			e.printStackTrace();
@@ -265,15 +227,15 @@ public class OccurrenceCommentHbm {
 				"\"user\".first_name," +
 				"\"user\".last_name," +
 				"\"user\".email";
-		Session sess = null;
 		log.info(sql);
-		Connection conn =null;
-		Statement st=null;
-		ResultSet rst=null;
-
+		
 		HashMap<String, RecapTable> hRecap = new HashMap<String, RecapTable>(); 
 		try {
-			sess=HibernateUtil.getSessionFactory().openSession(); 
+			Session sess = null;
+			Connection conn =null;
+			Statement st=null;
+			ResultSet rst=null;
+			sess = ManagedSession.createNewSessionAndTransaction(); 
 			conn=sess.connection();
 			st = conn.createStatement();
 			rst = st.executeQuery(sql);
@@ -297,6 +259,7 @@ public class OccurrenceCommentHbm {
 			conn.commit();
 			conn.close();
 			sess.close();
+			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			e.printStackTrace();

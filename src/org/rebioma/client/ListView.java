@@ -315,7 +315,10 @@ public class ListView extends ComponentView implements
    */
   public static final String REVIEWER_HEADER_CSS_STYLES[] = new String[] {
       "checkbox", "id", "accepted-species", "public", "validated",
-      "my_reviewed", "vetted", "owner-email", "shared-users",
+      "vetted", "owner-email", "shared-users", "shared-users",
+      /*"shared-users", "shared-users", "shared-users",*/ "shared-users",
+      "shared-users", "shared-users", "shared-users", "shared-users",
+      "attributes", "owner-email", "owner-email", "year-c",
       "validation-error" };
 
   /**
@@ -429,9 +432,18 @@ public class ListView extends ComponentView implements
       PageListener<Occurrence> pageListener, OccurrenceListener oListener) {
     super(parent, false);
     occurrenceListener = oListener;
-    currentHeaders = signedIn ? OccurrenceSummary.USER_REQUIRED_HEADERS
+    boolean isMyOccurenceToReviewSelected =
+	    isMyOccurenceToReviewSelected(History
+	    	.getToken());
+    String authenticatedHeaders[] = isMyOccurenceToReviewSelected?
+    		OccurrenceSummary.REVIEWER_REQUIRED_HEADERS:
+    		OccurrenceSummary.USER_REQUIRED_HEADERS;
+    String authenticatedHeadersStyle[] = isMyOccurenceToReviewSelected?
+    		REVIEWER_HEADER_CSS_STYLES:
+    		USER_HEADER_CSS_STYLES;
+    currentHeaders = signedIn ? authenticatedHeaders
         : OccurrenceSummary.GUEST_REQUIRED_HEADERS;
-    table = new TableWidget(currentHeaders, signedIn ? USER_HEADER_CSS_STYLES
+    table = new TableWidget(currentHeaders, signedIn ? authenticatedHeadersStyle
         : GUEST_HEADER_CSS_STYLES, 0);
     int pageSize = query.getLimit();
 	if(pageSize < 0){
@@ -464,7 +476,7 @@ public class ListView extends ComponentView implements
     mainVp = new VerticalPanel();
     mainSp.setWidget(mainVp);
     initWidget(mainSp);
-    mainVp.setSpacing(5);
+    mainVp.setSpacing(0);
     mainVp.add(toolHp);
     mainVp.add(table);
     mainVp.setStyleName(DEFAULT_STYLE);
@@ -539,6 +551,24 @@ public class ListView extends ComponentView implements
     Widget rowsWidget[][] = constructWidgetContent(summaries);
     int start = (pagerWidget.getCurrentPageNumber() - 1)
         * pagerWidget.getPageSize();
+    
+    boolean isMyOccurenceToReviewSelected =
+		    isMyOccurenceToReviewSelected(History
+		    	.getToken());
+	    String authenticatedHeaders[] = isMyOccurenceToReviewSelected?
+	    		OccurrenceSummary.REVIEWER_REQUIRED_HEADERS:
+	    		OccurrenceSummary.USER_REQUIRED_HEADERS;
+	    String authenticatedHeadersStyle[] = isMyOccurenceToReviewSelected?
+	    		REVIEWER_HEADER_CSS_STYLES:
+	    		USER_HEADER_CSS_STYLES;
+	    String headers[] = signedIn ? authenticatedHeaders
+	            : OccurrenceSummary.GUEST_REQUIRED_HEADERS;
+	    String headersStyle[] = signedIn ? authenticatedHeadersStyle
+	            : GUEST_HEADER_CSS_STYLES;
+  table.resetHeader(headers,
+		  headersStyle);
+  
+  currentHeaders = authenticatedHeaders;
     table.showRecord(pagerWidget.getPageSize(), start, rowsWidget);
     // resizeTable();
     restoreChecks();
@@ -576,6 +606,7 @@ public class ListView extends ComponentView implements
   }
 
   public void onStateChanged(ViewState state) {
+    //Window.alert("state change"  + state);
     switch (state) {
     case ADMIN:
     case REVIEWER:
@@ -590,15 +621,23 @@ public class ListView extends ComponentView implements
       actionTool.addAction(SHOW_EMAIL_ACTION, showEmailCommand);
       actionTool.addAction(HIDE_EMAIL_ACTION, hideEmailCommand);
       actionTool.addAction(UPDATE_COLLABORATORS, showSharedUsersCommand);
-      table.resetHeader(OccurrenceSummary.USER_REQUIRED_HEADERS,
-          USER_HEADER_CSS_STYLES);
-      currentHeaders = OccurrenceSummary.USER_REQUIRED_HEADERS;
+      boolean isMyOccurenceToReviewSelected =
+    		    isMyOccurenceToReviewSelected(History
+    		    	.getToken());
+    	    String authenticatedHeaders[] = isMyOccurenceToReviewSelected?
+    	    		OccurrenceSummary.REVIEWER_REQUIRED_HEADERS:
+    	    		OccurrenceSummary.USER_REQUIRED_HEADERS;
+    	    String authenticatedHeadersStyle[] = isMyOccurenceToReviewSelected?
+    	    		REVIEWER_HEADER_CSS_STYLES:
+    	    		USER_HEADER_CSS_STYLES;
+      table.resetHeader(authenticatedHeaders,
+    		  authenticatedHeadersStyle);
+      currentHeaders = authenticatedHeaders;
       if (!isMyView(parent.historyToken())) {
         pagerWidget.init(pagerWidget.getCurrentPageNumber());
       }
       addingReviewToolIfAllow(History.getToken());
       break;
-
     case UNAUTHENTICATED:
       signedIn = false;
       actionTool.clear();
@@ -656,7 +695,8 @@ public class ListView extends ComponentView implements
     if (height <= 0) {
       height = 1;
     }
-    mainSp.setPixelSize(width, height);
+    int w = width -22;
+    mainSp.setPixelSize(w, height);
   }
 
   private void addingReviewToolIfAllow(String token) {
@@ -707,14 +747,17 @@ public class ListView extends ComponentView implements
       length = pagerWidget.getPageSize();
     }
     Widget rowsWidget[][] = new Widget[length][];
-    // boolean isMyOccurenceToReviewSelected =
-    // isMyOccurenceToReviewSelected(History
-    // .getToken());
-    String authenticatedHeaders[] = OccurrenceSummary.USER_REQUIRED_HEADERS;
+    boolean isMyOccurenceToReviewSelected =
+    isMyOccurenceToReviewSelected(History
+    	.getToken());
+
+    String authenticatedHeaders[] = isMyOccurenceToReviewSelected?
+    		OccurrenceSummary.REVIEWER_REQUIRED_HEADERS:
+    		OccurrenceSummary.USER_REQUIRED_HEADERS;
     // if (currentHeaders != authenticatedHeaders) {
     // table.resetHeader(authenticatedHeaders,
     // (isMyOccurenceToReviewSelected ? REVIEWER_HEADER_CSS_STYLES
-    // : USER_HEADER_CSS_STYLES));
+    // : USER_HEADER_CSS_STYLES));My Reviewed
     // }
     String headers[] = signedIn ? authenticatedHeaders
         : OccurrenceSummary.GUEST_REQUIRED_HEADERS;
@@ -722,7 +765,12 @@ public class ListView extends ComponentView implements
     for (int row = 0; row < length; row++) {
       OccurrenceSummary summary = summaries.get(row);
       final Occurrence occurrence = summary.getOccurrence();
-      String[] rowData = signedIn ? summary.getUserSummary() : summary
+      
+      String userSummary[] = isMyOccurenceToReviewSelected?
+    		summary.getReviewerSummary():
+    		summary.getUserSummary();
+
+      String[] rowData = signedIn ? userSummary : summary
           .getUnauthenticatedSummary();
       Widget[] currentRow = new Widget[rowData.length + 1];
       SimplePanel panel = new SimplePanel();
@@ -1118,7 +1166,9 @@ public class ListView extends ComponentView implements
     historyState.setHistoryToken(token);
     String type = (String) historyState.getHistoryParameters(UrlParam.TYPE);
     GWT.log("type=" + type);
-    return type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW);
+    return type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW) ||
+    		type.equalsIgnoreCase(OccurrenceView.MY_POS_REVIEWED) ||
+    		type.equalsIgnoreCase(OccurrenceView.MY_NEG_REVIEWED);
   }
 
   private boolean isUpdated(int records) {

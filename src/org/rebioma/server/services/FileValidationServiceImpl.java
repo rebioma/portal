@@ -52,7 +52,7 @@ import org.rebioma.server.services.OccurrenceDb.AttributeValue;
 import org.rebioma.server.upload.Traitement;
 import org.rebioma.server.util.CsvUtil;
 import org.rebioma.server.util.EmailUtil;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 import org.rebioma.server.util.OccurrenceUtil;
 import org.rebioma.server.util.StringUtil;
 
@@ -209,13 +209,15 @@ public class FileValidationServiceImpl implements FileValidationService {
     List<TaxonomicReviewer> txrv = taxnomicReviewDb.findByProperty();    
     try {
       log.info("sending notification emails");
-      Session session = HibernateUtil.getCurrentSession();
-      HibernateUtil.beginTransaction(session);
+      //Session session = HibernateUtil.getCurrentSession();
+      //HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       int j=0;
       for (Occurrence occurrence : occurrences) {
     	  traitement.setTraitement("emails notification", occurrences.size()*1024, 1024*++j);    
     	  if(traitement.getCancel()){
-    		  HibernateUtil.rollbackTransaction();
+    		  ManagedSession.rollbackTransaction(session);
+    		  //HibernateUtil.rollbackTransaction();
     		  return "{\"Uploaded\":\"canceled2\"}";
     	  }
         if (occurrence.isValidated()) {
@@ -246,10 +248,11 @@ public class FileValidationServiceImpl implements FileValidationService {
         }
       }
       log.info("committing transaction");
-      HibernateUtil.commitCurrentTransaction();
+      ManagedSession.commitTransaction(session);
+      //HibernateUtil.commitCurrentTransaction();
       log.info("Commit succes");
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       log.error("Error: while checking for occurrence to be reviewed", e);
     }
     if (userOccurrencesMap.isEmpty()) {
@@ -536,8 +539,9 @@ public class FileValidationServiceImpl implements FileValidationService {
       StringBuilder inforMsgBuilder, StringBuilder errorBuilder,
       Map<String, Map<String, Set<String>>> userToTaxoAssignMap) {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstSession = HibernateUtil.beginTransaction(session);
+      //Session session = HibernateUtil.getCurrentSession();
+      //boolean isFirstSession = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       // UserDb userDb = DBFactory.getUserDb();
       for (String userEmail : occurrenceAssignmentMap.keySet()) {
         Integer assignmentCount = occurrenceAssignmentMap.get(userEmail);
@@ -554,11 +558,12 @@ public class FileValidationServiceImpl implements FileValidationService {
           errorBuilder.append("error while sending email notification to " + userEmail);
         }
       }
-      if (isFirstSession) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      //if (isFirstSession) {
+      //  HibernateUtil.commitCurrentTransaction();
+      //}
+      ManagedSession.commitTransaction(session);
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
+      //HibernateUtil.rollbackTransaction();
       e.printStackTrace();
       errorBuilder.append(e.getMessage());
     }
@@ -706,8 +711,9 @@ public String proccessOccurrenceFile(File file, User loggedinUser, boolean showE
 	    List<TaxonomicReviewer> txrv = taxnomicReviewDb.findByProperty();    
 	    try {
 	      log.info("sending notification emails");
-	      Session session = HibernateUtil.getCurrentSession();
-	      HibernateUtil.beginTransaction(session);
+	      //Session session = HibernateUtil.getCurrentSession();
+	      //HibernateUtil.beginTransaction(session);
+	      Session session = ManagedSession.createNewSessionAndTransaction();
 	      int i=0;
 	      for (Occurrence occurrence : occurrences) {
 	        if (occurrence.isValidated()) {
@@ -739,9 +745,10 @@ public String proccessOccurrenceFile(File file, User loggedinUser, boolean showE
 	          }
 	        }
 	      }
-	      HibernateUtil.commitCurrentTransaction();
+	      //HibernateUtil.commitCurrentTransaction();
+	      ManagedSession.commitTransaction(session);
 	    } catch (Exception e) {
-	      HibernateUtil.rollbackTransaction();
+	      //HibernateUtil.rollbackTransaction();
 	      log.error("Error: while checking for occurrence to be reviewed", e);
 	    }
 	    if (userOccurrencesMap.isEmpty()) {

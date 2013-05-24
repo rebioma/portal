@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.mapping.PersistentClass;
+
 public class StringUtil {
 
   public static String capFirstLetter(String s) {
@@ -34,6 +36,20 @@ public class StringUtil {
     }
     return false;
   }
+  
+  /*public static String columnName(Class cl, String name) {
+	    PersistentClass mapping = configuration.getClassMapping(cl.getClass().getName());
+	    Property property = mapping.getProperty(name);
+	    if(property.isComposite()){
+	        Component comp = (Component) property.getValue();
+	        property = comp.getProperty(StringHelper.unroot(name));
+	        assert ! property.isComposite(); //go only one level down 
+	    }
+	    Iterator<?> columnIterator = property.getColumnIterator();
+	    Column col = (Column) columnIterator.next();
+	    assert ! columnIterator.hasNext();
+	    return col.getName();
+	}*/
 
   public static void main(String args[]) {
     List<Integer> ids = new ArrayList<Integer>();

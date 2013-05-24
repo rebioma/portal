@@ -1104,8 +1104,9 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     if (height <= 0) {
       height = 1;
     }
+    int w = width - 20;
     hsp.setSplitPosition("30%");
-    mainVp.setPixelSize(width, height);
+    mainVp.setPixelSize(w, height);
     map.checkResizeAndCenter();
   }
 
@@ -1316,7 +1317,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 	public void onPageSizeChange(int newPageSize) {
 	  OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
 	  occView.setPageSize(newPageSize);
-      //on recharge les données
+      //on recharge les donnï¿½es
       requestData(1);
 	}
 

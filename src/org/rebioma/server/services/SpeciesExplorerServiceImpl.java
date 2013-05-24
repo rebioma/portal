@@ -19,7 +19,7 @@ import org.hibernate.Transaction;
 import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.Taxonomy;
 import org.rebioma.client.services.SpeciesExplorerService;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -145,7 +145,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		")tb\n" +
 		"GROUP BY " +colonneUpper.substring(0, colonneUpper.length()-1)  + " \n "+
 		")tt\n" +
-		"ON upper(t." +concerneTaxonomy+") = upper(tt.concerne) " + whereTaxonomy;
+		"ON upper(t." +concerneTaxonomy+") = upper(tt.concerne) " + whereTaxonomy + " ORDER BY t." +concerneTaxonomy;
 		tabs[0]=ret;
 		tabs[1]=level;
 		return tabs;
@@ -164,7 +164,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		Statement st=null;
 		ResultSet rst=null;
 		try {
-			sess=HibernateUtil.getSessionFactory().openSession(); 
+			sess = ManagedSession.createNewSessionAndTransaction(); 
 			conn=sess.connection();
 			
 			st = conn.createStatement();
@@ -412,21 +412,22 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 	    Session session=null;
 		Transaction tx=null;
 		try {
-			session = HibernateUtil.getSessionFactory().openSession();
-			tx=session.beginTransaction();	
+			session = ManagedSession.createNewSessionAndTransaction();
+			//tx=session.beginTransaction();	
 			
 			session.createSQLQuery("DELETE FROM taxonomy").executeUpdate();
 			
 			for (Taxonomy taxonomy : listTaxonomy) {
 				session.save(taxonomy);
 			}
-			tx.commit();			
-  	    }catch (RuntimeException re) {			
-  	      if(tx!=null)tx.rollback();
+			ManagedSession.commitTransaction(session);
+			//tx.commit();			
+  	    }catch (Exception re) {			
+  	      if(session!=null)ManagedSession.rollbackTransaction(session);
   	      throw re;
   	    } 
 		finally {			
-		     if(session!=null) session.close();
+		     //if(session!=null) session.close();
 		 }
 	    
 	}

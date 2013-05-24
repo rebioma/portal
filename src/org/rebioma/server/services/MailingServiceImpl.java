@@ -24,10 +24,9 @@ import org.rebioma.client.EmailException;
 import org.rebioma.client.bean.CommentTable;
 import org.rebioma.client.bean.OccurrenceCommentModel;
 import org.rebioma.client.bean.RecapTable;
-import org.rebioma.server.daemon.StartUp;
+import org.rebioma.server.daemon.AppStartUp;
 import org.rebioma.server.hibernate.OccurrenceCommentHbm;
 import org.rebioma.server.util.EmailUtil;
-import org.rebioma.server.util.HibernateUtil;
 
 import BCrypt.BCrypt;
 
@@ -174,7 +173,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 
 	@Override
 	public String[] getMailingStat() {
-		Properties p = new StartUp().load();
+		Properties p = new AppStartUp().load();
 		String [] string = {
 				p.getProperty("start", "false"),
 				p.getProperty("frequency", "2"),
@@ -190,7 +189,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		p.getProperty("frequency", frequency);
 		p.getProperty("date", date);
 		p.getProperty("url", url);
-		return new StartUp().save(p);
+		return new AppStartUp().save(p);
 	}
 
 }

@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.sourceforge.htmlunit.corejs.javascript.tools.debugger.Main;
+
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -35,7 +37,7 @@ import org.rebioma.client.bean.User;
 import org.rebioma.client.bean.UserRole;
 import org.rebioma.client.services.UserService;
 import org.rebioma.server.util.EmailUtil;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 import org.rebioma.server.util.RandomUtil;
 
 import BCrypt.BCrypt;
@@ -88,9 +90,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
   public User addRoles(String sessionId, User user, List<Role> roles)
       throws UserServiceException {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      User sessionUser = sessionService.getUserBySessionId(sessionId);
+      Session session = ManagedSession.createNewSessionAndTransaction();User sessionUser = sessionService.getUserBySessionId(sessionId);
       Set<Role> sessionUserRole = roleDb.getRoles(sessionUser.getId());
       if (sessionUser != null) {
         Role adminRole = roleDb.getRole(UserRole.ADMIN);
@@ -99,20 +99,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements
             userDb.addRole(user, role);
           }
         } else {
-          if (isFirstTransaction) {
-            HibernateUtil.commitCurrentTransaction();
-          }
+          ManagedSession.commitTransaction(session);
           throw new UserServiceException("user " + sessionUser.getId()
               + " is not an admin. Only admin can addRoles to an user");
         }
         // if(sessionUserRoles.contains(arg0))
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
       } else {
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         throw new UserServiceException("Bad or corrupted session id");
       }
       user.setRoles(roleDb.getRoles(user.getId())); // this to convert
@@ -122,11 +116,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       // PersistentSet
       return user;
     } catch (HibernateException de) {
-      HibernateUtil.rollbackTransaction();
       log.error("Error while adding role to " + user.getId() + ": "
           + de.getMessage(), de);
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
       log.error("Error while adding role to " + user.getId() + ": "
           + re.getMessage(), re);
     }
@@ -146,8 +138,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
    */
   public int changeUserPassword(String oldPass, String newPass,
       String sessionId, Email email) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     int passwordReturnStatus = -1;
     try {
       User user = sessionService.getUserBySessionId(sessionId);
@@ -158,9 +149,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
         email.buildBody();
         EmailUtil.adminSendEmailTo(user.getEmail(), email.getSubject(), email
             .toString());
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
 
         passwordReturnStatus = 1;
         log.info(user.getFirstName() + " with email address " + user.getEmail()
@@ -169,7 +158,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
         passwordReturnStatus = 0;
       }
     } catch (HibernateException e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("Error: There is a problem during changing password", e);
       e.printStackTrace();
     } catch (EmailException e) {
@@ -178,7 +167,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
               "Error: There is a problem during sending change password notification email",
               e);
       e.printStackTrace();
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
     } finally {
       // session.close();
     }
@@ -188,9 +177,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
   public UserQuery fetchUser(String sessionId, UserQuery query)
       throws UserServiceException {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      System.out.println("session calling fetchUser is " + session.isOpen());
+      Session session = ManagedSession.createNewSessionAndTransaction();System.out.println("session calling fetchUser is " + session.isOpen());
       User user = sessionService.getUserBySessionId(sessionId);
       if (query.isUsersCollaboratorsOnly()) {
         query = getFriends(sessionId, query);
@@ -206,13 +193,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements
           u.setRoles(roleDb.getRoles(u.getId()));
         }
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
     } catch (Exception e) {
       e.printStackTrace();
       log.error(e.getMessage(), e);
-      HibernateUtil.rollbackTransaction();
       throw new UserServiceException(e.getMessage());
     }
     return query;
@@ -233,22 +217,19 @@ public class UserServiceImpl extends RemoteServiceServlet implements
    * @see org.rebioma.client.services.UserService#isSessionIdValid(java.lang.String)
    */
   public User isSessionIdValid(String sessionId) throws UserServiceException {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       User user = sessionService.getUserBySessionId(sessionId);
       if (user != null) {
         user.setRoles(roleDb.getRoles(user.getId()));
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
 
       return user;
     } catch (Exception e) {
       e.printStackTrace();
       log.error(e.getMessage(), e);
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       throw new UserServiceException(e.getMessage());
     }
   }
@@ -263,8 +244,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
    */
   public void register(User user, Email welcomeEmail) throws EmailException,
       UserExistedException {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       boolean isUserExists = userEmailExists(user.getEmail());
       if (!isUserExists) {
@@ -278,22 +258,18 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
         EmailUtil.adminSendEmailTo(user.getEmail(), welcomeEmail.getSubject(),
             welcomeEmail.toString());
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         log.info("user " + user.getFirstName() + " with email "
             + user.getEmail() + " is created, and an Welcome email is sent to "
             + user.getEmail());
         userDb.addRole(user, researcherRole);
 
       } else {
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         throw new UserExistedException(user.getEmail());
       }
     } catch (HibernateException e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("Error: can't save user info", e);
       e.printStackTrace();
     } finally {
@@ -304,9 +280,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
   public User removeRoles(String sessionId, User user, List<Role> roles)
       throws UserServiceException {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      User sessionUser = sessionService.getUserBySessionId(sessionId);
+      Session session = ManagedSession.createNewSessionAndTransaction();User sessionUser = sessionService.getUserBySessionId(sessionId);
       Set<Role> sessionUserRoles = roleDb.getRoles(sessionUser.getId());
       if (sessionUser != null) {
         Role adminRole = roleDb.getRole(UserRole.ADMIN);
@@ -317,20 +291,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements
             }
           }
         } else {
-          if (isFirstTransaction) {
-            HibernateUtil.commitCurrentTransaction();
-          }
+          ManagedSession.commitTransaction(session);
           throw new UserServiceException("user " + sessionUser.getId()
               + " is not an admin. Only admin can addRoles to an user");
         }
         // if(sessionUserRoles.contains(arg0))
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
       } else {
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         throw new UserServiceException("Bad or corrupted session id");
       }
       user.setRoles(roleDb.getRoles(user.getId())); // this to convert
@@ -340,11 +308,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       // PersistentSet
       return user;
     } catch (HibernateException de) {
-      HibernateUtil.rollbackTransaction();
       log.error("Error while adding role to " + user.getId() + ": "
           + de.getMessage(), de);
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
       log.error("Error while adding role to " + user.getId() + ": "
           + re.getMessage(), re);
     }
@@ -360,8 +326,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
    *      org.rebioma.client.Email)
    */
   public void resetUserPassword(String emailAddr, Email email) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       // query.setString("pass", hashPass);
       User user = userDb.findByEmail(emailAddr);
@@ -373,9 +338,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
         email.setUserPassword(pass);
         email.setUserFirstName(user.getFirstName());
         email.buildBody();
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         System.out.println("password: " + pass);
         EmailUtil.adminSendEmailTo(emailAddr, email.getSubject(), email
             .toString());
@@ -384,11 +347,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       }
 
     } catch (HibernateException e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("Error: can't reset password", e);
       e.printStackTrace();
     } catch (EmailException e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("admin is unabled to send welcome email to " + emailAddr, e);
       e.printStackTrace();
     } finally {
@@ -406,8 +369,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
    *      java.lang.String)
    */
   public User signIn(String email, String password) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     User user = null;
     try {
       user = (User) session.createCriteria(User.class).add(
@@ -420,9 +382,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
           user.setSessionId(sessionId);
           session.update(user);
-          if (isFirstTransaction) {
-            HibernateUtil.commitCurrentTransaction();
-          }
+          ManagedSession.commitTransaction(session);
           user.setRoles(roleDb.getRoles(user.getId())); // this to convert
         } else {
           user = new User();
@@ -432,11 +392,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements
         user = new User();
       }
     } catch (HibernateException e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("Error: There is a problem during sign in", e);
       e.printStackTrace();
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("Error: There is a problem during sign in", e);
       e.printStackTrace();
     } finally {
@@ -450,8 +410,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
    * 
    */
   public User signInC(String email, String password) {
-	    Session session = HibernateUtil.getCurrentSession();
-	    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+	    Session session = ManagedSession.createNewSessionAndTransaction();
 	    User user = null;
 	    try {
 
@@ -470,9 +429,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
 	          user.setSessionId(sessionId);
 	          session.update(user);
-	          if (isFirstTransaction) {
-	            HibernateUtil.commitCurrentTransaction();
-	          }
+	          ManagedSession.commitTransaction(session);
+	          
 	          // user.setPasswordHash(null); // this is to ensure password never
 	          // return
 	          user.setRoles(roleDb.getRoles(user.getId())); // this to convert
@@ -492,11 +450,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	        user = new User();
 	      }
 	    } catch (HibernateException e) {
-	      HibernateUtil.rollbackTransaction();
+	      ManagedSession.rollbackTransaction(session);
 	      log.error("Error: There is a problem during sign in", e);
 	      e.printStackTrace();
 	    } catch (Exception e) {
-	      HibernateUtil.rollbackTransaction();
+	      ManagedSession.rollbackTransaction(session);
 	      log.error("Error: There is a problem during sign in", e);
 	      e.printStackTrace();
 	    } finally {
@@ -508,8 +466,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
   
   public void signOut(String sessionId) {
     // TODO: http://code.google.com/p/rebioma/issues/detail?id=70
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       User user = sessionService.getUserBySessionId(sessionId);
       if (user == null) {
@@ -517,13 +474,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       }
       user.setSessionId("");
       userDb.attachDirty(user);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
       log.error("error while signing out for user with sessionId " + sessionId,
           re);
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
     }
   }
 
@@ -531,24 +486,18 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       throws UserServiceException {
 
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      User loginUser = sessionService.getUserBySessionId(userSessionId);
+      Session session = ManagedSession.createNewSessionAndTransaction();User loginUser = sessionService.getUserBySessionId(userSessionId);
       User dbUser = userDb.findById(user.getId());
       Role adminRole = roleDb.getRole(UserRole.ADMIN);
       Set<Role> loginUserRoles = roleDb.getRoles(loginUser.getId());
       if (loginUser == null) {
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         throw new UserServiceException(
             "Bad session. Session is expired or corrupted");
       }
       if (!loginUser.getId().equals(user.getId())
           && !loginUserRoles.contains(adminRole)) {
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         throw new UserServiceException("You do not allow to change "
             + user.getFirstName() + " user information");
       }
@@ -595,9 +544,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
           userDb.addRole(dbUser, role);
         }
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       if (!passwordChanged) {
         throw new UserServiceException(
             "Bad old password. Password remain the same and other changes are saved");
@@ -605,7 +552,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       return true;
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      HibernateUtil.rollbackTransaction();
       throw new UserServiceException(e.getMessage());
     }
   }
@@ -621,9 +567,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
   public int update(String sessionId, UserQuery query)
       throws UserServiceException {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      CollaboratorsUpdate collaboratorsUpdate = query.getCollaboratorsUpdate();
+      Session session = ManagedSession.createNewSessionAndTransaction();CollaboratorsUpdate collaboratorsUpdate = query.getCollaboratorsUpdate();
       int count = 0;
       switch (collaboratorsUpdate) {
       case ADD:
@@ -636,13 +580,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements
         // TODO: user profiler updating.
         break;
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return count;
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      HibernateUtil.rollbackTransaction();
       throw new UserServiceException(e.getMessage());
     }
   }
@@ -666,7 +607,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
     //
     // } catch (HibernateException e) {
     // log.error("Error: " + e.getMessage(), e);
-    // HibernateUtil.rollbackTransaction();
+    // ManagedSession.rollbackTransaction(session);
     // } finally {
     // if (isFirstTransaction) {
     // HibernateUtil.commitCurrentTransaction();

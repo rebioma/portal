@@ -12,7 +12,7 @@ import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.bean.Role;
 import org.rebioma.client.bean.UserRole;
 import org.rebioma.server.util.CsvUtil;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 public class RoleDbImpl implements RoleDb {
   /**
@@ -36,98 +36,82 @@ public class RoleDbImpl implements RoleDb {
       String nameFr = new String(role.getDescriptionFr().getBytes(), "UTF-8");
       role.setNameFr(nameFr);
       role.setDescriptionFr(descriptionFr);
-      // role.setDescriptionFr("un rôle pour les administrateurs système");
+      // role.setDescriptionFr("un rï¿½le pour les administrateurs systï¿½me");
       System.out.println(role.getDescriptionFr());
       roleDb.save(role);
     }
   }
 
   public boolean delete(Role role) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
 
     try {
       session.delete(role);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return true;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on delete(Role)", re);
       return false;
     }
   }
 
   public Role edit(Role role) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       session.update(role);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return role;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on delete(Role)", re);
       throw re;
     }
   }
 
   public Role findById(int id) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Role role = (Role) session.get(Role.class, id);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return role;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on delete(Role)", re);
       throw re;
     }
   }
 
   public List<Role> getAllRoles() {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       List<Role> roles = session.createCriteria(Role.class).list();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return roles;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on delete(Role)", re);
       throw re;
     }
   }
 
   public Role getRole(UserRole userRole) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria criteria = session.createCriteria(Role.class);
       criteria.add(Restrictions.eq("nameEn", userRole.toString()));
       Role role = (Role) criteria.uniqueResult();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return role;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on delete(Role)", re);
       throw re;
     }
   }
 
   public Set<Role> getRoles(int userId) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria criteria = session.createCriteria(UserRoles.class);
       criteria.add(Restrictions.eq("userId", userId));
@@ -136,20 +120,17 @@ public class RoleDbImpl implements RoleDb {
       for (UserRoles userRole : userRoles) {
         roles.add(findById(userRole.getRoleId()));
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return roles;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on delete(Role)", re);
       throw re;
     }
   }
 
   public Role save(Role role) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria crit = session.createCriteria(Role.class);
       crit.add(Restrictions.eq("nameEn", role.getNameEn()));
@@ -159,13 +140,11 @@ public class RoleDbImpl implements RoleDb {
       } else {
         session.save(role);
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       // System.out.println(role.getId());
       return role;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on delete(Role)", re);
       throw re;
     }

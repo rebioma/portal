@@ -12,7 +12,7 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.bean.RecordReview;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
   /**
@@ -25,17 +25,13 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
 
   public void clearExistenceAssignments() {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       for (TaxonomicReviewer taxonomicReviewer : findAll()) {
         session.delete(taxonomicReviewer);
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
 
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
       log.error(
           "error :" + re.getMessage() + " on clearExistenceAssignments()", re);
       throw re;
@@ -45,15 +41,10 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
 
   public boolean delete(TaxonomicReviewer TaxonomicReviewer) {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      session.delete(TaxonomicReviewer);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      Session session = ManagedSession.createNewSessionAndTransaction();session.delete(TaxonomicReviewer);
+      ManagedSession.commitTransaction(session);
       return true;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
       log.error("error :" + re.getMessage() + " on delete(TaxonomicReviewer)",
           re);
       return false;
@@ -63,16 +54,11 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
   public List<TaxonomicReviewer> findAll() {
 
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      List<TaxonomicReviewer> reviewers = session.createCriteria(
+      Session session = ManagedSession.createNewSessionAndTransaction();List<TaxonomicReviewer> reviewers = session.createCriteria(
           TaxonomicReviewer.class).list();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return reviewers;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
       log.error("error :" + re.getMessage() + " on delete(TaxonomicReviewer)",
           re);
       throw re;
@@ -85,8 +71,7 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
 
   public boolean isAssignmentExisted(int userId, String fieldName,
       String fieldValue) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     boolean isExisted = false;
     try {
       Criteria criteria = session.createCriteria(TaxonomicReviewer.class);
@@ -94,11 +79,9 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
       criteria.add(Restrictions.eq("taxonomicField", fieldName));
       criteria.add(Restrictions.eq("taxonomicValue", fieldValue));
       isExisted = criteria.uniqueResult() != null;
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage()
           + " on isAssignmentExisted(userId, fieldName, fieldValue)", re);
     }
@@ -106,18 +89,15 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
   }
 
   public TaxonomicReviewer save(TaxonomicReviewer TaxonomicReviewer) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
 
     try {
       Integer id = (Integer) session.save(TaxonomicReviewer);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       TaxonomicReviewer.setId(id);
       return TaxonomicReviewer;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log
           .error("error :" + re.getMessage() + " on save(TaxonomicReviewer)",
               re);
@@ -126,17 +106,14 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
   }
 
   public TaxonomicReviewer update(TaxonomicReviewer TaxonomicReviewer) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
 
     try {
       session.update(TaxonomicReviewer);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return TaxonomicReviewer;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage() + " on update(TaxonomicReviewer)",
           re);
       return null;
@@ -144,18 +121,15 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
   }
 
   protected List<TaxonomicReviewer> findByProperty(String property, Object value) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     List<TaxonomicReviewer> TaxonomicReviewers = null;
     try {
       Criteria criteria = session.createCriteria(TaxonomicReviewer.class).add(
           Restrictions.eq(property, value));
       TaxonomicReviewers = criteria.list();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("error :" + re.getMessage()
           + " on findByProperty(property, value)", re);
     }
@@ -163,17 +137,14 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
   }
   
   public List<TaxonomicReviewer> findByProperty() {
-	  Session session = HibernateUtil.getCurrentSession();
-	    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+	  Session session = ManagedSession.createNewSessionAndTransaction();
 	    List<TaxonomicReviewer> TaxonomicReviewers = null;
 	    try {
 	      Criteria criteria = session.createCriteria(TaxonomicReviewer.class);
 	      TaxonomicReviewers = criteria.list();
-	      if (isFirstTransaction) {
-	        HibernateUtil.commitCurrentTransaction();
-	      }
+	      ManagedSession.commitTransaction(session);
 	    } catch (RuntimeException re) {
-	      HibernateUtil.rollbackTransaction();
+	      ManagedSession.rollbackTransaction(session);
 	      log.error("error :" + re.getMessage()
 	          + " on findByProperty(property, value)", re);
 	    }

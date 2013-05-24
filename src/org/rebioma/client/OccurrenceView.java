@@ -88,6 +88,8 @@ public class OccurrenceView extends ComponentView implements
 		public CustomPopupPanel(View w) {
 			super(false);
 			setWidget(w);
+			//int wi = Window.getClientWidth()-40;
+			//setWidth(wi+"px");
 			setStyleName(ComponentView.STYLE_NAME);
 		}
 
@@ -107,7 +109,7 @@ public class OccurrenceView extends ComponentView implements
 
 		@Override
 		public void show() {
-			setPopupPosition(toolHp.getAbsoluteLeft(), toolHp.getAbsoluteTop()
+			setPopupPosition(toolHp.getAbsoluteLeft()-1, toolHp.getAbsoluteTop()
 					+ toolHp.getOffsetHeight());
 			super.show();
 			setVisible(true);
@@ -648,13 +650,13 @@ public class OccurrenceView extends ComponentView implements
 						.getView();
 				query.setSearchFilters(searchView.getSearchFilters());
 			}
-
 			if (!activeView.equals(MAP) && !activeView.equals(LIST)) {
 				switchView(DEFAULT_VIEW, false);
 			}
 			if (!searchText.equals("")) {
 				query.addSearchFilter(QUICK_SEARCH + " = " + searchText);
 			}
+			
 			addErrorQuery();
 			addSharedSearchToQuery();
 			GWT.log(query.getBaseFilters() + "");
@@ -1054,7 +1056,7 @@ public class OccurrenceView extends ComponentView implements
 		// mapView.onValueChange(History.getToken());
 		// toolHp.add(uploadLink);
 		toolHp.add(searchForm);
-		toolHp.setWidth("100%");
+		//toolHp.setWidth("100%");
 		toolHp.add(switchViewPanel);
 		toolHp.setCellVerticalAlignment(switchViewPanel,
 				HasVerticalAlignment.ALIGN_MIDDLE);
@@ -1349,16 +1351,17 @@ public class OccurrenceView extends ComponentView implements
 		if (!isMyView(History.getToken())) {
 			return;
 		}
-		toolHp.setWidth(width + "px");
+		int w = width - 20;
+		toolHp.setWidth(w + "px");
 		height = height - mainSp.getAbsoluteTop();
 		if (height <= 0) {
 			height = 1;
 		}
-		mainSp.setPixelSize(width, height);
+		mainSp.setPixelSize(w, height);
 		if (activeViewInfo != null) {
 			getPopupView(activeViewInfo.getName()).reshow();
 		}
-		Window.enableScrolling(toolHp.getOffsetWidth() - 10 > width);
+		Window.enableScrolling(toolHp.getOffsetWidth() - 10 > w);
 
 	}
 
@@ -2124,7 +2127,7 @@ public class OccurrenceView extends ComponentView implements
 	public void setPageSize(int ps){
 		this.queryPageSize = ps;
 		query.setLimit(ps);
-		//on partage à ses enfants
+		//on partage ï¿½ ses enfants
 		for(Map.Entry<String, ViewInfo> entry: viewInfos.entrySet()){
 			if(entry.getKey().equalsIgnoreCase(MAP) || entry.getKey().equalsIgnoreCase(LIST) || entry.getKey().equalsIgnoreCase(DETAIL)){
 				View v = entry.getValue().getView();

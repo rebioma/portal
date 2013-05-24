@@ -37,7 +37,7 @@ import org.rebioma.client.bean.Role;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.bean.UserRole;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 /**
  * Default implementation of {@link UserDb}. Uses Hibernate for database
@@ -79,8 +79,7 @@ public class UserDbImpl implements UserDb {
 
   public static void main(String args[]) {
     UserDbImpl userDb = new UserDbImpl();
-    Session session = HibernateUtil.getCurrentSession();
-    HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       // Criteria criteria = session.createCriteria(UserRole.class);
       Query query = session
@@ -90,7 +89,7 @@ public class UserDbImpl implements UserDb {
         session.delete(userRole);
         System.out.println("userId: " + userRole.getUserId() + " delete");
       }
-      HibernateUtil.commitCurrentTransaction();
+     ManagedSession.commitTransaction(session);
     } catch (Exception e) {
 
     }
@@ -115,8 +114,7 @@ public class UserDbImpl implements UserDb {
   public void addRole(User user, Role role) {
     if (role != null) {
       log.debug("adding role " + role.getNameEn() + " to user " + user.getId());
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       try {
         Criteria criteria = session.createCriteria(UserRoles.class);
         criteria.add(Restrictions.eq("userId", user.getId()));
@@ -127,12 +125,10 @@ public class UserDbImpl implements UserDb {
           session.save(userRoles);
         }
         // session.merge(user);
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
       } catch (RuntimeException re) {
         log.error("add role " + role.getNameEn() + " to user " + user.getId() + " failed", re);
-        HibernateUtil.rollbackTransaction();
+        ManagedSession.rollbackTransaction(session);
         throw re;
       }
     }
@@ -141,7 +137,7 @@ public class UserDbImpl implements UserDb {
   public void attachClean(User instance) {
     log.debug("attaching clean User instance");
     try {
-      HibernateUtil.getCurrentSession().lock(instance, LockMode.NONE);
+      ManagedSession.createNewSession().lock(instance, LockMode.NONE);
       log.debug("attach successful");
     } catch (RuntimeException re) {
       log.error("attach failed", re);
@@ -153,15 +149,12 @@ public class UserDbImpl implements UserDb {
     log.debug("attaching dirty User instances");
     User ref = null;
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       for (User instance : instances) {
         ref = instance;
         session.saveOrUpdate(instance);
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
       log.debug("attach successful");
     } catch (RuntimeException re) {
       log.info("attach failed (" + ref + ") ", re);
@@ -171,13 +164,10 @@ public class UserDbImpl implements UserDb {
   public void attachDirty(User instance) {
     log.debug("attaching dirty User instance");
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       session.saveOrUpdate(instance);
       log.debug("attach successful");
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
       log.error("attach failed", re);
       throw re;
@@ -187,7 +177,7 @@ public class UserDbImpl implements UserDb {
   public void delete(User persistentInstance) {
     log.debug("deleting User instance");
     try {
-      HibernateUtil.getCurrentSession().delete(persistentInstance);
+      ManagedSession.createNewSession().delete(persistentInstance);
       log.debug("delete successful");
     } catch (RuntimeException re) {
       log.error("delete failed", re);
@@ -196,22 +186,17 @@ public class UserDbImpl implements UserDb {
   }
 
   public List<User> findAll() {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     List<User> users = new ArrayList<User>();
     try {
       users = session.createCriteria(User.class).list();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
       return users;
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       e.printStackTrace();
     } finally {
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
       // session.close();
     }
     for (User user : users) {
@@ -223,8 +208,7 @@ public class UserDbImpl implements UserDb {
   public List<User> findByEmail(Set<String> userEmails) {
     List<User> results = new ArrayList<User>();
     log.debug("getting User instance with user emails: " + userEmails);
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria criteria = session.createCriteria(User.class);
       Criterion criterion = null;
@@ -237,11 +221,9 @@ public class UserDbImpl implements UserDb {
       }
       criteria.add(criterion);
       results = criteria.list();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("get failed", re);
       throw re;
     }
@@ -251,8 +233,7 @@ public class UserDbImpl implements UserDb {
   public User findByEmail(String userEmail) {
     User result = null;
     log.debug("getting User instance with user email: " + userEmail);
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria criteria = session.createCriteria(User.class);
       criteria.add(Restrictions.eq("email", userEmail));
@@ -260,11 +241,9 @@ public class UserDbImpl implements UserDb {
       if (result != null) {
         result.setSessionId(null);
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("get failed", re);
       throw re;
     }
@@ -282,14 +261,11 @@ public class UserDbImpl implements UserDb {
   public List<User> findByExample(User instance) {
     log.debug("finding User instance by example");
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       List<User> results = session.createCriteria("org.rebioma.client.bean.User")
           .add(create(instance)).list();
       log.debug("find by example successful, result size: " + results.size());
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
       return results;
     } catch (RuntimeException re) {
       log.error("find by example failed", re);
@@ -300,12 +276,9 @@ public class UserDbImpl implements UserDb {
   public User findById(java.lang.Integer id) {
     log.debug("getting User instance with id: " + id);
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       User instance = findById(session, id); 
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
       return instance;
     } catch (RuntimeException re) {
       log.error("get failed", re);
@@ -341,8 +314,7 @@ public class UserDbImpl implements UserDb {
 
   public UserQuery findByQuery(UserQuery query, Integer loggedInUserId) throws Exception {
     log.debug("finding User instances by query.");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       Criteria criteria = session.createCriteria(User.class);
       List<OrderKey> orderingMap = query.getOrderingMap();
@@ -390,11 +362,9 @@ public class UserDbImpl implements UserDb {
       } else {
         query.setCount(-1);
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
     } catch (Exception e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       e.printStackTrace();
       throw e;
     }
@@ -405,13 +375,10 @@ public class UserDbImpl implements UserDb {
   public User merge(User detachedInstance) {
     log.debug("merging User instance");
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       User result = (User) session.merge(detachedInstance);
       log.debug("merge successful");
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
       return result;
     } catch (RuntimeException re) {
       log.error("merge failed", re);
@@ -422,7 +389,7 @@ public class UserDbImpl implements UserDb {
   public void persist(User transientInstance) {
     log.debug("persisting User instance");
     try {
-      HibernateUtil.getCurrentSession().persist(transientInstance);
+      ManagedSession.createNewSession().persist(transientInstance);
       log.debug("persist successful");
     } catch (RuntimeException re) {
       log.error("persist failed", re);
@@ -432,8 +399,7 @@ public class UserDbImpl implements UserDb {
 
   public void removeRole(User user, Role role) {
     log.debug("removing role " + role.getNameEn() + " to user " + user.getId());
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
 
       Criteria criteria = session.createCriteria(UserRoles.class);
@@ -445,12 +411,10 @@ public class UserDbImpl implements UserDb {
       }
       // session.merge(user);
 
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
       log.error("remove role " + role.getNameEn() + " to user " + user.getId() + " failed", re);
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       throw re;
     }
   }
@@ -458,8 +422,7 @@ public class UserDbImpl implements UserDb {
   public boolean removeUser(User user) {
     if (user != null) {
       log.debug("removing user " + user.getId());
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       try {
         Criteria criteria = session.createCriteria(UserRoles.class);
         criteria.add(Restrictions.eq("userId", user.getId()));
@@ -469,13 +432,11 @@ public class UserDbImpl implements UserDb {
         }
         session.delete(user);
         // session.merge(user);
-        if (isFirstTransaction) {
-          HibernateUtil.commitCurrentTransaction();
-        }
+        ManagedSession.commitTransaction(session);
         return true;
       } catch (RuntimeException re) {
         log.error("remove user " + user.getId() + " failed", re);
-        HibernateUtil.rollbackTransaction();
+        ManagedSession.rollbackTransaction(session);
         throw re;
       }
     }
@@ -495,15 +456,12 @@ public class UserDbImpl implements UserDb {
 
   void assignRoleToUsers(Role role, String... useremails) {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       for (String email : useremails) {
         User user = findByEmail(email.trim());
         addRole(user, role);
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+       ManagedSession.commitTransaction(session);
     } catch (RuntimeException re) {
       log.error("get failed", re);
       throw re;

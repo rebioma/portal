@@ -373,8 +373,7 @@ body {
  */
 
 .OccurrenceMapView {
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 5px 0px;
   width:100%;
   height:100%;
 }
@@ -624,13 +623,22 @@ text-decoration: none;
 .View-Content {
   border-color: #ECE9D8;
   border-style: solid;
-  border-width: 1px 1px 1px 1px;
+  border-width: 0px 1px 1px 1px;
   width: 100%;
+}
+
+.View-Content content pup{
+  border-color: #92C1F0;
+  border-style: solid;
+  border-width: 0px 2px 0px 2px;
+  width: 100%;
+  background: white;
 }
 
 .View-Content .tool {
   width: 100%;
   background-color: #ECE9D8;
+  margin-bottom: 5px;
 }
 /*
 .View-Content .content {
@@ -691,8 +699,7 @@ text-decoration: none;
 }
 
 .OccurrenceView-ListView {
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 5px 0px;
 }
 
 .OccurrenceView-ListView .Tool {
@@ -713,10 +720,10 @@ text-decoration: none;
   font-weight: bold;
   font-size: 14px;
   color: blue;
-  background-color: #ECE9D8;
+  background-color: #D6EAF3;
   width: 100%;
   border-top: thin solid #A4A4A4;
-  border-right: thin solid #A4A4A4;
+  border-right: 0px solid #A4A4A4;
   border-left: thin solid #A4A4A4;
 }
 
@@ -725,34 +732,51 @@ text-decoration: none;
 }
 
 .Table-TableWidget .header .id {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
   color: black;
   background-color: #ECE9D8;
-  width: 90px;
+  width: 80px;
   border-right: thin solid #A4A4A4;
   border-left: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 5px;*/
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 90px;
 }
 
 .Table-TableWidget .header .accepted-species {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
-color: black;
+  color: black;
   background-color: #ECE9D8;
   width: 200px;
   white-space: nowrap;
   border-right: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;
-
+  padding-right: 5px;*/
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 200px;
 }
 
 .Table-TableWidget .header .public {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
   background-color: #ECE9D8;
@@ -760,11 +784,21 @@ color: black;
   width: 60px;
   border-right: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 5px;*/
+  
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 50px;
 }
 
 .Table-TableWidget .header .validated {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
   color: black;
@@ -772,12 +806,21 @@ color: black;
   width: 80px;
   border-right: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 5px;*/
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 60px;
    
 }
 
 .Table-TableWidget .header .vetted {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
   color: black;
@@ -785,11 +828,20 @@ color: black;
   width: 80px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 5px;*/
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 60px;
 }
 
 .Table-TableWidget .header .owner-email {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
   color: black;
@@ -797,12 +849,21 @@ color: black;
   width: 150px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 5px;*/
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 200px;
 
 }
 
 .Table-TableWidget .header .shared-users {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
   color: black;
@@ -810,20 +871,59 @@ color: black;
   width: 200px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 5px;*/
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 200px;
 }
 
 .Table-TableWidget .header .validation-error {
-  text-align: left;
+  /*text-align: left;
   font-weight: bold;
   font-size: 14px;
   color: black;
   background-color: #ECE9D8;
   white-space: nowrap;
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 5px;*/
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  min-width:150px;
 }
-
+.Table-TableWidget .header .year-c {
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 90px;
+}
+.Table-TableWidget .header .attributes {
+  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  border-left: 1px solid #BBD3DA;
+  color: #69939E;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 5px 5px;
+  text-overflow: ellipsis;
+  width: 90px;
+}
 .Table-TableWidget .table {
   width: 100%;
   border-left: thin solid #A4A4A4;
@@ -836,12 +936,15 @@ color: black;
   /*background-color: #083109;*/
   background-color: white;
   border-top: thin solid #A4A4A4;
-  padding-top: 5px;
-  padding-bottom: 5px; 
+  padding-top: 0px;
+  padding-bottom: 0px; 
 }
 
 .Table-TableWidget .table .row .col-checkbox {
   width: 25px;
+  padding: 0px;
+  margin: 0px;
+  text-align: center;
 }
 
 .Table-TableWidget .table .row .col-id {
@@ -858,36 +961,36 @@ color: black;
 }  
 
 .Table-TableWidget .table .row .col-accepted-species {
-  width: 205px;
+  width: 200px;
   font-size: 14px;
   padding-left: 10px;
-  padding-right: 5px;
+  padding-right: 0px;
   overflow: hidden;
 }
 
 .Table-TableWidget .table .row .col-public {
-  width: 60px;
+  width: 50px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
 }
 
 .Table-TableWidget .table .row .col-validated {
-  width: 80px;
+  width: 60px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
 }
 
 .Table-TableWidget .table .row .col-vetted {
-  width: 80px;
+  width: 60px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
 }
 
 .Table-TableWidget .table .row .col-owner-email {
-  width: 153px;
+  width: 200px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
@@ -896,6 +999,21 @@ color: black;
 
 .Table-TableWidget .table .row .col-shared-users {
   width: 200px;
+  font-size: 14px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow: hidden;
+}
+.Table-TableWidget .table .row .col-year-c {
+  width: 90px;
+  font-size: 14px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow: hidden;
+}
+
+.Table-TableWidget .table .row .col-attributes {
+  width: 90px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
@@ -991,6 +1109,7 @@ color: black;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
+  min-width:150px;
 }
 
 .text {
@@ -1459,7 +1578,7 @@ html>body .AdvanceSearch .QueriesTable {
 }
 
 .table {
-  padding: 0px 5px 0px 5px;
+  padding: 0px 0px 0px 0px;
   border-left: thin solid #C3D9FF;
   border-right: thin solid #C3D9FF;
   border-bottom: thin solid #C3D9FF;
@@ -1565,7 +1684,25 @@ div#content {
 #closeButton {
   margin: 15px 6px 6px;
 }
-	
-	
+.table-row {
+}
+.table-row tbody td {
+    background-color: #FFFFFF;
+    /*border-bottom: 1px solid #DDDDDD;*/
+	cursor: default;
+	border-left: 1px dotted #BBD3DA;
+    /*overflow: hidden;*/
+    padding: 5px 0px;
+    margin: 0px;
+    text-overflow: ellipsis;
+    /*white-space: nowrap;*/
+}
+.table-row tbody td:first-child {
+    border-left: 0 none;
+}
+.table-row {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
 	
 	

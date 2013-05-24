@@ -20,7 +20,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.bean.User;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 /**
  * The default service implementation of {@link SessionIdService}.
@@ -41,20 +41,17 @@ public class SessionIdServiceImpl implements SessionIdService {
    * @see org.rebioma.server.services.SessionIdService#getUserBySessionId(java.lang.String)
    */
   public User getUserBySessionId(String sid) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       System.out.println("session before calling getUserBySessionId is "
           + session.isOpen());
       User user = (User) session.createCriteria(User.class).add(
           Restrictions.eq("sessionId", sid)).uniqueResult();
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       // user.setRoles(new HashSet<Role>(roleD));
       return user;
     } catch (HibernateException e) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("Error: " + e.getMessage(), e);
       return null;
     } finally {

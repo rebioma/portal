@@ -12,7 +12,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.OccurrenceCommentQuery;
 import org.rebioma.client.bean.OccurrenceComments;
-import org.rebioma.server.util.HibernateUtil;
+import org.rebioma.server.util.ManagedSession;
 
 public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService {
 
@@ -61,7 +61,8 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
   public void attachClean(OccurrenceComments instance) {
     log.debug("attaching clean OccurrenceComments instance");
     try {
-      HibernateUtil.getCurrentSession().lock(instance, LockMode.NONE);
+      ManagedSession.createNewSessionAndTransaction().lock(instance, LockMode.NONE);
+      //HibernateUtil.getCurrentSession().lock(instance, LockMode.NONE);
       log.debug("attach successful");
     } catch (RuntimeException re) {
       log.error("attach failed", re);
@@ -71,17 +72,20 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
 
   public void attachDirty(OccurrenceComments instance) {
     log.debug("attaching dirty OccurrenceComments instance");
-    System.out.println("######## review comments");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    //System.out.println("######## review comments");
+    //Session session = HibernateUtil.getCurrentSession();
+    //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       session.saveOrUpdate(instance);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      //if (isFirstTransaction) {
+      //  HibernateUtil.commitCurrentTransaction();
+      //}
+      ManagedSession.commitTransaction(session);
       log.debug("attach successful");
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
+      //HibernateUtil.rollbackTransaction();
       log.error("attach failed", re);
       throw re;
     }
@@ -89,18 +93,14 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
 
   public void attachDirty(Set<OccurrenceComments> instances) {
     log.debug("attaching dirty Set of OccurrenceComments");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-    try {
+    Session session = ManagedSession.createNewSessionAndTransaction();try {
       
     	attachDirty(session, instances);
     	
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       log.debug("attach successful");
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("attach failed", re);
       throw re;
     }
@@ -125,35 +125,27 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
 
   public void delete(OccurrenceComments persistentInstance) {
     log.debug("deleting OccurrenceComments instance");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-    try {
+    Session session = ManagedSession.createNewSessionAndTransaction();try {
       session.delete(persistentInstance);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       log.debug("delete successful");
     } catch (RuntimeException re) {
       log.error("delete failed", re);
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       throw re;
     }
   }
 
   public void delete(Set<OccurrenceComments> persistentInstances) {
     log.debug("deleting Set of OccurrenceComments");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-    try {
+    Session session = ManagedSession.createNewSessionAndTransaction();try {
       for (OccurrenceComments persistentInstance : persistentInstances) {
         session.delete(persistentInstance);
       }
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       log.debug("delete successful");
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("delete failed", re);
       throw re;
     }
@@ -163,10 +155,12 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
   public List<OccurrenceComments> findByExample(OccurrenceComments instance) {
     log.debug("finding OccurrenceComments instance by example");
     try {
-      List<OccurrenceComments> results = HibernateUtil.getCurrentSession()
+    	Session session = ManagedSession.createNewSessionAndTransaction();
+      List<OccurrenceComments> results = session//HibernateUtil.getCurrentSession()
           .createCriteria("OccurrenceComments").add(Example.create(instance))
           .list();
       log.debug("find by example successful, result size: " + results.size());
+      ManagedSession.commitTransaction(session);
       return results;
     } catch (RuntimeException re) {
       log.error("find by example failed", re);
@@ -176,14 +170,10 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
 
   public OccurrenceComments findById(int id) {
     log.debug("getting OccurrenceComments instance with id: " + id);
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-    try {
+    Session session = ManagedSession.createNewSessionAndTransaction();try {
       OccurrenceComments instance = (OccurrenceComments) session.get(
           "OccurrenceComments", id);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       if (instance == null) {
         log.debug("get successful, no instance found");
       } else {
@@ -191,7 +181,7 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
       }
       return instance;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("get failed", re);
       throw re;
     }
@@ -199,9 +189,7 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
 
   public List<OccurrenceComments> findByQuery(OccurrenceCommentQuery query) {
     log.debug("finding OccurrenceComments instances by query.");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-    try {
+    Session session = ManagedSession.createNewSessionAndTransaction();try {
 
       List<OccurrenceComments> results = null;
       Criteria criteria = session.createCriteria(OccurrenceComments.class);
@@ -228,12 +216,10 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
       results = criteria.list();
       log.debug("find by Occurrence comment query successful, result size: "
           + results.size());
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       return results;
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("find by Occurrence comment query failed", re);
       throw re;
     }
@@ -241,51 +227,40 @@ public class OccurrenceCommentsServiceImpl implements OccurrenceCommentsService 
 
   public OccurrenceComments merge(OccurrenceComments detachedInstance) {
     log.debug("merging OccurrenceComments instance");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-    try {
+    Session session = ManagedSession.createNewSessionAndTransaction();try {
       OccurrenceComments result = (OccurrenceComments) session
           .merge(detachedInstance);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       log.debug("merge successful");
       return result;
     } catch (RuntimeException re) {
       log.error("merge failed", re);
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       throw re;
     }
   }
 
   public void persist(OccurrenceComments transientInstance) {
     log.debug("persisting OccurrenceComments instance");
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-    try {
+    Session session = ManagedSession.createNewSessionAndTransaction();try {
       session.persist(transientInstance);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       log.debug("persist successful");
     } catch (RuntimeException re) {
       log.error("persist failed", re);
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       throw re;
     }
   }
 
   public void save(OccurrenceComments comment) {
-    Session session = HibernateUtil.getCurrentSession();
-    boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+    Session session = ManagedSession.createNewSessionAndTransaction();
     try {
       session.saveOrUpdate(comment);
-      if (isFirstTransaction) {
-        HibernateUtil.commitCurrentTransaction();
-      }
+      ManagedSession.commitTransaction(session);
       log.debug("attach successful");
     } catch (RuntimeException re) {
-      HibernateUtil.rollbackTransaction();
+      ManagedSession.rollbackTransaction(session);
       log.error("attach failed", re);
       throw re;
     }

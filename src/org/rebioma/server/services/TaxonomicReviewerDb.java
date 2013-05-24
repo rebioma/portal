@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.rebioma.server.util.HibernateUtil;
 
 public interface TaxonomicReviewerDb {
 
