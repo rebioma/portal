@@ -258,7 +258,10 @@ public class ApplicationView extends View implements ClickHandler {
   protected static final String USER_PROFILES = "Profiler";
   protected static final String USER_MANAGEMENT = "Management";
   protected static final String SPECIES_EXPLORER = "spec_expl";
-
+  
+  
+  protected static final String STATS_TAB = "stats_tab";
+ // protected static final String MAIL_TAB = "mail_tab";
   public static ApplicationView getApplication() {
     if (instance == null) {
       instance = new ApplicationView();
@@ -735,6 +738,11 @@ public class ApplicationView extends View implements ClickHandler {
       ViewInfo spExpViewInfo = viewInfos.get(SPECIES_EXPLORER.toLowerCase());
       SpeciesExplorerView spExpView = (SpeciesExplorerView)spExpViewInfo.getView();
       spExpView.addOccurrenceSearchListener((OccurrenceSearchListener)occView);
+      ViewInfo statViewInfo = viewInfos.get(STATS_TAB.toLowerCase());
+      StatisticsTabView statsView = (StatisticsTabView) statViewInfo.getView();
+      
+     /* ViewInfo mailViewInfo = viewInfos.get(MAIL_TAB.toLowerCase());
+      MailTabView mailView = (MailTabView) mailViewInfo.getView();*/
       
       List<ViewInfo> currentTabs = new ArrayList<ViewInfo>();
       int selectedTabIndex = 0;
@@ -743,16 +751,19 @@ public class ApplicationView extends View implements ClickHandler {
       if (view.equalsIgnoreCase(OCCURRENCES)) {
         currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
         currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+        currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
         if (isSignedIn) {
           currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
           // currentTabs.add(viewInfos.get(arg0))
         }
         if (isAdmin()) {
           currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+         // currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
         }
       }else if(view.equalsIgnoreCase(SPECIES_EXPLORER)){
     	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
           currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
           if (isSignedIn) {
 	          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
 	          // currentTabs.add(viewInfos.get(arg0))
@@ -795,6 +806,7 @@ public class ApplicationView extends View implements ClickHandler {
       }  else {
         currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
         currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+        //currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
         selectedTabIndex = 1;
 
       }
@@ -1042,8 +1054,11 @@ public class ApplicationView extends View implements ClickHandler {
         .UserManagement(), USER_MANAGEMENT);
     ViewInfo speciesExplorerViewInfo = SpeciesExplorerView.init(this, constants
     	.SpeciesExplorer(), SPECIES_EXPLORER);
+    ViewInfo statsViewInfo = StatisticsTabView.init(this, constants
+        	.Statistics(), STATS_TAB);
     addViewInfo(occurrenveViewInfo);
     addViewInfo(speciesExplorerViewInfo);
+    addViewInfo(statsViewInfo);
     addViewInfo(forgetPassViewInfo);
     addViewInfo(signinViewInfo);
     addViewInfo(changePassViewInfo);

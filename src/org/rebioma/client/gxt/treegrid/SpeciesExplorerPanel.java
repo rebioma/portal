@@ -3,144 +3,102 @@
  */
 package org.rebioma.client.gxt.treegrid;
 
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.rebioma.client.bean.SpeciesTreeModel;
+import org.rebioma.client.bean.SpeciesTreeModel.SpeciesTreeModelProperties;
+import org.rebioma.client.gxt3.treegrid.CheckBoxTreeGridListener;
+import org.rebioma.client.gxt3.treegrid.CheckboxTreeGrid;
 import org.rebioma.client.services.SpeciesExplorerService;
 import org.rebioma.client.services.SpeciesExplorerServiceAsync;
 
-import com.extjs.gxt.ui.client.GXT;
-import com.extjs.gxt.ui.client.data.BaseTreeLoader;
-import com.extjs.gxt.ui.client.data.LoadEvent;
-import com.extjs.gxt.ui.client.data.RpcProxy;
-import com.extjs.gxt.ui.client.event.CheckChangedEvent;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.LoadListener;
-import com.extjs.gxt.ui.client.store.TreeStore;
-import com.extjs.gxt.ui.client.widget.Layout;
-import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
-import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
-import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
-import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sencha.gxt.data.client.loader.RpcProxy;
+import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.data.shared.loader.ChildTreeStoreBinding;
+import com.sencha.gxt.data.shared.loader.TreeLoader;
+import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
+import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
 /**
  * @author Mikajy
- *
+ * 
  */
-public class SpeciesExplorerPanel extends LayoutContainer{
-	private static final String LABEL_COL_HEADER = "Explorer";
-	private static final String LEVEL_COL_HEADER = "Level";
-	private static final String PRIVATE_OCCURENCE_COL_HEADER = "Private Occurences";
-	private static final String PUBLIC_OCCURENCE_COL_HEADER = "Public Occurences";
-	
+public class SpeciesExplorerPanel {
+
 	private final SpeciesExplorerServiceAsync speciesExplorerService = GWT
-				.create(SpeciesExplorerService.class);
-	
+			.create(SpeciesExplorerService.class);
+	//
 	private CheckboxTreeGrid<SpeciesTreeModel> treeGrid;
-	
-	private List<SpeciesTreeModel> checkedSelection;
-	
-	public SpeciesExplorerPanel(){
-		this(new FitLayout(), null);
-	}
+	//
+	public SpeciesExplorerPanel() {
+		// Generate the key provider and value provider for the Data class
+		SpeciesTreeModelProperties speciesTreeModelProperties = GWT
+				.create(SpeciesTreeModelProperties.class);
+		// Create the configurations for each column in the tree grid
+		List<ColumnConfig<SpeciesTreeModel, ?>> ccs = new LinkedList<ColumnConfig<SpeciesTreeModel, ?>>();
+		ccs.add(new ColumnConfig<SpeciesTreeModel, String>(
+				speciesTreeModelProperties.label(), 200, "Explorer"));
+		ccs.add(new ColumnConfig<SpeciesTreeModel, String>(
+				speciesTreeModelProperties.level(), 200, "Level"));
+		ccs.add(new ColumnConfig<SpeciesTreeModel, Integer>(
+				speciesTreeModelProperties.nbPrivateOccurence(), 200,
+				"Private Occurrences"));
+		ccs.add(new ColumnConfig<SpeciesTreeModel, Integer>(
+				speciesTreeModelProperties.nbPublicOccurence(), 200,
+				"Public Occurrences"));
+		ColumnModel<SpeciesTreeModel> cm = new ColumnModel<SpeciesTreeModel>(
+				ccs);
 
-	public SpeciesExplorerPanel(Layout layout){
-		this(layout, null);
-	}
-	public SpeciesExplorerPanel(GridSelectionModel<SpeciesTreeModel> sm){
-		this(new FitLayout(), sm);
-	}
-	public SpeciesExplorerPanel(Layout layout, GridSelectionModel<SpeciesTreeModel> sm){
-		ColumnConfig explorer = new ColumnConfig(SpeciesTreeModel.LABEL, LABEL_COL_HEADER, 350);
-		ColumnConfig level = new ColumnConfig(SpeciesTreeModel.LEVEL, LEVEL_COL_HEADER, 100);
-		ColumnConfig privateOcc = new ColumnConfig(SpeciesTreeModel.PRIVATE_OCCURENCE, PRIVATE_OCCURENCE_COL_HEADER, 100);
-		ColumnConfig publicOcc = new ColumnConfig(SpeciesTreeModel.PUBLIC_OCCURENCE, PUBLIC_OCCURENCE_COL_HEADER, 100);
-		explorer.setRenderer(new CheckboxTreeGridCellRenderer<SpeciesTreeModel>(true));
-		
-		ColumnModel cm = new ColumnModel(Arrays.asList(explorer, level, privateOcc, publicOcc));
-		RpcProxy<List<SpeciesTreeModel>> proxy = getProxy();
-		BaseTreeLoader<SpeciesTreeModel> loader = getLoader(proxy);
-		loader.addLoadListener(new LoadListener(){
-			public void loaderBeforeLoad(LoadEvent le){
-				//mask(GXT.MESSAGES.loadMask_msg());
-			}
-			
-			public void loaderLoad(LoadEvent le) {
-				unmask();
-			 }
-		});
-		TreeStore<SpeciesTreeModel> store = getStore(loader);
-		treeGrid = new CheckboxTreeGrid<SpeciesTreeModel>(store, cm);
-		treeGrid.setLoadMask(true);
-		if(sm != null){
-			treeGrid.setSelectionModel(sm);
-		}
-		treeGrid.getView().setForceFit(true);
-		mask(GXT.MESSAGES.loadMask_msg());
-		//treeGrid.setSelectionModel(sm);
-		treeGrid.addListener(Events.CheckChanged, new Listener<CheckChangedEvent<SpeciesTreeModel>>() {
+		RpcProxy<SpeciesTreeModel, List<SpeciesTreeModel>> proxy = new RpcProxy<SpeciesTreeModel, List<SpeciesTreeModel>>() {
+
 			@Override
-			public void handleEvent(CheckChangedEvent<SpeciesTreeModel> be) {
-				checkedSelection = be.getCheckedSelection();
+			public void load(SpeciesTreeModel loadConfig,
+					AsyncCallback<List<SpeciesTreeModel>> callback) {
+				speciesExplorerService.getChildren(loadConfig, callback);
 			}
-			
-		});
-		this.setBorders(true);
-		this.setLayout(layout);
-		//this.add(treeGrid);
-	}
-	
-	public List<SpeciesTreeModel> getCheckedSelection(){
-		return checkedSelection;
-	}
-	
-	
-	@Override
-	protected void onRender(Element parent, int index) {
-		super.onRender(parent, index);
-		this.add(treeGrid);
-	}
+		};
 
-	private TreeStore<SpeciesTreeModel> getStore(BaseTreeLoader<SpeciesTreeModel> loader){
-		//le store
-		TreeStore<SpeciesTreeModel> store = new TreeStore<SpeciesTreeModel>(loader);
-		return store;
-	}
-	
-	private BaseTreeLoader<SpeciesTreeModel> getLoader(RpcProxy<List<SpeciesTreeModel>> proxy){
-		BaseTreeLoader<SpeciesTreeModel> loader = new BaseTreeLoader<SpeciesTreeModel>(proxy){
+		final TreeLoader<SpeciesTreeModel> loader = new TreeLoader<SpeciesTreeModel>(
+				proxy) {
 			@Override
 			public boolean hasChildren(SpeciesTreeModel parent) {
-				if(parent == null){
-					return false;
-				}
-				return !"species".equalsIgnoreCase(parent.getLevel());
+				//seul les species n'ont pas d'enfant
+				return !SpeciesTreeModel.ACCEPTEDSPECIES.equalsIgnoreCase(parent.getLevel()) 
+							&& !SpeciesTreeModel.SPECIES.equalsIgnoreCase(parent.getLevel());
 			}
 		};
-		return loader;
+		// Create the store that the contains the data to display in the tree
+		// grid
+		TreeStore<SpeciesTreeModel> s = new TreeStore<SpeciesTreeModel>(
+				speciesTreeModelProperties.key());
+
+		loader.addLoadHandler(new ChildTreeStoreBinding<SpeciesTreeModel>(s));
+		
+		// Create the tree grid using the store, column model and column config
+		// for the tree column
+		treeGrid = new CheckboxTreeGrid<SpeciesTreeModel>(s, cm, ccs.get(0));
+		treeGrid.setTreeLoader(loader);
+		// treeGrid.getView().setTrackMouseOver(false);
+		treeGrid.getView().setForceFit(true);
+		// treeGrid.setWidth(300);
+		treeGrid.setHeight(400);
+
 	}
 	
-	private RpcProxy<List<SpeciesTreeModel>> getProxy(){
-		RpcProxy<List<SpeciesTreeModel>> proxy = new RpcProxy<List<SpeciesTreeModel>>() {
-			@Override
-			protected void load(Object loadConfig,
-					AsyncCallback<List<SpeciesTreeModel>> callback) {
-				// C'est le loader qui fera tout seul l'appel asynchrone pour
-				// le chargement des enfants
-				speciesExplorerService.getChildren((SpeciesTreeModel) loadConfig,
-						callback);
-			}
-		};
-		return proxy;
+	public void addCheckBoxGridListener(CheckBoxTreeGridListener<SpeciesTreeModel> listener){
+		treeGrid.addCheckBoxTreeGridListener(listener);
 	}
-	
-	public CheckboxTreeGrid<SpeciesTreeModel> getTreeGrid(){
+
+	public List<SpeciesTreeModel> getCheckedSelection() {
+		return getTreeGrid().getCheckedSelection();
+	}
+
+	public CheckboxTreeGrid<SpeciesTreeModel> getTreeGrid() {
 		return this.treeGrid;
 	}
 }

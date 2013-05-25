@@ -5,88 +5,74 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.extjs.gxt.ui.client.data.BaseTreeModel;
-
 @SuppressWarnings("serial")
-public class OccurrenceCommentModel extends BaseTreeModel {
+public class OccurrenceCommentModel implements java.io.Serializable {
 	
-	public static final String UID = "uId";
-	public static final String FIRST_NAME = "firstName";
+	/*public static final String UID = "uId";
+	public static final String FIRST_NAME = "firstName"; 
 	public static final String LAST_NAME = "lastName";
 	public static final String EMAIL = "email";
-	public static final String COMMENT_DETAIL = "userComment";
+	public static final String COMMENT_DETAIL = "userComment";*/
+	private int uId;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private String commentDetail;
 	private String passwordHash = "";
-	//private HashMap<String, RecapTable> trbReviewed;
-	
-	/*public HashMap<String, RecapTable> getTrbReviewed() {
-		return trbReviewed;
-	}
-
-	public void setTrbReviewed(HashMap<String, RecapTable> trbReviewed) {
-		this.trbReviewed = trbReviewed;
-		Set<String> set = this.trbReviewed.keySet();
-		Iterator it = set.iterator();
-		String temp = "";
-		while(it.hasNext()){
-			RecapTable recap = this.trbReviewed.get(it.next());
-			temp += recap.getReliable()+"(R) " + recap.getQuestionable()+"(?) " +
-					recap.getLastName()+"/ ";
-		}	
-		setCommentdetail(temp);
-	}
-	*/
 	
 	public OccurrenceCommentModel(){
 		super();
 	}
 
-	public OccurrenceCommentModel(int uId, String firstName, String lastName, String email, String commentDetail, String passwd){
-		set(this.UID,uId);
-		set(this.FIRST_NAME,firstName);
-		set(this.LAST_NAME,lastName);
-		set(this.EMAIL,email);
-		set(this.COMMENT_DETAIL, commentDetail);
-		setPasswordHash(passwd);
+	public OccurrenceCommentModel(int uId, String firstName, String lastName,
+			String email, String commentDetail, String passwordHash) {
+		super();
+		this.uId = uId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.commentDetail = commentDetail;
+		this.passwordHash = passwordHash;
 	}
 
-	public int getUId(){
-		return (Integer)get(this.UID);
+	public int getUId() {
+		return uId;
 	}
-	
-	public String getFirstName(){
-		return (String)get(this.FIRST_NAME);
+
+	public void setUId(int uId) {
+		this.uId = uId;
 	}
-	
-	public String getLastName(){
-		return (String)get(this.LAST_NAME);
+
+	public String getFirstName() {
+		return firstName;
 	}
-	
-	public String getEmail(){
-		return (String)get(this.EMAIL);
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
-	
-	public String getCommentdetail(){
-		return (String)get(this.COMMENT_DETAIL);
+
+	public String getLastName() {
+		return lastName;
 	}
-	
-	public void setUId(int uId){
-		set(this.UID,uId);
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
-	
-	public void setFirstName(String firstName){
-		set(this.FIRST_NAME,firstName);
+
+	public String getEmail() {
+		return email;
 	}
-	
-	public void setLastName(String lastName){
-		set(this.LAST_NAME,lastName);
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
-	
-	public void setEmail(String email){
-		set(this.EMAIL,email);
+
+	public String getCommentDetail() {
+		return commentDetail;
 	}
-	
-	public void setCommentdetail(String commentdetail){
-		set(this.COMMENT_DETAIL,commentdetail);
+
+	public void setCommentDetail(String commentDetail) {
+		this.commentDetail = commentDetail;
 	}
 
 	public String getPasswordHash() {

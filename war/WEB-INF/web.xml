@@ -61,6 +61,14 @@
     <servlet-name>SpeciesExplorerService</servlet-name>
     <url-pattern>/rebioma/speciesExplorerService</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>StatisticsService</servlet-name>
+    <servlet-class>org.rebioma.server.services.StatisticsServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StatisticsService</servlet-name>
+    <url-pattern>/rebioma/statisticsService</url-pattern>
+  </servlet-mapping>
   
   <servlet>
     <servlet-name>UserService</servlet-name>

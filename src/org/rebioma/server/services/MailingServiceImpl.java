@@ -30,10 +30,6 @@ import org.rebioma.server.util.EmailUtil;
 
 import BCrypt.BCrypt;
 
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.FilterConfig;
-import com.extjs.gxt.ui.client.data.FilterPagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class MailingServiceImpl extends RemoteServiceServlet implements org.rebioma.client.services.MailingService{

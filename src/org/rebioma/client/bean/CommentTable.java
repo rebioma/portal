@@ -1,9 +1,8 @@
 package org.rebioma.client.bean;
 
-import java.util.Date;
-
-import com.extjs.gxt.ui.client.data.BaseTreeModel;
-import com.google.gwt.core.client.GWT;
+//import java.util.Date;
+//import com.extjs.gxt.ui.client.data.BaseTreeModel;
+//import com.google.gwt.core.client.GWT;
 
 @SuppressWarnings("serial")
 public class CommentTable implements java.io.Serializable{

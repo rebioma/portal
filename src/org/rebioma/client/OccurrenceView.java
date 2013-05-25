@@ -37,6 +37,8 @@ import org.rebioma.client.services.ServerPingService;
 import org.rebioma.client.services.ServerPingServiceAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -727,7 +729,7 @@ public class OccurrenceView extends ComponentView implements
 				// publicRb.setValue(true);
 			}
 			if (activeViewInfo != null) {
-				DeferredCommand.addCommand(new Command() {
+				Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 					public void execute() {
 						resize(Window.getClientWidth(),
 								Window.getClientHeight());
@@ -1096,7 +1098,7 @@ public class OccurrenceView extends ComponentView implements
 		listLink.addClickHandler(this);
 		uploadLink.addClickHandler(this);
 		revalidateLink.addClickHandler(this);
-		DeferredCommand.addCommand(new Command() {
+		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 			public void execute() {
 				resize(Window.getClientWidth(), Window.getClientHeight());
 			}
@@ -1489,7 +1491,7 @@ public class OccurrenceView extends ComponentView implements
 		}
 		switchViewPanel.clear();
 		activeViewInfo = switchViewInfo;
-		DeferredCommand.addCommand(new Command() {
+		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 			public void execute() {
 				CustomPopupPanel view = getPopupView(activeViewInfo.getName());
 				if (isLoadRecord) {

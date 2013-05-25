@@ -1,5 +1,7 @@
 package org.rebioma.client.i18n;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+
 /**
  * Interface to represent the constants contained in resource bundle:
  * 	'/home/rebioma/workspace/Rebioma/war/WEB-INF/classes/org/rebioma/client/i18n/AppConstants.properties'.
@@ -3030,6 +3032,101 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @Key("labelToDate")
   String labelToDate();
 
+  
+  @DefaultStringValue("Go")
+  @Key("goButton")
+  String goButton();
+  
+  //Tax: pour le moment
+  @DefaultStringValue("Data dashboard")
+  @Key("statistics")
+  String Statistics();
+
+  
+  @DefaultStringValue("Show Statistic")
+  @Key("ShowStatistic")
+  String ShowStatistic();
+  
+  @DefaultStringValue("Clear all selected")
+  @Key("ClearAllSelected")
+  String ClearAllSelected();
+
+  @DefaultStringValue("More informations")
+  @Key("MoreInformations")
+  String MoreInformations();
+
+ 
+  @DefaultStringValue("Numbers of occurrences per data manager (owner) ")
+  @Key("statsPerManagerUser")
+  String statsPerManagerUser();
+  
+  @DefaultStringValue("Numbers of occurrences  per data provider institution")
+  @Key("statsPerProviderInstitution")
+  String statsPerProviderInstitution();
+  
+  @DefaultStringValue("Numbers of occurrences per collection code")
+  @Key("statsPerCollectionCode")
+  String statsPerCollectionCode();
+  
+  
+  //columns of stqtistics tqble
+  @DefaultStringValue("Private data")
+  @Key("privateData")
+  String privateData();
+  
+  
+  @DefaultStringValue("Public data")
+  @Key("publicData")
+  String publicData();
+  
+  
+  @DefaultStringValue("Reliable")
+  @Key("reliable")
+  String reliable();
+  
+  @DefaultStringValue("Awaiting review")
+  @Key("awaiting")
+  String awaiting();
+  
+  @DefaultStringValue("Questionable")
+  @Key("questionable")
+  String questionable();
+  
+  @DefaultStringValue("Invalidated")
+  @Key("invalidated")
+  String invalidated();
+  
+  @DefaultStringValue("All")
+  @Key("all")
+  String all();
+  
+  @DefaultStringValue("Emailing setting")
+  @Key("emailSetting")
+  String emailSetting();
+  
+  @DefaultStringValue("System status")
+  @Key("systemStatus")
+  String systemStatus();
+  
+  @DefaultStringValue("Frequency")
+  @Key("frequency")
+  String frequency();
+  
+  @DefaultStringValue("Starting date")
+  @Key("startingDate")
+  String startingDate();
+  
+  @DefaultStringValue("Monthly")
+  @Key("Monthly")
+  String monthly();
+  
+  @DefaultStringValue("Weekly")
+  @Key("Weekly")
+  String weekly();
+  
+  @DefaultStringValue("2 Weeks")
+  @Key("Weeks")
+  String weeks();
   /**
    * Translated "Occurrence Comment".
    * 

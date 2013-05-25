@@ -13,12 +13,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.rebioma.client.bean.SpeciesStatisticModel;
 import org.rebioma.client.bean.SpeciesTreeModel;
+import org.rebioma.client.bean.SpeciesTreeModelInfoItem;
 import org.rebioma.client.bean.Taxonomy;
 import org.rebioma.client.services.SpeciesExplorerService;
+import org.rebioma.server.util.HibernateUtil;
 import org.rebioma.server.util.ManagedSession;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -36,12 +40,12 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 	
 	private static final HashMap<String, String> LEVELS=new HashMap<String, String>(){
         {
-            put("KINGDOM", "Kingdom");
-            put("PHYLUM", "Phylum");
-            put("CLASS", "Class");
-            put("GENUS", "Genus");
-            put("ORDER", "Order");
-            put("FAMILY", "Family");
+            put("KINGDOM", SpeciesTreeModel.KINGDOM);
+            put("PHYLUM", SpeciesTreeModel.PHYLUM);
+            put("CLASS", SpeciesTreeModel.CLASS_);
+            put("GENUS", SpeciesTreeModel.GENUS);
+            put("ORDER", SpeciesTreeModel.ORDER);
+            put("FAMILY", SpeciesTreeModel.FAMILY);
             put("ACCEPTEDSPECIES", "Species");
         }
 	};
@@ -58,13 +62,13 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		String colonneSynonym="";
 		String whereTaxonomy=" WHERE 1=1 ";
 		
-		if(obj==null || obj.get(SpeciesTreeModel.KINGDOM)==null || obj.get(SpeciesTreeModel.KINGDOM).toString().isEmpty()) {
+		if(obj==null || obj.getKingdom()==null || obj.getKingdom().toString().isEmpty()) {
 			concerne="kingdom ";
 			colonne+="AcceptedKingdom,";
 			level=LEVELS.get("KINGDOM");
 			//colonneSource=" getInfosKingdom(t.Kingdom)  ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.KINGDOM)!=null && !obj.get(SpeciesTreeModel.KINGDOM).toString().isEmpty()) {
+		if(obj!=null && obj.getKingdom()!=null && !obj.getKingdom().toString().isEmpty()) {
 			concerne="Phylum ";
 			colonne+="AcceptedKingdom,";
 			where+=" AND upper(Acceptedkingdom)=upper('"+obj.getKingdom()+"') ";
@@ -74,7 +78,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("PHYLUM");
 			//colonneSource=" getInfosPhylum(t.phylum) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.PHYLUM)!=null && !obj.get(SpeciesTreeModel.PHYLUM).toString().isEmpty() ) {
+		if(obj!=null && obj.getPhylum()!=null && !obj.getPhylum().toString().isEmpty() ) {
 			where+=" AND upper(AcceptedPhylum)=upper('"+obj.getPhylum()+"') ";
 			whereTaxonomy+=" AND upper(Phylum)=upper('"+obj.getPhylum()+"') ";
 			concerne="Class ";
@@ -82,7 +86,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("CLASS");
 			//colonneSource=" getInfosClass(t.class) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.CLASS_)!=null && !obj.get(SpeciesTreeModel.CLASS_).toString().isEmpty() ) {
+		if(obj!=null && obj.getClass_()!=null && !obj.getClass_().toString().isEmpty() ) {
 			where+=" AND upper(Acceptedclass)=upper('"+obj.getClass_()+"') ";
 			whereTaxonomy+=" AND upper(class)=upper('"+obj.getClass_()+"') ";
 			concerne="order ";
@@ -90,7 +94,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("ORDER");
 			//colonneSource=" getInfosGenus(t.genus) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.ORDER)!=null && !obj.get(SpeciesTreeModel.ORDER).toString().isEmpty() ) {
+		if(obj!=null && obj.getOrder()!=null && !obj.getOrder().toString().isEmpty() ) {
 			where+=" AND upper(Acceptedorder)=upper('"+obj.getOrder()+"') ";
 			whereTaxonomy+=" AND upper(\"order\")=upper('"+obj.getOrder()+"') ";
 			concerne="family ";
@@ -98,7 +102,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("FAMILY");
 			//colonneSource=" getInfosFamily(t.family) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.FAMILY)!=null && !obj.get(SpeciesTreeModel.FAMILY).toString().isEmpty() ) {
+		if(obj!=null && obj.getFamily()!=null && !obj.getFamily().toString().isEmpty() ) {
 			where+=" AND upper(Acceptedfamily)=upper('"+obj.getFamily()+"') ";
 			whereTaxonomy+=" AND upper(family)=upper('"+obj.getFamily()+"') ";
 			concerne="genus ";
@@ -106,7 +110,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			level=LEVELS.get("GENUS");
 			//colonneSource=" getInfosFamily(t.family) ";
 		}
-		if(obj!=null && obj.get(SpeciesTreeModel.GENUS)!=null && !obj.get(SpeciesTreeModel.GENUS).toString().isEmpty() ) {
+		if(obj!=null && obj.getGenus()!=null && !obj.getGenus().toString().isEmpty() ) {
 			where+=" AND upper(Acceptedgenus)=upper('"+obj.getGenus()+"') ";
 			whereTaxonomy+=" AND upper(genus)=upper('"+obj.getGenus()+"') ";
 			concerne="species ";
@@ -227,7 +231,8 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 					child1.setSuperfamily(parent.getSuperfamily());
 					child1.setFamily(parent.getFamily());
 					child1.setGenus(concerne);
-				}  else if(SpeciesTreeModel.ACCEPTEDSPECIES.equals(temp[1])){
+					
+				}  else if(SpeciesTreeModel.ACCEPTEDSPECIES.equals(temp[1]) || SpeciesTreeModel.SPECIES.equals(temp[1])){
 					child1.setKingdom(parent.getKingdom());
 					child1.setPhylum(parent.getPhylum());
 					child1.setClass_(parent.getClass_());
@@ -244,6 +249,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 				//child1.setStatus(child1.getLabel() + "Status");
 				//child1.setVernecularName(child1.getLabel() + "vernecularName");
 				//child1.setSynonymisedTaxa(child1.getLabel() + "Synonymised Taxa");
+				child1.setId(child1.getLevel() + "_" + child1.getLabel());
 				listToReturn.add(child1);
 			}
 		} catch (SQLException e) {
@@ -431,6 +437,218 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		 }
 	    
 	}
+	@SuppressWarnings("deprecation")
+	@Override
+	public List<SpeciesStatisticModel> getStatistics(SpeciesTreeModel obj) {
+		
+		String colonne="";
+		if(obj==null || obj.getKingdom()==null || obj.getKingdom().toString().isEmpty()) {			
+			colonne=" AND upper(AcceptedKingdom)=upper('"+obj.getKingdom()+"')";
+		}
+		if(obj!=null && obj.getKingdom()!=null && !obj.getKingdom().toString().isEmpty()) {			
+			colonne=" AND upper(AcceptedKingdom)=upper('"+obj.getKingdom()+"')";
+		}
+		if(obj!=null && obj.getPhylum()!=null && !obj.getPhylum().toString().isEmpty() ) {
+			colonne+=" AND upper(AcceptedPhylum)=upper('"+obj.getPhylum()+"')";
+		}
+		if(obj!=null && obj.getClass_()!=null && !obj.getClass_().toString().isEmpty() ) {
+			colonne+=" AND upper(Acceptedclass)=upper('"+obj.getClass_()+"') ";			
+		}
+		if(obj!=null && obj.getOrder()!=null && !obj.getOrder().toString().isEmpty() ) {
+			colonne+=" AND  upper(Acceptedorder)=upper('"+obj.getOrder()+"') ";			
+		}
+		if(obj!=null && obj.getFamily()!=null && !obj.getFamily().toString().isEmpty() ) {
+			colonne+=" AND  upper(Acceptedfamily)=upper('"+obj.getFamily()+"') ";			
+		}
+		if(obj!=null && obj.getGenus()!=null && !obj.getGenus().toString().isEmpty() ) {
+			colonne+=" AND  upper(Acceptedgenus)=upper('"+obj.getGenus()+"') ";			
+		}
+		if(obj!=null && obj.getAcceptedspecies()!=null && !obj.getAcceptedspecies().toString().isEmpty() ) {
+			colonne+=" AND  upper(Acceptedspecies)=upper('"+obj.getAcceptedspecies()+"') ";			
+		}
+		
+		colonne=" WHERE 1=1 "+colonne;
+		String sql=" SELECT Count(*) FROM occurrence " + colonne;
+		
+		final List<SpeciesStatisticModel> stats = new ArrayList<SpeciesStatisticModel>();
+		
+		
+		Session sess = null;		
+		Connection conn =null;
+		try {
+			sess=HibernateUtil.getSessionFactory().openSession(); 
+			conn=sess.connection();			
+			
+			
+			SpeciesStatisticModel m1 = new SpeciesStatisticModel();
+			m1.setKindOfData("Reliable(" + obj.getLabel() + ")");
+			m1.setNbRecords(getSpeciesStatisticModel(conn,sql + " AND reviewed = true ").getNbRecords());
+			m1.setObservations("Occurrence.reviewed = 1");
+			
+			stats.add(m1);
+			
+			SpeciesStatisticModel m2 = new SpeciesStatisticModel();
+			m2.setKindOfData("Awaiting review(" + obj.getLabel() + ")");
+			m2.setNbRecords(getSpeciesStatisticModel(conn,sql + " AND reviewed IS NULL AND validated = true ").getNbRecords());
+			m2.setObservations("Occurrence.reviewed = NULL AND Occurrence.validated = 1");
+			stats.add(m2);
+			
+			SpeciesStatisticModel m3 = new SpeciesStatisticModel();
+			m3.setKindOfData("Questionable(" + obj.getLabel() + ")");
+			m3.setNbRecords(getSpeciesStatisticModel(conn,sql + " AND reviewed = false ").getNbRecords());
+			m3.setObservations("Occurrence.reviewed = 0");
+			stats.add(m3);
+			
+			SpeciesStatisticModel m4 = new SpeciesStatisticModel();
+			m4.setKindOfData("Invalidated(" + obj.getLabel() + ") ");
+			m4.setNbRecords(getSpeciesStatisticModel(conn,sql + " AND validated = false ").getNbRecords());
+			m4.setObservations("Occurrence.validated = 0");
+			stats.add(m4);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}finally {			
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {					
+					e.printStackTrace();
+				}
+			}
+			if(sess!=null)
+				sess.close();
+		}	
+		
+		return stats;
+	}
+	@Override
+	public List<SpeciesTreeModelInfoItem> getInfomations(SpeciesTreeModel obj) {
+		List<SpeciesTreeModelInfoItem> informations = new ArrayList<SpeciesTreeModelInfoItem>();
+		/*
+		String sourceName = source.getLabel();
+		for(int i=0;i< 10;i++){
+			informations.add(new SpeciesTreeModelInfoItem("Libele Information(" + sourceName + ") " + (i + 1), "Valeur de l'information numéro " + (i + 1)));
+		}
+		*/
+		String colonne=""; String source=" ( Kingdomsource ";
+		if(obj==null || obj.getKingdom()==null || obj.getKingdom().toString().isEmpty()) {			
+			colonne=" AND  upper(Kingdom)=upper('"+obj.getKingdom()+"')";			
+		}
+		if(obj!=null && obj.getKingdom()!=null && !obj.getKingdom().toString().isEmpty()) {			
+			colonne=" AND  upper(Kingdom)=upper('"+obj.getKingdom()+"')";			
+		}
+		if(obj!=null && obj.getPhylum()!=null && !obj.getPhylum().toString().isEmpty() ) {
+			colonne+=" AND  upper(Phylum)=upper('"+obj.getPhylum()+"')";
+			source+=" || '-' ||  phylumsource";
+		}
+		if(obj!=null && obj.getClass_()!=null && !obj.getClass_().toString().isEmpty() ) {
+			colonne+=" AND  upper(class)=upper('"+obj.getClass_()+"') ";		
+			source+=" || '-' || classsource ";
+		}
+		if(obj!=null && obj.getOrder()!=null && !obj.getOrder().toString().isEmpty() ) {
+			colonne+="  AND upper(\"order\")=upper('"+obj.getOrder()+"') ";
+			source+=" || '-' || ordersource ";
+		}
+		if(obj!=null && obj.getFamily()!=null && !obj.getFamily().toString().isEmpty() ) {
+			colonne+="  AND upper(family)=upper('"+obj.getFamily()+"') ";
+			source+=" || '-' || familysource ";
+		}
+		if(obj!=null && obj.getGenus()!=null && !obj.getGenus().toString().isEmpty() ) {
+			colonne+="  AND upper(genus)=upper('"+obj.getGenus()+"') ";
+			source+=" || '-' ||  genussource ";
+		}
+		if(obj!=null && obj.getAcceptedspecies()!=null && !obj.getAcceptedspecies().toString().isEmpty() ) {
+			colonne+=" AND  upper(Acceptedspecies)=upper('"+obj.getAcceptedspecies()+"') ";			
+		}
+		source+=") as source";
+		String sql="SELECT '' as authority,status,'' as taxa, "+source+" ,'' as vernecularname , reviewedby FROM taxonomy WHERE 1=1 "+colonne;
+		
+		System.out.println(sql);
+		
+		Session sess = null;		
+		Connection conn =null;
+		
+			
+		Statement st=null;
+		ResultSet rst=null;
+		try {
+			sess=HibernateUtil.getSessionFactory().openSession(); 
+			conn=sess.connection();	
+			st = conn.createStatement();
+			rst = st.executeQuery(sql);
+			rst.next();
+			informations.add(new SpeciesTreeModelInfoItem("Authority " ,  rst.getString("authority")  ));
+			informations.add(new SpeciesTreeModelInfoItem("Status " ,  rst.getString("status")  ));
+			informations.add(new SpeciesTreeModelInfoItem("Synonymised taxa " ,  rst.getString("taxa")  ));
+			informations.add(new SpeciesTreeModelInfoItem("Source " ,  rst.getString("source")  ));
+			informations.add(new SpeciesTreeModelInfoItem("Vernecular name " ,  rst.getString("vernecularname")  ));
+			informations.add(new SpeciesTreeModelInfoItem("Reviewedby " ,  rst.getString("reviewedby")  ));
+			//	informations.add(new SpeciesTreeModelInfoItem("Libele Information(" + rst. + ") " + (i + 1), "Valeur de l'information numéro " + (i + 1)));
+				
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rst!=null) {
+				try {
+					rst.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(st!=null) {
+				try {
+					st.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {					
+					e.printStackTrace();
+				}
+			}
+			if(sess!=null)
+				sess.close();
+		}	
+		
+		
+		return informations;
+	}
 	
-
+	private SpeciesStatisticModel getSpeciesStatisticModel(Connection conn,String sql ){
+		System.out.println(sql);
+		SpeciesStatisticModel ret = new SpeciesStatisticModel();		
+		Statement st=null;
+		ResultSet rst=null;
+		try {
+			
+			st = conn.createStatement();
+			rst = st.executeQuery(sql);
+			while(rst.next()) {
+				ret.setNbRecords( rst.getInt(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rst!=null) {
+				try {
+					rst.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(st!=null) {
+				try {
+					st.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}			
+		}	
+		return ret;
+	}
 }

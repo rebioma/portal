@@ -15,6 +15,7 @@
  */
 package org.rebioma.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.form.client.api.DisplayPopup;
@@ -23,20 +24,17 @@ import org.rebioma.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.maps.client.LoadApi;
+import com.google.gwt.maps.client.LoadApi.LoadLibrary;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * The Portal class serves at the GWT {@link EntryPoint} to the application. It
@@ -83,6 +81,7 @@ public class Portal implements EntryPoint {
   }-*/;
 
   public void onModuleLoad() {
+//	  loadMapApi();
     // Uncomment this to test new view stuff:
     DisplayPopup.setCloseImageUrl("images/xclose.gif");
     Window.enableScrolling(false);
@@ -94,6 +93,28 @@ public class Portal implements EntryPoint {
     checkCurrentSession();
     // Window.confirm(browserDetect());
 
+  }
+  
+  private void loadMapApi() {
+	  boolean sensor = true;
+
+	    // load all the libs for use in the maps
+	    ArrayList<LoadLibrary> loadLibraries = new ArrayList<LoadApi.LoadLibrary>();
+	    loadLibraries.add(LoadLibrary.ADSENSE);
+	    loadLibraries.add(LoadLibrary.DRAWING);
+	    loadLibraries.add(LoadLibrary.GEOMETRY);
+	    loadLibraries.add(LoadLibrary.PANORAMIO);
+	    loadLibraries.add(LoadLibrary.PLACES);
+	    loadLibraries.add(LoadLibrary.WEATHER);
+	    loadLibraries.add(LoadLibrary.VISUALIZATION);
+
+	    Runnable onLoad = new Runnable() {
+	      @Override
+	      public void run() {
+	      }
+	    };
+
+	    LoadApi.go(onLoad, loadLibraries, sensor);
   }
 
   /**

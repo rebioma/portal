@@ -79,7 +79,7 @@ public class AscModelDbImpl implements AscModelDb {
       //  HibernateUtil.commitCurrentTransaction();
       //}
       ManagedSession.commitTransaction(session);
-      log.info("Ato izy alou eh!  "+results.size()+"  count:"+count+"  acceptsps:"+acceptedSpecies+"  start:"+start+"  limit:"+limit);
+      log.info(results.size()+"  count:"+count+"  acceptsps:"+acceptedSpecies+"  start:"+start+"  limit:"+limit);
       int i_count;
       if(count == null)i_count = 0;
       else i_count = count.intValue();

@@ -17,6 +17,8 @@ package org.rebioma.client;
 
 import org.rebioma.client.View.ViewStateChangeListener;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
@@ -91,7 +93,7 @@ public abstract class ComponentView extends View implements
    * Called before the view is displayed.
    */
   public void onShow() {
-    DeferredCommand.addCommand(new Command() {
+	Scheduler.get().scheduleDeferred(new ScheduledCommand(){
       public void execute() {
         if (isMyView(History.getToken())) {
           resize(Window.getClientWidth(), Window.getClientHeight());

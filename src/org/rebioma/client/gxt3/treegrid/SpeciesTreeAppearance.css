@@ -1,0 +1,22 @@
+
+.over {
+  background-color: #EEEEEE;
+}
+
+.drop {
+  background-color: #EEEEEE;
+}
+
+.selected {
+  background-color: #E5E5E5 !important;
+}
+	
+.text {
+  font: normal 11px arial, tahoma, helvetica, sans-serif;
+  color: black;
+}
+
+.customicon {
+	margin-left: 5px;
+	cursor: pointer;
+}
