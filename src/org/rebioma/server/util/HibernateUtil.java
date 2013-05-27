@@ -29,6 +29,8 @@ public class HibernateUtil {
   private static Transaction currentTransaction = null;
 
   private static Session currentSession = null;
+  
+  private static Configuration configuration = null;
   static {
     init();
   }
@@ -128,8 +130,9 @@ public class HibernateUtil {
 
   private synchronized static void init() {
     try {
+      configuration = new Configuration().configure();	
       // Create the SessionFactory from hibernate.cfg.xml
-      sessionFactory = new Configuration().configure().buildSessionFactory();
+      sessionFactory = configuration.buildSessionFactory();
       currentSession = null;
       currentTransaction = null;
     } catch (Throwable ex) {
@@ -137,5 +140,9 @@ public class HibernateUtil {
       log.error("Initial SessionFactory creation failed", ex);
       throw new ExceptionInInitializerError(ex);
     }
+  }
+
+  public static Configuration getConfiguration() {
+	  return configuration;
   }
 }

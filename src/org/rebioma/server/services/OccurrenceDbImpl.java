@@ -1298,8 +1298,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
           } else {
         	// {wd} on utilise "upper()" si type column = String 
           	if(StringUtil.isType(Occurrence.class, filter.column, String.class))
-          		criterion = Restrictions.sqlRestriction("upper({alias}." + filter.column + ") = upper(?)", filter.getValue(), Hibernate.STRING);
-              else
+          		criterion = Restrictions.sqlRestriction("upper({alias}." + StringUtil.columnName(Occurrence.class, filter.column) + ") = upper(?)", filter.getValue(), Hibernate.STRING);
+          	else
           		criterion = Restrictions.eq(filter.column, filter.getValue());
           }
           break;
