@@ -801,8 +801,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						
 					}
 					commentsService.attachDirty(session,allComments);
-					ManagedSession.commitTransaction(session);
-					 if (!ownerOccurrencesForCase5.isEmpty()) {
+					if (!ownerOccurrencesForCase5.isEmpty()) {
 					      for (Integer userId : ownerOccurrencesForCase5.keySet()) {
 						    if(mailNotificationUserMap.containsKey(userId) && mailNotificationUserMap.get(userId) != null){
 						    	Set<Integer> occurrenceIds = mailNotificationUserMap.get(userId).getOccurrenceIds();
@@ -817,7 +816,8 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						    }
 					      }
 					}
-					 nbtotal+=subOccurrences.size();
+					ManagedSession.commitTransaction(session);
+					nbtotal+=subOccurrences.size();
 		  	    }catch (IOException e) {
 					e.printStackTrace();
 				} 
@@ -826,11 +826,11 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(5, nbtotal);
 					exc.setResult(result);
-		  	      	ManagedSession.rollbackTransaction(session);
+		  	      	if(session!=null)ManagedSession.rollbackTransaction(session);
 		  	      throw exc;
 		  	    } 
 				finally {					 
-				     if(session!=null) session.close();
+				     //if(session!=null) session.close();
 				 }
 		  	    
 				indice++;
