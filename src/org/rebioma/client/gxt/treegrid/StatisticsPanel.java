@@ -52,7 +52,7 @@ public class StatisticsPanel  extends Widget{
 	private String BY_OWNER = "Numbers of occurrences per data manager (owner)";
 	private String BY_INSTITUTION = "Numbers of occurrences  per data provider institution";
 	private String BY_COLLECTION = "Numbers of occurrences per collection code";
-	private String BY_YEAR = "Numbers of occurrences per year";
+	private String BY_YEAR = "Numbers of occurrences per year collected";
 	String title = "";
 	 FramedPanel cp ;
 	 RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>> proxy;

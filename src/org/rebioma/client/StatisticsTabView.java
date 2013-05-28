@@ -69,7 +69,7 @@ public class StatisticsTabView extends ComponentView implements ClickHandler, Ch
 		
 		mainVp = new VerticalPanel();
 		
-		mainVp.setSpacing(5);
+		mainVp.setSpacing(0);
 		
 		statisticsPanel = new StatisticsPanel().statisticsPanel("title");
 		mainVp.setWidth("100%");
