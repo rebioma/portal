@@ -13,9 +13,14 @@ import org.rebioma.client.gxt3.treegrid.CheckboxTreeGrid;
 import org.rebioma.client.services.SpeciesExplorerService;
 import org.rebioma.client.services.SpeciesExplorerServiceAsync;
 
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.ChildTreeStoreBinding;
@@ -35,6 +40,10 @@ public class SpeciesExplorerPanel {
 	//
 	private CheckboxTreeGrid<SpeciesTreeModel> treeGrid;
 	//
+	private String space = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	
+	NumberFormat format = NumberFormat.getDecimalFormat();
+	
 	public SpeciesExplorerPanel() {
 		// Generate the key provider and value provider for the Data class
 		SpeciesTreeModelProperties speciesTreeModelProperties = GWT
@@ -45,12 +54,32 @@ public class SpeciesExplorerPanel {
 				speciesTreeModelProperties.label(), 200, "Explorer"));
 		ccs.add(new ColumnConfig<SpeciesTreeModel, String>(
 				speciesTreeModelProperties.level(), 200, "Level"));
-		ccs.add(new ColumnConfig<SpeciesTreeModel, Integer>(
+		ColumnConfig<SpeciesTreeModel, Integer> priO = new ColumnConfig<SpeciesTreeModel, Integer>(
 				speciesTreeModelProperties.nbPrivateOccurence(), 200,
-				"Private Occurrences"));
-		ccs.add(new ColumnConfig<SpeciesTreeModel, Integer>(
+				"Private Occurrences");
+		priO.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		priO.setCell(new AbstractCell<Integer>() {
+	        @Override
+	        public void render(com.google.gwt.cell.client.Cell.Context context, Integer value, SafeHtmlBuilder sb) {
+	        	String v = format.format(value) + space;
+	        	sb.appendHtmlConstant("<span>" + v + "</span>");
+	        }
+
+		});
+		ccs.add(priO);
+		ColumnConfig<SpeciesTreeModel, Integer> pubO = new ColumnConfig<SpeciesTreeModel, Integer>(
 				speciesTreeModelProperties.nbPublicOccurence(), 200,
-				"Public Occurrences"));
+				"Public Occurrences");
+		pubO.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		pubO.setCell(new AbstractCell<Integer>() {
+	        @Override
+	        public void render(com.google.gwt.cell.client.Cell.Context context, Integer value, SafeHtmlBuilder sb) {
+	        	String v = format.format(value) + space;
+	        	sb.appendHtmlConstant("<span>" + v + "</span>");
+	        }
+
+		});
+		ccs.add(pubO);
 		ColumnModel<SpeciesTreeModel> cm = new ColumnModel<SpeciesTreeModel>(
 				ccs);
 

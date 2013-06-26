@@ -366,7 +366,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		    		if(i==0) {
 		    			Taxonomy tax=new Taxonomy();
 		    			String val=nextLine[j].replaceAll("_", "");
-		    			if(val.equalsIgnoreCase("class"))
+		    			if(val.equalsIgnoreCase("class")||val.equalsIgnoreCase("taxonclass"))
 		    				val="Class_";
 		    			mapColonne.put(Integer.valueOf(j), val);
 		    		}else {

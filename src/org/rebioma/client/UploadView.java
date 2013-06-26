@@ -563,7 +563,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
     if (height <= 0) {
       height = 1;
     }
-    mainSp.setPixelSize(width, height);
+    mainSp.setPixelSize(width - 22, height - 10);
   }
 
   protected void updateChecksMap() {

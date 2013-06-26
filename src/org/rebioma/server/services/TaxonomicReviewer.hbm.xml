@@ -17,5 +17,11 @@
         <property name="taxonomicValue" type="string">
             <column name="taxonomicValue" not-null="true" />
         </property>
+        <property name="isMarine" type="java.lang.Boolean">
+            <column name="ismarine" />
+        </property>
+        <property name="isTerrestrial" type="java.lang.Boolean">
+            <column name="isterrestrial" />
+        </property>
     </class>
 </hibernate-mapping>

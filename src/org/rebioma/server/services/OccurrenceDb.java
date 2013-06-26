@@ -114,7 +114,7 @@ public interface OccurrenceDb {
    * @throws OccurrenceServiceException
    */
   public int assignReviewer(String userEmail, String taxoFieldName,
-      String taxoFieldValue) throws OccurrenceServiceException;
+      String taxoFieldValue, boolean isMarine, boolean isTerrestrial) throws OccurrenceServiceException;
 
   /**
    * Attaches a clean instance of {@link Occurrence} to the database.

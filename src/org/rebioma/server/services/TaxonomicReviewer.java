@@ -11,6 +11,8 @@ public class TaxonomicReviewer implements java.io.Serializable {
   private Integer userId;
   private String taxonomicField;
   private String taxonomicValue;
+  private boolean isMarine;
+  private boolean isTerrestrial;
 
   public TaxonomicReviewer() {
   }
@@ -22,7 +24,16 @@ public class TaxonomicReviewer implements java.io.Serializable {
     this.taxonomicValue = taxonomicValue;
   }
 
-  public Integer getId() {
+  public TaxonomicReviewer(Integer userId, String taxonomicField,
+		String taxonomicValue, boolean isMarine, boolean isTerrestrial) {
+	this.userId = userId;
+	this.taxonomicField = taxonomicField;
+	this.taxonomicValue = taxonomicValue;
+	this.isMarine = isMarine;
+	this.isTerrestrial = isTerrestrial;
+}
+
+public Integer getId() {
     return this.id;
   }
 
@@ -52,6 +63,22 @@ public class TaxonomicReviewer implements java.io.Serializable {
 
   public void setTaxonomicValue(String taxonomicValue) {
     this.taxonomicValue = taxonomicValue;
+  }
+
+  public boolean getIsMarine() {
+	  return isMarine;
+  }
+	
+  public void setIsMarine(boolean isMarine) {
+	  this.isMarine = isMarine;
+  }
+	
+  public boolean getIsTerrestrial() {
+	  return isTerrestrial;
+  }
+	
+  public void setIsTerrestrial(boolean isTerrestrial) {
+	  this.isTerrestrial = isTerrestrial;
   }
 
 }

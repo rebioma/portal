@@ -470,7 +470,7 @@ public class UserProfilesView extends ComponentView {
     if (pWidth < width) {
       pWidth = width;
     }
-
+    pWidth -= 20;
     if (pHeight < 0) {
       pHeight = height;
     }

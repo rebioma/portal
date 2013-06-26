@@ -266,7 +266,7 @@ public class SpeciesTreeModel implements Serializable{
 			return "AcceptedKingdom";
 		} else if ("Phylum".equalsIgnoreCase(level)) {
 			return "AcceptedPhylum";
-		} else if ("class".equalsIgnoreCase(level)
+		} else if ("taxon_class".equalsIgnoreCase(level)
 				|| "clazz".equalsIgnoreCase(level)) {
 			return "AcceptedClass";
 		} else if ("Order".equalsIgnoreCase(level)) {

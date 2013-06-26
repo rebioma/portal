@@ -17,8 +17,14 @@ package org.rebioma.server.services;
 
 import static org.hibernate.criterion.Example.create;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +32,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
+
+import java_cup.internal_error;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -51,6 +60,7 @@ import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
 import org.rebioma.server.services.QueryFilter.Operator;
 import org.rebioma.server.upload.Traitement;
+import org.rebioma.server.util.HibernateUtil;
 import org.rebioma.server.util.ManagedSession;
 import org.rebioma.server.util.RecordReviewUtil;
 import org.rebioma.server.util.StringUtil;
@@ -339,7 +349,30 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   }
 
   public static void main(String args[]) {
-    OccurrenceDb occurrenceDb = DBFactory.getOccurrenceDb();
+	  Scanner scan = null;
+	  int t = 0;
+	  int f = 0;
+	  int j = 1;
+	  String ids ="\n";
+	  try {
+		scan = new Scanner(new File("D:\\occurrenceidoc.log"));
+		while(scan.hasNext()){
+			int id = Integer.valueOf(scan.nextLine());
+			System.out.println(id);
+			if(new OccurrenceDbImpl().checkForReviewedChanged(id)){
+				t++;
+				ids+=id+",";
+			}
+			else f++;
+		}
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  System.out.println(t + " --"+j+"-- " + f + ids);
+	//System.out.println(new OccurrenceDbImpl().checkForReviewedChanged(115267));  
+	  
+    //OccurrenceDb occurrenceDb = DBFactory.getOccurrenceDb();
     /*OccurrenceQuery query = new OccurrenceQuery(0, OccurrenceQuery.UNLIMITED);
     try {
       for (Integer id : occurrenceDb.findOccurrenceIdsByQuery(query, (User) null)) {
@@ -349,8 +382,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }*/
-    Set<AttributeValue> attributeValues = new HashSet<OccurrenceDb.AttributeValue>();
-    occurrenceDb.findByAttributeValues(attributeValues);
+    //Set<AttributeValue> attributeValues = new HashSet<OccurrenceDb.AttributeValue>();
+    //occurrenceDb.findByAttributeValues(attributeValues);
   }
 
   UserDb userDb = DBFactory.getUserDb();
@@ -366,7 +399,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
    * @see org.rebioma.server.services.OccurrenceDb#assignReviewer(java.lang.String,
    *      java.lang.String, java.lang.String)
    */
-  public int assignReviewer(String userEmail, String taxoFieldName, String taxoFieldValue)
+  public int assignReviewer(String userEmail, String taxoFieldName, String taxoFieldValue, boolean isMarine, boolean isTerrestrial)
       throws OccurrenceServiceException {
     // Session session = HibernateUtil.getCurrentSession();
     // boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
@@ -379,7 +412,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         if (!taxonomicReviewerDb.isAssignmentExisted(user.getId(), attributeValue.getAttribute(),
             attributeValue.getValue())) {
           TaxonomicReviewer taxoReviewer = new TaxonomicReviewer(user.getId(),
-              attributeValue.getAttribute(), attributeValue.getValue());
+              attributeValue.getAttribute(), attributeValue.getValue(), isMarine, isTerrestrial);
           // persist the assignment to the database for future occurrence
           // references.
           taxoReviewer = taxonomicReviewerDb.save(taxoReviewer);
@@ -387,7 +420,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
           // taxonomic field and value pair
           // List<Occurrence> occurrences =
           // findByAttributeValue(attributeValue);
-          List<Integer> ids = findValidatedOccIdsByAttributeValue(attributeValue);
+          List<Integer> ids = findValidatedOccIdsByAttributeValue(attributeValue, isMarine, isTerrestrial);
           System.out.println("assigning reviewer to " + ids.size() + " matches occurrences");
           int idsCount = ids.size();
           Set<Integer> percentages = new HashSet<Integer>();
@@ -429,8 +462,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   public void attachClean(Occurrence instance) {
     log.debug("attaching clean Occurrence instance");
     try {
-      ManagedSession.createNewSessionAndTransaction().lock(instance, LockMode.NONE);
-      //HibernateUtil.getCurrentSession().lock(instance, LockMode.NONE);
+//      ManagedSession.createNewSessionAndTransaction().lock(instance, LockMode.NONE);
+      HibernateUtil.getCurrentSession().lock(instance, LockMode.NONE);
       log.debug("attach successful");
     } catch (RuntimeException re) {
       log.error("attach failed", re);
@@ -439,30 +472,54 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   }
 
   public void attachDirty(Occurrence instance) {
-    log.debug("attaching dirty Occurrence instance");
-    try {
-      //Session session = HibernateUtil.getCurrentSession();
-      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-      Session session = ManagedSession.createNewSessionAndTransaction();
-      instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
-      boolean newOccurrence = instance.getId() == null;
-      session.saveOrUpdate(instance);
-      if (newOccurrence) {
-        assignReviewRecords(instance);
-      }
-      log.debug("attach successful");
-      //if (isFirstTransaction) {
-      //  HibernateUtil.commitCurrentTransaction();
-      //}
-      ManagedSession.commitTransaction(session);
-    } catch (RuntimeException re) {
-      log.error("attach failed", re);
-      //HibernateUtil.rollbackTransaction();
-      throw re;
-    }
-  }
+	    log.debug("attaching dirty Occurrence instance");
+	    try {
+	      //Session session = HibernateUtil.getCurrentSession();
+	      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+	      Session session = ManagedSession.createNewSessionAndTransaction();
+	      instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
+	      boolean newOccurrence = instance.getId() == null;
+	      session.saveOrUpdate(instance);
+	      if (newOccurrence) {
+	        assignReviewRecords(instance);
+	      }
+	      log.debug("attach successful");
+	      //if (isFirstTransaction) {
+	      //  HibernateUtil.commitCurrentTransaction();
+	      //}
+	      ManagedSession.commitTransaction(session);
+	    } catch (RuntimeException re) {
+	      log.error("attach failed", re);
+	      //HibernateUtil.rollbackTransaction();
+	      throw re;
+	    }
+	  }
 
-  /**
+  	public void attachDirty(Occurrence instance, Session session) {
+	    log.debug("attaching dirty Occurrence instance");
+//	    try {
+	      //Session session = HibernateUtil.getCurrentSession();
+	      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+//	      Session session = ManagedSession.createNewSessionAndTransaction();
+	      instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
+	      boolean newOccurrence = instance.getId() == null;
+	      session.saveOrUpdate(instance);
+	      if (newOccurrence) {
+	        assignReviewRecords(instance);
+	      }
+	      log.debug("attach successful");
+	      //if (isFirstTransaction) {
+	      //  HibernateUtil.commitCurrentTransaction();
+	      //}
+//	      ManagedSession.commitTransaction(session);
+//	    } catch (RuntimeException re) {
+//	      log.error("attach failed", re);
+	      //HibernateUtil.rollbackTransaction();
+//	      throw re;
+//	    }
+	  }
+
+   /**
    * If an updated {@link Occurrence} contains vetted = true, make sure it is
    * validated otherwise set it back to false.
    */
@@ -561,9 +618,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 
   public boolean checkForReviewedChanged(int occurrenceId) {
     try {
-      //Session session = HibernateUtil.getCurrentSession();
-      //boolean isFirstSession = HibernateUtil.beginTransaction(session);
-      Session session = ManagedSession.createNewSessionAndTransaction();
+      Session session = HibernateUtil.getCurrentSession();
+      boolean isFirstSession = HibernateUtil.beginTransaction(session);
+//      Session session = ManagedSession.createNewSessionAndTransaction();
       Occurrence occ = findById(occurrenceId);
       Boolean oldReviewed = occ.getReviewed();
       Boolean newReviewed = RecordReviewUtil.isRecordReviewed(
@@ -586,17 +643,17 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       if (isChanged) {
         occ.setReviewed(newReviewed);
         attachClean(occ);
-        attachDirty(occ);
+        attachDirty(occ,session);
         // TODO: send user emails
         // User user = DBFactory.getUserDb().findById(occ.getOwner());
         // String subject = "";
         // EmailUtil.adminSendEmailTo(user.getEmail(), "", "");
       }
 
-      //if (isFirstSession) {
-      //  HibernateUtil.commitCurrentTransaction();
-      //}
-      ManagedSession.commitTransaction(session);
+      if (isFirstSession) {
+        HibernateUtil.commitCurrentTransaction();
+      }
+//      ManagedSession.commitTransaction(session);
       return isChanged;
     } catch (Exception e) {
       //HibernateUtil.rollbackTransaction();
@@ -1424,14 +1481,28 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     for (TaxonomicReviewer taxonomicReviewer : taxonomiKRB) {
       attributeValue.setAttribute(taxonomicReviewer.getTaxonomicField());
       attributeValue.setValue(taxonomicReviewer.getTaxonomicValue());
-      if (isTaxonomicMatch(attributeValue, occ)) {
+      if (isTaxonomicMatch(attributeValue, occ) && checkAcceptedspeciesLocation(taxonomicReviewer, occ.getAcceptedSpecies())) {
         RecordReview recordReview = new RecordReview(taxonomicReviewer.getUserId(), occ.getId(),
             null);
         recordReviewDb.save(recordReview);
       }
     }
   }
-
+  //{WD}
+  /**
+   * 
+   */
+  private boolean checkAcceptedspeciesLocation(TaxonomicReviewer trb, String acceptedSpecies){
+	Session session = ManagedSession.createNewSessionAndTransaction();
+	int isM = trb.getIsMarine()?1:0;
+	int isT = trb.getIsTerrestrial()?1:0;
+	Query query = session.createQuery("select id from Taxonomy t where t.acceptedSpecies "
+    		+ "='" + acceptedSpecies + "' and (t.isMarine = " + isM + " or t.isTerrestrial = " + isT + ")");
+    List<Integer> ids = query.list();
+    ManagedSession.commitTransaction(session);
+	return (ids!=null || ids.size()>0);
+	  
+  }
   /**
    * Create {@link RecordReview} for each of the occurrence that not yet assign
    * to user with user id = {@link TaxonomicReviewer#getUserId()}.
@@ -1690,7 +1761,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         criteria.setMaxResults(query.getLimit());
       }
       criteria.setProjection(null);
-      for (OrderKey orderKey : orderingMap) {
+      /*for (OrderKey orderKey : orderingMap) {
         String property = orderKey.getAttributeName();
         String occAttribute = getOccurrencePropertyName(property);
         if (orderKey.isAsc()) {
@@ -1700,7 +1771,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
           log.info("order by property " + occAttribute + " in descending order");
           criteria.addOrder(Order.desc(occAttribute));
         }
-      }
+      }*/
+      criteria.addOrder(Order.asc("id"));
       results = criteria.list();
       
       // filters.addAll(removedFilters);
@@ -1810,6 +1882,33 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     List<Integer> ids = query.list();
     ManagedSession.commitTransaction(session);
     return ids;
+  }
+  //{WD}
+  private List<Integer> findValidatedOccIdsByAttributeValue(AttributeValue attributeValue, boolean isMarrine, boolean isTerrestrial) {
+	    Session session = ManagedSession.createNewSessionAndTransaction();
+	    if(isMarrine&&isTerrestrial){
+	    	return findValidatedOccIdsByAttributeValue(attributeValue);
+	    }
+	    List<Integer> ids = new ArrayList<Integer>();
+	    int isM = isMarrine?1:0;
+	    int isT = isTerrestrial?1:0;
+	    Connection con = session.connection();
+	    Statement st;
+		try {
+			st = con.createStatement();
+			ResultSet rst = st.executeQuery("select o.id from Occurrence o left join taxonomy t on (o.acceptedspecies = t.acceptedspecies) where o."
+		        + attributeValue.getAttribute() + "='" + attributeValue.getValue()
+		        + "' and o.validated=true and (t.ismarine = " + isM + " or t.isterrestrial = " + isT + ")");
+			
+		    while(rst.next()) {
+				ids.add(new Integer(rst.getInt(1)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    ManagedSession.commitTransaction(session);
+	    return ids;
   }
 
   private Object[] getComplexCriterion(String values[], String fieldName, String operator) {

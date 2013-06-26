@@ -129,9 +129,10 @@ public class RecordReviewDbImpl implements RecordReviewDb {
       recordReview.setReviewedDate(new Date());
       session.update(recordReview);
       // List<RecordReview> recordReviews = getRecordReviewsByOcc(occurrenceId);
+      ManagedSession.commitTransaction(session);
       OccurrenceDb occurrenceDb = DBFactory.getOccurrenceDb();
       boolean isChanged = occurrenceDb.checkForReviewedChanged(occurrenceId);
-      ManagedSession.commitTransaction(session);
+      
       if (isChanged) {
         return recordReview;
       } else {
@@ -147,6 +148,36 @@ public class RecordReviewDbImpl implements RecordReviewDb {
       throw new RuntimeException(e.getMessage(), e);
     }
   }
+
+  public RecordReview reviewedRecord(int userId, int occurrenceId,
+	      boolean reviewed, Date date) {
+	    Session session = ManagedSession.createNewSessionAndTransaction();
+
+	    try {
+	      RecordReview recordReview = getRecordReview(userId, occurrenceId);
+	      recordReview.setReviewed(reviewed);
+	      recordReview.setReviewedDate(date);
+	      session.update(recordReview);
+	      // List<RecordReview> recordReviews = getRecordReviewsByOcc(occurrenceId);
+	      ManagedSession.commitTransaction(session);
+	      OccurrenceDb occurrenceDb = DBFactory.getOccurrenceDb();
+	      boolean isChanged = occurrenceDb.checkForReviewedChanged(occurrenceId);
+	      
+	      if (isChanged) {
+	        return recordReview;
+	      } else {
+	        return null;
+	      }
+	    } catch (RuntimeException re) {
+	      ManagedSession.rollbackTransaction(session);
+	      log.error("error :" + re.getMessage() + " on update(RecordReview)", re);
+	      throw re;
+	    } catch (Exception e) {
+	      ManagedSession.rollbackTransaction(session);
+	      log.error("error :" + e.getMessage() + " on update(RecordReview)", e);
+	      throw new RuntimeException(e.getMessage(), e);
+	    }
+	  }
 
   public RecordReview save(RecordReview recordReview) {
     Session session = ManagedSession.createNewSessionAndTransaction();

@@ -42,6 +42,7 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -382,7 +383,7 @@ public class ListView extends ComponentView implements
   /**
    * A {@link VerticalPanel} contains all the widgets of OccurreceListView
    */
-  private final VerticalPanel mainVp;
+  private final AbsolutePanel mainVp;
 
   /**
    * An {@link OccurrenceListener} that listens for a selected occurrence in
@@ -427,6 +428,7 @@ public class ListView extends ComponentView implements
   private final Map<Integer, Integer> currentSearchColOccIdsMap = new HashMap<Integer, Integer>();
   private String currentHeaders[] = null;
   private final ReviewerCommentPopup reviewerCommentPopup = new ReviewerCommentPopup();
+  private ScrollPanel scrollPanel;
 
   private ListView(View parent, OccurrenceQuery query,
       PageListener<Occurrence> pageListener, OccurrenceListener oListener) {
@@ -473,12 +475,15 @@ public class ListView extends ComponentView implements
     toolHp.add(actionTool);
     toolHp.add(pagerWidget);
     toolHp.setStylePrimaryName("Tool");
-    mainVp = new VerticalPanel();
+    mainVp = new AbsolutePanel();
     mainSp.setWidget(mainVp);
     initWidget(mainSp);
-    mainVp.setSpacing(0);
+    //mainVp.setSpacing(0);
     mainVp.add(toolHp);
-    mainVp.add(table);
+    scrollPanel = new ScrollPanel();
+    scrollPanel.add(table);
+    mainVp.add(scrollPanel);
+    //mainVp.add(table);
     mainVp.setStyleName(DEFAULT_STYLE);
     toolHp.setCellHorizontalAlignment(pagerWidget,
         HasHorizontalAlignment.ALIGN_RIGHT);
@@ -486,6 +491,7 @@ public class ListView extends ComponentView implements
         HasVerticalAlignment.ALIGN_MIDDLE);
     // mainVp.setCellWidth(table, "100%");
     mainVp.setWidth("100%");
+    
     applyToAllCb.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
         boolean isChecked = applyToAllCb.getValue();
@@ -696,7 +702,8 @@ public class ListView extends ComponentView implements
       height = 1;
     }
     int w = width -22;
-    mainSp.setPixelSize(w, height);
+    mainSp.setPixelSize(w, height - 10);
+    scrollPanel.setHeight((height)- 38 + "px");
   }
 
   private void addingReviewToolIfAllow(String token) {

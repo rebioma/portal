@@ -1359,7 +1359,7 @@ public class OccurrenceView extends ComponentView implements
 		if (height <= 0) {
 			height = 1;
 		}
-		mainSp.setPixelSize(w, height);
+		mainSp.setPixelSize(w, height-10);
 		if (activeViewInfo != null) {
 			getPopupView(activeViewInfo.getName()).reshow();
 		}

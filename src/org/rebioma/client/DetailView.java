@@ -2261,8 +2261,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		if (height <= 0) {
 			height = 1;
 		}
-		final int h = height;
-	    final int w = width -22;
+		final int h = height - 10;
+	    final int w = width - 22;
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
 			public void execute() {
@@ -2353,7 +2353,10 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	private void initTool() {
 		toolPanel.add(new HTML("&nbsp;&nbsp;"));
 		toolPanel.add(instruction);
-		toolPanel.add(occLinks);
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.add(occLinks);
+		scrollPanel.setWidth(Window.getClientWidth() - 700 + "px");
+		toolPanel.add(scrollPanel);
 
 		occLinks.setStyleName("OccurrenceLinks");
 		instruction.setWidth("250px");

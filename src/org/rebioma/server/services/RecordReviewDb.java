@@ -1,6 +1,7 @@
 package org.rebioma.server.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -26,6 +27,8 @@ public interface RecordReviewDb {
   List<RecordReview> getRecordReviewsByUser(int userId);
 
   RecordReview reviewedRecord(int userId, int occurrenceId, boolean reviewed);
+
+  RecordReview reviewedRecord(int userId, int occurrenceId, boolean reviewed, Date date);
 
   RecordReview save(RecordReview recordReview);
 

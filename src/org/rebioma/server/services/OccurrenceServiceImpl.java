@@ -409,7 +409,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
       if (recordReview.getReviewed() == null
           || !recordReview.getReviewed().equals(reviewed)) {
         recordReview = recordReviewDb
-            .reviewedRecord(user.getId(), id, reviewed);
+            .reviewedRecord(user.getId(), id, reviewed, date);
         count++;
         if (recordReview != null && !reviewed) {
           int ownerId = occurrenceDb.findById(id).getOwner();

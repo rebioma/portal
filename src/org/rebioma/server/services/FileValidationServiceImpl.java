@@ -89,10 +89,6 @@ public class FileValidationServiceImpl implements FileValidationService {
   // }
 
   public static void main(String args[]) throws IOException {
-    // if (true) {
-    // ((FileValidationServiceImpl) DBFactory.getFileValidationService())
-    // .loadTestOccurrence("csvFiles/occurrences.csv", 45);
-    // }
     if (args.length < 1) {
       System.out
           .println("FileValidationServiceImpl csvFileLocation [delimiter (default ,)] [is cleear old assignments (default false)] ");
@@ -107,7 +103,12 @@ public class FileValidationServiceImpl implements FileValidationService {
     if (args.length > 2) {
       isClearOldAssignments = Boolean.parseBoolean(args[2]);
     }
-
+    
+    /*
+	String fileLocation = "D:\\test.csv";
+	char delimiter = ';';
+	boolean isClearOldAssignments = false;
+	*/
     File file = new File(fileLocation);
     try {
       long startTime = System.currentTimeMillis();
@@ -163,6 +164,8 @@ public class FileValidationServiceImpl implements FileValidationService {
   private static final Logger log = Logger.getLogger(FileValidationServiceImpl.class);
   private static final String TAXO_FIELD = "field";
   private static final String TAXO_VALUE = "value";
+  private static final String IS_MARINE = "ismarine";
+  private static final String IS_TERRESTRIAL = "isterrestrial";
   
   public String proccessOccurrenceFile(File file, User loggedinUser, boolean showEmail,
       boolean isPublic, boolean isVettable, char delimiter, String userIdsCSV,Traitement traitement) throws IOException {
@@ -311,7 +314,9 @@ public class FileValidationServiceImpl implements FileValidationService {
         String userEmail = line[headerColMap.get(EMAIL)].trim();
         String taxoField = line[headerColMap.get(TAXO_FIELD)].trim();
         String taxoValue = line[headerColMap.get(TAXO_VALUE)].trim();
-        String missingEmail = userEmail.equals("") ? "email," : "";
+        boolean isMarine	= line[headerColMap.get(IS_MARINE)].trim().equals("1");
+        boolean isTerretrial= line[headerColMap.get(IS_TERRESTRIAL)].trim().equals("1");
+        String missingEmail	= userEmail.equals("") ? "email," : "";
         String missingTaxoField = taxoField.equals("") ? TAXO_FIELD + "," : "";
         String missingTaxoValue = taxoValue.equals("") ? TAXO_VALUE : "";
         if (!missingEmail.equals("") || !missingTaxoField.equals("")
@@ -339,7 +344,7 @@ public class FileValidationServiceImpl implements FileValidationService {
           taxoFieldValueMap.put(taxoField, taxoValues);
         }
         taxoValues.add(taxoValue);
-        int assignmentCount = occurrenceDb.assignReviewer(userEmail, taxoField, taxoValue);
+        int assignmentCount = occurrenceDb.assignReviewer(userEmail, taxoField, taxoValue, isMarine, isTerretrial);
         if (assignmentCount == 0) {
           errorMsgBuilder.append("no record assign for reviewer at line " + lineNumber
               + " because of assignment is already existed or " + userEmail
