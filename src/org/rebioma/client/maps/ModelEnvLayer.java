@@ -2,6 +2,7 @@ package org.rebioma.client.maps;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.maps.client.base.Point;
+import com.google.gwt.maps.client.base.Size;
 import com.google.gwt.maps.client.maptypes.TileUrlCallBack;
 
 public class ModelEnvLayer extends AscTileLayer {
@@ -16,6 +17,7 @@ public class ModelEnvLayer extends AscTileLayer {
 
   public ModelEnvLayer(String ascFilePath, double opacity) {
 	  super();
+	  this.imageMapTypeOptions.setTileSize(Size.newInstance(256, 256));
     this.imageMapTypeOptions.setOpacity(opacity);
     baseUrl = GWT.getModuleBaseURL() + "ascOverlay?f=" + ascFilePath;
     this.imageMapTypeOptions.setTileUrl(new TileUrlCallBack() {
@@ -24,8 +26,8 @@ public class ModelEnvLayer extends AscTileLayer {
 		public String getTileUrl(Point point,
 				int zoomLevel) {
 			String tileUrl = baseUrl;
-		    tileUrl += "&x=" + point.getX();
-		    tileUrl += "&y=" + point.getY();
+		    tileUrl += "&x=" + new Double(Math.rint(point.getX())).intValue();
+		    tileUrl += "&y=" +new Double(Math.rint(point.getY())).intValue();
 		    tileUrl += "&z=" + zoomLevel;
 		    return tileUrl;
 		}
