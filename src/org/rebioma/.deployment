@@ -1,5 +1,5 @@
-#Fri Apr 19 12:44:01 AST 2013
-war.name=latestTrunk.war
+#Thu Aug 29 19:31:58 AST 2013
+war.name=latestpg.war
 compiler.style=OBFUSCATED
 server.path=D\:\\admin\\Desktop
-compiler.memory.max=256m
+compiler.memory.max=128m
