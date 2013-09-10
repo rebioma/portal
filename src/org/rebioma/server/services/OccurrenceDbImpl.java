@@ -556,7 +556,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
           assignReviewRecords(instance);
         } else {
           //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(instance.getId());
-          List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(),rcdrv);        
+          List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
           for (RecordReview recordReview : recordReviews) {
             recordReview.setReviewed(null);
             recordReview.setReviewedDate(null);

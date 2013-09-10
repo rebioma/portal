@@ -8,10 +8,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -124,18 +122,6 @@ public class StartUp implements ServletContextListener {
     }
     
     public static void main(String[] args) {
-		Properties p = new Properties();
-		p.setProperty("test", "fanadramana");
-		File f = new File("fanadramana.properties");
-		try {
-			p.store(new FileOutputStream(f), "comments");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(f.getAbsolutePath());
+		
 	}
 }

@@ -721,214 +721,235 @@ text-decoration: none;
   font-weight: bold;
   font-size: 14px;
   color: blue;
-  background-color: #D6EAF3;
+  background-color: #ECE9D8/*#D6EAF3*/;
   width: 100%;
-  border-top: thin solid #A4A4A4;
+  border-top: thin solid white;
   border-right: 0px solid #A4A4A4;
-  border-left: thin solid #A4A4A4;
+  border-left: thin solid white;
 }
 
 .Table-TableWidget .header .checkbox {
-  width: 25px;
+  width: 24px;
+  border-right: 1px solid white;
 }
 
 .Table-TableWidget .header .id {
-  /*text-align: left;
+  /*text-align: left;*/
   font-weight: bold;
   font-size: 14px;
-  color: black;
+  color: black;/*
   background-color: #ECE9D8;
   width: 80px;
   border-right: thin solid #A4A4A4;
   border-left: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;*/
+  padding-right: 5px;
   background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
-  color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  border-right: 1px solid white;
+  /*color: #69939E;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 90px;
+  width: 89px;
 }
 
 .Table-TableWidget .header .accepted-species {
-  /*text-align: left;
+  /*text-align: left;*/
   font-weight: bold;
   font-size: 14px;
-  color: black;
+  color: black;/*
   background-color: #ECE9D8;
   width: 200px;
   white-space: nowrap;
   border-right: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;*/
+  padding-right: 5px;
   background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
+  border-right: 1px solid white;
+  /*
   color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 200px;
+  width: 199px;
 }
 
 .Table-TableWidget .header .public {
-  /*text-align: left;
+  /*text-align: left;*/
   font-weight: bold;
   font-size: 14px;
-  background-color: #ECE9D8;
-  color: black;
+  color: black;/*
   width: 60px;
   border-right: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;*/
-  
+  padding-right: 5px;
   background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
+  border-right: 1px solid white;
+  /*
   color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 50px;
+  width: 49px;
 }
 
 .Table-TableWidget .header .validated {
-  /*text-align: left;
+  /*text-align: left;*/
   font-weight: bold;
   font-size: 14px;
-  color: black;
-  background-color: #ECE9D8;
+  color: black;/*
   width: 80px;
   border-right: thin solid #A4A4A4;
   padding-left: 5px;
-  padding-right: 5px;*/
+  padding-right: 5px;
   background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
+  border-right: 1px solid white;
+  /*
   color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 60px;
+  width: 59px;
    
 }
 
 .Table-TableWidget .header .vetted {
-  /*text-align: left;
+  /*text-align: left;*/
   font-weight: bold;
   font-size: 14px;
-  color: black;
-  background-color: #ECE9D8;
+  color: black;/*
   width: 80px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
-  padding-right: 5px;*/
+  padding-right: 5px;
   background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
-  color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  border-right: 1px solid white;
+  /*color: #69939E;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 60px;
+  width: 64px;
 }
 
 .Table-TableWidget .header .owner-email {
-  /*text-align: left;
+  /*text-align: left;*/
   font-weight: bold;
   font-size: 14px;
-  color: black;
-  background-color: #ECE9D8;
+  color: black;/*
   width: 150px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
-  padding-right: 5px;*/
+  padding-right: 5px;
   background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
+  border-right: 1px solid white;
+  /*
   color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 200px;
+  width: 199px;
 
 }
 
 .Table-TableWidget .header .shared-users {
-  /*text-align: left;
-  font-weight: bold;
+  /*text-align: left;*/
   font-size: 14px;
   color: black;
-  background-color: #ECE9D8;
+  font-weight:bold;/*
   width: 200px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
-  padding-right: 5px;*/
-  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  padding-right: 5px;background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
+  border-right: 1px solid white;
+  /*
   color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 200px;
+  width: 199px;
 }
 
 .Table-TableWidget .header .validation-error {
-  /*text-align: left;
+  /*text-align: left;*/
   font-weight: bold;
   font-size: 14px;
-  color: black;
-  background-color: #ECE9D8;
+  color: black;/*
   white-space: nowrap;
   padding-left: 5px;
-  padding-right: 5px;*/
+  padding-right: 5px;
   background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
+  border-right: 0px solid white;
+  /*
   color: #69939E;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 12px;*/
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
   min-width:150px;
 }
 .Table-TableWidget .header .year-c {
-  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  /*background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
-  color: #69939E;
-  font-size: 12px;
+  border-right: 1px solid white;
+  color: black/*#69939E*/;
+  font-size: 14px;
   font-weight: bold;
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 90px;
+  width: 92px;
 }
 .Table-TableWidget .header .attributes {
-  background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  /*background: -moz-linear-gradient(left center , #E3F2F6 0px, #D6EAF3 14px, #D6EAF3 100%) repeat scroll 0 0 transparent;
+  */
+  background-color: #ECE9D8;
   border-left: 1px solid #BBD3DA;
-  color: #69939E;
-  font-size: 12px;
+  border-right: 1px solid white;
+  color: black/*#69939E*/;
+  font-size: 14px;
   font-weight: bold;
   overflow: hidden;
   padding: 5px 5px;
   text-overflow: ellipsis;
-  width: 90px;
+  width: 89px;
 }
 .Table-TableWidget .table {
   width: 100%;
-  border-left: thin solid #A4A4A4;
-  border-right: thin solid #A4A4A4;
+  border-left: thin solid white;
+  border-right: thin solid white;
   border-bottom: thin solid #A4A4A4;
 }
 
@@ -942,14 +963,14 @@ text-decoration: none;
 }
 
 .Table-TableWidget .table .row .col-checkbox {
-  width: 25px;
+  /*width: 25px;*/
   padding: 0px;
   margin: 0px;
   text-align: center;
 }
 
 .Table-TableWidget .table .row .col-id {
-  width: 90px;
+  width: 78px;
   text-align: left;
   font-size: 14px;
   text-decoration: none;
@@ -962,7 +983,7 @@ text-decoration: none;
 }  
 
 .Table-TableWidget .table .row .col-accepted-species {
-  width: 200px;
+  width: 188px;
   font-size: 14px;
   padding-left: 10px;
   padding-right: 0px;
@@ -970,28 +991,28 @@ text-decoration: none;
 }
 
 .Table-TableWidget .table .row .col-public {
-  width: 50px;
+  width: 38px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
 }
 
 .Table-TableWidget .table .row .col-validated {
-  width: 60px;
+  width: 48px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
 }
 
 .Table-TableWidget .table .row .col-vetted {
-  width: 60px;
+  width: 53px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
 }
 
 .Table-TableWidget .table .row .col-owner-email {
-  width: 200px;
+  width: 188px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
@@ -999,14 +1020,14 @@ text-decoration: none;
 }
 
 .Table-TableWidget .table .row .col-shared-users {
-  width: 200px;
+  width: 188px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
   overflow: hidden;
 }
 .Table-TableWidget .table .row .col-year-c {
-  width: 90px;
+  width: 81px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
@@ -1014,7 +1035,7 @@ text-decoration: none;
 }
 
 .Table-TableWidget .table .row .col-attributes {
-  width: 90px;
+  width: 78px;
   font-size: 14px;
   padding-left: 5px;
   padding-right: 5px;
@@ -1027,7 +1048,7 @@ text-decoration: none;
   font-size: 14px;
   color:black;
   background-color: #ECE9D8;
-  width: 85px;
+  width: 102px;
   border-right: thin solid #A4A4A4;
   border-left: thin solid #A4A4A4;
   padding-left: 5px;
@@ -1043,7 +1064,7 @@ text-decoration: none;
   font-size: 14px;
   background-color: #ECE9D8;
   color:black;
-  width: 85px;
+  width: 102px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
   padding-right: 5px;
@@ -1055,7 +1076,7 @@ text-decoration: none;
   font-size: 14px;
   background-color: #ECE9D8;
   color:black;
-  width: 150px;
+  width: 152px;
   border-right: thin solid #A4A4A4; 
   padding-left: 5px;
   padding-right: 5px;
@@ -1067,7 +1088,7 @@ text-decoration: none;
   font-size: 14px;
   color:black;
   background-color: #ECE9D8;
-  width: 100px;
+  width: 102px;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -1075,41 +1096,41 @@ text-decoration: none;
 
 .Table-TableWidget .table .row .col-first-name {
   font-size: 14px;
-  width: 85px;
-  padding-left: 10px;
-  padding-right: 5px;
+  width: 100px;
+  padding-left: 0px;
+  padding-right: 0px;
   overflow: hidden;
 }
 
 .Table-TableWidget .table .row .col-last-name {
   font-size: 14px;
-  width: 85px;
-  padding-left: 10px;
-  padding-right: 5px;
+  width: 100px;
+  padding-left: 0px;
+  padding-right: 0px;
   overflow: hidden;
 }
 
 .Table-TableWidget .table .row .col-email {
   font-size: 14px;
   width: 150px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
   overflow: hidden;
 }
 
 .Table-TableWidget .table .row .col-institution {
   font-size: 14px;
   width: 100px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
   overflow: hidden;
 }
 
 
 .Table-TableWidget .table .row .col-validation-error {
   font-size: 14px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
   min-width:150px;
 }
 
@@ -1710,7 +1731,7 @@ div#content {
 	cursor: default;
 	border-left: 1px dotted #BBD3DA;
     /*overflow: hidden;*/
-    padding: 5px 0px;
+    padding: 6px;
     margin: 0px;
     text-overflow: ellipsis;
     /*white-space: nowrap;*/
@@ -1722,5 +1743,8 @@ div#content {
     border-collapse: collapse;
     border-spacing: 0;
 }
-	
+.l-table {
+	border-right: solid 1px white;
+	border-left: solid 1px white;
+}
 	

@@ -89,26 +89,26 @@ public class FileValidationServiceImpl implements FileValidationService {
   // }
 
   public static void main(String args[]) throws IOException {
-    if (args.length < 1) {
-      System.out
-          .println("FileValidationServiceImpl csvFileLocation [delimiter (default ,)] [is cleear old assignments (default false)] ");
-      System.exit(1);
-    }
-    String fileLocation = args[0];
-    char delimiter = ',';
-    boolean isClearOldAssignments = false;
-    if (args.length > 1) {
-      delimiter = args[1].charAt(0);
-    }
-    if (args.length > 2) {
-      isClearOldAssignments = Boolean.parseBoolean(args[2]);
-    }
+//    if (args.length < 1) {
+//      System.out
+//          .println("FileValidationServiceImpl csvFileLocation [delimiter (default ,)] [is cleear old assignments (default false)] ");
+//      System.exit(1);
+//    }
+//    String fileLocation = args[0];
+//    char delimiter = ',';
+//    boolean isClearOldAssignments = false;
+//    if (args.length > 1) {
+//      delimiter = args[1].charAt(0);
+//    }
+//    if (args.length > 2) {
+//      isClearOldAssignments = Boolean.parseBoolean(args[2]);
+//    }
     
-    /*
-	String fileLocation = "D:\\test.csv";
+//    /*
+	String fileLocation = "D:\\ADMIN\\Documents\\travail\\csv\\trb_plantes_assignement - trb_terrestre_assignement.csv";
 	char delimiter = ';';
 	boolean isClearOldAssignments = false;
-	*/
+//	*/
     File file = new File(fileLocation);
     try {
       long startTime = System.currentTimeMillis();

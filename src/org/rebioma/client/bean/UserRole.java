@@ -1,11 +1,11 @@
 package org.rebioma.client.bean;
 
 public enum UserRole {
-  ADMIN("Admin"),
+  ADMIN("admin"),
 
-  REVIEWER("Reviewer"),
+  REVIEWER("reviewer"),
 
-  RESEARCHER("Researcher")
+  RESEARCHER("researcher")
 
   ;
   public static UserRole toUserRole(String role) {

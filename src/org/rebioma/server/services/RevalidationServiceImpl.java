@@ -202,8 +202,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			String genus = occurrence.getGenus();
 			String se = occurrence.getSpecificEpithet();
 			String nc = occurrence.getNomenclaturalCode();
+			String ir = occurrence.getInfraspecificRank();
 			String ie = occurrence.getInfraspecificEpithet();
-			Classification c = taxonomicAuthority.classify(genus, se, ie, nc); /*
+			Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 																				 * ie
 																				 * before
 																				 * nc
@@ -262,8 +263,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			String genus = occurrence.getGenus();
 			String se = occurrence.getSpecificEpithet();
 			String nc = occurrence.getNomenclaturalCode();
+			String ir = occurrence.getInfraspecificRank();
 			String ie = occurrence.getInfraspecificEpithet();
-			Classification c = taxonomicAuthority.classify(genus, se, ie, nc); /*
+			Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 																				 * ie
 																				 * before
 																				 * nc
@@ -350,8 +352,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				String genus = occurrence.getGenus();
 				String se = occurrence.getSpecificEpithet();
 				String nc = occurrence.getNomenclaturalCode();
+				String ir = occurrence.getInfraspecificRank();
 				String ie = occurrence.getInfraspecificEpithet();
-				Classification c = taxonomicAuthority.classify(genus, se, ie, nc); /*
+				Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 																					 * ie
 																					 * before
 																					 * nc
@@ -373,8 +376,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				String genus = occurrence.getGenus();
 				String se = occurrence.getSpecificEpithet();
 				String nc = occurrence.getNomenclaturalCode();
+				String ir = occurrence.getInfraspecificRank();
 				String ie = occurrence.getInfraspecificEpithet();
-				Classification c = taxonomicAuthority.classify(genus, se, ie, nc); /*
+				Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 																					 * ie
 																					 * before
 																					 * nc
@@ -774,8 +778,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						String genus = o.getGenus();
 						String se = o.getSpecificEpithet();
 						String nc = o.getNomenclaturalCode();
+						String ir = o.getInfraspecificRank();
 						String ie = o.getInfraspecificEpithet();
-						Classification c = taxonomicAuthority.classify(genus, se, ie, nc);
+						Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc);
 						String oComment = c.getNotes();
 						OccurrenceComments comment = new OccurrenceComments(o.getId(),ADMIN_ID, oComment);
 						comment.setDateCommented(date);

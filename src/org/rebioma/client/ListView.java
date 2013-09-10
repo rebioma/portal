@@ -481,6 +481,7 @@ public class ListView extends ComponentView implements
     //mainVp.setSpacing(0);
     mainVp.add(toolHp);
     scrollPanel = new ScrollPanel();
+    scrollPanel.setStyleName("l-table");
     scrollPanel.add(table);
     mainVp.add(scrollPanel);
     //mainVp.add(table);
@@ -703,7 +704,7 @@ public class ListView extends ComponentView implements
     }
     int w = width -22;
     mainSp.setPixelSize(w, height - 10);
-    scrollPanel.setHeight((height)- 38 + "px");
+    scrollPanel.setHeight((height)- 42 + "px");
   }
 
   private void addingReviewToolIfAllow(String token) {

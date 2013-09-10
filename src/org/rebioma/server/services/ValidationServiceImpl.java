@@ -396,8 +396,9 @@ public class ValidationServiceImpl implements ValidationService {
     String genus = occurrence.getGenus();
     String se = occurrence.getSpecificEpithet();
     String nc = occurrence.getNomenclaturalCode();
-    String ie = occurrence.getInfraspecificEpithet();
-    Classification c = taxonomicAuthority.classify(genus, se, ie, nc); /* ie before nc */
+    String ir = occurrence.getInfraspecificRank();
+	String ie = occurrence.getInfraspecificEpithet();
+    Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /* ie before nc */
     if (c != null) {
     String ok = c.getValidation();  
     	if (ok.equals("OK")){	
