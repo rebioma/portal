@@ -1,5 +1,7 @@
 package org.rebioma.client.bean;
 
+import java.util.List;
+
 //import java.util.Date;
 //import com.extjs.gxt.ui.client.data.BaseTreeModel;
 //import com.google.gwt.core.client.GWT;
@@ -15,6 +17,7 @@ public class CommentTable implements java.io.Serializable{
 	private String url;
 	private String email;
 	private String passwdHash;
+	private List<String> lOid;
 	
 	public static final String tdStyle = " style='color:#222;font-size:0.8em;border: 1px solid #CCCCCC;padding: 4px;text-align: left;'";
 	public static final String trStyle = " style='background: none repeat scroll 0 0 #EEEEEE;'";
@@ -24,6 +27,8 @@ public class CommentTable implements java.io.Serializable{
 	public final static String tdNoteStyle = " style='color:#476000;font-size:9pt;'";
 	public final static String spanStyle = " style='color:#222;font-size:9pt;'";
 	public static String pFrStyle = " style='margin:10px 0;color:#0000ff;font-size:9pt;'";
+	public static String objetDataOwner = "Notification about your data on the rebioma dataportal";
+	public static String objectNotification = "Notification from the rebioma dataportal";
 	
 	public String getUrl() {
 		return url;
@@ -98,19 +103,48 @@ public class CommentTable implements java.io.Serializable{
 		this.passwdHash = passwdHash;
 	}
 	
+	public CommentTable(List<String> lOid, String userComment,
+			String trb, String dateCommented, String url, String email, String passwdHash) {
+		super();
+		this.lOid = lOid;
+		this.userComment = userComment;
+		this.trb = trb;
+		this.dateCommented = dateCommented;
+		this.url = url;
+		this.email = email;
+		this.passwdHash = passwdHash;
+	}
+	
 	public String toTable(int rowNumber){
-		
-		return "<tr" + (rowNumber%2==1?trStyle:"") + ">" +
-					"<td " + tdStyle + ">" +
-						"<a href='" + this.url + "signinc="+this.passwdHash+"&emailc="+this.email+"&id=" + this.oid + "'>" +
-						this.oid + 
-						"</a>" +
-					"</td>" + 
+		if(url.contains("gwt.codesvr")){
+			url+="&";//dev mode
+		}else url+="?";//production mode
+		String rebiomaId = "";
+		if(this.lOid == null){
+			return "<tr" + (rowNumber%2==1?trStyle:"") + ">" +
+					"<td " + tdStyle + "><a href='" + this.url + "signinc="+this.passwdHash+"&emailc="+this.email+"&id=" + this.oid + "'>" +
+						this.oid +
+					"</a></td>" + 
 					"<td  " + tdStyle + ">" + this.acceptedSpecies + "</td>" +
-					"<td  " + tdStyle + ">" + this.userComment + "</td>" +
+					"<td  " + tdStyle + ">" + this.userComment.replace("\n", "<br/>") + "</td>" +
 					"<td  " + tdStyle + ">" + this.trb + "</td>" + 
 					"<td  " + tdStyle + ">" + this.dateCommented + "</td>" + 
 				"</tr>";
+		}else{
+			for(String ocid:this.lOid){
+				rebiomaId+="<a href='" + this.url + "signinc="+this.passwdHash+"&emailc="+this.email+"&id=" + ocid.split("=")[0] + "'>" +
+					ocid.split("=")[0] + 
+					"</a> - (" + ocid.split("=")[1] + ") - ";
+			}
+			return "<tr" + (rowNumber%2==1?trStyle:"") + ">" +
+					"<td " + tdStyle + ">" + rebiomaId +
+					"</td>" + 
+					"<td  " + tdStyle + ">" + this.userComment.replace("\n", "<br/>") + "</td>" +
+					"<td  " + tdStyle + ">" + this.trb + "</td>" + 
+					"<td  " + tdStyle + ">" + this.dateCommented + "</td>" + 
+				"</tr>";
+		}
+		
 	}
 
 }

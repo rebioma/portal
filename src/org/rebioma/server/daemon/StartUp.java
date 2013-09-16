@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
@@ -17,6 +18,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.rebioma.client.bean.LastComment;
 import org.rebioma.client.bean.OccurrenceCommentModel;
 import org.rebioma.server.services.MailingServiceImpl;
  
@@ -32,11 +34,11 @@ public class StartUp implements ServletContextListener {
 	
 	String fileName = "mailing.properties";
 	
-	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-d HH");
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	boolean start = false;
 	
-	long frequency[] = {7*1000*60*60*24, 14*1000*60*60*24, 30*1000*60*60*24}; 
+	long frequency[] = {(long)7*1000*60*60*24, (long)14*1000*60*60*24, (long)30*1000*60*60*24};  
 	
 	public Properties load(){
 		Properties p = new Properties();
@@ -84,6 +86,11 @@ public class StartUp implements ServletContextListener {
 			if((date2.getTime()-date1.getTime())>=diff){
 				List<OccurrenceCommentModel> occs = mail.getOccurrenceComments(date1, date2);
 				mail.sendComment(occs, url, date1, date2);
+				HashMap<String, List<LastComment>> map = mail.getLastComments(date1, date2);
+				mail.sendComment(map, url, date1, date2);
+				date2.setHours(date1.getHours());
+				date2.setMinutes(date1.getMinutes());
+				date2.setSeconds(date1.getSeconds());
 				p.setProperty("date", format.format(date2));
 				save(p);
 			}

@@ -114,11 +114,12 @@ public interface OccurrenceServiceAsync extends IsSerializable {
    * Asynchronously updates a set of {@link OccurrenceComments} objects.
    * 
    * @param sessionId the session id
+   * @param owner 
    * @param comments set of occurrence comment to be updated
    * @return number of record get updated
    */
   public Request updateComments(String sessionId,
-      Set<OccurrenceComments> comments, AsyncCallback<Integer> cb);
+      Integer owner, Set<OccurrenceComments> comments, boolean emailing, AsyncCallback<Integer> cb);
 
   void getMyReviewedOnRecords(String sid, Map<Integer, Integer> rowOccIdsMap,
       AsyncCallback<Map<Integer, Boolean>> callback);
@@ -126,9 +127,9 @@ public interface OccurrenceServiceAsync extends IsSerializable {
   void getOccurrenceReviewsOf(Integer occId, AsyncCallback<List<OccurrenceReview>> callback);
 
   void reviewRecords(String sid, Boolean reviewed, OccurrenceQuery query,
-      String comment, AsyncCallback<Integer> callback);
+      String comment, boolean notified, AsyncCallback<Integer> callback);
 
   void reviewRecords(String sid, Boolean reviewed, Set<Integer> occurrenceIds,
-      String comment, AsyncCallback<Integer> callback);
+      String comment, boolean notified, AsyncCallback<Integer> callback);
 
 }

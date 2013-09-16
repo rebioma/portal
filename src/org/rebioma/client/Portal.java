@@ -144,7 +144,7 @@ public class Portal implements EntryPoint {
 				else{
 					Cookies.setCookie(ApplicationView.SESSION_ID_NAME, result.getSessionId(),new Date(System
 				          .currentTimeMillis() + 86400000));
-					Window.Location.replace(GWT.getHostPageBaseURL()+dev+"#tab=occ&view=Detail&id="+id+"&p=false&page=1&asearch=Id = "+id+"&type=all pos reviewed");
+					Window.Location.replace(GWT.getHostPageBaseURL()+dev+"#tab=occ&view=Detail&id="+id+"&p=false&page=1&asearch=Id = "+id+"&type=all occurrences");
 				}
 			}
 		});

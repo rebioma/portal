@@ -430,7 +430,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			//tx.commit();			
   	    }catch (Exception re) {			
   	      if(session!=null)ManagedSession.rollbackTransaction(session);
-  	      throw re;
+  	     // throw re;
   	    } 
 		finally {			
 		     //if(session!=null) session.close();
@@ -578,12 +578,12 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			st = conn.createStatement();
 			rst = st.executeQuery(sql);
 			rst.next();
-			informations.add(new SpeciesTreeModelInfoItem("Authority " ,  rst.getString("authority")  ));
-			informations.add(new SpeciesTreeModelInfoItem("Status " ,  rst.getString("status")  ));
-			informations.add(new SpeciesTreeModelInfoItem("Synonymised taxa " ,  rst.getString("taxa")  ));
-			informations.add(new SpeciesTreeModelInfoItem("Source " ,  rst.getString("source")  ));
-			informations.add(new SpeciesTreeModelInfoItem("Vernecular name " ,  rst.getString("vernecularname")  ));
-			informations.add(new SpeciesTreeModelInfoItem("Reviewedby " ,  rst.getString("reviewedby")  ));
+			if(!checkIfInfosExists(informations,"Authority ",checkRedundancy(rst.getString("authority")))) informations.add(new SpeciesTreeModelInfoItem("Authority " ,  checkRedundancy(rst.getString("authority"))  ));
+			if(!checkIfInfosExists(informations,"status ",checkRedundancy(rst.getString("status")))) informations.add(new SpeciesTreeModelInfoItem("Status " ,  checkRedundancy(rst.getString("status")  )));
+			if(!checkIfInfosExists(informations,"Synonymised taxa ",checkRedundancy(rst.getString("taxa")))) informations.add(new SpeciesTreeModelInfoItem("Synonymised taxa " ,  checkRedundancy(rst.getString("taxa"))  ));
+			if(!checkIfInfosExists(informations,"source ",checkRedundancy(rst.getString("source")))) informations.add(new SpeciesTreeModelInfoItem("Source " ,  checkRedundancy(rst.getString("source") ) ));
+			if(!checkIfInfosExists(informations,"Vernecular name ",checkRedundancy(rst.getString("vernecularname")))) informations.add(new SpeciesTreeModelInfoItem("Vernecular name " ,  checkRedundancy(rst.getString("vernecularname") ) ));
+			if(!checkIfInfosExists(informations,"Reviewedby ",checkRedundancy(rst.getString("Reviewedby")))) informations.add(new SpeciesTreeModelInfoItem("Reviewedby " ,  checkRedundancy(rst.getString("reviewedby")  )));
 			//	informations.add(new SpeciesTreeModelInfoItem("Libele Information(" + rst. + ") " + (i + 1), "Valeur de l'information numéro " + (i + 1)));
 				
 			
@@ -617,6 +617,37 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		
 		
 		return informations;
+	}
+	private String checkRedundancy(String valeur){
+		return checkRedundancy(valeur,"-");
+	}
+	private String checkRedundancy(String valeur,String separateur){
+		if(valeur==null || valeur.isEmpty())
+			return valeur;
+		String[] tabs = valeur.split(separateur);
+		String ret=tabs[0];
+		for (String string : tabs) {
+			if(string.equalsIgnoreCase(tabs[0]))
+				continue;
+			else
+				ret+=string;
+		}
+		return ret;
+	}
+	/**
+	 * To avoid redundancy in information
+	 * @param informations
+	 * @param label
+	 * @param valeur
+	 * @return
+	 */
+	private boolean checkIfInfosExists(List<SpeciesTreeModelInfoItem> informations,String label,String valeur){
+		boolean ret=false;
+		for (SpeciesTreeModelInfoItem speciesTreeModelInfoItem : informations) {
+			if(speciesTreeModelInfoItem.getLabel().trim().equalsIgnoreCase(label.trim()) && speciesTreeModelInfoItem.getValue().equalsIgnoreCase(valeur))
+				return true;
+		}
+		return ret;
 	}
 	
 	private SpeciesStatisticModel getSpeciesStatisticModel(Connection conn,String sql ){

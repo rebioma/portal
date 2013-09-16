@@ -186,7 +186,7 @@ public class EmailUtil {
    */
   public static void main(String agrs[]) {
     try {
-      adminSendEmailTo2("wilfried@rebioma.net", "test", "test");
+      adminSendEmailTo("wilfried@rebioma.net", "test", "test");
       System.out.println("mail envoyé");
     } catch (EmailException e) {
       // TODO Auto-generated catch block

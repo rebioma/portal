@@ -8,11 +8,6 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public class OccurrenceCommentModel implements java.io.Serializable {
 	
-	/*public static final String UID = "uId";
-	public static final String FIRST_NAME = "firstName"; 
-	public static final String LAST_NAME = "lastName";
-	public static final String EMAIL = "email";
-	public static final String COMMENT_DETAIL = "userComment";*/
 	private int uId;
 	private String firstName;
 	private String lastName;

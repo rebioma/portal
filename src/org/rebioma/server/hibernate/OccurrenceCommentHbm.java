@@ -1,8 +1,10 @@
 package org.rebioma.server.hibernate;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,25 +14,28 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.bean.CommentTable;
+import org.rebioma.client.bean.LastComment;
+import org.rebioma.client.bean.LastComment;
 import org.rebioma.client.bean.OccurrenceCommentModel;
+import org.rebioma.client.bean.OccurrenceComments;
 import org.rebioma.client.bean.RecapTable;
-import org.rebioma.server.util.EmailUtil;
+import org.rebioma.client.bean.User;
 import org.rebioma.server.util.ManagedSession;
-
-import BCrypt.BCrypt;
 
 public class OccurrenceCommentHbm {
 	
 	private static Logger log = Logger.getLogger(OccurrenceCommentHbm.class);
-	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-d HH:mm:ss");
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static List<OccurrenceCommentModel> getCommentInfo(Date date1, Date date2){
 		String date = "";
 		
 		if(date1!=null && date2!=null)
-			date = "WHERE OccurrenceComments.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' ";
+			date = "OccurrenceComments.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' AND ";
 		
 		
 		String sql = "SELECT " +
@@ -44,7 +49,9 @@ public class OccurrenceCommentHbm {
 				"\"user\" " +
 				"INNER JOIN Occurrence ON (\"user\".id = Occurrence.Owner) " +
 				"INNER JOIN OccurrenceComments ON (Occurrence.ID = OccurrenceComments.oid) " +
+				"WHERE " +
 				date +
+				"usercomment <> '\n comment left when reviewed.' " +
 				"GROUP BY " +
 				"\"user\".first_name," +
 				"\"user\".last_name," +
@@ -71,11 +78,156 @@ public class OccurrenceCommentHbm {
 						rst.getString(2),
 						rst.getString(3),
 						rst.getString(4),
-						rst.getString(6)+" Comments",
+						rst.getString(6) + (rst.getInt(6)<=1?" comment":" comments"),
 						rst.getString(5)
 						);
 				
 				lists.add(temp);
+			}
+			ManagedSession.commitTransaction(sess);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return lists;
+	}
+	
+	public static List<OccurrenceCommentModel> getCommentInfo(HashMap<String, List<LastComment>> map, Date date1, Date date2){
+		
+		Iterator it = map.keySet().iterator();
+		List<OccurrenceCommentModel> lists = new ArrayList<OccurrenceCommentModel>();
+
+		while(it.hasNext()){
+			String uid = (String) it.next();
+			List<LastComment> list = map.get(uid);
+			User u = OccurrenceCommentHbm.getUserById(uid);
+			OccurrenceCommentModel temp = new OccurrenceCommentModel(
+					u.getId(),
+					u.getFirstName(),
+					u.getLastName(),
+					u.getEmail(),
+					list.size() + (list.size()<=1?" comment":" comments"),
+					u.getPasswordHash()
+					);
+			lists.add(temp);
+		}
+		return lists;
+	}
+	
+	
+	
+	public static User getUserById(String id){
+		Session session = ManagedSession.createNewSessionAndTransaction();
+	    try {
+	      User user = (User) session.createCriteria(User.class).add(
+	          Restrictions.eq("id", Integer.valueOf(id))).uniqueResult();
+	      ManagedSession.commitTransaction(session);
+	      return user;
+	    } catch (HibernateException e) {
+	      ManagedSession.rollbackTransaction(session);
+	      log.error("Error: " + e.getMessage(), e);
+	      return null;
+	    } 
+	}
+	
+	public static String creatCommentMail(List<LastComment> lComment, User trb, String url, Date date1, Date date2){
+		
+		String date = "";
+		if(date1!=null && date2!=null)
+			date = "occurrencecomments.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' AND ";
+		String mail = "";
+		int rowNumber = 0;
+		for(LastComment c: lComment){
+			try {
+				String sql = "SELECT " +
+						"occurrencecomments.oid, " +
+						"acceptedSpecies, " +
+						"occurrencecomments.usercomment, " +
+						"first_name, " +
+						"last_name, " +
+						"occurrencecomments.datecommented " +
+						"FROM " +
+						"occurrence, " +
+						"occurrencecomments, " +
+						"\"user\" " +
+						"WHERE " +
+						date +
+						"occurrence.id = occurrencecomments.oid AND " +
+						"occurrence.owner = \"user\".id " +
+						"and datecommented >= '" + c.getDate() + "' " +
+						"and usercomment <> '\n comment left when reviewed.' " +
+						"and '" + trb.getId() + "' <> uid and occurrencecomments.oid = " + c.getOid();
+				log.info(sql);
+				Session sess = null;
+				Connection conn =null;
+				Statement st=null;
+				ResultSet rst=null;
+				sess = ManagedSession.createNewSessionAndTransaction(); 
+				conn=sess.connection();
+				st = conn.createStatement();
+				rst = st.executeQuery(sql);
+				while(rst.next()) {
+					mail+= new CommentTable(
+						rst.getInt(1),
+						rst.getString(2),
+						rst.getString(3),
+						rst.getString(4) + " " + rst.getString(5),
+						format.format(rst.getDate(6)),
+						url,
+						trb.getEmail(),
+						trb.getPasswordHash()
+					).toTable(rowNumber);
+					rowNumber++;
+				}
+//				conn.commit();
+//				conn.close();
+//				sess.close();
+				ManagedSession.commitTransaction(sess);
+			} catch (Exception e) {
+				log.info(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return mail;
+	}
+	
+	public static HashMap<String, List<LastComment>> getLastComment(Date date1, Date date2){
+		String date = "";
+		
+		if(date1!=null && date2!=null)
+			date = "AND OccurrenceComments.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' ";
+		
+		
+		String sql = "select uid, oid, max(datecommented) " +
+				"from occurrencecomments " +
+				"where uid in (select distinct userid from taxonomic_reviewer) " +
+				"and usercomment <> '\n comment left when reviewed.' " +
+				date +
+				"group by uid,oid";
+		log.info(sql);
+		
+		HashMap<String, List<LastComment>> lists = new HashMap<String, List<LastComment>>();
+		try {
+			Session sess = null;
+			
+			Connection conn =null;
+			Statement st=null;
+			ResultSet rst=null;
+			sess= ManagedSession.createNewSessionAndTransaction();
+			conn=sess.connection();
+			
+			st = conn.createStatement();
+			rst = st.executeQuery(sql);
+			while(rst.next()) {
+				String uid = rst.getString(1);
+				int oid = rst.getInt(2);
+				Date dateC = rst.getDate(3);
+				List<LastComment> listD = lists.get(uid);
+				if(listD==null){
+					listD = new ArrayList<LastComment>();
+				}
+				listD.add(new LastComment(oid, dateC));
+				
+				lists.put(uid,listD);
 			}
 			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
@@ -118,6 +270,7 @@ public class OccurrenceCommentHbm {
 				"INNER JOIN Occurrence ON (OccurrenceComments.oid = Occurrence.ID) " +
 				"WHERE " +
 				date +
+				"usercomment <> '\n comment left when reviewed.' and " +
 				"(OccurrenceComments.dateCommented >= record_review.reviewed_date OR " +
 				"record_review.reviewed_date IS NULL) AND" +
 				"(record_review.reviewed = false OR " +
@@ -155,9 +308,9 @@ public class OccurrenceCommentHbm {
 				rowNumber++;
 				//System.out.println("########"+oc.getEmail());
 			}
-			conn.commit();
-			conn.close();
-			sess.close();
+//			conn.commit();
+//			conn.close();
+//			sess.close();
 			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
 			log.info(e.getMessage());
@@ -194,9 +347,9 @@ public class OccurrenceCommentHbm {
 				}
 				else if(!rst.getBoolean(1))validated[1] = rst.getString(3);
 			}
-			conn.commit();
-			conn.close();
-			sess.close();
+//			conn.commit();
+//			conn.close();
+//			sess.close();
 			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
 			log.info(e.getMessage());
@@ -256,9 +409,9 @@ public class OccurrenceCommentHbm {
 				}
 				hRecap.put(rst.getString(3), recap);
 			}
-			conn.commit();
-			conn.close();
-			sess.close();
+//			conn.commit();
+//			conn.close();
+//			sess.close();
 			ManagedSession.commitTransaction(sess);
 		} catch (Exception e) {
 			log.info(e.getMessage());
@@ -269,12 +422,14 @@ public class OccurrenceCommentHbm {
 	}
 	public static void main(String[] args) {
 		OccurrenceCommentHbm hbm = new OccurrenceCommentHbm();
-		HashMap<String, RecapTable> res = hbm.occurrenceTRBState(186);
-		Iterator it = res.keySet().iterator();
-		while(it.hasNext()){
-			RecapTable r = res.get(it.next());
-			System.out.println(r.getFirstName() + " " + r.getLastName() + " " + r.getQuestionable() + " " + r.getReliable());
-		}
+		HashMap<String, List<LastComment>> res = hbm.getLastComment(null, null);
+//		hbm.creatCommentMail(res, null, null, null);
+//		HashMap<String, RecapTable> res = hbm.occurrenceTRBState(186);
+//		Iterator it = res.keySet().iterator();
+//		while(it.hasNext()){
+//			RecapTable r = res.get(it.next());
+//			System.out.println(r.getFirstName() + " " + r.getLastName() + " " + r.getQuestionable() + " " + r.getReliable());
+//		}
 			
 	}
 }

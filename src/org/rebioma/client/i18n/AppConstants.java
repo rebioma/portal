@@ -3127,9 +3127,13 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @DefaultStringValue("2 Weeks")
   @Key("Weeks")
   String weeks();
-  /**
-   * Translated "Occurrence Comment".
-   * 
-   * @return translated "Occurrence Comments"
-   */
+  
+  @DefaultStringValue("Mailing system")
+  @Key("mailingSystem")
+  String mailingSystem();
+
+  @DefaultStringValue("Mailing  system")
+  @Key("mailing")
+  String mailing();
+  
 }

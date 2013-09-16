@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app>
 
-<!-- listener>
+<listener>
 	<listener-class>org.rebioma.server.daemon.AppStartUp</listener-class>
-</listener-->
+</listener>
   
 <context-param>
     <param-name>maxSize</param-name>

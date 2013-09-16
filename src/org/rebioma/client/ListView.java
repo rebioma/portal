@@ -222,6 +222,7 @@ public class ListView extends ComponentView implements
     private boolean isAll;
     private boolean reviewed;
     private Set<Integer> occurrenceIds;
+    private CheckBox checkBox;
 
     public ReviewerCommentPopup() {
 
@@ -232,10 +233,18 @@ public class ListView extends ComponentView implements
       if (mainContainer == null) {
         mainContainer = new VerticalPanel();
         commentArea = new TextArea();
+        checkBox = new CheckBox();
         submitButton = new Button(constants.Submit());
         header = new Label(constants.ReviewComment());
         mainContainer.add(commentArea);
         mainContainer.setSpacing(5);
+        HorizontalPanel hp = new HorizontalPanel();
+		Label ckLabel = new Label("Send notifications by email.");
+		hp.setSpacing(5);
+		checkBox.setValue(false);
+		hp.add(checkBox);
+		hp.add(ckLabel);
+		mainContainer.add(hp);
         mainContainer.add(submitButton);
         submitButton.addClickHandler(this);
       }
@@ -257,9 +266,9 @@ public class ListView extends ComponentView implements
           setEnable(false);
           comment += constants.commentLeftWhenReviewed();  
           if (isAll) {
-            reviewAllRecords(reviewed, comment);
+            reviewAllRecords(reviewed, comment, checkBox.getValue());
           } else {
-        	reviewRecords(occurrenceIds, reviewed, comment);
+        	reviewRecords(occurrenceIds, reviewed, comment, checkBox.getValue());
           }
         }
 
@@ -1201,10 +1210,10 @@ public class ListView extends ComponentView implements
     }
   }
 
-  private void reviewAllRecords(final Boolean reviewed, String comment) {
+  private void reviewAllRecords(final Boolean reviewed, String comment, boolean notified) {
     String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
     DataSwitch.get().reviewRecords(sessionId, reviewed, pagerWidget.getQuery(),
-        comment, new AsyncCallback<Integer>() {
+        comment, notified, new AsyncCallback<Integer>() {
           public void onFailure(Throwable caught) {
             Window.alert(caught.getMessage());
             DisplayPopup.getDefaultDisplayPopup().hide();
@@ -1221,9 +1230,9 @@ public class ListView extends ComponentView implements
   }
 
   private void reviewRecords(Set<Integer> occurrenceIds,
-      final Boolean reviewed, String comment) {
+      final Boolean reviewed, String comment, boolean notified) {
     String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
-    DataSwitch.get().reviewRecords(sessionId, reviewed, occurrenceIds, comment,
+    DataSwitch.get().reviewRecords(sessionId, reviewed, occurrenceIds, comment, notified,
         new AsyncCallback<Integer>() {
 
           public void onFailure(Throwable caught) {

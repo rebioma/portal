@@ -258,10 +258,11 @@ public class ApplicationView extends View implements ClickHandler {
   protected static final String USER_PROFILES = "Profiler";
   protected static final String USER_MANAGEMENT = "Management";
   protected static final String SPECIES_EXPLORER = "spec_expl";
+  protected static final String MAILING = "Mailing";
   
   
   protected static final String STATS_TAB = "stats_tab";
- // protected static final String MAIL_TAB = "mail_tab";
+//  protected static final String MAIL_TAB = "mail_tab";
   public static ApplicationView getApplication() {
     if (instance == null) {
       instance = new ApplicationView();
@@ -741,8 +742,11 @@ public class ApplicationView extends View implements ClickHandler {
       ViewInfo statViewInfo = viewInfos.get(STATS_TAB.toLowerCase());
       StatisticsTabView statsView = (StatisticsTabView) statViewInfo.getView();
       
-     /* ViewInfo mailViewInfo = viewInfos.get(MAIL_TAB.toLowerCase());
-      MailTabView mailView = (MailTabView) mailViewInfo.getView();*/
+//      ViewInfo mailViewInfo = viewInfos.get(MAIL_TAB.toLowerCase());
+//      MailTabView mailView = (MailTabView) mailViewInfo.getView();
+     
+      ViewInfo mailingInfo = viewInfos.get(MAILING.toLowerCase());
+//      EmailingTabView mailingView = (EmailingTabView)mailingInfo.getView();
       
       List<ViewInfo> currentTabs = new ArrayList<ViewInfo>();
       int selectedTabIndex = 0;
@@ -752,24 +756,29 @@ public class ApplicationView extends View implements ClickHandler {
         currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
         currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
         currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+        
         if (isSignedIn) {
           currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
           // currentTabs.add(viewInfos.get(arg0))
         }
         if (isAdmin()) {
           currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-         // currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
         }
       }else if(view.equalsIgnoreCase(SPECIES_EXPLORER)){
     	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
           currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
           currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
           if (isSignedIn) {
 	          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
 	          // currentTabs.add(viewInfos.get(arg0))
 	        }
 	        if (isAdmin()) {
 	          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+//	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+	          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
 	        }
           
       } else if (view.equalsIgnoreCase(SIGN_IN)) {
@@ -793,6 +802,8 @@ public class ApplicationView extends View implements ClickHandler {
         currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
         if (isAdmin()) {
           currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
         }
         selectedTabIndex = 1;
       } else if (view.equalsIgnoreCase(USER_MANAGEMENT)) {
@@ -801,6 +812,8 @@ public class ApplicationView extends View implements ClickHandler {
           //currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
           currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
           currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
           selectedTabIndex = 2;
         }
       }  else {
@@ -1056,15 +1069,21 @@ public class ApplicationView extends View implements ClickHandler {
     	.SpeciesExplorer(), SPECIES_EXPLORER);
     ViewInfo statsViewInfo = StatisticsTabView.init(this, constants
         	.Statistics(), STATS_TAB);
+//    ViewInfo mailViewInfo = MailTabView.init(this, constants
+//        	.mailingSystem(), MAIL_TAB);
+    ViewInfo mailingViewInfo = MailingTabView.init(this, constants
+        	.mailing(), MAILING);
     addViewInfo(occurrenveViewInfo);
     addViewInfo(speciesExplorerViewInfo);
     addViewInfo(statsViewInfo);
+//    addViewInfo(mailViewInfo);
     addViewInfo(forgetPassViewInfo);
     addViewInfo(signinViewInfo);
     addViewInfo(changePassViewInfo);
     addViewInfo(registerViewInfo);
     addViewInfo(editCollaboratorsViewInfo);
     addViewInfo(userManagementViewInfo);
+    addViewInfo(mailingViewInfo);
   }
 
   /**

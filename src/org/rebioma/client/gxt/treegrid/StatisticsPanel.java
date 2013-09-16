@@ -17,6 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -34,10 +35,10 @@ import com.sencha.gxt.widget.core.client.event.CellClickEvent.CellClickHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
+import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
@@ -47,7 +48,7 @@ public class StatisticsPanel  extends Widget{
 	.create(StatisticsService.class);
 	
 	//private ContentPanel root;
-	public static final int NUM_PAGE = 9;
+	public static final int NUM_PAGE = 25;
 	private int intStatisticType = 1;
 	private String BY_OWNER = "Numbers of occurrences per data manager (owner)";
 	private String BY_INSTITUTION = "Numbers of occurrences  per data provider institution";
@@ -72,6 +73,10 @@ public class StatisticsPanel  extends Widget{
 		
 		
 		List<ColumnConfig<StatisticModel, ?>> ccs = new LinkedList<ColumnConfig<StatisticModel, ?>>();
+		 IdentityValueProvider<StatisticModel> identity = new IdentityValueProvider<StatisticModel>();
+		  final CheckBoxSelectionModel<StatisticModel> selectionModel = new CheckBoxSelectionModel<StatisticModel>(identity);
+		
+		ccs.add(selectionModel.getColumn());
 		ccs.add(new ColumnConfig<StatisticModel, String>(
 				statisticsModelProperties.title(), 150, ""));
 		ccs.add(new ColumnConfig<StatisticModel, Integer>(
@@ -116,16 +121,18 @@ public class StatisticsPanel  extends Widget{
 	      TextButton save  = new TextButton("Go");
 	      toolBarHaut.add(type);
 	      toolBarHaut.add(save);
+	      TextButton details  = new TextButton("Show details");
+	     
+	      toolBarHaut.add(details);
 	  	
 	  	loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>>(proxy);
 	  	    loader.setRemoteSort(true);
 	  	    loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, StatisticModel, PagingLoadResult<StatisticModel>>(store));
 	  	    
-	  	  final PagingToolBar toolBar = new PagingToolBar(10);
+	  	  final PagingToolBar toolBar = new PagingToolBar(NUM_PAGE);
 	      toolBar.getElement().getStyle().setProperty("borderBottom", "none");
 	      toolBar.bind(loader);
 	       
-	      IdentityValueProvider<StatisticModel> identity = new IdentityValueProvider<StatisticModel>();
 	    
 	  	  /*ListStore<StatisticModel> store = new ListStore<StatisticModel>(statisticsModelProperties.key());
 		      store.addAll(StatisticModel.getstats());*/
@@ -153,11 +160,12 @@ public class StatisticsPanel  extends Widget{
 	        grid.setLoadMask(true);
 	        grid.setLoader(loader);
 	     
-	        
+	        grid.setSelectionModel(selectionModel);
+	        grid.getSelectionModel().setSelectionMode(SelectionMode.SIMPLE);
 	       cp = new FramedPanel();
 	        cp.setCollapsible(true);
 	        cp.setHeadingText(BY_OWNER);
-	        cp.setWidth("90%");
+	        cp.setWidth("100%");
 	        cp.setHeight(500);
 	        cp.addStyleName("margin-10");
 	        
@@ -180,7 +188,8 @@ public class StatisticsPanel  extends Widget{
 			
 			@Override
 			public void onCellClick(CellClickEvent event) {
-				grid.setSelectionModel(new GridSelectionModel<StatisticModel>());
+				int idx = event.getRowIndex();
+				grid.getSelectionModel().select(idx, false);
 				
 			}
 		});
@@ -212,7 +221,20 @@ public class StatisticsPanel  extends Widget{
 			@Override
 			public void onSelect(SelectEvent event) {
 				cp.setHeadingText(title);
-				loader.load(0,10);
+				loader.load(0,NUM_PAGE);
+			}
+		});
+	      //getAnotherStatistics
+	      details.addSelectHandler(new SelectHandler() {
+			
+			@Override
+			public void onSelect(SelectEvent event) {
+				StatisticModel model = grid.getSelectionModel().getSelectedItem();
+				
+				StatisticsDialog dialog = new StatisticsDialog(model);
+				dialog.show();
+				
+				
 				
 				
 				

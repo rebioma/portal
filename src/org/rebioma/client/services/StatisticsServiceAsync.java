@@ -21,4 +21,11 @@ public interface StatisticsServiceAsync {
 	void getStatisticsByType(int statisticsType,
 			AsyncCallback<List<StatisticModel>> callback);
 
+	void getStatisticDetails(StatisticModel statisticModel,
+			PagingLoadConfig config,
+			AsyncCallback<PagingLoadResult<StatisticModel>> callback);
+
+	void getStatisticDetails(int statisticsType, String libelle,
+			AsyncCallback<List<StatisticModel>> callback);
+
 }

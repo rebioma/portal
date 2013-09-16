@@ -22,7 +22,6 @@ public class MailTabView extends ComponentView implements ClickHandler{
 	private MailTabView(View parent){
 		super(parent, false);
 		
-		
 		mainVp = new VerticalPanel();
 		
 		mainVp.setSpacing(5);
@@ -33,8 +32,6 @@ public class MailTabView extends ComponentView implements ClickHandler{
 		mainVp.add(mailPanel);
 		
 		initWidget(mainVp);
-		
-		
 		
 	}
 	

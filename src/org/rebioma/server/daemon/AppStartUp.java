@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -19,28 +20,29 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.rebioma.client.bean.LastComment;
 import org.rebioma.client.bean.OccurrenceCommentModel;
 import org.rebioma.server.services.MailingServiceImpl;
  
 public class AppStartUp implements ServletContextListener {
 	
-	Timer t = new Timer();
+	private Timer t = new Timer();
 	
-	boolean initialized = false;
+	private boolean initialized = false;
 	
-	Logger log = Logger.getLogger(MailingServiceImpl.class);
+	private Logger log = Logger.getLogger(MailingServiceImpl.class);
 	
-	MailingServiceImpl mail = null;
+	private MailingServiceImpl mail = null;
 	
-	String fileName = "mailing.properties";
+	private static String fileName = "mailing.properties";
 	
-	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-d HH");
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
-	boolean start = false;
+	private boolean start = false;
 	
-	long frequency[] = {7*1000*60*60*24, 14*1000*60*60*24, 30*1000*60*60*24}; 
+	private long frequency[] = {(long)7*1000*60*60*24, (long)14*1000*60*60*24, (long)30*1000*60*60*24}; 
 	
-	public Properties load(){
+	static public Properties load(){
 		Properties p = new Properties();
 		File f = new File(fileName);
 		try {
@@ -55,7 +57,15 @@ public class AppStartUp implements ServletContextListener {
 	
 	public boolean save(Properties p){
 		try {
-			p.store(new FileOutputStream(fileName), "");
+//			System.out.println("##############" +
+//					p.getProperty("start", "false") + " " + 
+//					p.getProperty("url", "false") + " " + 
+//					p.getProperty("frequency", "2") + " " +
+//					p.getProperty("date", "1900-01-01 01:00:00")
+//			);
+//			FileOutputStream file = new FileOutputStream(new File(fileName));
+			p.store(new FileOutputStream(new File(fileName)), "mailing");
+//			file.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -64,9 +74,7 @@ public class AppStartUp implements ServletContextListener {
 	}
 	
 	public void checkProperties() {
-		Properties p = new Properties();
-		
-		p = load();
+		Properties p = load();
 
 		Date date1 = null,date2=new Date();
 		
@@ -74,6 +82,7 @@ public class AppStartUp implements ServletContextListener {
 			String frq = p.getProperty("frequency","2");
 			long diff = frequency[Integer.valueOf(frq)];
 			String url = p.getProperty("url","http://data.rebioma.net");
+			
 			try {
 				date1 = format.parse(p.getProperty("date",format.format(date2)));
 			} catch (ParseException e) {
@@ -86,6 +95,11 @@ public class AppStartUp implements ServletContextListener {
 			if((date2.getTime()-date1.getTime())>=diff){
 				List<OccurrenceCommentModel> occs = mail.getOccurrenceComments(date1, date2);
 				mail.sendComment(occs, url, date1, date2);
+				HashMap<String, List<LastComment>> map = mail.getLastComments(date1, date2);
+				mail.sendComment(map, url, date1, date2);
+				date2.setHours(date1.getHours());
+				date2.setMinutes(date1.getMinutes());
+				date2.setSeconds(date1.getSeconds());
 				p.setProperty("date", format.format(date2));
 				save(p);
 			}
@@ -124,18 +138,6 @@ public class AppStartUp implements ServletContextListener {
     }
     
     public static void main(String[] args) {
-		Properties p = new Properties();
-		p.setProperty("test", "fanadramana");
-		File f = new File("fanadramana.properties");
-		try {
-			p.store(new FileOutputStream(f), "comments");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(f.getAbsolutePath());
+		
 	}
 }

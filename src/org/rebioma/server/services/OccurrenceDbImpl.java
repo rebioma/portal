@@ -2104,7 +2104,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   	      occurrence.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
   	      occurrence.setReviewed(null);
   	      occurrence.setStability(isStable);
-  	      ManagedSession.commitTransaction(session);
+  	      session.saveOrUpdate(occurrence);
+//  	      ManagedSession.commitTransaction(session);
 	   
   	      assignReviewRecords(occurrence);
   	      log.debug("attach successful");

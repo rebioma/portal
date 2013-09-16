@@ -16,6 +16,7 @@
 package org.rebioma.server.services;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -244,7 +245,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
   }
 
   public int reviewRecords(String sid, Boolean reviewed, OccurrenceQuery query,
-      String comment) throws OccurrenceServiceException {
+      String comment, boolean notified) throws OccurrenceServiceException {
     try {
       if (reviewed == null) {
         throw new OccurrenceServiceException(
@@ -259,7 +260,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
         List<Integer> occurrenceIds = occurrenceDb.findOccurrenceIdsByQuery(
             query, user);
         if (occurrenceIds != null && !occurrenceIds.isEmpty()) {
-          return reviewRecords(user, reviewed, occurrenceIds, comment);
+          return reviewRecords(user, reviewed, occurrenceIds, comment, notified);
         }
       } else {
         throw new OccurrenceServiceException(
@@ -276,7 +277,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
   }
 
   public int reviewRecords(String sid, Boolean reviewed,
-      Set<Integer> occurrenceIds, String comment)
+      Set<Integer> occurrenceIds, String comment, boolean notified)
       throws OccurrenceServiceException {
     int count = 0;
     try {
@@ -288,7 +289,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
       User user = sessionService.getUserBySessionId(sid);
 
       if (user != null) {
-        count = reviewRecords(user, reviewed, occurrenceIds, comment);
+        count = reviewRecords(user, reviewed, occurrenceIds, comment, notified);
       } else {
         throw new OccurrenceServiceException(
             "Invalid request. No user associated with session id.");
@@ -364,9 +365,8 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
     }
   }
 
-  public int updateComments(String sessionId, Set<OccurrenceComments> comments)
+  public int updateComments(String sessionId, Integer owner, Set<OccurrenceComments> comments, boolean emailing)
       throws OccurrenceServiceException {
-  	//System.out.println("####### updateComments");
     try {
       int updatedCount = 0;
       User user = sessionService.getUserBySessionId(sessionId);
@@ -377,6 +377,10 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
         commentService.attachDirty(comments);
         updatedCount = comments.size();
         updateService.update();
+        if(emailing){
+        	new MailingServiceImpl()
+        		.notifyComment(comments, user, owner);
+        }
       } else {
         throw new OccurrenceServiceException(
             "Invalid request. No user associated with session id.");
@@ -398,24 +402,41 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
   }
 
   private int reviewRecords(User user, Boolean reviewed,
-      Collection<Integer> occurrenceIds, String comment) {
+      Collection<Integer> occurrenceIds, String comment, boolean notified) {
     int count = 0;
     log.info("reviewing records: " + occurrenceIds);
     Date date = new Date();
+    HashMap<Integer, List<String>> mailData = null;
+    if(notified)
+    	mailData = new HashMap<Integer, List<String>>();
     Map<Integer, Set<Integer>> ownerChangeToNegRecordReviewedMap = new HashMap<Integer, Set<Integer>>();
     for (Integer id : occurrenceIds) {
       RecordReview recordReview = recordReviewDb.getRecordReview(user.getId(),
           id);
+      Occurrence occ = occurrenceDb.findById(id);
+      int ownerId = occ.getOwner();
+      // {WD get info for the notification
+      if(mailData!=null){
+      	List<String> data = mailData.get(ownerId);
+      	if(data==null){
+      		data = new ArrayList<String>();
+      	}
+      	data.add(id + "=" + occ.getAcceptedSpecies());
+      	mailData.put(ownerId, data);
+      	System.out.println("##### sending mail");
+      }
+      // WD}
       if (recordReview.getReviewed() == null
           || !recordReview.getReviewed().equals(reviewed)) {
         recordReview = recordReviewDb
             .reviewedRecord(user.getId(), id, reviewed, date);
         count++;
+        
         if (recordReview != null && !reviewed) {
-          int ownerId = occurrenceDb.findById(id).getOwner();
-          Set<Integer> recordsReviewChanges = ownerChangeToNegRecordReviewedMap
+        	
+        	Set<Integer> recordsReviewChanges = ownerChangeToNegRecordReviewedMap
               .get(ownerId);
-          if (recordsReviewChanges == null) {
+        	if (recordsReviewChanges == null) {
             recordsReviewChanges = new HashSet<Integer>();
             ownerChangeToNegRecordReviewedMap
                 .put(ownerId, recordsReviewChanges);
@@ -433,7 +454,11 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
       }
 
     }
-
+    if(notified && comment != null && (comment.length()>=1)){
+    	System.out.println("##### sending mail");
+    	new MailingServiceImpl()
+    		.notifyComment(mailData, user , comment);
+    }
     /*if (!ownerChangeToNegRecordReviewedMap.isEmpty()) {
       log.info("sending email notification of reviewed changes to users");
       for (Integer userId : ownerChangeToNegRecordReviewedMap.keySet()) {

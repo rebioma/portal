@@ -597,17 +597,17 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
   }
 
   public void reviewRecords(String sid, Boolean reviewed,
-      OccurrenceQuery query, String comment, AsyncCallback<Integer> callback) {
+      OccurrenceQuery query, String comment, boolean notified, AsyncCallback<Integer> callback) {
     fireActivities();
-    occurrenceService.reviewRecords(sid, reviewed, query, comment, callback);
+    occurrenceService.reviewRecords(sid, reviewed, query, comment, notified, callback);
 
   }
 
   public void reviewRecords(String sid, Boolean reviewed,
-      Set<Integer> occurrenceIds, String comment,
+      Set<Integer> occurrenceIds, String comment, boolean notified,
       final AsyncCallback<Integer> callback) {
     fireActivities();
-    occurrenceService.reviewRecords(sid, reviewed, occurrenceIds, comment,
+    occurrenceService.reviewRecords(sid, reviewed, occurrenceIds, comment, notified,
         callback);
 
   }
@@ -716,9 +716,9 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
   }
 
   public Request updateComments(String sessionId,
-      Set<OccurrenceComments> comments, final AsyncCallback<Integer> cb) {
+      Integer owner, Set<OccurrenceComments> comments, boolean emailing, final AsyncCallback<Integer> cb) {
     fireActivities();
-    return occurrenceService.updateComments(sessionId, comments,
+    return occurrenceService.updateComments(sessionId, owner, comments, emailing, 
         new AsyncCallback<Integer>() {
           public void onFailure(Throwable caught) {
             cb.onFailure(caught);

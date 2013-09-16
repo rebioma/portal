@@ -2,8 +2,10 @@ package org.rebioma.server.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.rebioma.client.bean.RecordReview;
@@ -14,24 +16,40 @@ public class RecordReviewUtil {
   private static final Logger logger = Logger.getLogger(RecordReviewUtil.class);
   public static Properties devModeProp = new Properties();
   private static Boolean isDevMode = null;
+  
   static {
-    try {
-      InputStream inputStream = ClassLoader
-          .getSystemResourceAsStream("dev.properties");
-      if (inputStream != null) {
-        devModeProp.load(inputStream);
-      } else {
-        logger
-            .warn("can't find dev.properties file. Development mode is disable");
-      }
-      logger.info("successfully load dev.properties");
-    } catch (IOException e) {
-      logger
-          .warn(
-              "error while load dev.properties the system is operate in production mode",
-              e);
-    }
+	    ResourceBundle rb = ResourceBundle.getBundle("dev");
+
+	    if (rb != null) {
+	      Enumeration<String> keys = rb.getKeys();
+
+	      while (keys.hasMoreElements()) {
+	        String key = keys.nextElement();
+	        devModeProp.put(key, rb.getObject(key));
+	      }
+	    } else {
+	    	logger.warn(
+	              "error while load dev.properties the system is operate in production mode", null);
+	    }
   }
+//  static {
+//    try {
+//      InputStream inputStream = ClassLoader
+//          .getSystemResourceAsStream("dev.properties");
+//      if (inputStream != null) {
+//        devModeProp.load(inputStream);
+//      } else {
+//        logger
+//            .warn("can't find dev.properties file. Development mode is disable");
+//      }
+//      logger.info("successfully load dev.properties");
+//    } catch (IOException e) {
+//      logger
+//          .warn(
+//              "error while load dev.properties the system is operate in production mode",
+//              e);
+//    }
+//  }
 
   public static String getSentEmail(String email) {
     if (isDevMode()) {
@@ -42,9 +60,9 @@ public class RecordReviewUtil {
 
   public static boolean isDevMode() {
     if (isDevMode == null) {
-    	System.out.println(devModeProp.getProperty("devmode"));
+//    	System.out.println(devModeProp.getProperty("devmode"));
       isDevMode = Boolean.parseBoolean(devModeProp.getProperty("devmode",
-          "false"));
+          "false").trim());
       logger.info("the system is operating in "
           + (isDevMode ? "development" : "production") + " mode.");
     }
@@ -81,5 +99,8 @@ public class RecordReviewUtil {
   // logger.error("error while load dev.properties", e);
   // }
   // }
+  
+  public static void main(String[] args) {
+  }
 
 }

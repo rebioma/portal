@@ -60,6 +60,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -890,6 +891,12 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			VerticalPanel mainVp = new VerticalPanel();
 			mainVp.setStyleName(COMMENT_STYLE);
 			initWidget(mainVp);
+			HorizontalPanel hp0 = new HorizontalPanel();
+			final CheckBox ck = new CheckBox();
+			Label ckLabel = new Label("Send a copy of the comment by email.");
+			hp0.setSpacing(5);
+			hp0.add(ck);
+			hp0.add(ckLabel);
 			HorizontalPanel hp = new HorizontalPanel();
 			Label commentTitle = new Label(ADD_COMMENT_MESSAGE);
 			commentTitle.setStyleName(COMMENT_TITLE_STYLE);
@@ -903,6 +910,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			mainVp.setCellVerticalAlignment(commentTitle,
 					HasVerticalAlignment.ALIGN_TOP);
 			// mainVp.add(commentTitle);
+			mainVp.add(hp0);
 			mainVp.add(hp);
 			submit.setEnabled(false);
 			discard.setEnabled(false);
@@ -918,7 +926,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 					}
 					submit.setEnabled(commentUnsaved);
 					discard.setEnabled(commentUnsaved);
-
+					ck.setEnabled(commentUnsaved);
+					ck.setChecked(false);
 				}
 			});
 
@@ -929,13 +938,14 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 					}
 					String sessionId = Cookies
 							.getCookie(ApplicationView.SESSION_ID_NAME);
+					Integer owner = currentOccurrence.getOwner();
 					OccurrenceComments comment = new OccurrenceComments();
 					comment.setOccurrenceId(currentOccurrence.getId());
 					comment.setUserComment(commentText.getText());
 					comment.setDateCommented(new Date());
 					Set<OccurrenceComments> comments = new HashSet<OccurrenceComments>();
 					comments.add(comment);
-					DataSwitch.get().updateComments(sessionId, comments,
+					DataSwitch.get().updateComments(sessionId, owner, comments, ck.getValue(),
 							new AsyncCallback<Integer>() {
 								public void onFailure(Throwable caught) {
 									GWT.log(caught.getLocalizedMessage(),

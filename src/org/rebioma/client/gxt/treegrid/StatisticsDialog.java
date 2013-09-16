@@ -18,10 +18,18 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sencha.gxt.core.client.dom.Mask;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
+import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.FramedPanel;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 
 public class StatisticsDialog extends Dialog {
 
@@ -30,24 +38,29 @@ public class StatisticsDialog extends Dialog {
 
 	private final Grid<StatisticModel> grid;
 	
-	private final RpcProxy<StatisticModel, List<StatisticModel>> proxy;
+	private final RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>> proxy;
+	
+	 private  PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>> loader;
 	
 	private final Map<StatisticModel, List<StatisticModel>> clientCache = new HashMap<StatisticModel, List<StatisticModel>>();
 	
-	public StatisticsDialog() {
+	StatisticModel source;
+	public StatisticsDialog(StatisticModel source) {
 		super();
+		this.source = source;
+		
 		StatisticsModelProperties props = GWT
 				.create(StatisticsModelProperties.class);
-
-		proxy = new RpcProxy<StatisticModel, List<StatisticModel>>() {
-			@Override
-			public void load(StatisticModel source,
-					AsyncCallback<List<StatisticModel>> callback) {
-				statService.getStatisticDetails(source, callback);
-			}
-		};
+		proxy = new RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>>() {
+		      @Override
+		      public void load(PagingLoadConfig loadConfig, AsyncCallback<PagingLoadResult<StatisticModel>> callback) {
+		    	  statService.getStatisticDetails(StatisticsDialog.this.source,loadConfig,callback);
+		      }
+		    };
+		
 		ListStore<StatisticModel> store = new ListStore<StatisticModel>(
 				props.key());
+		
 
 		ColumnConfig<StatisticModel, String> titleCC = new ColumnConfig<StatisticModel, String>(
 				props.title(), 150, "");
@@ -75,62 +88,53 @@ public class StatisticsDialog extends Dialog {
 		l.add(questionableCC);
 		l.add(invalidatedCC);
 		l.add(allCC);
+		
+		loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>>(proxy);
+  	    loader.setRemoteSort(true);
+  	    loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, StatisticModel, PagingLoadResult<StatisticModel>>(store));
+  	  final PagingToolBar toolBar = new PagingToolBar(30);
+      toolBar.getElement().getStyle().setProperty("borderBottom", "none");
+      toolBar.bind(loader);
 		ColumnModel<StatisticModel> cm = new ColumnModel<StatisticModel>(l);
-		grid = new Grid<StatisticModel>(store, cm);
+		grid = new Grid<StatisticModel>(store, cm){
+	          @Override
+	          protected void onAfterFirstAttach() {
+	            super.onAfterFirstAttach();
+	            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+	              @Override
+	              public void execute() {
+	                loader.load();
+	              }
+	            });
+	          }
+	        };
 		grid.getView().setAutoExpandColumn(titleCC);
 		grid.getView().setStripeRows(true);
 		grid.getView().setColumnLines(true);
 		grid.setBorders(false);
 		grid.setAllowTextSelection(false);
 		grid.setLoadMask(true);
-//		grid.setLoader(loader);
+		grid.setLoader(loader);
 		grid.setColumnReordering(true);
 		grid.setStateful(true);
 		grid.setStateId("gridExample");
+		
+        
+		
+        
+		
+		VerticalLayoutContainer con = new VerticalLayoutContainer();
+		 con.add(grid, new VerticalLayoutData(1, 1));
+	        con.add(toolBar, new VerticalLayoutData(1, -1));
 		setBodyBorder(false);
-		setWidth(730);
-		setHeight(300);
+		con.setWidth(700);
+		con.setHeight(500);
 		setHideOnButtonClick(true);
 		setModal(true);
-		add(grid);
+		add(con);
 		// initWidget(complex);
 	}
 
-	public void showStatistic(final StatisticModel model) {
-		if(model != null){
-			/*String headingText = getHeadingText(model);
-			setHeadingText(headingText);*/
-			this.show();
-			if(clientCache.containsKey(model)){
-				List<StatisticModel> cacheDatas = clientCache.get(model);
-				grid.getStore().replaceAll(cacheDatas);
-			}else{
-				 Scheduler.get().scheduleDeferred(new ScheduledCommand(){
-					@Override
-					public void execute() {
-						grid.getStore().clear();
-						Mask.mask(grid.getElement(), "Loading...");
-					}
-				 });
-				proxy.load(model, new AsyncCallback<List<StatisticModel>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						hide();
-						Window.alert(caught.getLocalizedMessage());
-					}
-
-					@Override
-					public void onSuccess(List<StatisticModel> result) {
-						grid.setLoadMask(false);
-						grid.getStore().replaceAll(result);
-						clientCache.put(model, result);
-						Mask.unmask(grid.getElement());
-					}
-				});
-			}
-			
-		}
-	}
 	
 	/*private String getHeadingText(SpeciesTreeModel model){
 		return model.getLevel() + " " + model.getLabel();

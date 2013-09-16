@@ -146,11 +146,11 @@ public interface OccurrenceService extends RemoteService {
    */
   public Long lastUpdateInMilliseconds() throws OccurrenceServiceException;
 
-  public int reviewRecords(String sid, Boolean reviewed, OccurrenceQuery query, String comment)
+  public int reviewRecords(String sid, Boolean reviewed, OccurrenceQuery query, String comment, boolean notified)
       throws OccurrenceServiceException;
 
   public int reviewRecords(String sid, Boolean reviewed,
-      Set<Integer> occurrenceIds, String comment) throws OccurrenceServiceException;
+      Set<Integer> occurrenceIds, String comment, boolean noified) throws OccurrenceServiceException;
 
   /**
    * Updates a set of {@link Occurrence} objects.
@@ -174,16 +174,8 @@ public interface OccurrenceService extends RemoteService {
   public String update(String sessionId, Set<Occurrence> occurrences)
       throws OccurrenceServiceException;
 
-  /**
-   * Updates a set of {@link OccurrenceComments} objects.
-   * 
-   * @param sid the session id
-   * @param comments set of occurrence comments to update
-   * @return error message or null if no error
-   * @throws OccurrenceServiceException
-   */
-  public int updateComments(String sid, Set<OccurrenceComments> comments)
-      throws OccurrenceServiceException;
+  int updateComments(String sessionId, Integer owner,
+		Set<OccurrenceComments> comments, boolean emailing) throws OccurrenceServiceException;
 
   Map<Integer, Boolean> getMyReviewedOnRecords(String sid,
       Map<Integer, Integer> rowOccIdsMap) throws OccurrenceServiceException;
