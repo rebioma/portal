@@ -142,20 +142,24 @@ public class OccurrenceCommentHbm {
 						"occurrencecomments.oid, " +
 						"acceptedSpecies, " +
 						"occurrencecomments.usercomment, " +
-						"first_name, " +
-						"last_name, " +
-						"occurrencecomments.datecommented " +
+						"u1.first_name, " +
+						"u1.last_name, " +
+						"occurrencecomments.datecommented, " +
+						"u2.first_name, " +
+						"u2.last_name " +
 						"FROM " +
 						"occurrence, " +
 						"occurrencecomments, " +
-						"\"user\" " +
+						"\"user\" as u1, " +
+						"\"user\" as u2 " +
 						"WHERE " +
 						date +
 						"occurrence.id = occurrencecomments.oid AND " +
-						"occurrence.owner = \"user\".id " +
-						"and datecommented >= '" + c.getDate() + "' " +
-						"and usercomment <> '\n comment left when reviewed.' " +
-						"and '" + trb.getId() + "' <> uid and occurrencecomments.oid = " + c.getOid();
+						"occurrence.owner = u1.id AND " +
+						"datecommented >= '" + c.getDate() + "' AND " +
+						"occurrencecomments.uid = u2.id AND " +
+						"usercomment <> '\n comment left when reviewed.' AND " +
+						"'" + trb.getId() + "' <> uid and occurrencecomments.oid = " + c.getOid();
 				log.info(sql);
 				Session sess = null;
 				Connection conn =null;
@@ -166,7 +170,7 @@ public class OccurrenceCommentHbm {
 				st = conn.createStatement();
 				rst = st.executeQuery(sql);
 				while(rst.next()) {
-					mail+= new CommentTable(
+					CommentTable cTable = new CommentTable(
 						rst.getInt(1),
 						rst.getString(2),
 						rst.getString(3),
@@ -175,7 +179,9 @@ public class OccurrenceCommentHbm {
 						url,
 						trb.getEmail(),
 						trb.getPasswordHash()
-					).toTable(rowNumber);
+					);
+					cTable.setCommentedBy(rst.getString(7) + " " + rst.getString(8));
+					mail+= cTable.toTable(rowNumber);
 					rowNumber++;
 				}
 //				conn.commit();

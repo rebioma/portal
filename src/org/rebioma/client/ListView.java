@@ -239,7 +239,7 @@ public class ListView extends ComponentView implements
         mainContainer.add(commentArea);
         mainContainer.setSpacing(5);
         HorizontalPanel hp = new HorizontalPanel();
-		Label ckLabel = new Label("Send notifications by email.");
+		Label ckLabel = new Label("Do you want to send an email right now?");
 		hp.setSpacing(5);
 		checkBox.setValue(false);
 		hp.add(checkBox);

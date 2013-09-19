@@ -893,7 +893,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			initWidget(mainVp);
 			HorizontalPanel hp0 = new HorizontalPanel();
 			final CheckBox ck = new CheckBox();
-			Label ckLabel = new Label("Send a copy of the comment by email.");
+			Label ckLabel = new Label("Do you want to send an email right now?");
 			hp0.setSpacing(5);
 			hp0.add(ck);
 			hp0.add(ckLabel);

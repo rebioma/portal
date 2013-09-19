@@ -66,7 +66,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		String url = new StartUp().load().getProperty("url","http://data.rebioma.net");
 		User dataManager = OccurrenceCommentHbm.getUserById(owner+"");
 		
-		if(dataManager.getId() != user.getId()){
+		if(dataManager.getId() == user.getId()){
 			HashMap<String, List<OccurrenceComments>> trbMap = new HashMap<String, List<OccurrenceComments>>();
 			List<RecordReview> trb = null;
 			for(OccurrenceComments ocC : comments){
@@ -87,56 +87,13 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 					List<OccurrenceComments> ocTmp = trbMap.get(id);
 					User userTmp = OccurrenceCommentHbm.getUserById(id);
 					int rowNumber = 0;
-					String mail = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>" +
-							"<p" + CommentTable.pStyle + ">Dear " + userTmp.getFirstName() + " " + dataManager.getLastName() + ",</p>" +
-							"<p" + CommentTable.pFrStyle + ">Bonjour " + userTmp.getFirstName() + " " + dataManager.getLastName() + ",</p>";
-							
-					String tableIntro = "<p" + CommentTable.pStyle + ">There are new comments on the data recorded within the REBIOMA data portal that you had reviewed. These occurrences commented are listed in the table below.</p>" +
-							"<p" + CommentTable.pFrStyle + ">Il y a des nouvelles commentaires sur les donn&eacute;es enregistr&eacute;es dans le portail de donn&eacute;es de REBIOMA que vous aviez revis&eacute;. Ils sont list&eacute;s dans le tableau ci-dessous.</p>" +
-							"<p" + CommentTable.pStyle + ">" +
-								"<table>" +
-									"<tr>" +
-										"<td" + CommentTable.tdNoteStyle + "><i>Note: </i></td><td" + CommentTable.tdNoteStyle + "><i>if you want to see a comment on the data portal, click on the corresponding column Occurrence Id.</i></td>" +
-									"</tr><tr>" +
-									"</tr>" +
-								"</table>" +
-								"<table>" +
-								"<tr>" +
-									"<td" + CommentTable.tdNoteStyle + ">&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>Si vous voulez acceder &agrave; un commentaire sur le portail donn&eacute;es, cliquez sur la colonne Occurrence Id correspondante.</i></td>" +
-								"</tr><tr>" +
-								"</tr>" +
-							"</table>" +
-							"</p>";
-					
-					String thx = "<p" + CommentTable.pStyle + ">Thank you for your generous and important contributions to the REBIOMA data portal and the conservation of Madagascar's biodiversity." +
-							" Please contact us with any questions or comments.</p>" +
-							"<p" + CommentTable.pFrStyle + ">Nous vous remercions de votre pr&eacute;cieuse contribution  au portail de donn&eacute;es de REBIOMA et &agrave; la conservation de la biodiversit&eacute; de Madagascar." +
-							" N'h&eacute;sitez &agrave; nous contacter si vous avez des questions ou des remarques.</p>";
-					
-					String signature = "<p" + CommentTable.pStyle + ">Sincerely,<br/>" +
-							"Rebioma Portal Team<br/>" +
-							"Tel: +261 20 22 597 89<br/>" +
-							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+261 033 15 880 40<br/>" +
-							"Site:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;www.rebioma.net<br/>" +
-							"E-mail: rebiomawebportal@gmail.com</p>";
-					
-					String tableH = "<br /><table" + CommentTable.tableStyle + ">" +
-							"<tbody>" +
-							"	<tr>" +
-							"		<th style='" + CommentTable.thStyle + "width:90px'>" +
-							"			&nbsp;Occurrence Id" +
-							"		</th>" +
-							"		<th style='" + CommentTable.thStyle + "width:110px'>Species</th>" +
-							"		<th style='" + CommentTable.thStyle + "'>Comments</th>" +
-							"		<th style='" + CommentTable.thStyle + "width:120px'>DataOwner</th>" +
-							"		<th style='" + CommentTable.thStyle + "width:100px'>Date</th>" +
-							"	</tr>";
-					
-					String tableF = "</tbody></table>";
+					String userFullName = userTmp.getFirstName() + " " + userTmp.getLastName();
+
 					String tableR = "";
+					
 					for(OccurrenceComments oc: ocTmp){
 						Occurrence occurrence = DBFactory.getOccurrenceDb().findById(oc.getOccurrenceId());
-						tableR+= new CommentTable(
+						CommentTable cTable = new CommentTable(
 								oc.getOccurrenceId(),
 								occurrence.getAcceptedSpecies(),
 								oc.getUserComment(),
@@ -145,14 +102,18 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 								url,
 								userTmp.getEmail(),
 								userTmp.getPasswordHash()
-							).toTable(rowNumber);
+							);
+						cTable.setCommentedBy(user.getFirstName() + " " + user.getLastName());
+						tableR+= cTable.toTable(rowNumber);
 							rowNumber++;
 					}
-					mail += tableIntro + tableH + tableR + tableF + thx + signature + "</body></html>";
+					String mail = CommentTable.getMailToTRB();
+					mail = mail.replace("#{user}", userFullName);
+					mail = mail.replace("#{table}", tableR);
 //					PrintWriter p = new PrintWriter(new File("D:/mail_c_" + userTmp.getId() + ".html"));
 //					p.write(mail);
 //					p.close();
-					EmailUtil.adminSendEmailTo2(userTmp.getEmail(), CommentTable.objectNotification, mail);
+					EmailUtil.adminSendEmailTo2(userTmp.getEmail(), CommentTable.objectTRB, mail);
 				}
 			}catch(Exception e){
 			  e.printStackTrace();
@@ -161,56 +122,8 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		} else {
 		  try{
 			int rowNumber = 0;
-			String mail = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>" +
-					"<p" + CommentTable.pStyle + ">Dear " + dataManager.getFirstName() + " " + dataManager.getLastName() + ",</p>" +
-					"<p" + CommentTable.pFrStyle + ">Bonjour " + dataManager.getFirstName() + " " + dataManager.getLastName() + ",</p>";
-					
-				
-			String tableIntro = "<p" + CommentTable.pStyle + ">An expert from the REBIOMA Taxonomic Review Board TRB have reviewed  some of your data recorded within the REBIOMA data portal and have made comments about your occurrence data that are listed in the table below.</p>" +
-					"<p" + CommentTable.pFrStyle + ">Un expert membres du REBIOMA Taxonomic Review Board TRB ont valid&eacute; vos donn&eacute;es enregistr&eacute;es sur le portail de donn&eacute;es de REBIOMA et ont d&eacute;pos&eacute; des commentaires sur vos donn&eacute;es. Ils sont list&eacute;s dans le tableau ci-dessous.</p>" +
-					"<p" + CommentTable.pStyle + ">" +
-						"<table>" +
-							"<tr>" +
-								"<td" + CommentTable.tdNoteStyle + "><i>Note: </i></td><td" + CommentTable.tdNoteStyle + "><i>if you want to see a comment on the data portal, click on the corresponding column Occurrence Id.</i></td>" +
-							"</tr><tr>" +
-								"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>We encourage you to reply to the comments of experts in the data portal to resolve any questions.</i></td>" +
-							"</tr>" +
-						"</table>" +
-						"<table>" +
-						"<tr>" +
-							"<td" + CommentTable.tdNoteStyle + ">&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>Si vous voulez acceder &agrave; un commentaire sur le portail donn&eacute;es, cliquez sur la colonne Occurrence Id correspondante.</i></td>" +
-						"</tr><tr>" +
-							"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i> Nous vous encourageons de r&eacute;pondre aux commentaires des experts pour la fiabilit&eacute;s de vos donn&eacute;es.</i></td>" +
-						"</tr>" +
-					"</table>" +
-					"</p>";
+			String tableR 		= "";
 			
-			String thx = "<p" + CommentTable.pStyle + ">Thank you for your generous and important contributions to the REBIOMA data portal and the conservation of Madagascar's biodiversity." +
-					" Please contact us with any questions or comments.</p>" +
-					"<p" + CommentTable.pFrStyle + ">Nous vous remercions de votre pr&eacute;cieuse contribution  au portail de donn&eacute;es de REBIOMA et &agrave; la conservation de la biodiversit&eacute; de Madagascar." +
-					" N'h&eacute;sitez &agrave; nous contacter si vous avez des questions ou des remarques.</p>";
-			
-			String signature = "<p" + CommentTable.pStyle + ">Sincerely,<br/>" +
-					"Rebioma Portal Team<br/>" +
-					"Tel: +261 20 22 597 89<br/>" +
-					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+261 033 15 880 40<br/>" +
-					"Site:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;www.rebioma.net<br/>" +
-					"E-mail: rebiomawebportal@gmail.com</p>";
-			
-			String tableH = "<br /><table" + CommentTable.tableStyle + ">" +
-					"<tbody>" +
-					"	<tr>" +
-					"		<th style='" + CommentTable.thStyle + "width:90px'>" +
-					"			&nbsp;Occurrence Id" +
-					"		</th>" +
-					"		<th style='" + CommentTable.thStyle + "width:110px'>Species</th>" +
-					"		<th style='" + CommentTable.thStyle + "'>Comments</th>" +
-					"		<th style='" + CommentTable.thStyle + "width:120px'>Reviwers</th>" +
-					"		<th style='" + CommentTable.thStyle + "width:100px'>Date</th>" +
-					"	</tr>";
-			
-			String tableF = "</tbody></table>";
-			String tableR = "";
 			for(OccurrenceComments oc : comments){
 				Occurrence occurrence = DBFactory.getOccurrenceDb().findById(oc.getOccurrenceId());
 				tableR+= new CommentTable(
@@ -225,11 +138,14 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 				).toTable(rowNumber);
 				rowNumber++;
 			}
-			mail += tableIntro + tableH + tableR + tableF + thx + signature + "</body></html>";
+			String userFullName = dataManager.getFirstName() + " " + dataManager.getLastName();
+			String mail 		= CommentTable.getMailToDO();
+			mail = mail.replace("#{user}", userFullName);
+			mail = mail.replace("#{table}", tableR);
 //			PrintWriter p = new PrintWriter(new File("D:/mail_c.html"));
 //			p.write(mail);
 //			p.close();
-			EmailUtil.adminSendEmailTo2(dataManager.getEmail(), CommentTable.objectNotification, mail);
+			EmailUtil.adminSendEmailTo2(dataManager.getEmail(), CommentTable.objectDataOwner, mail);
 		  }catch(Exception e){
 			  e.printStackTrace();
 			  log.error("Sending occurrence comment error: " + e.getMessage());
@@ -248,69 +164,26 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 			List<String> list = mailData.get(id);
 			try {
 				int rowNumber = 0;
-				String mail = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>" +
-						"<p" + CommentTable.pStyle + ">Dear " + userTmp.getFirstName() + " " + userTmp.getLastName() + ",</p>" +
-						"<p" + CommentTable.pFrStyle + ">Bonjour " + userTmp.getFirstName() + " " + userTmp.getLastName() + ",</p>";
-							
-				String tableIntro = "<p" + CommentTable.pStyle + ">An expert from the REBIOMA Taxonomic Review Board TRB have reviewed  some of your data recorded within the REBIOMA data portal and have made comments about your occurrence data that are listed in the table below.</p>" +
-						"<p" + CommentTable.pFrStyle + ">Un expert membres du REBIOMA Taxonomic Review Board TRB ont valid&eacute; vos donn&eacute;es enregistr&eacute;es sur le portail de donn&eacute;es de REBIOMA et ont d&eacute;pos&eacute; des commentaires sur vos donn&eacute;es. Ils sont list&eacute;s dans le tableau ci-dessous.</p>" +
-						"<p" + CommentTable.pStyle + ">" +
-							"<table>" +
-								"<tr>" +
-									"<td" + CommentTable.tdNoteStyle + "><i>Note: </i></td><td" + CommentTable.tdNoteStyle + "><i>if you want to see a comment on the data portal, click on the corresponding column Occurrence Id.</i></td>" +
-								"</tr><tr>" +
-									"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>We encourage you to reply to the comments of experts in the data portal to resolve any questions.</i></td>" +
-								"</tr>" +
-							"</table>" +
-							"<table>" +
-							"<tr>" +
-								"<td" + CommentTable.tdNoteStyle + ">&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>Si vous voulez acceder &agrave; un commentaire sur le portail donn&eacute;es, cliquez sur la colonne Occurrence Id correspondante.</i></td>" +
-							"</tr><tr>" +
-								"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i> Nous vous encourageons de r&eacute;pondre aux commentaires des experts pour la fiabilit&eacute;s de vos donn&eacute;es.</i></td>" +
-							"</tr>" +
-						"</table>" +
-						"</p>";
-					
-					String thx = "<p" + CommentTable.pStyle + ">Thank you for your generous and important contributions to the REBIOMA data portal and the conservation of Madagascar's biodiversity." +
-							" Please contact us with any questions or comments.</p>" +
-							"<p" + CommentTable.pFrStyle + ">Nous vous remercions de votre pr&eacute;cieuse contribution  au portail de donn&eacute;es de REBIOMA et &agrave; la conservation de la biodiversit&eacute; de Madagascar." +
-							" N'h&eacute;sitez &agrave; nous contacter si vous avez des questions ou des remarques.</p>";
-					
-					String signature = "<p" + CommentTable.pStyle + ">Sincerely,<br/>" +
-							"Rebioma Portal Team<br/>" +
-							"Tel: +261 20 22 597 89<br/>" +
-							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+261 033 15 880 40<br/>" +
-							"Site:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;www.rebioma.net<br/>" +
-							"E-mail: rebiomawebportal@gmail.com</p>";
-					
-					String tableH = "<br /><table" + CommentTable.tableStyle + ">" +
-							"<tbody>" +
-							"	<tr>" +
-							"		<th style='" + CommentTable.thStyle + "width:200px'>" +
-							"			&nbsp;Occurrence Id (Species)</th>" +
-							"		<th style='" + CommentTable.thStyle + "'>Comments</th>" +
-							"		<th style='" + CommentTable.thStyle + "width:120px'>TRB</th>" +
-							"		<th style='" + CommentTable.thStyle + "width:100px'>Date</th>" +
-							"	</tr>";
-					
-					String tableF = "</tbody></table>";
-					String tableR = "";
-					tableR+= new CommentTable(
-						list,
-						comment,
-						userTmp.getFirstName() + " " + userTmp.getLastName(),
-						format.format(new Date()),
-						url,
-						userTmp.getEmail(),
-						userTmp.getPasswordHash()
-					).toTable(rowNumber);
-					rowNumber++;
-					mail += tableIntro + tableH + tableR + tableF + thx + signature + "</body></html>";
-//					PrintWriter p = new PrintWriter(new File("D:/mail_c_" + userTmp.getId() + ".html"));
-//					p.write(mail);
-//					p.close();
-					log.info("sendin mail...");
-					EmailUtil.adminSendEmailTo2(userTmp.getEmail(), CommentTable.objectNotification, mail);
+				String userFullName = userTmp.getFirstName() + " " + userTmp.getLastName();
+				String mail = CommentTable.getMailOnReviwing();
+				String tableR = "";
+				tableR+= new CommentTable(
+					list,
+					comment,
+					userTmp.getFirstName() + " " + userTmp.getLastName(),
+					format.format(new Date()),
+					url,
+					userTmp.getEmail(),
+					userTmp.getPasswordHash()
+				).toTable(rowNumber);
+				rowNumber++;
+				mail = mail.replace("#{user}", userFullName);
+				mail = mail.replace("#{table}", tableR);
+//				PrintWriter p = new PrintWriter(new File("D:/mail_c_" + userTmp.getId() + ".html"));
+//				p.write(mail);
+//				p.close();
+//				log.info("sendin mail...");
+				EmailUtil.adminSendEmailTo2(userTmp.getEmail(), CommentTable.objectTRB, mail);
 			}catch(Exception e){
 			  e.printStackTrace();
 			  log.error("Sending occurrence comment error: " + e.getMessage());
@@ -329,104 +202,46 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		int i=0;
 		for(OccurrenceCommentModel oc : list){
 			try{
-				String mail = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>" +
-						"<p" + CommentTable.pStyle + ">Dear " + oc.getFirstName() + " " + oc.getLastName() + ",</p>" +
-						"<p" + CommentTable.pFrStyle + ">Bonjour " + oc.getFirstName() + " " + oc.getLastName() + ",</p>" +
-						"<p" + CommentTable.pStyle + ">Experts from the REBIOMA Taxonomic Review Board TRB have reviewed  some of your data recorded within the REBIOMA data portal." +
-						" These are the results of the review process:</p>" +
-						"<p" + CommentTable.pFrStyle + ">Des experts membres du REBIOMA Taxonomic Review Board TRB ont valid&eacute; vos donn&eacute;es enregistr&eacute;es sur le portail de donn&eacute;es de REBIOMA." +
-						" Les r&eacute;sultats des validations sont les suivants:</p>";
-					
-				String trbTable = "<p" + CommentTable.pStyle + "><table" + CommentTable.tableStyle + "><tr>" +
-						"<th style='" + CommentTable.thStyle + "'>TRB</th>" +
-						"<th style='" + CommentTable.thStyle + "'>Reliable</th>" +
-						"<th style='" + CommentTable.thStyle + "'>Questionable</th>" +
-						//"<th style='" + CommentTable.thStyle + "'>Awaiting review</th>" +
-						"</tr>";
-						HashMap<String, RecapTable> hRecap = OccurrenceCommentHbm.occurrenceTRBState(oc.getUId());
-						Set<String> set = hRecap.keySet();
-						Iterator it = set.iterator();
-						int rowNum =0;
-						while(it.hasNext()){
-							RecapTable recap = hRecap.get(it.next());
-							trbTable += "<tr" + (rowNum%2==1?CommentTable.trStyle:"") + ">" +
-									"<td" + CommentTable.tdStyle + ">" + recap.getFirstName() + " " + recap.getLastName() + "</td>" +
-									"<td" + CommentTable.tdStyle + ">" + recap.getReliable() + "</td>" +
-									"<td" + CommentTable.tdStyle + ">" + recap.getQuestionable() + "</td>" +
-									//"<td" + CommentTable.tdStyle + ">" + recap.getaReview() + "</td>" +
-									"</tr>";
-							rowNum++;
-						}
-				trbTable += "</table></p>";
+				String mail = CommentTable.getCommentToSend();
+				String userFullName = oc.getFirstName() + " " + oc.getLastName();
+				String recapTable = "";
+				HashMap<String, RecapTable> hRecap = OccurrenceCommentHbm.occurrenceTRBState(oc.getUId());
+				Set<String> set = hRecap.keySet();
+				Iterator it = set.iterator();
+				int rowNum =0;
+				while(it.hasNext()){
+					RecapTable recap = hRecap.get(it.next());
+					recapTable += "<tr" + (rowNum%2==1?CommentTable.trStyle:"") + ">" +
+							"<td" + CommentTable.tdStyle + ">" + recap.getFirstName() + " " + recap.getLastName() + "</td>" +
+							"<td" + CommentTable.tdStyle + ">" + recap.getReliable() + "</td>" +
+							"<td" + CommentTable.tdStyle + ">" + recap.getQuestionable() + "</td>" +
+							//"<td" + CommentTable.tdStyle + ">" + recap.getaReview() + "</td>" +
+							"</tr>";
+					rowNum++;
+				}
 				
 				String validated[] = OccurrenceCommentHbm.occurrenceState(oc.getUId());
 				
-				trbTable += "<div" + CommentTable.pStyle + ">In total, you have:</div><div style='color:#0000ff'>En total, vous avez:</div>" +
-						"<p" + CommentTable.pStyle + "><ul>" +
-							"<li><span" + CommentTable.spanStyle + ">" + validated[0] + " validated occurrences as reliable (occurrences valid&eacute;es comme fiables),</span></li>" +
-							"<li><span" + CommentTable.spanStyle + ">" + validated[1] + " validated occurrences as questionable (occurrences valid&eacute;es comme questionnables),</span></li>" +
-							"<li><span" + CommentTable.spanStyle + ">" + validated[2] + " occurrences awaiting for review (occurrences en enttente de r&eacute;vision),</span></li>" +
-							"<li><span" + CommentTable.spanStyle + ">" + validated[3] + " invalidated (invalide pendant la validation automatique lors du t&eacute;l&eacute;chargement(upload) des donn&eacute;es).</span></li>" +
-						"</ul>" +
-						"</p>";
-
-				String tableIntro = "<p" + CommentTable.pStyle + ">Also, the reviewers have made comments about your occurrence data that are listed in the table below.</p>" +
-						"<p" + CommentTable.pFrStyle + ">Aussi, les validateurs ont d&eacute;pos&eacute; des commentaires sur vos donn&eacute;es. Ils sont list&eacute;s dans le tableau ci-dessous.</p>" +
-						"<p" + CommentTable.pStyle + ">" +
-							"<table>" +
-								"<tr>" +
-									"<td" + CommentTable.tdNoteStyle + "><i>Note: </i></td><td" + CommentTable.tdNoteStyle + "><i>if you want to see a comment on the data portal, click on the corresponding column Occurrence Id.</i></td>" +
-								"</tr><tr>" +
-									"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>We encourage you to reply to the comments of experts in the data portal to resolve any questions.</i></td>" +
-								"</tr>" +
-							"</table>" +
-							"<table>" +
-							"<tr>" +
-								"<td" + CommentTable.tdNoteStyle + ">&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>Si vous voulez acceder &agrave; un commentaire sur le portail donn&eacute;es, cliquez sur la colonne Occurrence Id correspondante.</i></td>" +
-							"</tr><tr>" +
-								"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i> Nous vous encourageons de r&eacute;pondre aux commentaires des experts pour la fiabilit&eacute;s de vos donn&eacute;es.</i></td>" +
-							"</tr>" +
-						"</table>" +
-						"</p>";
-				
-				String thx = "<p" + CommentTable.pStyle + ">Thank you for your generous and important contributions to the REBIOMA data portal and the conservation of Madagascar's biodiversity." +
-						" Please contact us with any questions or comments.</p>" +
-						"<p" + CommentTable.pFrStyle + ">Nous vous remercions de votre pr&eacute;cieuse contribution  au portail de donn&eacute;es de REBIOMA et &agrave; la conservation de la biodiversit&eacute; de Madagascar." +
-						" N'h&eacute;sitez &agrave; nous contacter si vous avez des questions ou des remarques.</p>";
-				
-				String signature = "<p" + CommentTable.pStyle + ">Sincerely,<br/>" +
-						"Rebioma Portal Team<br/>" +
-						"Tel: +261 20 22 597 89<br/>" +
-						"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+261 033 15 880 40<br/>" +
-						"Site:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;www.rebioma.net<br/>" +
-						"E-mail: rebiomawebportal@gmail.com</p>";
-				
-				String tableH = "<br /><table" + CommentTable.tableStyle + ">" +
-						"<tbody>" +
-						"	<tr>" +
-						"		<th style='" + CommentTable.thStyle + "width:90px'>" +
-						"			&nbsp;Occurrence Id" +
-						"		</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:110px'>Species</th>" +
-						"		<th style='" + CommentTable.thStyle + "'>Comments</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:120px'>Reviwers</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:100px'>Date</th>" +
-						"	</tr>";
-				
-				String tableF = "</tbody></table>";
-				
 				String tableR = OccurrenceCommentHbm.creatCommentMail(oc, url, date1, date2);
 				
-				if(tableR.length()<=1)
-					mail += trbTable + thx + signature;
-				else
-					mail += trbTable + thx + signature +tableH + tableR + tableF + "</body></html>";
+				mail = mail.replace("#{user}", userFullName);
+				mail = mail.replace("#{recapTable}", recapTable);
+				mail = mail.replace("#{reliable}", validated[0]);
+				mail = mail.replace("#{questionable}", validated[1]);
+				mail = mail.replace("#{awaiting}", validated[2]);
+				mail = mail.replace("#{invalidated}", validated[3]);
+				if(tableR.length()>1){
+					mail = mail.replace("<introEn/>", CommentTable.introDeatilTableEn);
+					mail = mail.replace("<introFr/>", CommentTable.introDeatilTableFr);
+					mail = mail.replace("<table/>", CommentTable.deatilTable);
+					mail = mail.replace("#{tableD}", tableR);
+				}
 
 //				PrintWriter p = new PrintWriter(new File("D:/mail_" + i + ".html"));
 //				p.write(mail);
 //				p.close();
 //				i++;
-				EmailUtil.adminSendEmailTo2(oc.getEmail(), CommentTable.objetDataOwner, mail);
+				EmailUtil.adminSendEmailTo2(oc.getEmail(), CommentTable.objectDataOwner, mail);
 			}catch(Exception e){
 				e.printStackTrace();
 				log.error("Sending occurrence comment error: " + e.getMessage());
@@ -449,62 +264,16 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 			List<LastComment> list = map.get(uid);
 			User u = OccurrenceCommentHbm.getUserById(uid);
 			try{
-				String head = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>" +
-					"<p" + CommentTable.pStyle + ">Dear " + u.getFirstName() + " " + u.getLastName() + ",</p>" +
-					"<p" + CommentTable.pFrStyle + ">Bonjour " + u.getFirstName() + " " + u.getLastName() + ",</p>" +
-					"<p" + CommentTable.pStyle + ">There are new comments on the data recorded within the REBIOMA data portal that you had reviewed." +
-					" These occurrences commented are listed in the table below.</p>" +
-					"<p" + CommentTable.pFrStyle + ">Il y a des nouvelles commentaires sur les donn&eacute;es enregistr&eacute;es dans le portail de donn&eacute;es de REBIOMA que vous aviez revis&eacute;." +
-					" Les occurrences comment&eacute;s sont list&eacute;s dans le tableau ci-dessous.</p>" +
-					"<p" + CommentTable.pStyle + ">" +
-						"<table>" +
-							"<tr>" +
-								"<td" + CommentTable.tdNoteStyle + "><i>Note: </i></td><td" + CommentTable.tdNoteStyle + "><i>if you want to see a comment on the data portal, click on the corresponding column Occurrence Id.</i></td>" +
-							"</tr><tr>" +
-								"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>We encourage you to reply to the comments of experts in the data portal to resolve any questions.</i></td>" +
-							"</tr>" +
-						"</table>" +
-						"<table>" +
-						"<tr>" +
-							"<td" + CommentTable.tdNoteStyle + ">&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>Si vous voulez acceder &agrave; un commentaire sur le portail donn&eacute;es, cliquez sur la colonne Occurrence Id correspondante.</i></td>" +
-						"</tr><tr>" +
-							"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i> Nous vous encourageons de r&eacute;pondre aux commentaires des experts pour la fiabilit&eacute;s de vos donn&eacute;es.</i></td>" +
-						"</tr>" +
-					"</table>" +
-					"</p>";
-			
-				String tableH = "<br /><table" + CommentTable.tableStyle + ">" +
-						"<tbody>" +
-						"	<tr>" +
-						"		<th style='" + CommentTable.thStyle + "width:90px'>" +
-						"			&nbsp;Occurrence Id" +
-						"		</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:110px'>Species</th>" +
-						"		<th style='" + CommentTable.thStyle + "'>Comments</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:120px'>Data manager</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:100px'>Date</th>" +
-						"	</tr>";
+				
+				String mail = CommentTable.getMailToTRB();
+				String userFullName = u.getFirstName() + " " + u.getLastName();
 				
 				String tableR = OccurrenceCommentHbm.creatCommentMail(list, u, url, date1, date2);
 				
-				String tableF = "</tbody></table>";
-				
-				String thx = "<p" + CommentTable.pStyle + ">Thank you for your generous and important contributions to the REBIOMA data portal and the conservation of Madagascar's biodiversity." +
-						" Please contact us with any questions or comments.</p>" +
-						"<p" + CommentTable.pFrStyle + ">Nous vous remercions de votre pr&eacute;cieuse contribution  au portail de donn&eacute;es de REBIOMA et &agrave; la conservation de la biodiversit&eacute; de Madagascar." +
-						" N'h&eacute;sitez &agrave; nous contacter si vous avez des questions ou des remarques.</p>";
-				
-				String signature = "<p" + CommentTable.pStyle + ">Sincerely,<br/>" +
-						"Rebioma Portal Team<br/>" +
-						"Tel: +261 20 22 597 89<br/>" +
-						"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+261 033 15 880 40<br/>" +
-						"Site:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;www.rebioma.net<br/>" +
-						"E-mail: rebiomawebportal@gmail.com</p>";
-				String mail = "";
 				if(tableR.length()<=1)
 					continue;
-				else
-					mail = head + tableH + tableR + tableF + thx +  signature + "</body></html>";
+				mail = mail.replace("#{user}", userFullName);
+				mail = mail.replace("#{table}", tableR);
 //				PrintWriter p = new PrintWriter(new File("d:/mail"+i+".html"));
 //				p.write(mail);i++;
 //				p.close();
@@ -539,62 +308,14 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 			List<LastComment> list = map.get(uid);
 			User u = OccurrenceCommentHbm.getUserById(uid);
 			try{
-				String head = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>" +
-					"<p" + CommentTable.pStyle + ">Dear " + u.getFirstName() + " " + u.getLastName() + ",</p>" +
-					"<p" + CommentTable.pFrStyle + ">Bonjour " + u.getFirstName() + " " + u.getLastName() + ",</p>" +
-					"<p" + CommentTable.pStyle + ">There are new comments on the data recorded within the REBIOMA data portal that you had reviewed." +
-					" These occurrences commented are listed in the table below.</p>" +
-					"<p" + CommentTable.pFrStyle + ">Il y a des nouvelles commentaires sur les donn&eacute;es enregistr&eacute;es dans le portail de donn&eacute;es de REBIOMA que vous aviez revis&eacute;." +
-					" Les occurrences comment&eacute;s sont list&eacute;s dans le tableau ci-dessous.</p>" +
-					"<p" + CommentTable.pStyle + ">" +
-						"<table>" +
-							"<tr>" +
-								"<td" + CommentTable.tdNoteStyle + "><i>Note: </i></td><td" + CommentTable.tdNoteStyle + "><i>if you want to see a comment on the data portal, click on the corresponding column Occurrence Id.</i></td>" +
-							"</tr><tr>" +
-								"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>We encourage you to reply to the comments of experts in the data portal to resolve any questions.</i></td>" +
-							"</tr>" +
-						"</table>" +
-						"<table>" +
-						"<tr>" +
-							"<td" + CommentTable.tdNoteStyle + ">&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i>Si vous voulez acceder &agrave; un commentaire sur le portail donn&eacute;es, cliquez sur la colonne Occurrence Id correspondante.</i></td>" +
-						"</tr><tr>" +
-							"<td>&nbsp;</td><td" + CommentTable.tdNoteStyle + "><i> Nous vous encourageons de r&eacute;pondre aux commentaires des experts pour la fiabilit&eacute;s de vos donn&eacute;es.</i></td>" +
-						"</tr>" +
-					"</table>" +
-					"</p>";
-			
-				String tableH = "<br /><table" + CommentTable.tableStyle + ">" +
-						"<tbody>" +
-						"	<tr>" +
-						"		<th style='" + CommentTable.thStyle + "width:90px'>" +
-						"			&nbsp;Occurrence Id" +
-						"		</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:110px'>Species</th>" +
-						"		<th style='" + CommentTable.thStyle + "'>Comments</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:120px'>Data manager</th>" +
-						"		<th style='" + CommentTable.thStyle + "width:100px'>Date</th>" +
-						"	</tr>";
-				
+				String mail = CommentTable.getMailToTRB();
+				String userFullName = u.getFirstName() + " " + u.getLastName();
 				String tableR = OccurrenceCommentHbm.creatCommentMail(list, u, url, date1, date2);
 				
-				String tableF = "</tbody></table>";
-				
-				String thx = "<p" + CommentTable.pStyle + ">Thank you for your generous and important contributions to the REBIOMA data portal and the conservation of Madagascar's biodiversity." +
-						" Please contact us with any questions or comments.</p>" +
-						"<p" + CommentTable.pFrStyle + ">Nous vous remercions de votre pr&eacute;cieuse contribution  au portail de donn&eacute;es de REBIOMA et &agrave; la conservation de la biodiversit&eacute; de Madagascar." +
-						" N'h&eacute;sitez &agrave; nous contacter si vous avez des questions ou des remarques.</p>";
-				
-				String signature = "<p" + CommentTable.pStyle + ">Sincerely,<br/>" +
-						"Rebioma Portal Team<br/>" +
-						"Tel: +261 20 22 597 89<br/>" +
-						"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+261 033 15 880 40<br/>" +
-						"Site:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;www.rebioma.net<br/>" +
-						"E-mail: rebiomawebportal@gmail.com</p>";
-				String mail = "";
 				if(tableR.length()<=1)
 					continue;
-				else
-					mail = head + tableH + tableR + tableF + thx +  signature + "</body></html>";
+				mail = mail.replace("#{user}", userFullName);
+				mail = mail.replace("#{table}", tableR);
 //				PrintWriter p = new PrintWriter(new File("d:/mail"+i+".html"));
 //				p.write(mail);i++;
 //				p.close();
