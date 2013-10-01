@@ -66,7 +66,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		String url = new StartUp().load().getProperty("url","http://data.rebioma.net");
 		User dataManager = OccurrenceCommentHbm.getUserById(owner+"");
 		
-		if(dataManager.getId() == user.getId()){
+		if(dataManager.getId().equals(user.getId())){
 			HashMap<String, List<OccurrenceComments>> trbMap = new HashMap<String, List<OccurrenceComments>>();
 			List<RecordReview> trb = null;
 			for(OccurrenceComments ocC : comments){
