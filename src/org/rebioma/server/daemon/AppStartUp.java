@@ -127,7 +127,7 @@ public class AppStartUp implements ServletContextListener {
 				checkProperties();
 				log.info("mailing check");
 			}
-		}, 2000, 30000);
+		}, 2000, 1000000);
        
     }
  

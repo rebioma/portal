@@ -8,16 +8,25 @@ import org.rebioma.client.bean.StatisticModel.StatisticsModelProperties;
 import org.rebioma.client.services.StatisticsService;
 import org.rebioma.client.services.StatisticsServiceAsync;
 
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style.SelectionMode;
+import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -55,11 +64,22 @@ public class StatisticsPanel  extends Widget{
 	private String BY_COLLECTION = "Numbers of occurrences per collection code";
 	private String BY_YEAR = "Numbers of occurrences per year collected";
 	String title = "";
-	 FramedPanel cp ;
-	 RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>> proxy;
-	 private  PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>> loader;
+	FramedPanel cp ;
+	RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>> proxy;
+	private  PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>> loader;
 	 
-	 
+	SimpleSafeHtmlCell formatNbr = new SimpleSafeHtmlCell<Integer>(new AbstractSafeHtmlRenderer<Integer>() {
+      @Override
+      public SafeHtml render(Integer object) {
+        return SafeHtmlUtils.fromString(NumberFormat.getDecimalFormat().format(object));
+      }
+    });
+	
+	interface ExampleTemplate extends XTemplates {
+	    @XTemplate("<div><span><b>{name}</b><br />{value}</span></div>")
+	    SafeHtml render(String name, String value);
+	  }
+	
 	public Widget statisticsPanel(String gridTitle) {
 		
 		proxy = new RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>>() {
@@ -77,22 +97,61 @@ public class StatisticsPanel  extends Widget{
 		  final CheckBoxSelectionModel<StatisticModel> selectionModel = new CheckBoxSelectionModel<StatisticModel>(identity);
 		
 		ccs.add(selectionModel.getColumn());
-		ccs.add(new ColumnConfig<StatisticModel, String>(
-				statisticsModelProperties.title(), 150, ""));
-		ccs.add(new ColumnConfig<StatisticModel, Integer>(
-				statisticsModelProperties.nbPrivateData(), 80, "Private data"));
-		ccs.add(new ColumnConfig<StatisticModel, Integer>(
-				statisticsModelProperties.nbPublicData(), 80,"Public data"));
-		ccs.add(new ColumnConfig<StatisticModel, Integer>(
-				statisticsModelProperties.nbReliable(), 80, "Reliable"));
-		ccs.add(new ColumnConfig<StatisticModel, Integer>(
-				statisticsModelProperties.nbAwaiting(), 100, "Awaiting review"));
-		ccs.add(new ColumnConfig<StatisticModel, Integer>(
-				statisticsModelProperties.nbQuestionable(), 80, "Questionable"));
-		ccs.add(new ColumnConfig<StatisticModel, Integer>(
-				statisticsModelProperties.nbInvalidated(), 80, "Invalidated"));
-		ccs.add(new ColumnConfig<StatisticModel, Integer>(
-				statisticsModelProperties.nbTotal(), 80, "All"));
+		ColumnConfig cTitle = new ColumnConfig<StatisticModel, String>(
+				statisticsModelProperties.title(), 150, "");
+		final ExampleTemplate template = GWT.create(ExampleTemplate.class);
+		cTitle.setCell(new AbstractCell<String>() {
+			 
+	        @Override
+	        public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
+	          sb.append(template.render(value.split(" - ")[0], value.split(" - ").length>1?value.replace(value.split(" - ")[0] + " - ", ""):""));
+	        }
+
+		});
+		
+		ColumnConfig cNbPrivateData = new ColumnConfig<StatisticModel, Integer>(
+				statisticsModelProperties.nbPrivateData(), 80, "Private data");
+		cNbPrivateData.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbPrivateData.setCell(formatNbr);
+		
+		ColumnConfig cNbPublicData = new ColumnConfig<StatisticModel, Integer>(
+				statisticsModelProperties.nbPublicData(), 80,"Public data");
+		cNbPublicData.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbPublicData.setCell(formatNbr);
+		
+		ColumnConfig cNbReliable = new ColumnConfig<StatisticModel, Integer>(
+				statisticsModelProperties.nbReliable(), 80, "Reliable");
+		cNbReliable.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbReliable.setCell(formatNbr);
+		
+		ColumnConfig cNbAwaiting = new ColumnConfig<StatisticModel, Integer>(
+			statisticsModelProperties.nbAwaiting(), 100, "Awaiting review");
+		cNbAwaiting.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbAwaiting.setCell(formatNbr);
+		
+		ColumnConfig cNbQuestionable = new ColumnConfig<StatisticModel, Integer>(
+				statisticsModelProperties.nbQuestionable(), 80, "Questionable");
+		cNbQuestionable.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbQuestionable.setCell(formatNbr);
+		
+		ColumnConfig cNbInvalidated = new ColumnConfig<StatisticModel, Integer>(
+			statisticsModelProperties.nbInvalidated(), 80, "Invalidated");
+		cNbInvalidated.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbInvalidated.setCell(formatNbr);
+	
+		ColumnConfig cNbTotal = new ColumnConfig<StatisticModel, Integer>(
+				statisticsModelProperties.nbTotal(), 80, "All");
+		cNbTotal.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbTotal.setCell(formatNbr);
+
+		ccs.add(cTitle);
+		ccs.add(cNbPrivateData);	
+		ccs.add(cNbPublicData);
+		ccs.add(cNbReliable);
+		ccs.add(cNbAwaiting);
+		ccs.add(cNbQuestionable);		
+		ccs.add(cNbInvalidated);
+		ccs.add(cNbTotal);
 		
 		ColumnModel<StatisticModel> cm = new ColumnModel<StatisticModel>(
 				ccs);

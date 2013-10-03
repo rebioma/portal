@@ -89,7 +89,16 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.util.Margins;
+import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.TabItemConfig;
+import //com.google.gwt.user.client.ui.TabPanel;
+com.sencha.gxt.widget.core.client.TabPanel;
+import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
+import com.sencha.gxt.widget.core.client.container.MarginData;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -101,7 +110,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class MapView extends ComponentView implements CheckedSelectionListener,
     DataRequestListener, PageClickListener, PageListener<Occurrence>,
-    TileLayerCallback, ItemSelectionListener, SelectionHandler<Integer>, OccurrencePageSizeChangeHandler, GeocoderRequestHandler {
+    TileLayerCallback, ItemSelectionListener, SelectionHandler<Widget>, OccurrencePageSizeChangeHandler, GeocoderRequestHandler {
 
   /**
    * Manage history states of map View.
@@ -718,12 +727,15 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
   private boolean isInitializing = true;
   private OccurrenceSummaryContent summaryContent = null;
-  private final HorizontalSplitPanel hsp;
+//  private final HorizontalSplitPanel hsp;
+  private final BorderLayoutContainer con;
   private final ModelSearch modelSearch;
   private final TabPanel leftTab;
+  private final ContentPanel leftTabPanel;
+  private final ContentPanel mapPanel;
   private boolean switched = false;
   private int currentSelectedTab = 0;
-
+  private Widget currentTab = null; 
   /**
    * Creates a new map view. The map view is intended to be part of a composite
    * view which displays a page of occurrences on a map or in a list.
@@ -766,13 +778,48 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     geocoder = controlsGroup.getGeocoder();
     initMap();
     modelSearch = new ModelSearch();
+    
     leftTab = new TabPanel();
-    leftTab.add(markerList, constants.MarkerResult());
-    leftTab.add(modelSearch, constants.ModelSearch()); // Add Model Tab
+    TabItemConfig markerTb = new TabItemConfig(constants.MarkerResult());
+    TabItemConfig modelTb = new TabItemConfig(constants.ModelSearch());
+    ScrollPanel mrspanel = new ScrollPanel(markerList);
+    ScrollPanel mdspanel = new ScrollPanel(modelSearch);
+//    mrspanel.add(markerList);
+//    mdspanel.add(modelSearch);
+    currentTab = mrspanel;
+    leftTab.add(mrspanel, markerTb);
+    leftTab.add(mdspanel, modelTb); // Add Model Tab
+    //leftTab.addSelectionHandler(this);
     leftTab.addSelectionHandler(this);
-    hsp = new HorizontalSplitPanel();
-    hsp.setLeftWidget(leftTab);
-    hsp.setRightWidget(map);
+//    hsp = new HorizontalSplitPanel();
+    con = new BorderLayoutContainer();
+   
+    BorderLayoutData westData = new BorderLayoutData(360);
+    westData.setMinSize(200);
+    westData.setCollapsible(false);
+    westData.setSplit(false);
+    westData.setCollapseMini(false);
+    westData.setMargins(new Margins(0, 5, 0, 0));
+    
+    MarginData centerData = new MarginData();
+    
+//    hsp.setLeftWidget(leftTab);
+//    hsp.setRightWidget(map);
+    leftTab.setHeight(Window.getClientHeight()-183);
+
+    leftTabPanel = new ContentPanel();
+    leftTabPanel.setHeaderVisible(false);
+//    leftTabPanel.setHeadingHtml();
+    leftTabPanel.setBorders(false);
+    leftTabPanel.setBodyBorder(false);
+    leftTabPanel.add(leftTab);
+    mapPanel = new ContentPanel();
+    mapPanel.setHeaderVisible(false);
+    mapPanel.setHeight(Window.getClientHeight()-183);
+    mapPanel.add(map);
+    
+    con.setWestWidget(leftTabPanel, westData);
+    con.setCenterWidget(mapPanel, centerData);
 
     HorizontalPanel toolHp = new HorizontalPanel();
     toolHp.add(actionTool);
@@ -792,19 +839,24 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     // vp.add(idPanel);
     // vp.setCellHeight(idPanel, "20px");
 
-    mainVp.add(hsp);
-    mainVp.setCellVerticalAlignment(hsp, HasVerticalAlignment.ALIGN_TOP);
+//    mainVp.add(hsp);
+    mainVp.add(con);
+//    mainVp.setCellVerticalAlignment(hsp, HasVerticalAlignment.ALIGN_TOP);
+    mainVp.setCellVerticalAlignment(con, HasVerticalAlignment.ALIGN_TOP);
     mainVp.setStyleName(DEFAULT_STYLE);
     initWidget(mainVp);
     // mainVp.setPixelSize(Window.getClientWidth(), Window.getClientHeight());
     // mainVp.setSize("100%", "100%");
-    hsp.setSplitPosition("30%");
+//    hsp.setSplitPosition("30%");
 
     markerList.addItemSelectionListener(this);
     markerList.setCheckedAll(true);
 
     String historyToken = History.getToken();
-    leftTab.selectTab(currentSelectedTab);
+//    leftTab.setTabIndex(1);
+    leftTab.setActiveWidget(modelSearch);
+//    leftTab.setTabScroll(true);
+//    leftTab.setResizeTabs(true);
     if (!historyToken.equals("")) {
       handleOnValueChange(historyToken);
     }
@@ -920,19 +972,22 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
   }
 
-  public void onSelection(SelectionEvent<Integer> event) {
+  public void onSelection(SelectionEvent<Widget> event) {
     Object source = event.getSource();
     if (source == leftTab) {
-      if (event.getSelectedItem() != currentSelectedTab) {
-        this.currentSelectedTab = event.getSelectedItem();
-        addHistoryItem(false);
-        if (currentSelectedTab == 1) {
-          modelSearch.setPage(1);
-          modelSearch.search("");
-        } else if (currentSelectedTab == 0) {
-          modelSearch.clearOverLay();
-        }
-      }
+    	if (!event.getSelectedItem().equals(currentTab)) {
+			currentTab = (Widget) event.getSelectedItem();
+			addHistoryItem(false);
+			if (currentTab.equals(modelSearch.getParent())) {
+				modelSearch.setPage(1);
+				modelSearch.search("");
+			} else if (currentTab.equals(markerList.getParent())) {
+				//Exception ?
+				try{
+					modelSearch.clearOverLay();
+				}catch(Exception e){e.printStackTrace();};
+			}
+		}
     }
 
   }
@@ -1107,12 +1162,15 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
   }
 
   protected void resize(int width, int height) {
+	int h = height;
     height = height - mainVp.getAbsoluteTop();
     if (height <= 0) {
       height = 1;
     }
     int w = width - 20;
-    hsp.setSplitPosition("30%");
+    mapPanel.setHeight(h - 183);
+    leftTab.setHeight(h - 183);
+//    hsp.setSplitPosition("30%");
     mainVp.setPixelSize(w, height - 10);
 //    map.checkResizeAndCenter();
   }
@@ -1175,7 +1233,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
       }
       break;
     case LEFT_TAB:
-      int index = leftTab.getTabBar().getSelectedTab();
+      int index = leftTab.getTabIndex();//leftTab.getTabBar().getSelectedTab();
       if (index < 0) {
         index = 0;
       }
