@@ -77,7 +77,7 @@ public class StatisticsTabView extends ComponentView implements ClickHandler, Ch
 		mainVp.add(statisticsPanel);
 		mainVp.setStyleName(DEFAULT_STYLE);
 		initWidget(mainVp);
-		
+		resize(Window.getClientWidth(), (Window.getClientHeight() - 115));
 		
 		
 	}
@@ -137,9 +137,11 @@ public class StatisticsTabView extends ComponentView implements ClickHandler, Ch
 	@Override
 	protected void resize(final int width, int height) {
 		int w = width - 20;
-		
-		mainVp.setWidth(w + "px");
+		int h = height - mainVp.getAbsoluteTop() - 5;
+//		mainVp.setWidth(w + "px");
+//		mainVp.setHeight(h + "px");
 		statisticsPanel.setWidth(w+ "px");
+		statisticsPanel.setHeight(h + "px");
 		//infoPanel.setWidth(w);
 		Window.enableScrolling(mainVp.getOffsetWidth() - 10 > width);
 

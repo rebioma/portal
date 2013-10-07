@@ -221,12 +221,12 @@ public class StatisticsPanel  extends Widget{
 	     
 	        grid.setSelectionModel(selectionModel);
 	        grid.getSelectionModel().setSelectionMode(SelectionMode.SIMPLE);
-	       cp = new FramedPanel();
+	        cp = new FramedPanel();
 	        cp.setCollapsible(true);
 	        cp.setHeadingText(BY_OWNER);
 	        cp.setWidth("100%");
 	        cp.setHeight(500);
-	        cp.addStyleName("margin-10");
+//	        cp.addStyleName("margin-10");
 	        
 	        VerticalLayoutContainer con = new VerticalLayoutContainer();
 	        

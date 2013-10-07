@@ -50,7 +50,7 @@ public class MailingTabView extends ComponentView implements ClickHandler {
 		int w = width - 20;
 		verticalPanel.setWidth(w + "px");
 //		mailingTab.getWidget().setWidth(w  + "px");
-		mailingTab.setPixelSize(w, height - mailingTab.getAbsoluteTop() -5 );
+		mailingTab.setPixelSize(w, height - mailingTab.getAbsoluteTop() - 5 );
 
 	}
 	
