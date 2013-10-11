@@ -52,11 +52,11 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 	protected static final String MAIL_SUBJECT_CASE3 = "Revalidation case 3";
 	protected static final String MAIL_SUBJECT_CASE2 = "Revalidation case 2";
 	protected static final String MAIL_SUBJECT_CASE4 = "Revalidation case 4";
-	protected static final String MAIL_BODY_CASE3 = "Revalidation case 3: need more information";
-	protected static final String MAIL_BODY_CASE5 = "Revalidation case 5: need more information";
+	protected static final String MAIL_BODY_CASE3 = "Lastly, we have have updated the REBIOMA Taxonomy Authority (TA). Some of your data recorded within the REBIOMA data portal are involved in taxonomy classification updates. Some species were erased or changed in the REBIOMA taxonomy authority.";
+	protected static final String MAIL_BODY_CASE5 = "Lastly, we have have updated the REBIOMA Taxonomy Authority (TA). Some of your data recorded within the REBIOMA data portal are involved in taxonomy classification updates. Some species were split into several new derived species.";
 	protected static final String MAIL_SUBJECT_CASE5 = "Revalidation case 5";
 	protected static final String OCCURRENCE_COMMENTS = "Case 5 detected during revalidation";
-	protected static final int ADMIN_ID = 106;
+	protected static final int ADMIN_ID = 220; //User related to the REBIOMA Data portal mail system (rebiomawebportal@gmail.com)
 	protected static final Logger log = Logger
 			.getLogger(RevalidationServiceImpl.class);
 
@@ -362,6 +362,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				if (c != null) {
 					String ok = c.getValidation();
 					if (ok.equals("OK")) {
+						//System.out.println("----------------> Cas 2 itoo "+occurrence.getGenus()+" Verbatime  "+c.getVerbatimSpecies());
 						// case 2
 						modifyMap("2", map, occurrence);
 					}
@@ -411,6 +412,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				}
 			}
 			*/
+			
+			List<Occurrence> occurrencies = map.get("2");
+			System.out.println("----------------> Cas 2 ---------------------->"+occurrencies.size());
 			revalidateAction(result, map);
 			long dateEnd = System.currentTimeMillis();
 			long duration = (dateEnd - dateStart)/1000;
@@ -473,6 +477,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		 * OCCURENCE MATCHES NEW NAME: => Same as upload: do the
 		 * validation attach occurrences to RecordReview
 		 */
+
 		if (!occurrences.isEmpty()) {
 			log.info(" Occurrences 2 : "
 					+ occurrences.size() + " ............");
@@ -792,6 +797,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						}
 
 						occurrenceDb.resetRecordReview(o, false,session);
+						occurrenceDb.updateStability(o, Boolean.TRUE,session);
 						
 						int ownerId = o.getOwner();
 			         
@@ -864,18 +870,18 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 	}
 	protected void revalidateAction(RevalidationResult result, Map<String, List<Occurrence>> mapOccurences) throws RevalidationException {
 		
+			
 			for (String key : mapOccurences.keySet()) {
 				List<Occurrence> occurrencies = mapOccurences.get(key);
 				Set<Occurrence> occurrences = new HashSet<Occurrence>(
 						occurrencies);
-				int keyInt = Integer.parseInt(key);
-				switch (keyInt) {
-				case 2:
+				//int keyInt = Integer.parseInt(key);
+				System.out.println(" ------------Key -------------------> "+key);
+				if(key.equals("2")){
+					System.out.println(" Occurrences 2 : "+ occurrences.size() + " ............");
+					log.info(" Occurrences 2 : "+ occurrences.size() + " ............");
 					treatCase2(result,occurrences);
-					break;
-				case 3:
-					
-					
+				}else if(key.equals("3")){
 					/**
 					 * For 1:MANY-or 1:0 synonomy: => 1.delete all recordreviews
 					 * for each occurence 2.send mail to owner to request more
@@ -888,18 +894,12 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					
 					treatCase3(result,occurrences);
 					log.info(" fin 3 : ............");
-					
-					
-					
-					
-					break;
-
-				case 4:
+				}else if(key.equals("4")){
 					/**
 					 * For 1:1 or Many:1 Synonomy: => Change the taxonomy in the
 					 * occurence table , no other change
 					 */
-					log.info(" Occurrences 44444444444 : " + occurrences.size()
+					log.info(" Occurrences 4 : " + occurrences.size()
 							+ " ............");
 					/*
 					for (Occurrence o : occurrences) {
@@ -910,19 +910,70 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					*/
 					treatCase4(result,occurrences);
 					log.info(" fin 4 : ............");
+					
+				}else if(key.equals("5")){
+					log.info(" Occurrences 5 : " + occurrences.size()
+							+ " ............");
+					treatCase5(result,occurrences);					
+					log.info(" fin 5 : ............");
+				}
+				
+				
+				/*switch (keyInt) {
+				case 2:
+					//System.out.println(" Occurrences 2 : "+ occurrences.size() + " ............");
+					log.info(" Occurrences 2 : "+ occurrences.size() + " ............");
+					treatCase2(result,occurrences);
+					break;
+				case 3:
+					
+					
+					*//**
+					 * For 1:MANY-or 1:0 synonomy: => 1.delete all recordreviews
+					 * for each occurence 2.send mail to owner to request more
+					 * information 3.set the status of occurence as invalid <=>
+					 * it is the same as doing the validation , we are sure that
+					 * theses occurrences will be invalid
+					 *//*
+					log.info(" Occurrences 3 : " + occurrences.size()
+							+ " ............");
+					
+					treatCase3(result,occurrences);
+					log.info(" fin 3 : ............");
+					
+					
+					
+					
+					break;
+
+				case 4:
+					*//**
+					 * For 1:1 or Many:1 Synonomy: => Change the taxonomy in the
+					 * occurence table , no other change
+					 *//*
+					log.info(" Occurrences 4 : " + occurrences.size()
+							+ " ............");
+					
+					for (Occurrence o : occurrences) {
+						validateTaxonomy(o);
+						// o.setStability(true);
+
+					}
+					
+					treatCase4(result,occurrences);
+					log.info(" fin 4 : ............");
 					break;
 
 				case 5:
-					log.info(" Occurrences 5555555 : " + occurrences.size()
+					log.info(" Occurrences 5 : " + occurrences.size()
 							+ " ............");
-					treatCase5(result,occurrences);
-					
+					treatCase5(result,occurrences);					
 					log.info(" fin 5 : ............");
 					break;
 
 				default:
 					break;
-				}
+				}*/
 			}
 			log.info("FIN");
 			

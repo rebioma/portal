@@ -287,10 +287,14 @@ public class EmailUtil {
 	    String subject = "[REBIOMA PORTAL] Record(s) Questionably for Revalidation :"+subjects;
 	    StringBuilder bodyBuilder = new StringBuilder("Dear "
 	        + owner.getFirstName() + " " + owner.getLastName() + ",\n\n");
-	    bodyBuilder.append("There are " + occurrenceIds.size()
+	    bodyBuilder.append("There are " + occurrenceIds.size()+" "
 	        + body);
+	    bodyBuilder.append("\n These are the ID of all records affected:  "+buildOclist(occurrenceIds));
 	   // bodyBuilder
-	      //  .append("To find your  records, sign into the REBIOMA data portal (data.rebioma.net) with your email and password and select \"My Positively Reviews\" or \"My Negatively Reviews\", or use \"Advanced Search\" to search for specific records by REBIOMA id.");
+	      //  .append(" \n To find your  records, sign into the REBIOMA data portal (data.rebioma.net) with your email and password and select \"My Positively Reviews\" or \"My Negatively Reviews\", or use \"Advanced Search\" to search for specific records by REBIOMA id.");
+	    
+	    bodyBuilder.append(" \n\n To find your  records, sign into the REBIOMA data portal (data.rebioma.net) with your email and password and select use \"Advanced Search\" to search for specific records by REBIOMA id.");
+	    bodyBuilder.append(" Then, once you found out affected records, please check comments left by the TRB members and update your records. To update some informations in your records, you can download it then re-upload it. Or you can modify it directly on the data portal.");
 	    bodyBuilder.append("\n\n");
 	    bodyBuilder.append(Email.REBIOMA_TEAM);
 	    String userEmail = owner.getEmail();
@@ -298,7 +302,16 @@ public class EmailUtil {
 	    adminSendEmailTo(userEmail, subject, bodyBuilder.toString());
 	    logger.info("successfully sent nofication email to " + userEmail);
 	  }
+  
+  
+  private static String buildOclist(Set<Integer> occurrenceIds){
+	  String list="";
 
+	  for(int id:occurrenceIds){
+		list+=""+id+" ,";  
+	  }	  
+	  return list;	  
+  }
   /**
    * This method sends an email from sender address to recipient address with a
    * given subject and body content. It throws and SendEmailException if there

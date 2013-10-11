@@ -1082,6 +1082,17 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     }
   }
 
+  public void updateStability(Occurrence o, Boolean stability, Session sess) {
+	    try {
+	      //Query query = sess.createQuery("update Occurrence o set o.stability=:stability where o.id=:ID");
+	      Query query = sess.createQuery("update Occurrence o set o.stability="+stability+" where o.id="+o.getId());
+	      //query.setParameter("stability", stability);
+	      //query.setParameter("ID", o.getId());
+	      query.executeUpdate();	      	 
+	    } catch (Exception e) {
+	      log.error(e.getMessage(), e);
+	    }
+	  }
   /**
    * First update records with original query if there is no update, replace the
    * original query acceptedSpecies = to acceptedspecies like query. If user is
