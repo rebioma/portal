@@ -451,6 +451,14 @@ body {
   vertical-align: middle;
 }
 
+.link2 {
+    color: #0000FF;
+    cursor: pointer;
+    display: inline;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
 .listlink{
   background: url("images/table.png") no-repeat;
   text-decoration: none;
