@@ -76,7 +76,7 @@ public class StatisticsPanel  extends Widget{
     });
 	
 	interface ExampleTemplate extends XTemplates {
-	    @XTemplate("<div><span><b>{name}</b><br />{value}</span></div>")
+	    @XTemplate("<b>{name}</b><br />{value}")
 	    SafeHtml render(String name, String value);
 	  }
 	
@@ -159,13 +159,13 @@ public class StatisticsPanel  extends Widget{
 		
 		
 	  	ListStore<StatisticModel> store = new ListStore<StatisticModel>(new ModelKeyProvider<StatisticModel>() {
-	        @Override
+	  		@Override
 	        public String getKey(StatisticModel item) {
 	          return "" + item.getIdKey();
 	        }
-	      });
+	  	});
 	  	
-	  	 ToolBar toolBarHaut = new ToolBar();
+	  	ToolBar toolBarHaut = new ToolBar();
 	  	toolBarHaut.add(new LabelToolItem("Statistics: "));
 	    SimpleComboBox<String> type = new SimpleComboBox<String>(new StringLabelProvider<String>());
 	      type.setTriggerAction(TriggerAction.ALL);
@@ -184,7 +184,7 @@ public class StatisticsPanel  extends Widget{
 	     
 	      toolBarHaut.add(details);
 	  	
-	  	loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>>(proxy);
+  			loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>>(proxy);
 	  	    loader.setRemoteSort(true);
 	  	    loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, StatisticModel, PagingLoadResult<StatisticModel>>(store));
 	  	    

@@ -40,7 +40,7 @@ public class SpeciesExplorerPanel {
 	//
 	private CheckboxTreeGrid<SpeciesTreeModel> treeGrid;
 	//
-	private String space = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	private String style = "style='padding-right:15px'";
 	
 	NumberFormat format = NumberFormat.getDecimalFormat();
 	
@@ -61,8 +61,8 @@ public class SpeciesExplorerPanel {
 		priO.setCell(new AbstractCell<Integer>() {
 	        @Override
 	        public void render(com.google.gwt.cell.client.Cell.Context context, Integer value, SafeHtmlBuilder sb) {
-	        	String v = format.format(value) + space;
-	        	sb.appendHtmlConstant("<span>" + v + "</span>");
+	        	String v = format.format(value);// + space;
+	        	sb.appendHtmlConstant("<span " + style + ">" + v + "</span>");
 	        }
 
 		});
@@ -74,8 +74,8 @@ public class SpeciesExplorerPanel {
 		pubO.setCell(new AbstractCell<Integer>() {
 	        @Override
 	        public void render(com.google.gwt.cell.client.Cell.Context context, Integer value, SafeHtmlBuilder sb) {
-	        	String v = format.format(value) + space;
-	        	sb.appendHtmlConstant("<span>" + v + "</span>");
+	        	String v = format.format(value);// + space;
+	        	sb.appendHtmlConstant("<span " + style + ">" + v + "</span>");
 	        }
 
 		});

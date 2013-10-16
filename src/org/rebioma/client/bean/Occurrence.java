@@ -1,5 +1,12 @@
 package org.rebioma.client.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.rebioma.client.ApplicationView;
+import org.rebioma.client.DetailView;
+import org.rebioma.client.bean.gxt.OccurrenceSummary.OccurrenceFieldItem;
+
 // Generated Sep 17, 2008 10:15:17 AM by Hibernate Tools 3.2.2.GA
 
 /**
@@ -1371,5 +1378,86 @@ public class Occurrence implements java.io.Serializable {
 				+ " Vettable=" + vettable + " Vetted=" + vetted
 				+ " TapirAccessible=" + tapirAccessible;
 	}
-
+	
+	//{WD
+	/**
+	   * 
+	   * Gets a {@link OccurrenceFieldItem} which contains taxonomic authorities
+	   * species display and its value.
+	   * 
+	   * @param occurrence
+	   * @return a {@link OccurrenceFieldItem} which contains taxonomic authorities
+	   *         species display and its value.
+	   */
+	  public static OccurrenceFieldItem getDisplayField(Occurrence occurrence) {
+	    List<OccurrenceFieldItem> taxonomicAuthorities = new ArrayList<OccurrenceFieldItem>();
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.ACCEPTED_SPECIES, occurrence
+	            .getAcceptedSpecies()));
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.SCIENTIFIC_NAME, occurrence
+	            .getScientificName()));
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.VERBATIM_SPECIES, occurrence
+	            .getVerbatimSpecies()));
+	    // GENUS_SPECIES
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.GENUS_SPECIES, getGenusSpecies(occurrence)));
+	    taxonomicAuthorities
+	        .add(new OccurrenceFieldItem(DetailView.FieldConstants.ACCEPTED_GENUS,
+	            occurrence.getAcceptedGenus()));
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.ACCEPTED_SUBFAMILY, occurrence
+	            .getAcceptedSubfamily()));
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.ACCEPTED_FAMILY, occurrence
+	            .getAcceptedFamily()));
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.ACCEPTED_SUBORDER, occurrence
+	            .getAcceptedSuborder()));
+	    taxonomicAuthorities
+	        .add(new OccurrenceFieldItem(DetailView.FieldConstants.ACCEPTED_ORDER,
+	            occurrence.getAcceptedOrder()));
+	    taxonomicAuthorities
+	        .add(new OccurrenceFieldItem(DetailView.FieldConstants.ACCEPTED_CLASS,
+	            occurrence.getAcceptedClass()));
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.ACCEPTED_PHYLUM, occurrence
+	            .getAcceptedPhylum()));
+	    taxonomicAuthorities.add(new OccurrenceFieldItem(
+	        DetailView.FieldConstants.ACCEPTED_KINGDOM, occurrence
+	            .getAcceptedKingdom()));
+	    for (OccurrenceFieldItem taxonomic : taxonomicAuthorities) {
+	      String value = taxonomic.getValue();
+	      if (value != null && !value.equals("")) {
+	        return taxonomic;
+	      }
+	    }
+	    return null;
+	  }
+	  
+	  private static String getGenusSpecies(Occurrence occurrence) {
+	    if (occurrence.getAcceptedGenus() == null
+	        || occurrence.getAcceptedGenus() == null)
+	      return null;
+	    return occurrence.getAcceptedGenus().trim() + " "
+	        + occurrence.getSpecificEpithet().trim();
+	  }
+	  
+	  private String taxonomic;
+	  
+	  public String getTaxonomic() {
+		  OccurrenceFieldItem item = getDisplayField(this);
+		  return item == null ? ApplicationView.getConstants().None() : item.toString();
+	  }
+	  
+	  private String email;
+	  
+	  public String getEmail() {
+		  	if(emailVisible) 
+		  		return this.getOwnerEmail();
+		  	else return ApplicationView.getConstants().EmailNotShow();
+	  }
+	  
+	  //WD}
 }

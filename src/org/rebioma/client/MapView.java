@@ -99,6 +99,10 @@ com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.MarginData;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
+import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -717,7 +721,9 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
   private final HistoryState historyState = new MapState();
   private final Map<String, MapTypeId> mapTypesMap = new HashMap<String, MapTypeId>();
-  private final VerticalPanel mainVp = new VerticalPanel();
+//  private final VerticalPanel mainVp = new VerticalPanel();
+  private final VerticalLayoutContainer mainVp = new VerticalLayoutContainer();
+  
   /**
    * For some reason when make this static it cause a weird infinite
    * initializing, so make it non-static to solve this problem.
@@ -821,29 +827,40 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     con.setWestWidget(leftTabPanel, westData);
     con.setCenterWidget(mapPanel, centerData);
 
-    HorizontalPanel toolHp = new HorizontalPanel();
+//    HorizontalPanel toolHp = new HorizontalPanel();
+    ToolBar toolHp = new ToolBar();
+    actionTool.setWidth("200px");
     toolHp.add(actionTool);
+    toolHp.add(new FillToolItem());
+    pager.setWidth("300px");
     toolHp.add(pager);
-    toolHp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-    toolHp.setCellHorizontalAlignment(actionTool,
-        HasHorizontalAlignment.ALIGN_LEFT);
-    toolHp
-        .setCellHorizontalAlignment(pager, HasHorizontalAlignment.ALIGN_RIGHT);
+    
+//    toolHp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//    toolHp.setCellHorizontalAlignment(actionTool,
+//        HasHorizontalAlignment.ALIGN_LEFT);
+//    toolHp
+//        .setCellHorizontalAlignment(pager, HasHorizontalAlignment.ALIGN_RIGHT);
     toolHp.setWidth("100%");
-    toolHp.setStyleName(DEFAULT_STYLE + "-ToolBar");
-    mainVp.add(toolHp);
+//    toolHp.setStyleName(DEFAULT_STYLE + "-ToolBar");
+//    mainVp.add(toolHp);
     // vp.setCellHorizontalAlignment(pager, HasHorizontalAlignment.ALIGN_RIGHT);
-    mainVp.setCellHeight(toolHp, "20px");
+//    mainVp.setCellHeight(toolHp, "20px");
+    
 
     // idPanel.setHeight("20px");
     // vp.add(idPanel);
     // vp.setCellHeight(idPanel, "20px");
 
 //    mainVp.add(hsp);
-    mainVp.add(con);
+//    mainVp.add(con);
 //    mainVp.setCellVerticalAlignment(hsp, HasVerticalAlignment.ALIGN_TOP);
-    mainVp.setCellVerticalAlignment(con, HasVerticalAlignment.ALIGN_TOP);
-    mainVp.setStyleName(DEFAULT_STYLE);
+//    mainVp.setCellVerticalAlignment(con, HasVerticalAlignment.ALIGN_TOP);
+//    mainVp.setStyleName(DEFAULT_STYLE);
+    
+    mainVp.setBorders(false);
+    mainVp.add(toolHp, new VerticalLayoutData(1, -1));
+    mainVp.add(con, new VerticalLayoutData(1, 1));
+    
     initWidget(mainVp);
     // mainVp.setPixelSize(Window.getClientWidth(), Window.getClientHeight());
     // mainVp.setSize("100%", "100%");
