@@ -287,8 +287,8 @@ public class EmailUtil {
 	    String subject = "[REBIOMA PORTAL] Record(s) Questionably for Revalidation :"+subjects;
 	    StringBuilder bodyBuilder = new StringBuilder("Dear "
 	        + owner.getFirstName() + " " + owner.getLastName() + ",\n\n");
-	    bodyBuilder.append("There are " + occurrenceIds.size()+" "
-	        + body);
+	    //bodyBuilder.append("There are " + occurrenceIds.size()+" "+ body);
+	    bodyBuilder.append(body);
 	    bodyBuilder.append("\n These are the ID of all records affected:  "+buildOclist(occurrenceIds));
 	   // bodyBuilder
 	      //  .append(" \n To find your  records, sign into the REBIOMA data portal (data.rebioma.net) with your email and password and select \"My Positively Reviews\" or \"My Negatively Reviews\", or use \"Advanced Search\" to search for specific records by REBIOMA id.");
