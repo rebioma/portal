@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
+import org.rebioma.client.View.ViewState;
 import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.gxt.treegrid.SpeciesExplorerPanel;
@@ -174,6 +175,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		toolHp.setWidth(w + "px");
 		verticalPanel.setWidth(w + "px");
 		speciesExplorerPanel.getTreeGrid().setWidth(w);
+		speciesExplorerPanel.getTreeGrid().setHeight(height - speciesExplorerPanel.getTreeGrid().getAbsoluteTop() - 10 );
 		//infoPanel.setWidth(w);
 		Window.enableScrolling(toolHp.getOffsetWidth() - 10 > width);
 
@@ -207,8 +209,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 
 	@Override
 	protected void resetToDefaultState() {
-		// TODO Auto-generated method stub
-
+		onStateChanged(ApplicationView.getCurrentState());
 	}
 
 	public static ViewInfo init(final View parent, final String name,
@@ -242,11 +243,14 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 	 *            hide/remove my records only check box
 	 */
 	private void setMyRecordsEnable(boolean enabled) {
-		if (enabled) {
-			mainHp.insert(resultFilterLb, 2);
-		} else {
-			mainHp.remove(resultFilterLb);
-			// publicRb.setValue(true);
+		if(ApplicationView.getCurrentState()!=ViewState.SUPERADMIN){
+		
+			if (enabled) {
+				mainHp.insert(resultFilterLb, 2);
+			} else {
+				mainHp.remove(resultFilterLb);
+				// publicRb.setValue(true);
+			}
 		}
 		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 			public void execute() {
@@ -367,9 +371,9 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		updateTaxonomieLink.setHTML("");
 		updateTaxonomieLink.setStyleName("");
 		switch (state) {
+		case SUPERADMIN:
 		case UNAUTHENTICATED:
 			break;
-
 		// My Positively Reviewed
 		// My Negatively Reviewed
 		// My Awaiting Review
@@ -517,6 +521,8 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		ViewState viewState = ApplicationView.getCurrentState();
 		sharedListBox.clear();
 		switch (viewState) {
+		case SUPERADMIN:
+			mainHp.insert(resultFilterLb, 2);
 		case UNAUTHENTICATED:
 			mainHp.remove(sharedListBox);
 			break;
@@ -594,5 +600,5 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 			this.speciesStatistiqueDialog.showStatistic(model);
 		}
 	}
-
+	
 }

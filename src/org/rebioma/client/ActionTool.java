@@ -61,7 +61,7 @@ public abstract class ActionTool extends Composite {
 
     sp.setWidget(mainHp);
     initWidget(sp);
-    sp.setWidth("100%");
+//    sp.setWidth("100%");
     allLink = new HTML(constants.All());
     noneLink = new HTML(constants.None());
     allLink.setStyleName("link");

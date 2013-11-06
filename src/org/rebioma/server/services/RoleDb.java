@@ -22,5 +22,7 @@ public interface RoleDb {
   Set<Role> getRoles(int userId);
 
   Role save(Role role);
+  
+  boolean isSAdmin(int userId);
 
 }

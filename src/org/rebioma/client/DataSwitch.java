@@ -764,4 +764,9 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
       lastUpdateTime = result;
     }
   }
+
+  public void editUpdate(List<Occurrence> occurrences, String sessionId,
+		AsyncCallback<Boolean> callback) {
+	  occurrenceService.editUpdate(occurrences, sessionId, callback);
+  }
 }

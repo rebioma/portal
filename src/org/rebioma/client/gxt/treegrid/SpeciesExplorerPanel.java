@@ -112,6 +112,7 @@ public class SpeciesExplorerPanel {
 		// for the tree column
 		treeGrid = new CheckboxTreeGrid<SpeciesTreeModel>(s, cm, ccs.get(0));
 		treeGrid.setTreeLoader(loader);
+//		loader.
 		// treeGrid.getView().setTrackMouseOver(false);
 		treeGrid.getView().setForceFit(true);
 		// treeGrid.setWidth(300);

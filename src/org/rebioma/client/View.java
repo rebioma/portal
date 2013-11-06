@@ -96,7 +96,7 @@ public abstract class View extends Composite implements
    */
   public enum ViewState {
     RESEARCHER("Researcher"), UNAUTHENTICATED("Guest"), ADMIN("Admin"), REVIEWER(
-        "Reviewer");
+            "Reviewer"), SUPERADMIN("SuperAdmin");
 
     public static ViewState toViewState(String role) {
       ViewState viewState = ViewState.UNAUTHENTICATED;
@@ -105,7 +105,9 @@ public abstract class View extends Composite implements
       } else if (role.equalsIgnoreCase("reviewer")) {
         viewState = REVIEWER;
       } else if (role.equalsIgnoreCase("researcher")) {
-        viewState = RESEARCHER;
+    	  viewState = RESEARCHER;
+      } else if (role.equalsIgnoreCase("superadmin")) {
+    	  viewState = SUPERADMIN;
       }
       return viewState;
     }

@@ -182,4 +182,6 @@ public interface OccurrenceService extends RemoteService {
 
   List<OccurrenceReview> getOccurrenceReviewsOf(Integer occId)
       throws OccurrenceServiceException;
+  
+  public boolean editUpdate(List<Occurrence> occurrences, String sessionId);
 }

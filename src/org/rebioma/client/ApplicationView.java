@@ -350,7 +350,9 @@ public class ApplicationView extends View implements ClickHandler {
     authenticatedUser = user;
     if (user != null) {
       Set<Role> roles = user.getRoles();
-      if (isAllowToView(roles, ViewState.ADMIN)) {
+      if (isAllowToView(roles, ViewState.SUPERADMIN)) {
+        currentState = ViewState.SUPERADMIN;    	  
+      } else if (isAllowToView(roles, ViewState.ADMIN)) {
         currentState = ViewState.ADMIN;
       } else if (isAllowToView(roles, ViewState.REVIEWER)) {
         currentState = ViewState.REVIEWER;
@@ -573,8 +575,8 @@ public class ApplicationView extends View implements ClickHandler {
         if (activeViewInfo != null
             && selectedWidget != activeViewInfo.getView()) {
           activeViewInfo = ((View) selectedWidget).getViewInfo();
-          if (selectedWidget instanceof FormView) {
-            activeViewInfo.getView().resetToDefaultState();
+          if (selectedWidget instanceof FormView || selectedWidget instanceof SpeciesExplorerView) {
+              activeViewInfo.getView().resetToDefaultState();
           }
           addHistoryItem(false);
         }
@@ -739,13 +741,13 @@ public class ApplicationView extends View implements ClickHandler {
       ViewInfo spExpViewInfo = viewInfos.get(SPECIES_EXPLORER.toLowerCase());
       SpeciesExplorerView spExpView = (SpeciesExplorerView)spExpViewInfo.getView();
       spExpView.addOccurrenceSearchListener((OccurrenceSearchListener)occView);
-      ViewInfo statViewInfo = viewInfos.get(STATS_TAB.toLowerCase());
-      StatisticsTabView statsView = (StatisticsTabView) statViewInfo.getView();
+//      ViewInfo statViewInfo = viewInfos.get(STATS_TAB.toLowerCase());
+//      StatisticsTabView statsView = (StatisticsTabView) statViewInfo.getView();
       
 //      ViewInfo mailViewInfo = viewInfos.get(MAIL_TAB.toLowerCase());
 //      MailTabView mailView = (MailTabView) mailViewInfo.getView();
      
-      ViewInfo mailingInfo = viewInfos.get(MAILING.toLowerCase());
+//      ViewInfo mailingInfo = viewInfos.get(MAILING.toLowerCase());
 //      EmailingTabView mailingView = (EmailingTabView)mailingInfo.getView();
       
       List<ViewInfo> currentTabs = new ArrayList<ViewInfo>();
@@ -774,12 +776,12 @@ public class ApplicationView extends View implements ClickHandler {
           if (isSignedIn) {
 	          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
 	          // currentTabs.add(viewInfos.get(arg0))
-	        }
-	        if (isAdmin()) {
+          }
+          if (isAdmin()) {
 	          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
 //	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
 	          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-	        }
+          }
           
       } else if (view.equalsIgnoreCase(SIGN_IN)) {
         currentTabs.add(viewInfos.get(SIGN_IN.toLowerCase()));
@@ -964,6 +966,7 @@ public class ApplicationView extends View implements ClickHandler {
     links.putLinks(LinksGroup.EDIT_COLLABORATORS + "", new Widget[] { version,
         homeLink, signOutLink, webPortalLink, issuesLink, helpLink, acknowledgmentLink, locale });
     switch (currentState) {
+    case SUPERADMIN:
     case ADMIN:
     case REVIEWER:
     case RESEARCHER:

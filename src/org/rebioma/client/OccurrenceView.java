@@ -480,10 +480,11 @@ public class OccurrenceView extends ComponentView implements
 			typeIndexMap.put(ALL_OCC, searchTypeBox.getItemCount() - 1);
 
 			switch (state) {
+			case SUPERADMIN:
+				mainHp.insert(resultFilterLb, 2);
 			case UNAUTHENTICATED:
 				mainHp.remove(sharedListBox);
 				break;
-
 			// My Positively Reviewed
 			// My Negatively Reviewed
 			// My Awaiting Review
@@ -536,7 +537,7 @@ public class OccurrenceView extends ComponentView implements
 						searchTypeBox.getItemCount() - 1);
 
 				mainHp.insert(sharedListBox, 2);
-
+				
 				break;
 			}
 
@@ -722,11 +723,13 @@ public class OccurrenceView extends ComponentView implements
 		 *            hide/remove my records only check box
 		 */
 		void setMyRecordsEnable(boolean enabled) {
-			if (enabled) {
-				mainHp.insert(resultFilterLb, 2);
-			} else {
-				mainHp.remove(resultFilterLb);
-				// publicRb.setValue(true);
+			if(ApplicationView.getCurrentState()!=ViewState.SUPERADMIN) {
+				if (enabled) {
+					mainHp.insert(resultFilterLb, 2);
+				} else {
+					mainHp.remove(resultFilterLb);
+					// publicRb.setValue(true);
+				}
 			}
 			if (activeViewInfo != null) {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand(){
@@ -763,6 +766,8 @@ public class OccurrenceView extends ComponentView implements
 			ViewState viewState = ApplicationView.getCurrentState();
 			sharedListBox.clear();
 			switch (viewState) {
+			case SUPERADMIN:
+				mainHp.insert(resultFilterLb, 2);
 			case UNAUTHENTICATED:
 				mainHp.remove(sharedListBox);
 				break;
@@ -1274,6 +1279,7 @@ public class OccurrenceView extends ComponentView implements
 			revalidateLink.setHTML(constants.Revalidate());
 			revalidateLink.setStyleName("revalidatelink");
 		case REVIEWER:
+		case SUPERADMIN:
 		case RESEARCHER:
 			uploadLink.setHTML(constants.Upload());
 			uploadLink.setStyleName("uploadlink");

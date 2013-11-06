@@ -132,4 +132,7 @@ public interface OccurrenceServiceAsync extends IsSerializable {
   void reviewRecords(String sid, Boolean reviewed, Set<Integer> occurrenceIds,
       String comment, boolean notified, AsyncCallback<Integer> callback);
 
+  void editUpdate(List<Occurrence> occurrences, String sessionId,
+		  AsyncCallback<Boolean> callback);
+
 }

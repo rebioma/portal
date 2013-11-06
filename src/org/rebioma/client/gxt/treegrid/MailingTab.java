@@ -230,7 +230,7 @@ public class MailingTab {
 //	    blc.setHeaderVisible(false);
 	    blc.setWidth("100%");
 	    blc.setHeight("400px");
-	    blc.addStyleName("margin-10");
+//	    blc.addStyleName("margin-10");
 	 
 	    VerticalLayoutContainer con = new VerticalLayoutContainer();
 	    con.setBorders(true);

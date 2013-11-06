@@ -233,6 +233,7 @@ public class UserProfilesView extends ComponentView {
   @Override
   public void onStateChanged(ViewState state) {
     switch (state) {
+    case SUPERADMIN:
     case ADMIN:
     case REVIEWER:
     case RESEARCHER:

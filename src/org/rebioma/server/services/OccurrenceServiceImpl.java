@@ -15,6 +15,7 @@
  */
 package org.rebioma.server.services;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.rebioma.client.EmailException;
 import org.rebioma.client.OccurrenceCommentQuery;
 import org.rebioma.client.OccurrenceQuery;
@@ -37,6 +39,7 @@ import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService;
 import org.rebioma.server.MySqlPing;
 import org.rebioma.server.util.EmailUtil;
+import org.rebioma.server.util.ManagedSession;
 import org.rebioma.server.util.OccurrenceUtil;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -475,6 +478,22 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
     }*/
     updateService.update();
     return count;
+  }
+  
+  public boolean editUpdate(List<Occurrence> occurrences, String sessionId) {
+	  log.debug("updating occurrences");
+	  Session session = ManagedSession.createNewSessionAndTransaction();
+	  try{
+		  for(Occurrence occ: occurrences) {
+			  session.update(occ);
+		  }
+		  ManagedSession.commitTransaction(session);
+	  }catch(Exception e){
+		  if(session!=null)ManagedSession.rollbackTransaction(session);
+		  return false;
+	  }
+	  log.debug("modif successful");
+	  return true;
   }
 
   // /**

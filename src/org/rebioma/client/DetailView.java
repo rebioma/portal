@@ -2216,6 +2216,9 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		case RESEARCHER:
 			signedIn = true;
 			break;
+		case SUPERADMIN:
+			signedIn = true;
+			break;
 		case ADMIN:
 			signedIn = true;
 			break;

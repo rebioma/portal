@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.rebioma.client.View.ViewState;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.i18n.AppConstants;
@@ -265,6 +266,8 @@ public class OccurrenceQuery extends Query<Occurrence> {
       this.resultFilter = ResultFilter.PUBLIC;
       // filters.add(DEFAULT_FILTER);
     }
+    if(ApplicationView.getCurrentState() == ViewState.SUPERADMIN)
+    	this.resultFilter = resultFilter;
     return filters;
   }
 

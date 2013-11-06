@@ -149,4 +149,12 @@ public class RoleDbImpl implements RoleDb {
       throw re;
     }
   }
+  
+  public boolean isSAdmin(int userId) {
+	  boolean sAdmin = false;
+	  for(Role roles: getRoles(userId)){
+		  if(roles.getNameEn().equalsIgnoreCase("superadmin"))sAdmin = true;
+	  }
+	  return sAdmin;
+  }
 }

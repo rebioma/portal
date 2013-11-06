@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.rebioma.client.ApplicationView;
 import org.rebioma.client.DetailView;
-import org.rebioma.client.bean.gxt.OccurrenceSummary.OccurrenceFieldItem;
+import org.rebioma.client.bean.OccurrenceSummary.OccurrenceFieldItem;
 
 // Generated Sep 17, 2008 10:15:17 AM by Hibernate Tools 3.2.2.GA
 
@@ -1389,7 +1389,7 @@ public class Occurrence implements java.io.Serializable {
 	   * @return a {@link OccurrenceFieldItem} which contains taxonomic authorities
 	   *         species display and its value.
 	   */
-	  public static OccurrenceFieldItem getDisplayField(Occurrence occurrence) {
+	  public OccurrenceFieldItem getDisplayField(Occurrence occurrence) {
 	    List<OccurrenceFieldItem> taxonomicAuthorities = new ArrayList<OccurrenceFieldItem>();
 	    taxonomicAuthorities.add(new OccurrenceFieldItem(
 	        DetailView.FieldConstants.ACCEPTED_SPECIES, occurrence
@@ -1436,7 +1436,7 @@ public class Occurrence implements java.io.Serializable {
 	    return null;
 	  }
 	  
-	  private static String getGenusSpecies(Occurrence occurrence) {
+	  private String getGenusSpecies(Occurrence occurrence) {
 	    if (occurrence.getAcceptedGenus() == null
 	        || occurrence.getAcceptedGenus() == null)
 	      return null;
@@ -1444,16 +1444,16 @@ public class Occurrence implements java.io.Serializable {
 	        + occurrence.getSpecificEpithet().trim();
 	  }
 	  
-	  private String taxonomic;
+//	  private String taxonomic;
 	  
-	  public String getTaxonomic() {
+	  public String getTaxonomicField() {
 		  OccurrenceFieldItem item = getDisplayField(this);
 		  return item == null ? ApplicationView.getConstants().None() : item.toString();
 	  }
 	  
-	  private String email;
+//	  private String email;
 	  
-	  public String getEmail() {
+	  public String getEmailField() {
 		  	if(emailVisible) 
 		  		return this.getOwnerEmail();
 		  	else return ApplicationView.getConstants().EmailNotShow();

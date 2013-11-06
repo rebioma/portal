@@ -89,25 +89,25 @@ public class FileValidationServiceImpl implements FileValidationService {
   // }
 
   public static void main(String args[]) throws IOException {
-//    if (args.length < 1) {
-//      System.out
-//          .println("FileValidationServiceImpl csvFileLocation [delimiter (default ,)] [is cleear old assignments (default false)] ");
-//      System.exit(1);
-//    }
-//    String fileLocation = args[0];
-//    char delimiter = ',';
-//    boolean isClearOldAssignments = false;
-//    if (args.length > 1) {
-//      delimiter = args[1].charAt(0);
-//    }
-//    if (args.length > 2) {
-//      isClearOldAssignments = Boolean.parseBoolean(args[2]);
-//    }
+    if (args.length < 1) {
+      System.out
+          .println("FileValidationServiceImpl csvFileLocation [delimiter (default ,)] [is cleear old assignments (default false)] ");
+      System.exit(1);
+    }
+    String fileLocation = args[0];
+    char delimiter = ',';
+    boolean isClearOldAssignments = false;
+    if (args.length > 1) {
+      delimiter = args[1].charAt(0);
+    }
+    if (args.length > 2) {
+      isClearOldAssignments = Boolean.parseBoolean(args[2]);
+    }
     
 //    /*
-	String fileLocation = "D:\\ADMIN\\Documents\\travail\\csv\\trb_plantes_assignement - trb_terrestre_assignement.csv";
-	char delimiter = ';';
-	boolean isClearOldAssignments = false;
+//	String fileLocation = "D:\\ADMIN\\Documents\\travail\\util\\trb_plante.csv";
+//	char delimiter = ',';
+//	boolean isClearOldAssignments = false;
 //	*/
     File file = new File(fileLocation);
     try {
@@ -175,7 +175,10 @@ public class FileValidationServiceImpl implements FileValidationService {
 	  Map<User, Set<Occurrence>> userOccurrencesMap = new HashMap<User, Set<Occurrence>>();
 	  String removeBadIdMessage = occurrenceDb.removeBadId(occurrences, loggedinUser);
 	  int newOccurrenceSize = 0;
+	  boolean sAdmin = new RoleDbImpl().isSAdmin(loggedinUser.getId());
+	  
 	  //List<Occurrence> newOccurrences = new ArrayList<Occurrence>();
+	  if(!sAdmin)
 	  for (Occurrence occurrence : occurrences) {
 	      // String createdDate = (new Timestamp(System.currentTimeMillis()))
 	      // .toString();
@@ -201,12 +204,12 @@ public class FileValidationServiceImpl implements FileValidationService {
 	        newOccurrenceSize++;
 	        // newOccurrences.add(occurrence);
 	      }
-    }
+	  }
     List<RecordReview> rcdrv = recordReviewDb.findByProperty();
     validationService.validate(occurrences, traitement);
     occurrenceDb.attachDirty(occurrences, traitement,rcdrv);
     traitement.setTraitement("Updating occurrences...", 100*1024, 0);
-    if(traitement.getCancel())return "{\"Uploaded\":\"canceled\"}";
+//    if(traitement.getCancel())return "{\"Uploaded\":\"canceled\"}";
     updateService.update();
     traitement.setTraitement("Updating occurrences...", 100*1024, 100*1024);
     List<TaxonomicReviewer> txrv = taxnomicReviewDb.findByProperty();    

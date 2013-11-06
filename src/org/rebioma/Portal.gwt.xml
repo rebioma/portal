@@ -61,6 +61,7 @@
 	<entry-point class='org.rebioma.client.Portal' />
 
 	<!-- Specify the application specific style sheet.              -->
+	<stylesheet src="reset.css" />
 	<stylesheet src='../Portal.css' />
 	<inherits name="gwtupload.GWTUpload"/>
  	<stylesheet src="Upload.css"/>

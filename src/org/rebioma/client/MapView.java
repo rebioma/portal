@@ -832,8 +832,13 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     actionTool.setWidth("200px");
     toolHp.add(actionTool);
     toolHp.add(new FillToolItem());
-    pager.setWidth("300px");
-    toolHp.add(pager);
+//    pager.setWidth("300px");
+    HorizontalPanel pWHp = new HorizontalPanel();
+    pWHp.add(pager);
+    pWHp.setCellHorizontalAlignment(pager,
+          HasHorizontalAlignment.ALIGN_RIGHT);
+    pWHp.setWidth("450px");
+    toolHp.add(pWHp);
     
 //    toolHp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 //    toolHp.setCellHorizontalAlignment(actionTool,

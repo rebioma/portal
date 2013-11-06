@@ -55,6 +55,7 @@ import org.rebioma.client.OrderKey;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.RecordReview;
+import org.rebioma.client.bean.Role;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
@@ -445,6 +446,41 @@ public class OccurrenceDbImpl implements OccurrenceDb {
           }
           System.out.println("\ndone assigned " + ids.size() + " occurrences to " + userEmail
               + " and " + assignOccsCount + " was assigned");
+        } else {
+        	List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByUser(user.getId());
+        	Map<Integer, Integer> recordIds = new HashMap<Integer, Integer>();
+        	for(RecordReview recordReview : recordReviews){
+        		recordIds.put(recordReview.getOccurrenceId(), recordReview.getOccurrenceId());
+        	}
+//        	TaxonomicReviewer taxoReviewer = new TaxonomicReviewer(user.getId(),
+//                    attributeValue.getAttribute(), attributeValue.getValue(), isMarine, isTerrestrial);
+//        	taxoReviewer = taxonomicReviewerDb.save(taxoReviewer);
+        	List<Integer> ids = findValidatedOccIdsByAttributeValue(attributeValue, isMarine, isTerrestrial);
+        	List<Integer> newIds = new ArrayList<Integer>();
+        	for(Integer i: ids){
+        		if(recordIds.get(i)==null)newIds.add(i);
+        	}
+        	System.out.println("assigning reviewer to " + newIds.size() + " matches occurrences");
+        	int idsCount = newIds.size();
+        	
+        	Set<Integer> percentages = new HashSet<Integer>();
+        	for (int i = 0; i < idsCount; i++) {
+        		int id = newIds.get(i);
+        		RecordReview recordReview = new RecordReview();
+        		recordReview.setOccurrenceId(id);
+        		recordReview.setUserId(user.getId());
+        		recordReview = recordReviewDb.save(recordReview);
+        		if (recordReview != null) {
+        			resetOccurrenceReviewedStatus(id);
+        			assignOccsCount++;
+        		}
+        		int percentage = (int) ((i / (idsCount * 1.0)) * 100);
+        		if (percentage % 5 == 0 && percentages.add(percentage)) {
+        			System.out.print(percentage + "%...");
+        		}
+        	}
+        	System.out.println("\ndone assigned " + newIds.size() + " occurrences to " + userEmail
+        			+ " and " + assignOccsCount + " was assigned");
         }
       }
       // if (isFirstTransaction) {
@@ -972,6 +1008,10 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       instances.clear();
       return "{\"userLoggedIn\":false}";
     }
+    boolean sAdmin = false;
+    for(Role roles: new RoleDbImpl().getRoles(loggedinUser.getId())){
+    	if(roles.getNameEn().equalsIgnoreCase("superadmin"))sAdmin = true;
+    }
     Integer id;
     Map<Integer, Occurrence> testDuplicate = new HashMap<Integer, Occurrence>();
     for (Occurrence o : instances) {
@@ -1002,8 +1042,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
             log.error("attach failed (" + o + ") Id not found in Database");
             idNotinDb.append("\"" + o.getId() + "\"" + ",");
           }
-        } else if (!existenceOwnerEmail.equalsIgnoreCase(ownerEmail)
-            || !existenceOwnerEmail.equalsIgnoreCase(currentUserEmail)) {
+        } else if ((!existenceOwnerEmail.equalsIgnoreCase(ownerEmail)
+            || !existenceOwnerEmail.equalsIgnoreCase(currentUserEmail)) && !sAdmin) {
           if (toRemove.add(o)) {
             log.error("attach failed (" + o + ") record is not belong to " + currentUserEmail);
             notYourRecords.append("\"" + o.getId() + "\"" + ",");
@@ -1907,9 +1947,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	    Statement st;
 		try {
 			st = con.createStatement();
-			ResultSet rst = st.executeQuery("select o.id from Occurrence o left join taxonomy t on (o.acceptedspecies = t.acceptedspecies) where o."
-		        + attributeValue.getAttribute() + "='" + attributeValue.getValue()
-		        + "' and o.validated=true and (t.ismarine = " + isM + " or t.isterrestrial = " + isT + ")");
+			ResultSet rst = st.executeQuery("select o.id from Occurrence o left join taxonomy t on (upper(o.acceptedspecies) = upper(t.acceptedspecies)) where upper(o."
+		        + attributeValue.getAttribute() + ")=upper('" + attributeValue.getValue()
+		        + "') and o.validated=true and (t.ismarine = " + isM + " or t.isterrestrial = " + isT + ")");
 			
 		    while(rst.next()) {
 				ids.add(new Integer(rst.getInt(1)));
@@ -1971,6 +2011,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     if (resultFilter == null) {
       return null;
     }
+    boolean sAdmin = false;
+    if(user != null)
+    	sAdmin = new RoleDbImpl().isSAdmin(user.getId());
     Criterion criterion = null;
     String publicCol = getOccurrencePropertyName("public");
     String ownerCol = getOccurrencePropertyName("ownerEmail");
@@ -1980,26 +2023,38 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       queryFilters.add(criterion.toString());
       break;
     case PRIVATE:
+    	if(sAdmin){
+    		criterion = Restrictions.eq(publicCol, false);
+    		queryFilters.add(publicCol + "=false ");
+    	} else {
       criterion = Restrictions.and(Restrictions.eq(publicCol, false),
           Restrictions.eq(ownerCol, user.getEmail()));
       queryFilters.add(publicCol + "=false and " + ownerCol + "='" + user.getEmail() + "'");
+    	}
       break;
     case BOTH:
-      Criterion publicCri = Restrictions.eq(publicCol, true);
-      Criterion privateCri = Restrictions.and(Restrictions.eq(publicCol, false),
-          Restrictions.eq(ownerCol, user == null ? null : user.getEmail()));
-      String publicQ = publicCri.toString();
-      String privateQ = publicCol + "=false and " + ownerCol + "='" + user.getEmail() + "'";
-      if (!isMyOccurrence) {
-        privateCri = Restrictions.or(privateCri,
-            Restrictions.ilike("sharedUsersCSV", user.getEmail(), MatchMode.ANYWHERE));
-        criterion = Restrictions.or(publicCri, privateCri);
-        queryFilters.add(publicQ + " or " + privateQ + " or " + "sharedUsersCSV like '%"
-            + user.getEmail() + "%'");
-      } else {
-        criterion = Restrictions.or(publicCri, privateCri);
-        queryFilters.add(publicQ + " or " + privateQ);
-      }
+    	if(sAdmin){
+    		Criterion publicCri = Restrictions.eq(publicCol, true);
+    		Criterion privateCri = Restrictions.eq(publicCol, false);
+    		criterion = Restrictions.or(publicCri, privateCri);
+            queryFilters.add(publicCri.toString() + " or " + privateCri.toString());
+    	} else {
+	      Criterion publicCri = Restrictions.eq(publicCol, true);
+	      Criterion privateCri = Restrictions.and(Restrictions.eq(publicCol, false),
+	          Restrictions.eq(ownerCol, user == null ? null : user.getEmail()));
+	      String publicQ = publicCri.toString();
+	      String privateQ = publicCol + "=false and " + ownerCol + "='" + user.getEmail() + "'";
+	      if (!isMyOccurrence) {
+	        privateCri = Restrictions.or(privateCri,
+	            Restrictions.ilike("sharedUsersCSV", user.getEmail(), MatchMode.ANYWHERE));
+	        criterion = Restrictions.or(publicCri, privateCri);
+	        queryFilters.add(publicQ + " or " + privateQ + " or " + "sharedUsersCSV like '%"
+	            + user.getEmail() + "%'");
+	      } else {
+	        criterion = Restrictions.or(publicCri, privateCri);
+	        queryFilters.add(publicQ + " or " + privateQ);
+	      }
+    	}
       break;
     }
 

@@ -40,8 +40,15 @@ import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
+import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
+import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.editing.AbstractGridEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
+import com.sencha.gxt.widget.core.client.grid.editing.GridEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
 /**
  * Used in OccurrenceTable to create occurrence's summary in a table with the
  * following data: id, public, validated, vetted, validationError.
@@ -50,39 +57,6 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
  * 
  */
 public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
-  /**
-   * 
-   * @author tri
-   * 
-   */
-  public static class OccurrenceFieldItem {
-    /**
-     * A name of this field.
-     */
-    private final String name;
-    /**
-     * A value associated with this field.
-     */
-    private final String value;
-
-    public OccurrenceFieldItem(String name, String value) {
-      this.name = name;
-      this.value = value;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return name + " - " + value;
-    }
-  }
 
   /**
    * Constants required for i18n.
@@ -105,13 +79,13 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	 
 	    ValueProvider<Occurrence, Integer> id();
 	 
-	    ValueProvider<Occurrence, String> taxonomic();
+	    ValueProvider<Occurrence, String> taxonomicField();
 	 
 	    ValueProvider<Occurrence, Boolean> validated();
 	 
 	    ValueProvider<Occurrence, Boolean> reviewed();
 	    
-	    ValueProvider<Occurrence, String> email();
+	    ValueProvider<Occurrence, String> emailField();
 	    
 	    ValueProvider<Occurrence, String> decimalLatitude();
 	    
@@ -176,7 +150,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
   public static final List<ColumnConfig<Occurrence, ?>> getGuestColumnModel(){
 	  ColumnConfig<Occurrence, Integer> cc1 = new ColumnConfig<Occurrence, Integer>(properties.id(), 80, "ReBioMa Id");
 	  
-	  ColumnConfig<Occurrence, String> cc2 = new ColumnConfig<Occurrence, String>(properties.taxonomic(), 220, constants.Taxonomy());
+	  ColumnConfig<Occurrence, String> cc2 = new ColumnConfig<Occurrence, String>(properties.taxonomicField(), 220, constants.Taxonomy());
 	  cc2.setCell(taxonomicCell);
 	 
 	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.validated(), 80, constants.Validated());
@@ -187,7 +161,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  cc4.setCell(reviewedCell);
 	  cc4.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  	
-	  ColumnConfig<Occurrence, String> cc5 = new ColumnConfig<Occurrence, String>(properties.email(), 160, constants.Owner());
+	  ColumnConfig<Occurrence, String> cc5 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
 	  cc5.setCell(cell);
 	  
 	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.sharedUsersCSV(), 170, constants.Collaborators());
@@ -222,7 +196,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
   public static final List<ColumnConfig<Occurrence, ?>> getUserColumnModel(){
 	  ColumnConfig<Occurrence, Integer> cc1 = new ColumnConfig<Occurrence, Integer>(properties.id(), 80, "ReBioMa Id");
 	  	
-	  ColumnConfig<Occurrence, String> cc2 = new ColumnConfig<Occurrence, String>(properties.taxonomic(), 220, constants.Taxonomy());
+	  ColumnConfig<Occurrence, String> cc2 = new ColumnConfig<Occurrence, String>(properties.taxonomicField(), 220, constants.Taxonomy());
 	  cc2.setCell(taxonomicCell);
 	  
 	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.public_(), 80, constants.Public());
@@ -237,7 +211,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  cc5.setCell(reviewedCell);
 	  cc5.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
-	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.email(), 160, constants.Owner());
+	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
 //	  cc6.setCell(cell);
 	  
 	  ColumnConfig<Occurrence, String> cc7 = new ColumnConfig<Occurrence, String>(properties.sharedUsersCSV(), 170, constants.Collaborators());
@@ -278,7 +252,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
   public static final List<ColumnConfig<Occurrence, ?>> getReviewerColumnModel(){
 	  ColumnConfig<Occurrence, Integer> cc1 = new ColumnConfig<Occurrence, Integer>(properties.id(), 80, "ReBioMa Id");
 	  
-	  ColumnConfig<Occurrence, String> cc2 = new ColumnConfig<Occurrence, String>(properties.taxonomic(), 220, constants.Taxonomy());
+	  ColumnConfig<Occurrence, String> cc2 = new ColumnConfig<Occurrence, String>(properties.taxonomicField(), 220, constants.Taxonomy());
 	  cc2.setCell(taxonomicCell);
 	  
 	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.public_(), 60, constants.Public());
@@ -293,7 +267,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  cc5.setCell(reviewedCell);
 	  cc5.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
-	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.email(), 160, constants.Owner());
+	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
 	  cc6.setCell(cell);
 	  
 	  ColumnConfig<Occurrence, String> cc7 = new ColumnConfig<Occurrence, String>(properties.basisOfRecord(), 160, "Basis of record");
@@ -356,6 +330,113 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  l.add(cc18);
 	  return l;
   }
+  
+  public static final List<ColumnConfig<Occurrence, ?>> getSAdminColumnModel(Grid<Occurrence> table){
+	  GridEditing<Occurrence> editing = new GridInlineEditing<Occurrence>(table);
+	  
+	  ((AbstractGridEditing<Occurrence>) editing).setClicksToEdit(ClicksToEdit.TWO);
+	  ColumnConfig<Occurrence, Integer> cc1 = new ColumnConfig<Occurrence, Integer>(properties.id(), 80, "ReBioMa Id");
+//	  editing.addEditor(cc1, new TextField());
+	  
+	  ColumnConfig<Occurrence, String> cc2 = new ColumnConfig<Occurrence, String>(properties.taxonomicField(), 220, constants.Taxonomy());
+	  cc2.setCell(taxonomicCell);
+//	  editing.addEditor(cc2, new TextField());
+//	  editing.getEditor(cc2).setDeferHeight(true);
+	  
+	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.public_(), 60, constants.Public());
+	  cc3.setCell(imageCell);
+	  cc3.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+//	  editing.addEditor(cc3, new TextField());
+	  
+	  ColumnConfig<Occurrence, Boolean> cc4 = new ColumnConfig<Occurrence, Boolean>(properties.validated(), 60, constants.Validated());
+	  cc4.setCell(imageCell);
+	  cc4.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  
+	  ColumnConfig<Occurrence, Boolean> cc5 = new ColumnConfig<Occurrence, Boolean>(properties.reviewed(), 60, constants.Reviewed());
+	  cc5.setCell(reviewedCell);
+	  cc5.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  
+	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
+	  cc6.setCell(cell);
+	  editing.addEditor(cc6, new TextField());
+	  editing.getEditor(cc6).setDeferHeight(true);
+	  
+	  ColumnConfig<Occurrence, String> cc7 = new ColumnConfig<Occurrence, String>(properties.basisOfRecord(), 160, "Basis of record");
+	  cc7.setCell(cell);
+	  editing.addEditor(cc7, new TextField());
+	  editing.getEditor(cc7).setDeferHeight(true);
+	  
+	  ColumnConfig<Occurrence, String> cc8 = new ColumnConfig<Occurrence, String>(properties.institutionCode(), 160, "Institution code");
+	  cc8.setCell(cell);
+	  TextField txt = new TextField();
+	  txt.setDeferHeight(true);
+	  editing.addEditor(cc8, txt);
+	  
+	  ColumnConfig<Occurrence, String> cc9 = new ColumnConfig<Occurrence, String>(properties.stateProvince(), 100, "StateProvince");
+	  cc9.setCell(cell);
+	  editing.addEditor(cc9, new TextField());
+	  editing.getEditor(cc9).setDeferHeight(true);
+	  
+	  ColumnConfig<Occurrence, String> cc10 = new ColumnConfig<Occurrence, String>(properties.county(), 100, "County");
+	  cc10.setCell(cell);
+	  editing.addEditor(cc10, new TextField());
+	  editing.getEditor(cc6).setDeferHeight(true);
+	  
+	  ColumnConfig<Occurrence, String> cc11 = new ColumnConfig<Occurrence, String>(properties.locality(), 100, "Locality");
+	  cc11.setCell(cell);
+	  editing.addEditor(cc11, new TextField());
+	  
+	  ColumnConfig<Occurrence, String> cc12 = new ColumnConfig<Occurrence, String>(properties.collectingMethod(), 100, "Collecting method");
+	  cc12.setCell(cell);
+	  editing.addEditor(cc12, new TextField());
+	  
+	  ColumnConfig<Occurrence, String> cc13 = new ColumnConfig<Occurrence, String>(properties.collector(), 180, "Collector");
+	  cc13.setCell(cell);
+	  editing.addEditor(cc13, new TextField());
+	  
+	  ColumnConfig<Occurrence, String> cc14 = new ColumnConfig<Occurrence, String>(properties.attributes(), 100, "Attributes");
+	  cc14.setCell(cell);
+	  editing.addEditor(cc14, new TextField());
+	  
+	  ColumnConfig<Occurrence, String> cc15 = new ColumnConfig<Occurrence, String>(properties.verbatimCollectingDate(), 100, "Verbatim collecting Date");
+	  cc15.setCell(cell);
+	  editing.addEditor(cc15, new TextField());
+	  
+	  ColumnConfig<Occurrence, String> cc16 = new ColumnConfig<Occurrence, String>(properties.verbatimElevation(), 100, "Verbatim elevation");
+	  cc16.setCell(cell);
+	  editing.addEditor(cc16, new TextField());
+	  
+	  ColumnConfig<Occurrence, String> cc17 = new ColumnConfig<Occurrence, String>(properties.yearCollected(), 80, constants.YearCollected().replace(":", ""));
+	  cc17.setCell(cell);
+	  cc17.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  
+	  ColumnConfig<Occurrence, String> cc18 = new ColumnConfig<Occurrence, String>(properties.relatedInformation(), 120, "Related information");
+	  cc18.setCell(cell);
+	  editing.addEditor(cc18, new TextField());
+	  
+	  List<ColumnConfig<Occurrence, ?>> l = new ArrayList<ColumnConfig<Occurrence, ?>>();
+	  l.add(sm.getColumn());
+	  l.add(cc1);
+	  l.add(cc2);
+	  l.add(cc3);
+	  l.add(cc4);
+	  l.add(cc5);
+	  l.add(cc6);
+	  l.add(cc7);
+	  l.add(cc8);
+	  l.add(cc9);
+	  l.add(cc10);
+	  l.add(cc11);
+	  l.add(cc12);
+	  l.add(cc13);
+	  l.add(cc14);
+	  l.add(cc15);
+	  l.add(cc16);
+	  l.add(cc17);
+	  l.add(cc18);
+	  return l;
+  }
+  
   public static final String MY_REVIEWED = "my reviewed";
 
   public static boolean isAscLayersLoaded(Occurrence o) {

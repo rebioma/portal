@@ -131,8 +131,8 @@ public class UserProfile extends Composite implements ClickHandler,
           roleNames.remove(roleName);
         }
         for (String roleName : roleNames) {
-          assignableRoles.addItem(roleName, availableRoles.get(roleName)
-              .getNameEn());
+          if(!availableRoles.get(roleName).getNameEn().contains("super"))
+        	  assignableRoles.addItem(roleName, availableRoles.get(roleName).getNameEn());
         }
 
       }

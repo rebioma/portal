@@ -56,6 +56,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -65,16 +66,21 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.Store.Record;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.WidgetComponent;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
+import com.sencha.gxt.widget.core.client.event.OverflowEvent;
+import com.sencha.gxt.widget.core.client.event.OverflowEvent.OverflowHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.info.Info;
+import com.sencha.gxt.widget.core.client.menu.SeparatorMenuItem;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
-
 public class ListView extends ComponentView implements
     PageListener<Occurrence>, PageClickListener, DataRequestListener, OccurrencePageSizeChangeHandler {
 
@@ -456,6 +462,7 @@ public class ListView extends ComponentView implements
   private final Map<Integer, Integer> currentSearchColOccIdsMap = new HashMap<Integer, Integer>();
   private List<ColumnConfig<Occurrence, ?>> currentHeaders = null;
   private final ReviewerCommentPopup reviewerCommentPopup = new ReviewerCommentPopup();
+  private ToolBar toolHp = null;
 //  private ScrollPanel scrollPanel;
 
   private ListView(View parent, OccurrenceQuery query,
@@ -527,15 +534,74 @@ public class ListView extends ComponentView implements
 
     actionTool.addWidget(applyToAllCb);
 //    HorizontalPanel toolHp = new HorizontalPanel();
-    ToolBar toolHp = new ToolBar();
+    toolHp = new ToolBar();
 //    WidgetComponent wc = new WidgetComponent(actionTool);
     
-    actionTool.setWidth("200px");
-    toolHp.setEnableOverflow(false);
+//    actionTool.setWidth("480px");
+    toolHp.setEnableOverflow(true);
+    toolHp.setHeight("28px");
+    
     toolHp.add(actionTool);
     toolHp.add(new FillToolItem());
-    pagerWidget.setWidth("400px");
-    toolHp.add(new WidgetComponent(pagerWidget));
+//    pagerWidget.setWidth("450px");
+    HorizontalPanel pWHp = new HorizontalPanel();
+    pWHp.add(pagerWidget);
+    pWHp.setCellHorizontalAlignment(pagerWidget,
+          HasHorizontalAlignment.ALIGN_RIGHT);
+    pWHp.setWidth("450px");
+    
+    pWHp.add(editHp);
+    
+    reset.addClickHandler(new ClickHandler() {
+    	 
+		@Override
+		public void onClick(ClickEvent event) {
+			table.getStore().rejectChanges();
+		}
+    });
+    
+    save.addClickHandler(new ClickHandler() {
+    	 
+		@Override
+		public void onClick(ClickEvent event) {
+			if(table.getStore().getModifiedRecords().isEmpty()){
+				Info.display("", "There is no modification to save");
+				return;
+			}
+			table.getStore().commitChanges();
+			String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
+			List<Occurrence> occurrences = new ArrayList<Occurrence>();
+			occurrences.addAll(table.getStore().getAll());
+			DataSwitch.get().editUpdate(occurrences, sessionId, 
+					new AsyncCallback<Boolean>() {
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+					GWT.log(caught.getMessage(), caught);
+				}
+				
+				/**
+				 * If result != null, update is a successful. Clears the
+				 * {@link DataSwitch} cache.
+				 * 
+				 * @param result
+				 */
+				public void onSuccess(Boolean result) {
+					if (result) {
+						Info.display("", "Modification done successfully");
+					} else {
+						Window.confirm(constants.UnexpectedError());
+					}
+				}
+
+			});
+		}
+    });
+    
+    initModifLink();
+    showModifLink(false);
+    pWHp.setCellHorizontalAlignment(editHp,
+            HasHorizontalAlignment.ALIGN_RIGHT);
+    toolHp.add(pWHp);
 //    toolHp.setStylePrimaryName("Tool");
     mainVp = new VerticalLayoutContainer();//new AbsolutePanel();
     mainSp.setHeaderVisible(false);
@@ -618,7 +684,6 @@ public class ListView extends ComponentView implements
       pagerWidget.goToPage(pagerWidget.getCurrentPageNumber() - 1);
       return;
     }
-
     currentPageOccurrences = data;
 
     applyToAllCb.setText(constants.ApplyToAll() + " "
@@ -641,12 +706,15 @@ public class ListView extends ComponentView implements
 //	    String authenticatedHeadersStyle[] = isMyOccurenceToReviewSelected?
 //	    		REVIEWER_HEADER_CSS_STYLES:
 //	    		USER_HEADER_CSS_STYLES;
-	    List<ColumnConfig<Occurrence, ?>> headers = signedIn ? authenticatedHeaders
+	    List<ColumnConfig<Occurrence, ?>> headers = signedIn ? ApplicationView.getCurrentState()==ViewState.SUPERADMIN?
+	    		OccurrenceSummary.getSAdminColumnModel(table):authenticatedHeaders
 	            : OccurrenceSummary.getGuestColumnModel();//GUEST_REQUIRED_HEADERS;
 //	    String headersStyle[] = signedIn ? authenticatedHeadersStyle
 //	            : GUEST_HEADER_CSS_STYLES;
 //  table.resetHeader(headers,
 //		  headersStyle);
+	    
+	    showModifLink(signedIn && ApplicationView.getCurrentState()==ViewState.SUPERADMIN);
 	    
     ColumnModel<Occurrence> cm = new ColumnModel<Occurrence>(headers);
 	    
@@ -658,6 +726,7 @@ public class ListView extends ComponentView implements
     table.getView().setForceFit(headers.size()<=10);
     table.getView().setAdjustForHScroll(true);
     table.reconfigure(store, cm);// = new Grid<Occurrence>(store, cm);
+    table.getView().refresh(true);
     table.setSelectionModel(OccurrenceSummary.sm);
     
     
@@ -698,10 +767,35 @@ public class ListView extends ComponentView implements
           });
     }
   }
-
+  
+  private HTML reset = new HTML("Reset");
+  private HTML save =new HTML("Save");
+  private HorizontalPanel editHp = new HorizontalPanel();
+  
+  private void initModifLink(){
+	  editHp.add(new HTML("&nbsp;&nbsp;"));
+	  editHp.add(reset);
+	  editHp.add(new HTML("&nbsp;&nbsp;"));
+	  editHp.add(save);
+	  editHp.add(new HTML("&nbsp;&nbsp;"));
+	  
+	  save.setStyleName("link");
+	  reset.setStyleName("link");
+  }
+  
+  private void showModifLink(boolean visible) {
+//	  separator.setVisible(visible);
+//	  reset.setVisible(visible);
+//	  space.setVisible(visible);
+//	  save.setVisible(visible);
+	  editHp.setVisible(visible);
+  }
   public void onStateChanged(ViewState state) {
-    //Window.alert("state change"  + state);
+    //Window.alert("state change"  + state);	
+	  showModifLink(false);
     switch (state) {
+    case SUPERADMIN:
+    	showModifLink(true);
     case ADMIN:
     case REVIEWER:
     case RESEARCHER:
@@ -720,7 +814,7 @@ public class ListView extends ComponentView implements
     		    	.getToken());
       List<ColumnConfig<Occurrence, ?>> authenticatedHeaders = isMyOccurenceToReviewSelected?
     	    		OccurrenceSummary.getReviewerColumnModel()://REVIEWER_REQUIRED_HEADERS:
-    	    		OccurrenceSummary.getUserColumnModel();//USER_REQUIRED_HEADERS;
+    	    		state== ViewState.SUPERADMIN ? OccurrenceSummary.getSAdminColumnModel(table):OccurrenceSummary.getUserColumnModel();//USER_REQUIRED_HEADERS;
 //    	    String authenticatedHeadersStyle[] = isMyOccurenceToReviewSelected?
 //    	    		REVIEWER_HEADER_CSS_STYLES:
 //    	    		USER_HEADER_CSS_STYLES;
@@ -729,10 +823,11 @@ public class ListView extends ComponentView implements
 //    		  authenticatedHeadersStyle);
       
       ColumnModel<Occurrence> cm = new ColumnModel<Occurrence>(authenticatedHeaders);
-	    
+	  
       cm.getColumn(1).setCell(cellRebiomaId);
       table.getView().setForceFit(authenticatedHeaders.size()<=10);
       table.reconfigure(table.getStore(), cm);
+      table.getView().refresh(true);
       
       currentHeaders = authenticatedHeaders;
       if (!isMyView(parent.historyToken())) {
@@ -751,6 +846,7 @@ public class ListView extends ComponentView implements
       cmU.getColumn(1).setCell(cellRebiomaId);
       table.getView().setForceFit(true);
       table.reconfigure(table.getStore(), cmU);
+      table.getView().refresh(true);
       currentHeaders = OccurrenceSummary.getGuestColumnModel();//GUEST_REQUIRED_HEADERS;
       if (!isMyView(parent.historyToken())) {
         pagerWidget.init(pagerWidget.getCurrentPageNumber());
