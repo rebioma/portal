@@ -1589,6 +1589,10 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			// map.setScrollWheelZoomEnabled(true);
 			// map.setPixelSize(MAP_WIDTH, MAP_HEIGHT);
 		}
+		
+		public MapWidget getMap() {
+			return map;
+		}
 	}
 
 	/**
@@ -2280,7 +2284,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 
 			public void execute() {
 				mainSp.setPixelSize(w, h);
-
+				smallMap.getMap().triggerResize();
 			}
 		});
 

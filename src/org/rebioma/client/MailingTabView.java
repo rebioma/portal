@@ -5,6 +5,7 @@ import org.rebioma.client.services.SpeciesExplorerService;
 import org.rebioma.client.services.SpeciesExplorerServiceAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -15,7 +16,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MailingTabView extends ComponentView implements ClickHandler {
 
-	private final Widget mailingTab;
+	private final Widget mailingTabW;
+	
+	private final MailingTab mailingTab;
 	
 	private final VerticalPanel verticalPanel;
 	
@@ -31,10 +34,11 @@ public class MailingTabView extends ComponentView implements ClickHandler {
 	private MailingTabView(View parent) {
 		super(parent, false);
 		verticalPanel = new VerticalPanel();
-		mailingTab = new MailingTab().getWidget(); 
+		mailingTab = new MailingTab();
+		mailingTabW = mailingTab.getWidget(); 
 //		mailingTab.setWidth("100%");
 //		mailingTab.setHeight((Window.getClientHeight() - 115)  + "px");
-	    verticalPanel.add(mailingTab);
+	    verticalPanel.add(mailingTabW);
 		initWidget(verticalPanel);
 		resize(Window.getClientWidth(), (Window.getClientHeight() - 115));
 		History.addValueChangeHandler(this);
@@ -50,8 +54,16 @@ public class MailingTabView extends ComponentView implements ClickHandler {
 		int w = width - 20;
 		verticalPanel.setWidth(w + "px");
 //		mailingTab.getWidget().setWidth(w  + "px");
-		mailingTab.setPixelSize(w, height - mailingTab.getAbsoluteTop() - 5 );
+		mailingTabW.setPixelSize(w, height - mailingTabW.getAbsoluteTop() - 5 );
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 
+            @Override
+            public void execute()
+            {
+            	mailingTab.forceLayout();
+            }
+        });
+		
 	}
 	
 	public static ViewInfo init(final View parent, final String name,

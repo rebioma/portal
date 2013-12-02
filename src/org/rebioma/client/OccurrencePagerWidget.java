@@ -89,7 +89,7 @@ public class OccurrencePagerWidget extends PagerWidget<Occurrence>{
    * cf doc {@link ListBox#setItemSelected(int, boolean)}
    * Note that setting the selection programmatically does not cause the 
    * ChangeHandler.onChange(ChangeEvent) event to be fired. 
-   * => donc pas de risque de recursivité.
+   * => donc pas de risque de recursivitï¿½.
    * @param selectedValue
    */
   public void setPageSizeSelectedItem(String selectedValue){

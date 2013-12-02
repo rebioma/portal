@@ -116,7 +116,7 @@ public class SpeciesExplorerPanel {
 		// treeGrid.getView().setTrackMouseOver(false);
 		treeGrid.getView().setForceFit(true);
 		// treeGrid.setWidth(300);
-		treeGrid.setHeight(400);
+//		treeGrid.setHeight(400);
 
 	}
 	

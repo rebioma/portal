@@ -128,7 +128,10 @@ public interface OccurrenceServiceAsync extends IsSerializable {
 
   void reviewRecords(String sid, Boolean reviewed, OccurrenceQuery query,
       String comment, boolean notified, AsyncCallback<Integer> callback);
-
+  
+  void commentRecords(String sid, Set<Integer> occurrenceIds,
+	      String comment, boolean notified, AsyncCallback<Integer> callback);
+	  
   void reviewRecords(String sid, Boolean reviewed, Set<Integer> occurrenceIds,
       String comment, boolean notified, AsyncCallback<Integer> callback);
 

@@ -35,14 +35,22 @@ import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -66,19 +74,18 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.Store.Record;
 import com.sencha.gxt.widget.core.client.ContentPanel;
-import com.sencha.gxt.widget.core.client.WidgetComponent;
-import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.MultiLinePromptMessageBox;
+import com.sencha.gxt.widget.core.client.box.PromptMessageBox;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
-import com.sencha.gxt.widget.core.client.event.OverflowEvent;
-import com.sencha.gxt.widget.core.client.event.OverflowEvent.OverflowHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.info.Info;
-import com.sencha.gxt.widget.core.client.menu.SeparatorMenuItem;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 public class ListView extends ComponentView implements
@@ -309,7 +316,94 @@ public class ListView extends ComponentView implements
     }
 
   }
+  
+  private class CommentRecordsPopup extends MultiLinePromptMessageBox {
+	  	
+	  private com.sencha.gxt.widget.core.client.form.CheckBox checkBox;
+	  private boolean isAll;
+	  private boolean review;
+	  private boolean reviewed;
+	  private Set<Integer> occurrenceIds;
+	  public CommentRecordsPopup(String title, String placeHolder) {
+	    	super(title, "");
+	    	checkBox = new com.sencha.gxt.widget.core.client.form.CheckBox();
+//	    	getTextArea().setAllowBlank(false);
+	    	getTextArea().setEmptyText(placeHolder);
+	    	getTextArea().setHeight(70);
+	    	getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
+	    	getButtonById(PredefinedButton.OK.name()).disable();
+	    	getButtonById(PredefinedButton.OK.name()).addSelectHandler(selectHandler);
+	    	checkBox.setBoxLabel("Do you want to send an email right now?");
+	    	contentAppearance.getContentElement(getElement()).appendChild(checkBox.getElement());
+	    	getTextArea().addKeyUpHandler(new KeyUpHandler() {
+				
+				@Override
+				public void onKeyUp(KeyUpEvent event) {
+					getButtonById(PredefinedButton.OK.name()).setEnabled(!getTextArea().getText().trim().equals(""));
+				}
+			});
+	    	setPixelSize(300, 170);
+	    }
+	    
+	  public void display(boolean isAll, boolean reviewed, boolean review,
+		        Set<Integer> occurrenceIds, String header) {
+		  getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
+		  setHeadingText(header);
+		  checkBox.setValue(false);
+		  setEnable(true);
+		  this.isAll = isAll;
+		  this.reviewed = reviewed;
+		  this.review = review;
+		  this.occurrenceIds = occurrenceIds;
+		  super.show();
+		  getTextArea().clear();
+		  getTextArea().setHeight(70);
+		  setPixelSize(300, 170);
+	  }
+	  
+	  SelectHandler selectHandler = new SelectHandler() {
 
+		  @Override
+		  public void onSelect(SelectEvent event) {
+			  if (review) {
+				  String comment = getTextArea().getText().trim();
+				  if (!comment.isEmpty() || Window.confirm(constants.NoCommentReview())) {
+					  setEnable(false);
+//					  comment += constants.commentLeftWhenReviewed();  
+					  if (isAll) {
+						  reviewAllRecords(reviewed, comment, checkBox.getValue());
+					  } else {
+						  reviewRecords(occurrenceIds, reviewed, comment, checkBox.getValue());
+					  }
+				  }
+			  } else {
+				  String comment = getTextArea().getText().trim();
+				  if (!comment.isEmpty() || Window.confirm(constants.NoCommentReview())) {
+					  setEnable(false);
+					  if (isAll) {
+//						  reviewAllRecords(reviewed, comment, checkBox.getValue());
+					  } else {
+						  commentRecords(occurrenceIds, comment, checkBox.getValue());
+					  }
+				  }
+			  }
+		  }
+	      
+
+	  };
+	  
+	  public void setEnable(boolean enabled) {
+		  getButtonById(PredefinedButton.OK.name()).setEnabled(enabled);
+	      if (enabled) {
+	    	  getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
+	      } else {
+	    	  getButtonById(PredefinedButton.OK.name()).setText(constants.Submitting());
+	      }
+	    }
+  }
+  
+  CommentRecordsPopup box = new CommentRecordsPopup("Comment records", "Please enter your comment");  
+  
   /**
    * A green check image url for table columns with boolean value true/yes.
    */
@@ -382,6 +476,7 @@ public class ListView extends ComponentView implements
       .PositivelyReview();
   protected static final String SHOW_EMAIL_ACTION = constants.ShowMyEmail();
   protected static final String HIDE_EMAIL_ACTION = constants.HideMyEmail();
+  protected static final String COMMENT_RECORDS = "Comment records";
 
   public static ViewInfo init(final View parent, final OccurrenceQuery query,
       final PageListener<Occurrence> pageListener,
@@ -407,6 +502,7 @@ public class ListView extends ComponentView implements
   private Command makePrivateCommand;
   private Command makePublicCommand;
   private Command negReviewedCommand;
+  private Command commentRecordsCommand;
   private Command posReviewedCommand;
   private Command showEmailCommand;
   private Command hideEmailCommand;
@@ -462,6 +558,7 @@ public class ListView extends ComponentView implements
   private final Map<Integer, Integer> currentSearchColOccIdsMap = new HashMap<Integer, Integer>();
   private List<ColumnConfig<Occurrence, ?>> currentHeaders = null;
   private final ReviewerCommentPopup reviewerCommentPopup = new ReviewerCommentPopup();
+  
   private ToolBar toolHp = null;
 //  private ScrollPanel scrollPanel;
 
@@ -548,7 +645,7 @@ public class ListView extends ComponentView implements
     pWHp.add(pagerWidget);
     pWHp.setCellHorizontalAlignment(pagerWidget,
           HasHorizontalAlignment.ALIGN_RIGHT);
-    pWHp.setWidth("450px");
+//    pWHp.setWidth("470px");
     
     pWHp.add(editHp);
     
@@ -606,7 +703,7 @@ public class ListView extends ComponentView implements
     mainVp = new VerticalLayoutContainer();//new AbsolutePanel();
     mainSp.setHeaderVisible(false);
     mainSp.setHeight(Window.getClientHeight() - 115 + "px");
-    mainSp.setWidth("100%");
+//    mainSp.setWidth("100%");
     mainSp.setBorders(false);
     mainSp.setBodyBorder(false);
     mainSp.addStyleName("margin-0");
@@ -626,7 +723,7 @@ public class ListView extends ComponentView implements
     // mainVp.setCellWidth(table, "100%");
 //    mainVp.setWidth("100%");
     mainVp.setBorders(true);
-    mainVp.add(toolHp, new VerticalLayoutData(1, -1));
+    mainVp.add(toolHp);
     mainVp.add(table, new VerticalLayoutData(1, 1));
     
     mainSp.setWidget(mainVp);
@@ -724,8 +821,8 @@ public class ListView extends ComponentView implements
     cm.getColumn(1).setCell(cellRebiomaId);
     //set forcefit if column number is more than 10
     table.getView().setForceFit(headers.size()<=10);
-    table.getView().setAdjustForHScroll(true);
     table.reconfigure(store, cm);// = new Grid<Occurrence>(store, cm);
+    table.getView().setAdjustForHScroll(true);
     table.getView().refresh(true);
     table.setSelectionModel(OccurrenceSummary.sm);
     
@@ -766,6 +863,7 @@ public class ListView extends ComponentView implements
 
           });
     }
+    forceLayout();
   }
   
   private HTML reset = new HTML("Reset");
@@ -827,6 +925,7 @@ public class ListView extends ComponentView implements
       cm.getColumn(1).setCell(cellRebiomaId);
       table.getView().setForceFit(authenticatedHeaders.size()<=10);
       table.reconfigure(table.getStore(), cm);
+      table.getView().setAdjustForHScroll(true);
       table.getView().refresh(true);
       
       currentHeaders = authenticatedHeaders;
@@ -846,6 +945,7 @@ public class ListView extends ComponentView implements
       cmU.getColumn(1).setCell(cellRebiomaId);
       table.getView().setForceFit(true);
       table.reconfigure(table.getStore(), cmU);
+      table.getView().setAdjustForHScroll(true);
       table.getView().refresh(true);
       currentHeaders = OccurrenceSummary.getGuestColumnModel();//GUEST_REQUIRED_HEADERS;
       if (!isMyView(parent.historyToken())) {
@@ -902,11 +1002,18 @@ public class ListView extends ComponentView implements
     mainSp.setPixelSize(w, height - 10);
 //    table.getParent().setHeight((height)- 42 + "px");
 //    scrollPanel.setHeight((height)- 42 + "px");
+    Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+        public void execute() {
+          forceLayout();
+        }
+
+    });
   }
 
   private void addingReviewToolIfAllow(String token) {
     historyState.setHistoryToken(token);
     String type = (String) historyState.getHistoryParameters(UrlParam.TYPE);
+    actionTool.addAction(COMMENT_RECORDS, commentRecordsCommand);
     if (type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW)) {
       actionTool.addAction(POSTIVELY_REVIEWED_ACTION, posReviewedCommand);
       actionTool.addAction(NEGATIVELY_REVIEWED_ACTION, negReviewedCommand);
@@ -917,6 +1024,7 @@ public class ListView extends ComponentView implements
       actionTool.addAction(POSTIVELY_REVIEWED_ACTION, posReviewedCommand);
       actionTool.removeAction(NEGATIVELY_REVIEWED_ACTION);
     } else {
+      actionTool.removeAction(COMMENT_RECORDS);
       actionTool.removeAction(POSTIVELY_REVIEWED_ACTION);
       actionTool.removeAction(NEGATIVELY_REVIEWED_ACTION);
     }
@@ -1422,6 +1530,31 @@ public class ListView extends ComponentView implements
       }
 
     };
+    
+    commentRecordsCommand = new Command() {
+        public void execute() {
+          boolean isAllChecked = applyToAllCb.getValue();
+          if (applyToAllCb.getValue()) {
+        	  box.display(isAllChecked, false, false, null, COMMENT_RECORDS);
+//            reviewerCommentPopup.display(isAllChecked, true, null);
+            return;
+          } else if (!isUpdated(checkedRecordCount())) {
+            return;
+          }
+          Set<Integer> occurrenceIds = getCheckedOccurrenceId();
+          if (occurrenceIds.isEmpty()) {
+              Window.alert(" no valid record to review");
+              return;
+          }
+          if(checkedRecordCount()==0) {
+        	  Window.alert(" no valid record to review" + occurrenceIds.size());
+        	  return;
+          }
+          box.display(isAllChecked, false, false, occurrenceIds, COMMENT_RECORDS);
+//        reviewerCommentPopup.display(isAllChecked, true, occurrenceIds);
+        }
+
+      };
 
   }
 
@@ -1502,6 +1635,28 @@ public class ListView extends ComponentView implements
 
         });
   }
+
+  private void commentRecords(Set<Integer> occurrenceIds, String comment, boolean notified) {
+	    String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
+	    DataSwitch.get().commentRecords(sessionId, occurrenceIds, comment, notified,
+	        new AsyncCallback<Integer>() {
+
+	          public void onFailure(Throwable caught) {
+	            Window.alert(caught.getMessage());
+	            DisplayPopup.getDefaultDisplayPopup().hide();
+	          }
+
+	          public void onSuccess(Integer result) {
+	            pagerWidget.init(pagerWidget.getCurrentPageNumber());
+	            showMsg(result + " records was commented successfully");
+	            DisplayPopup.getDefaultDisplayPopup().hide();
+	            
+	          //tax
+	            setCheckedAll(false);
+	          }
+
+	        });
+	  }
 
   /**
    * Sets whether checked or unchecked to {@link #applyToAllCb} check box and
@@ -1678,4 +1833,7 @@ public class ListView extends ComponentView implements
 		}
 	};
 	
+	public void forceLayout(){
+		toolHp.forceLayout();
+	}
 }

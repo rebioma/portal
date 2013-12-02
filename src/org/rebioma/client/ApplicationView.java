@@ -43,6 +43,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.maps.client.events.resize.ResizeEventFormatter;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
@@ -508,7 +509,7 @@ public class ApplicationView extends View implements ClickHandler {
 
   private ViewInfo activeViewInfo = null;
   private boolean isInitialized;
-
+  private boolean isOccViewInitialized = false;
   private ViewInfo editCollaboratorsViewInfo;
   private ViewInfo userManagementViewInfo;
 
@@ -578,7 +579,15 @@ public class ApplicationView extends View implements ClickHandler {
           if (selectedWidget instanceof FormView || selectedWidget instanceof SpeciesExplorerView) {
               activeViewInfo.getView().resetToDefaultState();
           }
+          //{ WD fix the resizing issue
+          activeViewInfo.getView().onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});
           addHistoryItem(false);
+          if (selectedWidget instanceof OccurrenceView && !isOccViewInitialized) {
+              activeViewInfo.getView().handleOnValueChange(History.getToken());
+          }
+        }
+        if (selectedWidget instanceof OccurrenceView && !isOccViewInitialized) {
+            isOccViewInitialized = true;
         }
         // Widget tabWidget = null;
         // if (listener != null) {
@@ -768,7 +777,7 @@ public class ApplicationView extends View implements ClickHandler {
 //          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
           currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
         }
-      }else if(view.equalsIgnoreCase(SPECIES_EXPLORER)){
+      } else if(view.equalsIgnoreCase(SPECIES_EXPLORER)){
     	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
           currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
           currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
@@ -782,7 +791,51 @@ public class ApplicationView extends View implements ClickHandler {
 //	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
 	          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
           }
-          
+          selectedTabIndex = 1;
+      } else if(view.equalsIgnoreCase(STATS_TAB)){
+    	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+          if (isSignedIn) {
+	          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+	          // currentTabs.add(viewInfos.get(arg0))
+          }
+          if (isAdmin()) {
+	          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+//	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+	          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+          }
+          selectedTabIndex = 2;
+      } else if (view.equalsIgnoreCase(USER_PROFILES) && isSignedIn) {
+          currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+          if (isAdmin()) {
+            currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+//            currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+            currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+          }
+          selectedTabIndex = 3;
+      } else if (view.equalsIgnoreCase(USER_MANAGEMENT) && isAdmin()) {
+          currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+          selectedTabIndex = 4;
+      } else if (view.equalsIgnoreCase(MAILING) && isAdmin()) {
+          currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+          selectedTabIndex = 5;
       } else if (view.equalsIgnoreCase(SIGN_IN)) {
         currentTabs.add(viewInfos.get(SIGN_IN.toLowerCase()));
         currentTabs.add(viewInfos.get(FORGET_PASS.toLowerCase()));
@@ -798,32 +851,18 @@ public class ApplicationView extends View implements ClickHandler {
         currentTabs.add(viewInfos.get(FORGET_PASS.toLowerCase()));
         linksGroup = LinksGroup.SIGN_IN + "";
         selectedTabIndex = 1;
-      } else if (view.equalsIgnoreCase(USER_PROFILES)) {
-        currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-        //currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-        currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-        if (isAdmin()) {
-          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-        }
-        selectedTabIndex = 1;
-      } else if (view.equalsIgnoreCase(USER_MANAGEMENT)) {
-        if (isAdmin()) {
+      } else {
           currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-          //currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-          selectedTabIndex = 2;
-        }
-      }  else {
-        currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-        currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-        //currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-        selectedTabIndex = 1;
-
+          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+          
+          if (isSignedIn) {
+            currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+          }
+          if (isAdmin()) {
+            currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+            currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+          }
       }
       for (ViewInfo viewInfo : currentTabs) {
         addTab(viewInfo);

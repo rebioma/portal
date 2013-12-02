@@ -173,7 +173,6 @@ public class Portal implements EntryPoint {
 
   @SuppressWarnings("deprecation")
 private void initApplication(User user) {
-    RootPanel.get().clear();
     ApplicationView.setAuthenticatedUser(user);
     // Make sure the server is notify when the session is longer valid when
     // load.
@@ -187,12 +186,14 @@ private void initApplication(User user) {
     ApplicationView appView = ApplicationView.getApplication();
     appView.setTitleWidget(logo);
     History.addValueChangeHandler(appView);
-    RootPanel.get().add(appView);
     if (History.getToken().length() > 0) {
-      History.fireCurrentHistoryState();
+        History.fireCurrentHistoryState();
     } else {
-      appView.init(true);
+        appView.init(true);
     }
+    RootPanel.get().clear();
+    RootPanel.get().add(appView);
+    
   }
 
   /**

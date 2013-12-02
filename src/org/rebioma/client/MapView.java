@@ -741,7 +741,8 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
   private final ContentPanel mapPanel;
   private boolean switched = false;
   private int currentSelectedTab = 0;
-  private Widget currentTab = null; 
+  private Widget currentTab = null;
+  private ToolBar toolHp;
   /**
    * Creates a new map view. The map view is intended to be part of a composite
    * view which displays a page of occurrences on a map or in a list.
@@ -805,10 +806,10 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     westData.setCollapsible(false);
     westData.setSplit(false);
     westData.setCollapseMini(false);
-    westData.setMargins(new Margins(0, 5, 0, 0));
+    westData.setMargins(new Margins(5, 5, 5, 0));
     
     MarginData centerData = new MarginData();
-    
+    centerData.setMargins(new Margins(5, 0, 5, 0));
 //    hsp.setLeftWidget(leftTab);
 //    hsp.setRightWidget(map);
     leftTab.setHeight(Window.getClientHeight()-183);
@@ -828,8 +829,8 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     con.setCenterWidget(mapPanel, centerData);
 
 //    HorizontalPanel toolHp = new HorizontalPanel();
-    ToolBar toolHp = new ToolBar();
-    actionTool.setWidth("200px");
+    toolHp = new ToolBar();
+//    actionTool.setWidth("200px");
     toolHp.add(actionTool);
     toolHp.add(new FillToolItem());
 //    pager.setWidth("300px");
@@ -837,7 +838,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     pWHp.add(pager);
     pWHp.setCellHorizontalAlignment(pager,
           HasHorizontalAlignment.ALIGN_RIGHT);
-    pWHp.setWidth("450px");
+//    pWHp.setWidth("470px");
     toolHp.add(pWHp);
     
 //    toolHp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -845,7 +846,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 //        HasHorizontalAlignment.ALIGN_LEFT);
 //    toolHp
 //        .setCellHorizontalAlignment(pager, HasHorizontalAlignment.ALIGN_RIGHT);
-    toolHp.setWidth("100%");
+//    toolHp.setWidth("100%");
 //    toolHp.setStyleName(DEFAULT_STYLE + "-ToolBar");
 //    mainVp.add(toolHp);
     // vp.setCellHorizontalAlignment(pager, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -863,7 +864,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 //    mainVp.setStyleName(DEFAULT_STYLE);
     
     mainVp.setBorders(false);
-    mainVp.add(toolHp, new VerticalLayoutData(1, -1));
+    mainVp.add(toolHp);
     mainVp.add(con, new VerticalLayoutData(1, 1));
     
     initWidget(mainVp);
@@ -882,11 +883,12 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     if (!historyToken.equals("")) {
       handleOnValueChange(historyToken);
     }
-    // History.fireCurrentHistoryState();
+//    History.fireCurrentHistoryState();
     Scheduler.get().scheduleDeferred(new ScheduledCommand(){
       public void execute() {
         resize(Window.getClientWidth(), Window.getClientHeight());
         isInitializing = false;
+        forceLayout();
       }
 
     });
@@ -991,7 +993,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
       handleHistoryEvent();
       markerList.setCheckedFromMap(historyState.getChecksMap());
     }
-
+    forceLayout();
   }
 
   public void onSelection(SelectionEvent<Widget> event) {
@@ -1134,7 +1136,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 //      historyState.parseCheckedUrl();
       isHistoryChanging = false;
     }
-
+    
     // parent.switchView(MAP, true);
   }
 
@@ -1194,6 +1196,15 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     leftTab.setHeight(h - 183);
 //    hsp.setSplitPosition("30%");
     mainVp.setPixelSize(w, height - 10);
+    Scheduler.get().scheduleDeferred(new ScheduledCommand(){
+        public void execute() {
+          forceLayout();
+          map.triggerResize();
+//          map.setCenter(map.getCenter());
+        }
+
+    });
+//    initMap();
 //    map.checkResizeAndCenter();
   }
 
@@ -1457,5 +1468,9 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 				marker.setMap((MapWidget)null);
 			}
 		}
+	}
+	
+	public void forceLayout(){
+		toolHp.forceLayout();
 	}
 }

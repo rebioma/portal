@@ -603,6 +603,13 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
 
   }
 
+  public void commentRecords(String sid, Set<Integer> occurrenceIds, 
+		  String comment, boolean notified, AsyncCallback<Integer> callback) {
+	  fireActivities();
+	  occurrenceService.commentRecords(sid, occurrenceIds, comment, notified, callback);
+
+  }
+
   public void reviewRecords(String sid, Boolean reviewed,
       Set<Integer> occurrenceIds, String comment, boolean notified,
       final AsyncCallback<Integer> callback) {

@@ -61,6 +61,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -86,43 +87,61 @@ public class OccurrenceView extends ComponentView implements
 	 * @author Tri
 	 * 
 	 */
-	private class CustomPopupPanel extends PopupPanel {
-		public CustomPopupPanel(View w) {
-			super(false);
+//	private class CustomPopupPanel extends Composite {
+//		public CustomPopupPanel(View w) {
+//			super(/*false*/);
+//			setWidget(w);
+//			setWidth("100%");
+//			//int wi = Window.getClientWidth()-40;
+//			//setWidth(wi+"px");
+//			setStyleName(ComponentView.STYLE_NAME);
+//		}
+//
+////		@Override
+////		public void hide(boolean autoClose) {
+////			setVisible(false);
+////			Widget view = getWidget();
+////			if (view instanceof MapView) {
+////				((MapView) view).setVisible(false);
+////			}
+////
+////		}
+//
+////		public void reshow() {
+////			show();
+////		}
+//
+////		@Override
+////		public void show() {
+////			setPopupPosition(toolHp.getAbsoluteLeft()-1, toolHp.getAbsoluteTop()
+////					+ toolHp.getOffsetHeight());
+////			super.show();
+////			setVisible(true);
+////			View view = (View) getWidget();
+////			view.onShow();
+////			if (view instanceof MapView) {
+////				((MapView) view).setVisible(true);
+////			}
+////		}
+//	}
+
+	private class CustomSimplePanel extends SimplePanel implements HasWidgets {
+		public CustomSimplePanel(View w) {
+			super();
 			setWidget(w);
 			//int wi = Window.getClientWidth()-40;
 			//setWidth(wi+"px");
 			setStyleName(ComponentView.STYLE_NAME);
 		}
-
-		@Override
-		public void hide(boolean autoClose) {
-			setVisible(false);
-			Widget view = getWidget();
-			if (view instanceof MapView) {
-				((MapView) view).setVisible(false);
-			}
-
+		
+		public CustomSimplePanel() {
+			super();
+			//int wi = Window.getClientWidth()-40;
+			//setWidth(wi+"px");
+			setStyleName(ComponentView.STYLE_NAME);
 		}
 
-		public void reshow() {
-			show();
-		}
-
-		@Override
-		public void show() {
-			setPopupPosition(toolHp.getAbsoluteLeft()-1, toolHp.getAbsoluteTop()
-					+ toolHp.getOffsetHeight());
-			super.show();
-			setVisible(true);
-			View view = (View) getWidget();
-			view.onShow();
-			if (view instanceof MapView) {
-				((MapView) view).setVisible(true);
-			}
-		}
 	}
-
 	private class QueryFiltersMap {
 		private final Map<String, Set<String>> typeFiltersMap = new TreeMap<String, Set<String>>();
 		private final Map<String, String> historyTypeValue = new HashMap<String, String>();
@@ -999,12 +1018,13 @@ public class OccurrenceView extends ComponentView implements
 
 	private String lastView;
 	private final SimplePanel mainSp = new SimplePanel();
+	private final CustomSimplePanel viewPanel = new CustomSimplePanel();
 	private ViewInfo activeViewInfo;
 	private int currentPageNum = 1;
 	private final QueryFiltersMap queryFiltersMap;
 	private final SearchForm searchForm;
 	private final VerticalPanel mainVp;
-	private final Map<String, CustomPopupPanel> viewsMap = new HashMap<String, CustomPopupPanel>();
+	private final Map<String, View> viewsMap = new HashMap<String, View>();
 	private final HistoryState historyState = new HistoryState() {
 
 		@Override
@@ -1074,6 +1094,7 @@ public class OccurrenceView extends ComponentView implements
 		// toolSp.setWidget(toolHp);
 		toolHp.setStyleName("OccurrenceView-ToolBar");
 		mainVp.add(toolHp);
+		mainVp.add(viewPanel);
 		mapLink.setStyleName("maplink");
 		listLink.setStyleName("listlink");
 		uploadLink.setStyleName("uploadlink");
@@ -1088,7 +1109,7 @@ public class OccurrenceView extends ComponentView implements
 		// Window.getClientHeight());
 		mainVp.setCellHeight(toolHp, "20px");
 		addHistoryItem(false);
-		Window.addResizeHandler(this);
+//		Window.addResizeHandler(this);
 		History.addValueChangeHandler(this);
 		// History.fireCurrentHistoryState();
 		String historyToken = History.getToken();
@@ -1111,11 +1132,11 @@ public class OccurrenceView extends ComponentView implements
 		});
 	}
 
-	public CustomPopupPanel getPopupView(String viewName) {
+	public View getPopupView(String viewName) {
 		viewName = viewName.toLowerCase();
-		CustomPopupPanel popupView = viewsMap.get(viewName);
+		View popupView = viewsMap.get(viewName);
 		if (popupView == null) {
-			popupView = new CustomPopupPanel(viewInfos.get(viewName).getView());
+			popupView = viewInfos.get(viewName).getView();
 			viewsMap.put(viewName, popupView);
 		}
 		return popupView;
@@ -1247,6 +1268,7 @@ public class OccurrenceView extends ComponentView implements
 
 	@Override
 	public void onResize(ResizeEvent event) {
+//		Window.alert("oresize OccurrenceView");
 		resize(event.getWidth(), event.getHeight());
 
 	}
@@ -1296,14 +1318,14 @@ public class OccurrenceView extends ComponentView implements
 		}
 	}
 
-	@Override
-	public void setVisible(boolean visible) {
-		if (visible) {
-			getPopupView(activeViewInfo.getName()).show();
-		} else {
-			getPopupView(activeViewInfo.getName()).hide();
-		}
-	};
+//	@Override
+//	public void setVisible(boolean visible) {
+//		if (visible) {
+//			getPopupView(activeViewInfo.getName()).show();
+//		} else {
+//			getPopupView(activeViewInfo.getName()).hide();
+//		}
+//	};
 
 	@Override
 	protected void handleOnValueChange(String historyToken) {
@@ -1356,6 +1378,7 @@ public class OccurrenceView extends ComponentView implements
 
 	@Override
 	protected void resize(final int width, int height) {
+//		Window.alert("My view " + History.getToken() + " = " + isMyView(History.getToken()));
 		if (!isMyView(History.getToken())) {
 			return;
 		}
@@ -1367,7 +1390,10 @@ public class OccurrenceView extends ComponentView implements
 		}
 		mainSp.setPixelSize(w, height-10);
 		if (activeViewInfo != null) {
-			getPopupView(activeViewInfo.getName()).reshow();
+//			getPopupView(activeViewInfo.getName()).reshow();
+//			viewPanel.setWidget(activeViewInfo.getView());
+			if(viewPanel.getWidget()!=null)
+			viewPanel.getWidget().setHeight((height-10-toolHp.getOffsetHeight())+ "px");
 		}
 		Window.enableScrolling(toolHp.getOffsetWidth() - 10 > w);
 
@@ -1492,18 +1518,26 @@ public class OccurrenceView extends ComponentView implements
 			switchViewInfo = viewInfos.get(DEFAULT_VIEW);
 		}
 		if (activeViewInfo != null) {
-			getPopupView(activeViewInfo.getName()).hide();
+//			getPopupView(activeViewInfo.getName()).hide();
 			// mainVp.remove(activeViewInfo.getView());
 		}
 		switchViewPanel.clear();
 		activeViewInfo = switchViewInfo;
 		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 			public void execute() {
-				CustomPopupPanel view = getPopupView(activeViewInfo.getName());
+				View view = getPopupView(activeViewInfo.getName());
 				if (isLoadRecord) {
 					searchForm.restoreStatesFromHistory(History.getToken());
 				}
-				view.show();
+//				view.show();
+				viewPanel.setWidget(view);
+				view.onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});
+//				if (view instanceof MapView) {
+////					Window.alert("MapView");
+////					((MapView)view).forceLayout();
+//				} else if (view instanceof ListView) {
+////					((ListView)view).forceLayout();
+//				}
 			}
 		});
 		// View switchView = switchViewInfo.getView();
@@ -1536,6 +1570,7 @@ public class OccurrenceView extends ComponentView implements
 		}
 		activeViewInfo = switchViewInfo;
 		initAdvanceFields();
+//		onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});
 		// switchView.onShow();
 	}
 

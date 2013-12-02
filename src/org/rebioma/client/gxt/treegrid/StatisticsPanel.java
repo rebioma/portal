@@ -21,12 +21,14 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.core.client.XTemplates;
+import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -35,8 +37,9 @@ import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
-import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.CellClickEvent;
@@ -64,8 +67,10 @@ public class StatisticsPanel  extends Widget{
 	private String BY_COLLECTION = "Numbers of occurrences per collection code";
 	private String BY_YEAR = "Numbers of occurrences per year collected";
 	String title = "";
-	FramedPanel cp ;
+	Label lTitle;
+	VerticalLayoutContainer cp ;
 	RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>> proxy;
+	private PagingToolBar toolBar;
 	private  PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>> loader;
 	 
 	SimpleSafeHtmlCell formatNbr = new SimpleSafeHtmlCell<Integer>(new AbstractSafeHtmlRenderer<Integer>() {
@@ -78,8 +83,13 @@ public class StatisticsPanel  extends Widget{
 	interface ExampleTemplate extends XTemplates {
 	    @XTemplate("<b>{name}</b><br />{value}")
 	    SafeHtml render(String name, String value);
-	  }
+	}
 	
+	public StatisticsPanel(Label lTitle) {
+		super();
+		this.lTitle = lTitle;
+	}
+
 	public Widget statisticsPanel(String gridTitle) {
 		
 		proxy = new RpcProxy<PagingLoadConfig, PagingLoadResult<StatisticModel>>() {
@@ -166,7 +176,8 @@ public class StatisticsPanel  extends Widget{
 	  	});
 	  	
 	  	ToolBar toolBarHaut = new ToolBar();
-	  	toolBarHaut.add(new LabelToolItem("Statistics: "));
+	  	LabelToolItem statLabel = new LabelToolItem("Statistics: ");
+	  	toolBarHaut.add(statLabel);
 	    SimpleComboBox<String> type = new SimpleComboBox<String>(new StringLabelProvider<String>());
 	      type.setTriggerAction(TriggerAction.ALL);
 	      type.setEditable(false);
@@ -181,15 +192,14 @@ public class StatisticsPanel  extends Widget{
 	      toolBarHaut.add(type);
 	      toolBarHaut.add(save);
 	      TextButton details  = new TextButton("Show details");
-	     
 	      toolBarHaut.add(details);
 	  	
   			loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>>(proxy);
 	  	    loader.setRemoteSort(true);
 	  	    loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, StatisticModel, PagingLoadResult<StatisticModel>>(store));
 	  	    
-	  	  final PagingToolBar toolBar = new PagingToolBar(NUM_PAGE);
-	      toolBar.getElement().getStyle().setProperty("borderBottom", "none");
+	  	  toolBar = new PagingToolBar(NUM_PAGE);
+	  	  toolBar.getElement().getStyle().setProperty("borderBottom", "none");
 	      toolBar.bind(loader);
 	       
 	    
@@ -221,21 +231,46 @@ public class StatisticsPanel  extends Widget{
 	     
 	        grid.setSelectionModel(selectionModel);
 	        grid.getSelectionModel().setSelectionMode(SelectionMode.SIMPLE);
-	        cp = new FramedPanel();
-	        cp.setCollapsible(true);
-	        cp.setHeadingText(BY_OWNER);
-	        cp.setWidth("100%");
-	        cp.setHeight(500);
-//	        cp.addStyleName("margin-10");
+	        cp = new VerticalLayoutContainer();//FramedPanel();
+//	        cp.setCollapsible(true);
+//	        cp.setHeadingText(BY_OWNER);
+	        lTitle.setText(BY_OWNER);
+//	        cp.setWidth("100%");
+//	        cp.setHeight(500);
+	        cp.addStyleName("margin-0");
 	        
+	        
+	        BorderLayoutContainer panel = new BorderLayoutContainer();
+	        BorderLayoutData centerLayoutData = new BorderLayoutData();
+	        centerLayoutData.setMargins(new Margins(5, 0, 0, 0));
 	        VerticalLayoutContainer con = new VerticalLayoutContainer();
-	        
 	        con.setBorders(true);
-	        con.add(toolBarHaut);
 	        con.add(grid, new VerticalLayoutData(1, 1));
-	        con.add(toolBar, new VerticalLayoutData(1, -1));
-	        cp.setWidget(con);
-	 
+	        con.add(toolBar);
+	        panel.setCenterWidget(con, centerLayoutData);
+	        
+//	        ContentPanel eastPanel = new ContentPanel();
+//	        eastPanel.setHeadingText("Company Details");
+//	        eastPanel.setHeaderVisible(false);
+//	        eastPanel.addStyleName("white-bg");
+//	        VBoxLayoutContainer vbox = new VBoxLayoutContainer();
+//	        vbox.setVBoxLayoutAlign(VBoxLayoutAlign.CENTER);
+//	        vbox.add(radarChart);
+//	        detail.setStyleName("searchLabel");
+//	        HorizontalPanel hp = new HorizontalPanel();
+//	        hp.add(detail);
+//	        vbox.add(hp);
+//	        eastPanel.add(vbox, new VerticalLayoutData(1, 1, new Margins(5, 0, 0, 0)));
+	        
+//	        BorderLayoutData eastLayoutData = new BorderLayoutData(400);
+//	        eastLayoutData.setMargins(new Margins(5, 5, 5, 0));
+//	        panel.setEastWidget(eastPanel, eastLayoutData);
+	        
+	        cp.setBorders(false);
+	        cp.add(toolBarHaut);
+	        cp.add(panel, new VerticalLayoutData(1, 1));
+//	        cp.add(toolBar, new VerticalLayoutData(1, -1));
+//	        cp.setWidget(cp);
 	      /*grid.setColumnReordering(true);
 	      grid.setStateful(true);
 	      grid.setStateId("gridExample");*/
@@ -279,7 +314,8 @@ public class StatisticsPanel  extends Widget{
 			
 			@Override
 			public void onSelect(SelectEvent event) {
-				cp.setHeadingText(title);
+//				cp.setHeadingText(title);
+				lTitle.setText(title);
 				loader.load(0,NUM_PAGE);
 			}
 		});
@@ -309,5 +345,8 @@ public class StatisticsPanel  extends Widget{
 		
 	}
 	
+	public void forceLayout() {
+		toolBar.forceLayout();
+	}
 
 }

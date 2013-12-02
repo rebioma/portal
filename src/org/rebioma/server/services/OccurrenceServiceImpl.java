@@ -306,6 +306,23 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
     return count;
   }
 
+  public int commentRecords(String sid, Set<Integer> occurrenceIds, 
+		  String comment, boolean notified) {
+	    int count = 0;
+	    try {
+
+	      User user = sessionService.getUserBySessionId(sid);
+
+	      if (user != null) {
+	        count = commentRecords(user, occurrenceIds, comment, notified);
+	      } else {
+	        return -1;
+	      }
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    }
+	    return count;
+	  }
   /*
    * (non-Javadoc)
    * 
@@ -479,6 +496,47 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
     updateService.update();
     return count;
   }
+  
+  private int commentRecords(User user, Collection<Integer> occurrenceIds, String comment, boolean notified) {
+	    int count = 0;
+	    log.info("commenting records: " + occurrenceIds);
+	    Date date = new Date();
+	    HashMap<Integer, List<String>> mailData = null;
+	    if(notified)
+	    	mailData = new HashMap<Integer, List<String>>();
+	    for (Integer id : occurrenceIds) {
+	      Occurrence occ = occurrenceDb.findById(id);
+	      int ownerId = occ.getOwner();
+	      // {WD get info for the notification
+	      if(mailData!=null){
+	      	List<String> data = mailData.get(ownerId);
+	      	if(data==null){
+	      		data = new ArrayList<String>();
+	      	}
+	      	data.add(id + "=" + occ.getAcceptedSpecies());
+	      	mailData.put(ownerId, data);
+	      }
+	      // WD}
+	      if (comment != null && !comment.isEmpty() && !comment.equals("")) {
+	    	  //System.out.println("comment" + comment);
+	    	  //comment += "\n\n comment left when reviewed";
+	    	  OccurrenceComments occurrenceComment = new OccurrenceComments(id,
+	    			  user.getId(), comment);
+	    	  occurrenceComment.setDateCommented(date);
+	    	  commentService.attachDirty(occurrenceComment);
+	    	  count++;
+	      }
+	    }
+	    if(notified && comment != null && (comment.length()>=1)){
+	    	System.out.println("##### sending mail");
+	    	new MailingServiceImpl()
+	    		.notifyComment(mailData, user , comment);
+	    }
+	    
+	    updateService.update();
+	    return count;
+  }
+	  
   
   public boolean editUpdate(List<Occurrence> occurrences, String sessionId) {
 	  log.debug("updating occurrences");

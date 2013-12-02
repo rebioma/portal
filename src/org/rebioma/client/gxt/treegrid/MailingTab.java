@@ -68,6 +68,8 @@ public class MailingTab {
 	private long frequency[] = {(long)7*1000*60*60*24, (long)14*1000*60*60*24, (long)30*1000*60*60*24};  
 	private List<OccurrenceCommentModel> listOccurrenceCommentModel;
 	private CheckBoxSelectionModel<OccurrenceCommentModel> sm;
+	private ToolBar toolBar;
+	private PagingToolBar pagingToolBar;
 	public Widget getWidget() {
 	
 		final MailingServiceAsync service = GWT.create(MailingService.class);
@@ -141,7 +143,7 @@ public class MailingTab {
 			}
 		});
 	    
-		ToolBar toolBar = new ToolBar();
+		toolBar = new ToolBar();
 		toolBar.addStyleName("style");
 	    toolBar.add(loadConfig);
 	    toolBar.add(new SeparatorToolItem());
@@ -159,7 +161,7 @@ public class MailingTab {
 	    toolBar.add(sendButton);
 	    sendButton.setEnabled(false);
 
-	    final PagingToolBar pagingToolBar = new PagingToolBar(50);
+	    pagingToolBar = new PagingToolBar(50);
 	    pagingToolBar.getElement().getStyle().setProperty("borderBottom", "none");
 	    pagingToolBar.bind(loader);
 	     
@@ -234,9 +236,9 @@ public class MailingTab {
 	 
 	    VerticalLayoutContainer con = new VerticalLayoutContainer();
 	    con.setBorders(true);
-	    con.add(toolBar, new VerticalLayoutData(1, -1));
+	    con.add(toolBar);
 	    con.add(grid, new VerticalLayoutData(1, 1));
-	    con.add(pagingToolBar, new VerticalLayoutData(1, -1));
+	    con.add(pagingToolBar);
 	    
 	    BorderLayoutData eastData = new BorderLayoutData(350);
 	    eastData.setMargins(new Margins(5, 5, 5, 5));
@@ -304,4 +306,9 @@ public class MailingTab {
 		});
 	}
 	
+	public void forceLayout() {
+		toolBar.forceLayout();
+		pagingToolBar.forceLayout();
+	}
+
 }

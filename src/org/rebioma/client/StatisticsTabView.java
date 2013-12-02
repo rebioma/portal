@@ -56,7 +56,9 @@ public class StatisticsTabView extends ComponentView implements ClickHandler, Ch
 	 
 	
 	
-	 private final Widget statisticsPanel;
+	private final StatisticsPanel statisticsPanel;
+	
+	private final Widget statisticsPanelW;
 	
 	private StatisticsTabView(){
 		this(null);
@@ -71,10 +73,21 @@ public class StatisticsTabView extends ComponentView implements ClickHandler, Ch
 		
 		mainVp.setSpacing(0);
 		
-		statisticsPanel = new StatisticsPanel().statisticsPanel("title");
+		HorizontalPanel hp = new HorizontalPanel();
+		Label title = new Label();
+		title.setStyleName("searchLabel");
+		hp.add(title);
+		hp.setCellVerticalAlignment(title, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		hp.setWidth("100%");
+		hp.setHeight("27px");
+		hp.setStyleName("OccurrenceView-ToolBar");
+		statisticsPanel = new StatisticsPanel(title);
+		statisticsPanelW = statisticsPanel.statisticsPanel("title");
 		mainVp.setWidth("100%");
-		statisticsPanel.setWidth(Window.getClientWidth()-20 +"px");
-		mainVp.add(statisticsPanel);
+//		statisticsPanel.setWidth(Window.getClientWidth()-19 +"px");
+		mainVp.add(hp);
+		mainVp.add(statisticsPanelW);
 		mainVp.setStyleName(DEFAULT_STYLE);
 		initWidget(mainVp);
 		resize(Window.getClientWidth(), (Window.getClientHeight() - 115));
@@ -136,15 +149,22 @@ public class StatisticsTabView extends ComponentView implements ClickHandler, Ch
 	
 	@Override
 	protected void resize(final int width, int height) {
-		int w = width - 20;
-		int h = height - mainVp.getAbsoluteTop() - 5;
+		int w = width - 18;
+		int h = height - mainVp.getAbsoluteTop() - 35;
 //		mainVp.setWidth(w + "px");
 //		mainVp.setHeight(h + "px");
-		statisticsPanel.setWidth(w+ "px");
-		statisticsPanel.setHeight(h + "px");
+		statisticsPanelW.setWidth(w+ "px");
+		statisticsPanelW.setHeight(h + "px");
 		//infoPanel.setWidth(w);
 		Window.enableScrolling(mainVp.getOffsetWidth() - 10 > width);
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 
+            @Override
+            public void execute()
+            {
+            	statisticsPanel.forceLayout();
+            }
+        });
 	}
 	
 	public String historyToken() {
