@@ -1008,10 +1008,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       instances.clear();
       return "{\"userLoggedIn\":false}";
     }
-    boolean sAdmin = false;
-    for(Role roles: new RoleDbImpl().getRoles(loggedinUser.getId())){
-    	if(roles.getNameEn().equalsIgnoreCase("superadmin"))sAdmin = true;
-    }
+    
+    boolean sAdmin = new RoleDbImpl().isSAdmin(loggedinUser.getId());
+    
     Integer id;
     Map<Integer, Occurrence> testDuplicate = new HashMap<Integer, Occurrence>();
     for (Occurrence o : instances) {

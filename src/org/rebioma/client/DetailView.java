@@ -2099,7 +2099,10 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			User currentUser = ApplicationView.getAuthenticatedUser();
 			String userEmail = occurrence.getOwnerEmail();
 			boolean isEditable = (currentUser != null)
-					&& (currentUser.getEmail().equals(userEmail)) && signedIn;
+					&& (
+						((currentUser.getEmail().equals(userEmail)) && signedIn) 
+						|| ApplicationView.getCurrentState() == ViewState.SUPERADMIN
+					);
 
 			setFieldsEditable(isEditable);
 			setCommentEnable(signedIn);
@@ -3909,7 +3912,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		if (editable) {
 			instruction.setHTML(constants.DetailInstruction() + "&nbsp;&nbsp;");
 		} else {
-			instruction.setHTML(constants.NotAllowToEdit() + "&nbsp;&nbsp;");
+			instruction.setHTML("<img src='images/warn.png' style='float:left'>&nbsp;" + constants.NotAllowToEdit() + "&nbsp;&nbsp;");
 		}
 		requiredItems.setFieldsEditable(editable);
 		coreItems.setFieldsEditable(editable);
