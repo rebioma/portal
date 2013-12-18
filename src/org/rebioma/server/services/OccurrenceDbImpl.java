@@ -1464,14 +1464,26 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         case IN:
           if (filter.getValue() instanceof Collection<?>) {
             criterion = Restrictions.in(filter.column, (Collection<?>) filter.getValue());
+            //{WD
+          } else if (StringUtil.isType(Occurrence.class, filter.column, Integer.class)){
+        	  Object values[] = filter.getIntegerValues();
+              criterion = Restrictions.in(filter.column, values);
+              //}
           } else {
             String values[] = filter.getCollectionValues();
             criterion = Restrictions.in(filter.column, values);
           }
           break;
         case NOT_IN:
-          String arryValues[] = filter.getCollectionValues();
-          criterion = Restrictions.not(Restrictions.in(filter.column, arryValues));
+          //{WD
+          if (StringUtil.isType(Occurrence.class, filter.column, Integer.class)){
+        	  Object arryValues[] = filter.getIntegerValues();
+        	  criterion = Restrictions.not(Restrictions.in(filter.column, arryValues));
+          //}
+          } else {
+        	  String arryValues[] = filter.getCollectionValues();
+        	  criterion = Restrictions.not(Restrictions.in(filter.column, arryValues));
+          }
           break;
         case IS_EMPTY:
           if (StringUtil.isString(Occurrence.class, filter.column)) {

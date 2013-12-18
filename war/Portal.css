@@ -178,6 +178,7 @@ body {
   font-style: bold;
   color: red;
   display: inline;
+  white-space: nowrap;
   vertical-align: middle;
 }
 

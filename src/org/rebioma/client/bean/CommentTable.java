@@ -121,6 +121,10 @@ public class CommentTable implements java.io.Serializable{
 		this.passwdHash = passwdHash;
 	}
 	
+	public static String getDownloadMail() {
+		return downloadMailEn + hr + downloadMailFr;
+	}
+	
 	public CommentTable(List<String> lOid, String userComment,
 			String trb, String dateCommented, String url, String email, String passwdHash) {
 		super();
@@ -498,4 +502,49 @@ foot;
 "	</tr>" +
 "	#{tableD}" +
 "</tbody></table>";
+	
+	private static String downloadMailEn = 
+			head +
+			"<p" + pStyle + ">" +
+			"Dear #{user}," +
+			"</p>" +
+			"<p" + pStyle + ">" +
+			"	#{title} #{firstN} #{lastN} downloaded some of your data recorded within the REBIOMA data portal." +
+			"</p>" +
+			"<p" + pStyle + ">" +
+			" 	These are the information about it:" +
+			"</p>" +
+			"<p" + pStyle + ">" +
+				"<div" + spanStyle + ">Title: #{title},</div>" +
+				"<div" + spanStyle + ">First name: #{firstN},</div>" +
+				"<div" + spanStyle + ">Last name: #{lastN},</div>" +
+				"<div" + spanStyle + ">Activities/Profession: #{activity},</div>" +
+				"<div" + spanStyle + ">Email: #{email},</div>" +
+				"<div" + spanStyle + ">Institution: #{institution},</div>" +
+				"<div" + spanStyle + ">Data use explaination: #{dataue},</div>" +
+			"</p>" +
+			signatureEn
+			;
+				
+	private static String downloadMailFr = 
+			"<p" + pFrStyle + ">" +
+			"Bonjour #{user}," +
+			"</p>" +
+			"<p" + pFrStyle + ">" +
+			"	#{title} #{firstN} #{lastN} a télechargé vos données enregistrées sur le portail de données de REBIOMA." +
+			"</p>" +
+			"<p" + pFrStyle + ">" +
+			"	Les informations sont, en détails, les suivants:" +
+			"</p>" +
+			"<p" + pFrStyle + ">" +
+				"<div" + spanFrStyle + ">Titre: #{title},</div>" +
+				"<div" + spanFrStyle + ">Nom: #{firstN},</div>" +
+				"<div" + spanFrStyle + ">Prénom: #{lastN},</div>" +
+				"<div" + spanFrStyle + ">Activité/Profession: #{activity},</div>" +
+				"<div" + spanFrStyle + ">Email: #{email},</div>" +
+				"<div" + spanFrStyle + ">Institution: #{institution},</div>" +
+				"<div" + spanFrStyle + ">Utilistaion du données: #{dataue},</div>" +
+			"</p>" +
+			signatureFr +
+			foot;
 }

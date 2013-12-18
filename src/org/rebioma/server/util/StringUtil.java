@@ -53,7 +53,7 @@ public class StringUtil {
 	    Column col = (Column) columnIterator.next();
 	    assert ! columnIterator.hasNext();
 	    return col.getName();
-	}
+  }
 
   public static void main(String args[]) {
     List<Integer> ids = new ArrayList<Integer>();

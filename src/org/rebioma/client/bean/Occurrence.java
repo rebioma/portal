@@ -1389,7 +1389,7 @@ public class Occurrence implements java.io.Serializable {
 	   * @return a {@link OccurrenceFieldItem} which contains taxonomic authorities
 	   *         species display and its value.
 	   */
-	  public OccurrenceFieldItem getDisplayField(Occurrence occurrence) {
+	  public OccurrenceFieldItem displayField(Occurrence occurrence) {
 	    List<OccurrenceFieldItem> taxonomicAuthorities = new ArrayList<OccurrenceFieldItem>();
 	    taxonomicAuthorities.add(new OccurrenceFieldItem(
 	        DetailView.FieldConstants.ACCEPTED_SPECIES, occurrence
@@ -1402,7 +1402,7 @@ public class Occurrence implements java.io.Serializable {
 	            .getVerbatimSpecies()));
 	    // GENUS_SPECIES
 	    taxonomicAuthorities.add(new OccurrenceFieldItem(
-	        DetailView.FieldConstants.GENUS_SPECIES, getGenusSpecies(occurrence)));
+	        DetailView.FieldConstants.GENUS_SPECIES, genusSpecies(occurrence)));
 	    taxonomicAuthorities
 	        .add(new OccurrenceFieldItem(DetailView.FieldConstants.ACCEPTED_GENUS,
 	            occurrence.getAcceptedGenus()));
@@ -1436,7 +1436,7 @@ public class Occurrence implements java.io.Serializable {
 	    return null;
 	  }
 	  
-	  private String getGenusSpecies(Occurrence occurrence) {
+	  private String genusSpecies(Occurrence occurrence) {
 	    if (occurrence.getAcceptedGenus() == null
 	        || occurrence.getAcceptedGenus() == null)
 	      return null;
@@ -1446,14 +1446,14 @@ public class Occurrence implements java.io.Serializable {
 	  
 //	  private String taxonomic;
 	  
-	  public String getTaxonomicField() {
-		  OccurrenceFieldItem item = getDisplayField(this);
+	  public String taxonomicField() {
+		  OccurrenceFieldItem item = displayField(this);
 		  return item == null ? ApplicationView.getConstants().None() : item.toString();
 	  }
 	  
 //	  private String email;
 	  
-	  public String getEmailField() {
+	  public String emailField() {
 		  	if(emailVisible) 
 		  		return this.getOwnerEmail();
 		  	else return ApplicationView.getConstants().EmailNotShow();

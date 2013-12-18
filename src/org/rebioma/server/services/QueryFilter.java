@@ -248,6 +248,16 @@ public abstract class QueryFilter {
     return values;
   }
 
+  Object[] getIntegerValues() {
+	  String values[] = value.toString().split(",");
+	  Object oValues[] = new Object[values.length];
+	  for (int i = 0; i < values.length; i++) {
+		  oValues[i] = Integer.valueOf(values[i].trim());
+	  }
+	  return oValues;
+  }
+
+	  
   Set<Integer> getIntCollectionValues() {
     String values[] = value.toString().split(",");
     Set<Integer> intValues = new HashSet<Integer>();

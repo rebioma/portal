@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -27,8 +29,10 @@ import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.User;
 import org.rebioma.server.services.DBFactory;
+import org.rebioma.server.services.MailingServiceImpl;
 import org.rebioma.server.services.OccurrenceDb;
 import org.rebioma.server.services.OccurrenceDbImpl;
+import org.rebioma.server.services.RoleDbImpl;
 import org.rebioma.server.services.SessionIdService;
 import org.rebioma.server.util.QueryToCsv;
 
@@ -71,10 +75,18 @@ public class FileDownloadServlet extends HttpServlet {
       OccurrenceQuery query = new OccurrenceQuery(0, 1000);
       String sid = null;
       String delimiter = ","; // default delimiter
+      String title = "";
+      String firstN = "";
+      String lastN = "";
+      String activity = "";
+      String email = "";
+      String institution = "";
+      String dataUE = "";
+      String userEmail = "";
       for (FileItem item : items) {
         String fieldName = item.getFieldName();
         if (fieldName.equals("query")) {
-          String[] filters = item.getString().split(",");
+          String[] filters = item.getString().split(";");
           for (String filter : filters) {
             query.addBaseFilter(filter);
           }
@@ -85,6 +97,22 @@ public class FileDownloadServlet extends HttpServlet {
           if (!value.trim().equals("")) {
             delimiter = value;
           }
+        } else if (fieldName.equals("title")) {
+        	title = item.getString();
+        } else if (fieldName.equals("firstN")) {
+            firstN = item.getString();
+        } else if (fieldName.equals("lastN")) {
+        	lastN = item.getString();
+        } else if (fieldName.equals("activity")) {
+            activity = item.getString();
+        } else if (fieldName.equals("email")) {
+        	email = item.getString();
+        } else if (fieldName.equals("institution")) {
+        	institution = item.getString();
+        } else if (fieldName.equals("dataue")) {
+        	dataUE = item.getString();
+        } else if (fieldName.equals("useremail")) {
+        	userEmail = item.getString();
         } else if (fieldName.equals("extra")) {
           String value = item.getString();
           ResultFilter resultFilter;
@@ -119,6 +147,8 @@ public class FileDownloadServlet extends HttpServlet {
       recordReviewWriter
           .write("occurrence id, reviewer name, reviewer email, reviewed status, reviewed date\n");
       List<Occurrence> results = new ArrayList<Occurrence>();
+      HashMap ownerMap = new HashMap<Integer, String>();
+      boolean sAdmin = user!=null && (new RoleDbImpl().isSAdmin(user.getId()));
       for (int start = query.getStart();;) {
         query.setStart(start);
         List<Occurrence> newResults = occurrenceDb.findByOccurrenceQuery(query,
@@ -128,6 +158,10 @@ public class FileDownloadServlet extends HttpServlet {
         } else {
           for (Occurrence occurrence : newResults) {
             results.add(occurrence);
+            if(!sAdmin) {
+	            if(!occurrence.getOwnerEmail().trim().equalsIgnoreCase(userEmail.trim()))
+	            	ownerMap.put(occurrence.getOwner(), occurrence.getOwnerEmail());
+            }
             List<OccurrenceReview> occReviews = occurrenceDb
                 .getOccurrenceReviewsOf(occurrence.getId());
 
@@ -178,6 +212,7 @@ public class FileDownloadServlet extends HttpServlet {
       }
       citationWriter.close();
       agreementReader.close();
+      MailingServiceImpl.sendDownloadMail(ownerMap, title, firstN, lastN, activity, email, institution, dataUE);
       DBFactory.getFileValidationService().zipFiles(
           new File[] { csvFile, recordReviewedFile, citationFile },
           response.getOutputStream());

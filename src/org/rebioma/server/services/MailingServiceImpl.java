@@ -1,6 +1,7 @@
 package org.rebioma.server.services;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +16,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.rebioma.client.EmailException;
 import org.rebioma.client.bean.CommentTable;
 import org.rebioma.client.bean.LastComment;
 import org.rebioma.client.bean.Occurrence;
@@ -426,6 +428,50 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		}else 
 			sendComment(list, url, date1, date2);
 		return true;
+	}
+	
+	/**
+	 * Notify the data owner by email when his data is downloaded 
+	 * @param ownerMap list of data owner's email
+	 * @param title 
+	 * @param firstN
+	 * @param lastN
+	 * @param activity
+	 * @param email
+	 * @param institution
+	 * @param dataUE
+	 * @throws EmailException 
+	 */
+	public static void sendDownloadMail(HashMap ownerMap, String title,
+			String firstN, String lastN, String activity, String email,
+			String institution, String dataUE) {
+		Iterator it = ownerMap.keySet().iterator();
+		while(it.hasNext()) {
+			String oEmail = (String) ownerMap.get(it.next());
+			User user = new UserDbImpl().findByEmail(oEmail);
+			String mail = CommentTable.getDownloadMail();
+			mail = mail.replace("#{user}", user.getFirstName());
+			mail = mail.replace("#{title}", title);
+			mail = mail.replace("#{firstN}", firstN);
+			mail = mail.replace("#{lastN}", lastN);
+			mail = mail.replace("#{activity}", activity);
+			mail = mail.replace("#{email}", email);
+			mail = mail.replace("#{institution}", institution);
+			mail = mail.replace("#{dataue}", dataUE);
+//			PrintWriter p = null;
+//			try {
+//				p = new PrintWriter(new File("/Users/razsoa/Documents/Travail/download.html"));
+//			} catch (FileNotFoundException e1) {
+//				e1.printStackTrace();
+//			}
+//			p.write(mail);
+//			p.close();
+			try {
+				EmailUtil.adminSendEmailTo2(oEmail, CommentTable.objectNotification, mail);
+			} catch (EmailException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }
