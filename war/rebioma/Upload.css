@@ -1,0 +1,319 @@
+.GWTUpld, table.GWTUpld td {
+	font-family: Verdana, Arial;
+	font-size: 12px;
+}
+
+.GWTUpld form, 
+.GWTUpld .upld-form-elements {
+	padding: 0px;
+	vertical-align: top;
+}
+
+.GWTUpld .upld-status {
+	font-family: arial;
+	font-size: 12px;
+	font-weight: bold;
+}
+.GWTUpld .upld-status div.cancel {
+	background: url(images/cancel-upld.gif) no-repeat;
+	width: 12px;
+	height: 12px;
+	cursor: pointer;
+	margin-top: 1px;
+}
+
+* html .GWTUpld .upld-status div.cancel {
+	width: 14px;
+	height: 10px;
+	margin-top: 2px;
+}
+
+.GWTUpld .upld-status div.cancel:hover {
+	background: url(images/cancel-upld-hover.gif) no-repeat;
+}
+
+.GWTUpld .upld-status .filename {
+	overflow: hidden;
+	white-space: nowrap;
+	margin-left: 0px;
+	margin-right: 11px;
+	height: 100%;
+	font-size: 12px;
+}
+.GWTUpld .upld-status .status {
+	padding-left: 8px;
+	white-space: nowrap;
+	height: 100%;
+	font-size: 12px;
+}
+.GWTUpld .upld-status .status-success {
+	color: green;
+}
+.GWTUpld .upld-status .status-error,
+.GWTUpld .upld-status .status-canceled {
+	color: red;
+}
+
+.GWTUpld .prgbar-back {
+	background: #ffffff none repeat scroll 0 0;
+	border: 1px solid #999999;
+	height: 10px;
+	overflow: hidden;
+	padding: 1px;
+	width: 100px;
+	float: left;
+}
+* html .GWTUpld .prgbar-back {
+	height: 12px;
+	margin-top: 2px;
+}
+.GWTUpld .prgbar-done {
+	background: #d4e4ff none repeat scroll 0 0;
+	font-size: 0;
+	height: 100%;
+	float: left;
+}
+.GWTUpld .prgbar-msg {
+	position: absolute;
+	z-index: 9;
+	font-size: 9px;
+	font-weight: normal;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top : 2px;
+	width : 200px;
+	text-align: center;
+	color :#fff;
+	text-shadow: 0 1px 0 #111111;
+}
+
+* html .GWTUpld .prgbar-msg {
+	top: 0px;
+	left: 4px;
+}
+
+.GWTUpld .changed {
+	font-weight: normal;  
+	text-decoration: blink;
+}
+.gwt-PopupPanel .GWTUpld {
+	border: 2px groove #A8F628;
+	padding: 10px;
+	background: #E5E8E4;
+  	-moz-border-radius-bottomleft: 6px;
+  	-moz-border-radius-bottomright: 6px;
+  	-moz-border-radius-topleft: 6px;
+  	-moz-border-radius-topright: 6px;
+	
+}
+
+.GWTUpld .DecoratedFileUpload {
+	margin-right: 5px;
+}
+
+.GWTUpld .DecoratedFileUpload .gwt-Button,
+.GWTUpld .DecoratedFileUpload .gwt-Anchor,
+.GWTUpld .DecoratedFileUpload .gwt-Label {
+	white-space: nowrap;
+	font-size: 100%;
+}
+
+.GWTUpld .gwt-Button, .GWTUpld .gwt-FileUpload {
+	font-size: 100%;
+	min-height: 15px;
+}
+
+.GWTUpld .DecoratedFileUpload .gwt-Anchor,
+.GWTUpld .DecoratedFileUpload .gwt-Label {
+	color: #0000AA;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.GWTUpld .gwt-Button:HOVER,
+.GWTUpld .DecoratedFileUpload .gwt-Button-over,
+.GWTUpld .DecoratedFileUpload .gwt-Anchor-over,
+.GWTUpld .DecoratedFileUpload .gwt-Label-over {
+	color: #999/*#af6b29*/;
+}
+.GWTUpld .DecoratedFileUpload .gwt-Label-over {
+	text-decoration: underline;
+}
+.GWTUpld .DecoratedFileUpload-disabled .gwt-Button,
+.GWTUpld .DecoratedFileUpload-disabled .gwt-Anchor,
+.GWTUpld .DecoratedFileUpload-disabled .gwt-Label {
+	color: grey;
+}
+
+.gwt-PopupPanelGlass {
+  background-color: #d4e4ff;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+.progress-bar {
+	background-color: #1a1a1a;
+	height: 15px;
+	padding: 3px;
+	width: 200px;
+	margin: 0px;			
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+	-webkit-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+	box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;           
+}
+
+.progress-bar div.prgbar-done {
+	display: inline-block;
+	height: 100%;
+	background-color: #777;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	-moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+	-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+	-webkit-transition: width .4s ease-in-out;
+	-moz-transition: width .4s ease-in-out;
+	-ms-transition: width .4s ease-in-out;
+	-o-transition: width .4s ease-in-out;
+	transition: width .4s ease-in-out;		
+}
+
+/*---------------------------*/			
+
+.blue div.prgbar-done {
+	background-color: #34c2e3;   
+}
+
+.orange div.prgbar-done {
+	  background-color: #fecf23;
+	  background-image: -webkit-gradient(linear, left top, left bottom, from(#fecf23), to(#fd9215));
+	  background-image: -webkit-linear-gradient(top, #fecf23, #fd9215);
+	  background-image: -moz-linear-gradient(top, #fecf23, #fd9215);
+	  background-image: -ms-linear-gradient(top, #fecf23, #fd9215);
+	  background-image: -o-linear-gradient(top, #fecf23, #fd9215);
+	  background-image: linear-gradient(top, #fecf23, #fd9215);  
+}	
+
+.green div.prgbar-done {
+	  background-color: #a5df41;
+	  background-image: -webkit-gradient(linear, left top, left bottom, from(#a5df41), to(#4ca916));
+	  background-image: -webkit-linear-gradient(top, #a5df41, #4ca916);
+	  background-image: -moz-linear-gradient(top, #a5df41, #4ca916);
+	  background-image: -ms-linear-gradient(top, #a5df41, #4ca916);
+	  background-image: -o-linear-gradient(top, #a5df41, #4ca916);
+	  background-image: linear-gradient(top, #a5df41, #4ca916);  
+}		
+
+/*---------------------------*/		
+
+.stripes div.prgbar-done {
+	-webkit-background-size: 30px 30px;
+	-moz-background-size: 30px 30px;
+	background-size: 30px 30px;			
+	background-image: -webkit-gradient(linear, left top, right bottom,
+						color-stop(.25, rgba(255, 255, 255, .15)), color-stop(.25, transparent),
+						color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .15)),
+						color-stop(.75, rgba(255, 255, 255, .15)), color-stop(.75, transparent),
+						to(transparent));
+	background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+						transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+						transparent 75%, transparent);
+	background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+						transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+						transparent 75%, transparent);
+	background-image: -ms-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+						transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+						transparent 75%, transparent);
+	background-image: -o-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+						transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+						transparent 75%, transparent);
+	background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+						transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+						transparent 75%, transparent);            
+	
+	-webkit-animation: animate-stripes 3s linear infinite;
+	-moz-animation: animate-stripes 3s linear infinite;       		
+}
+
+@-webkit-keyframes animate-stripes { 
+	0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+
+
+@-moz-keyframes animate-stripes {
+	0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+
+/*---------------------------*/	 
+
+.shine div.prgbar-done {
+	position: relative;
+}
+
+.shine div.prgbar-done::after {
+	content: '';
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: #fff;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;			
+	
+	-webkit-animation: animate-shine 2s ease-out infinite;
+	-moz-animation: animate-shine 2s ease-out infinite; 			
+}
+
+@-webkit-keyframes animate-shine { 
+	0% {opacity: 0; width: 0;}
+	50% {opacity: .5;}
+	100% {opacity: 0; width: 95%;}
+}
+
+
+@-moz-keyframes animate-shine {
+	0% {opacity: 0; width: 0;}
+	50% {opacity: .5;}
+	100% {opacity: 0; width: 95%;}
+}
+.cancel{
+	float: right;
+}
+.filename {
+	float: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 190px;
+}
+.tache {
+	color: #555;	
+    /*text-shadow: 0 1px 0 #111;*/
+    font: italic 11px 'trebuchet MS',Arial,Helvetica;
+    overflow: hidden;
+    float: left;
+	text-overflow: ellipsis;
+	width: 200px;	
+}
+.title1 {
+	/*border-bottom:solid 1px #E0E0E0;
+	background: none repeat scroll 0 0 #F2F2F2;*/
+	padding: 5px;
+	margin-bottom: 4px;
+	font-weight:normal;
+	font-size: 110%;
+	color:#222;	
+}
+.sep {
+	border-left:solid Opx #E0E0E0;
+	padding:0px 4px 0px 4px;
+	margin: 0px 4px 0px 4px;
+}
+.pupload td{
+	padding-bottom: 4px;
+}
