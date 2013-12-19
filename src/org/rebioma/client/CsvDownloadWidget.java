@@ -132,7 +132,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     dataUE.setWidth(270);
     dataUE.setAllowBlank(false);
     dataUE.setName("dataue");
-    info = new Label("* requiered field");
+    info = new Label("* required field");
     fieldTitle =new FieldLabel(title, "Title*");
     fieldFirstN =new FieldLabel(firstN, "First name*");
     fieldLastN =new FieldLabel(lastN, "Last name");
