@@ -212,7 +212,7 @@ public class FileDownloadServlet extends HttpServlet {
       }
       citationWriter.close();
       agreementReader.close();
-      MailingServiceImpl.sendDownloadMail(ownerMap, title, firstN, lastN, activity, email, institution, dataUE);
+      new MailingServiceImpl().sendDownloadMail(ownerMap, title, firstN, lastN, activity, email, institution, dataUE);
       DBFactory.getFileValidationService().zipFiles(
           new File[] { csvFile, recordReviewedFile, citationFile },
           response.getOutputStream());

@@ -60,6 +60,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -1002,6 +1003,7 @@ public class OccurrenceView extends ComponentView implements
 
 	private final HTML mapLink = new HTML(constants.Map());
 	private final HTML listLink = new HTML(constants.List());
+	private final HTML actionLink = new HTML("Action");
 	private final HTML uploadLink = new HTML(constants.Upload());
 	private final HTML revalidateLink = new HTML(constants.Revalidate());
 	private static final String FIELDS_LIST = "<a target='_blank' href='http://www.rebioma.net/index.php?option=com_content&view=article&id=52'>"
@@ -1087,6 +1089,8 @@ public class OccurrenceView extends ComponentView implements
 		toolHp.add(switchViewPanel);
 		toolHp.setCellVerticalAlignment(switchViewPanel,
 				HasVerticalAlignment.ALIGN_MIDDLE);
+		toolHp.setCellHorizontalAlignment(switchViewPanel,
+				HasHorizontalAlignment.ALIGN_RIGHT);
 		toolHp.setCellVerticalAlignment(searchForm,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
@@ -1097,6 +1101,7 @@ public class OccurrenceView extends ComponentView implements
 		mainVp.add(viewPanel);
 		mapLink.setStyleName("maplink");
 		listLink.setStyleName("listlink");
+		actionLink.setStyleName("actionlink");
 		uploadLink.setStyleName("uploadlink");
 		revalidateLink.setStyleName("revalidatelink");
 
@@ -1122,6 +1127,7 @@ public class OccurrenceView extends ComponentView implements
 
 		mapLink.addClickHandler(this);
 		listLink.addClickHandler(this);
+		actionLink.addClickHandler(this);
 		uploadLink.addClickHandler(this);
 		revalidateLink.addClickHandler(this);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
@@ -1295,9 +1301,12 @@ public class OccurrenceView extends ComponentView implements
 		searchForm.onStateChanged(state);
 		
 		revalidateLink.setHTML("");
+		revalidateLink.setVisible(false);
 		revalidateLink.setStyleName("link");
+		actionLink.setVisible(false);
 		switch (state) {
 		case ADMIN:
+			revalidateLink.setVisible(true);
 			revalidateLink.setHTML(constants.Revalidate());
 			revalidateLink.setStyleName("revalidatelink");
 		case REVIEWER:
@@ -1305,6 +1314,7 @@ public class OccurrenceView extends ComponentView implements
 		case RESEARCHER:
 			uploadLink.setHTML(constants.Upload());
 			uploadLink.setStyleName("uploadlink");
+			actionLink.setVisible(true);
 			break;
 		case UNAUTHENTICATED:
 			uploadLink.setHTML("");
@@ -1568,6 +1578,7 @@ public class OccurrenceView extends ComponentView implements
 			switchViewPanel.add(listLink);
 			switchViewPanel.add(uploadLink);
 		}
+		switchViewPanel.add(actionLink);
 		activeViewInfo = switchViewInfo;
 		initAdvanceFields();
 //		onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});

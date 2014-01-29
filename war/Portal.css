@@ -513,6 +513,22 @@ body {
   padding: 0px 0px 0px 20px;
   margin-right: 0.25em;
 }
+
+.actionlink{
+  background: url("images/actions.png") no-repeat;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  /*color:#FFD838;*/
+  color:blue;
+  display: inline;
+  margin-left: 5px;
+  vertical-align: middle;
+  padding: 0px 0px 0px 20px;
+  margin-right: 0.25em;
+}
+
 .revalidatelink .revalidatelink_success{
 	background: url("images/greenCheck.png") no-repeat;
 	color: green;
@@ -1148,7 +1164,27 @@ text-decoration: none;
 
 .text {
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 14px !important;
+  font-family: Trebuchet MS, Verdana,Helvetica,Arial,sans-serif !important;
+  text-overflow: ellipsis;
+}
+/*
+* for gxt button
+*/
+.text td div, .text div span, .text div {
+  white-space: nowrap;
+  font-size: 14px !important;
+  font-family: Trebuchet MS, Verdana,Helvetica,Arial,sans-serif !important;
+  text-overflow: ellipsis;
+}
+/*
+* for gxt tabpanel
+*/
+.text span span {
+  white-space: nowrap;
+  font-size: 14px !important;
+  font-family: Trebuchet MS, Verdana,Helvetica,Arial,sans-serif !important;
+  text-overflow: ellipsis;
 }
 
 .gwt-Label {
@@ -1160,8 +1196,8 @@ text-decoration: none;
 */
 
 .OccurrenceView-Detail {
-  padding-left: 10px;
-  padding-right: 10px;
+/*   padding-left: 10px; */
+/*   padding-right: 10px; */
   width: 100%;
 }
 
@@ -1175,7 +1211,7 @@ text-decoration: none;
   /*background-color: #84BD0E;*/
   background-color: #ECE9D8;
   /*border-top: 5px solid #083109;*/
-  border-top: 5px solid white;
+/*   border-top: 5px solid white; */
 }
 
 .OccurrenceView-Detail .Tool .OccurrenceLinks {
@@ -1220,7 +1256,7 @@ text-decoration: none;
 
 .OccurrenceView-Detail .Small-Map {
   /*border-top: 10px solid #083109;*/
-  border-top: 10px solid white;
+/*   border-top: 10px solid white; */
   width: 300px;
   height: 300px;
 }
@@ -1312,7 +1348,7 @@ font-size: 14px;
 }
 
 .OccurrenceView-Detail .Left .Comment .Title{
-  width: 100%;
+/*   width: 100%; */
   background-color: #ECE9D8;
   height: 20px;
   font-size: 14px;
@@ -1758,5 +1794,9 @@ div#content {
 .l-table {
 	border-right: solid 1px white;
 	border-left: solid 1px white;
+}
+
+.padding05 {
+	padding: 0 5px 5px 5px;
 }
 	

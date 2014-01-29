@@ -787,6 +787,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     modelSearch = new ModelSearch();
     
     leftTab = new TabPanel();
+    leftTab.addStyleName("text");
     TabItemConfig markerTb = new TabItemConfig(constants.MarkerResult());
     TabItemConfig modelTb = new TabItemConfig(constants.ModelSearch());
     ScrollPanel mrspanel = new ScrollPanel(markerList);

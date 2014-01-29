@@ -1389,7 +1389,7 @@ public class Occurrence implements java.io.Serializable {
 	   * @return a {@link OccurrenceFieldItem} which contains taxonomic authorities
 	   *         species display and its value.
 	   */
-	  public OccurrenceFieldItem displayField(Occurrence occurrence) {
+	  private OccurrenceFieldItem displayField(Occurrence occurrence) {
 	    List<OccurrenceFieldItem> taxonomicAuthorities = new ArrayList<OccurrenceFieldItem>();
 	    taxonomicAuthorities.add(new OccurrenceFieldItem(
 	        DetailView.FieldConstants.ACCEPTED_SPECIES, occurrence
@@ -1444,14 +1444,10 @@ public class Occurrence implements java.io.Serializable {
 	        + occurrence.getSpecificEpithet().trim();
 	  }
 	  
-//	  private String taxonomic;
-	  
 	  public String taxonomicField() {
 		  OccurrenceFieldItem item = displayField(this);
 		  return item == null ? ApplicationView.getConstants().None() : item.toString();
 	  }
-	  
-//	  private String email;
 	  
 	  public String emailField() {
 		  	if(emailVisible) 

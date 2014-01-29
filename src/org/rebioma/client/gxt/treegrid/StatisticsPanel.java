@@ -177,6 +177,7 @@ public class StatisticsPanel  extends Widget{
 	  	
 	  	ToolBar toolBarHaut = new ToolBar();
 	  	LabelToolItem statLabel = new LabelToolItem("Statistics: ");
+	  	statLabel.addStyleName("text");
 	  	toolBarHaut.add(statLabel);
 	    SimpleComboBox<String> type = new SimpleComboBox<String>(new StringLabelProvider<String>());
 	      type.setTriggerAction(TriggerAction.ALL);
@@ -189,9 +190,11 @@ public class StatisticsPanel  extends Widget{
 	      type.setValue(BY_OWNER);
 	      
 	      TextButton save  = new TextButton("Go");
+	      save.addStyleName("text");
 	      toolBarHaut.add(type);
 	      toolBarHaut.add(save);
 	      TextButton details  = new TextButton("Show details");
+	      details.addStyleName("text");
 	      toolBarHaut.add(details);
 	  	
   			loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<StatisticModel>>(proxy);
@@ -199,6 +202,7 @@ public class StatisticsPanel  extends Widget{
 	  	    loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, StatisticModel, PagingLoadResult<StatisticModel>>(store));
 	  	    
 	  	  toolBar = new PagingToolBar(NUM_PAGE);
+	  	  toolBar.addStyleName("text");
 	  	  toolBar.getElement().getStyle().setProperty("borderBottom", "none");
 	      toolBar.bind(loader);
 	       

@@ -330,20 +330,20 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 	}
 	
 	public static void main(String[] args) throws ParseException {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date d = new Date();
-		d = format.parse("2013-01-01 01:00:00");
-		Date d2 = new Date();
-//		d2 = format.parse("2012-12-1 01:00:00");
-		String url = "http://start.rebioma.net:8888/Portal.html?gwt.codesvr=start.rebioma.net:9997&";
-		System.out.println(url);
-		List<OccurrenceCommentModel> list = new ArrayList<OccurrenceCommentModel>();
-		list.add(new OccurrenceCommentModel(162, "",  "", "wilfried@rebioma.net", "", ""));
-//		new MailingServiceImpl().sendComment(list,url,d,d2);
-//		System.out.println(format.format(d));
-		MailingServiceImpl mail = new MailingServiceImpl();
-		HashMap<String, List<LastComment>> map = mail.getLastComments(d, d2);
-		mail.sendComment(map, list, url, d, d2);
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		Date d = new Date();
+//		d = format.parse("2013-01-01 01:00:00");
+//		Date d2 = new Date();
+////		d2 = format.parse("2012-12-1 01:00:00");
+//		String url = "http://start.rebioma.net:8888/Portal.html?gwt.codesvr=start.rebioma.net:9997&";
+//		System.out.println(url);
+//		List<OccurrenceCommentModel> list = new ArrayList<OccurrenceCommentModel>();
+//		list.add(new OccurrenceCommentModel(162, "",  "", "wilfried@rebioma.net", "", ""));
+////		new MailingServiceImpl().sendComment(list,url,d,d2);
+////		System.out.println(format.format(d));
+//		MailingServiceImpl mail = new MailingServiceImpl();
+//		HashMap<String, List<LastComment>> map = mail.getLastComments(d, d2);
+//		mail.sendComment(map, list, url, d, d2);
 	}
 
 	@Override
@@ -442,7 +442,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 	 * @param dataUE
 	 * @throws EmailException 
 	 */
-	public static void sendDownloadMail(HashMap ownerMap, String title,
+	public void sendDownloadMail(HashMap ownerMap, String title,
 			String firstN, String lastN, String activity, String email,
 			String institution, String dataUE) {
 		Iterator it = ownerMap.keySet().iterator();
@@ -467,7 +467,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 //			p.write(mail);
 //			p.close();
 			try {
-				EmailUtil.adminSendEmailTo2(oEmail, CommentTable.objectNotification, mail);
+				EmailUtil.adminSendEmailTo2("aimewilfried2@yahoo.fr", oEmail + " " + CommentTable.objectNotification, mail);
 			} catch (EmailException e) {
 				e.printStackTrace();
 			}

@@ -16,7 +16,10 @@
 	<inherits name="com.google.gwt.maps.Maps" />
 <!--	<inherits name="org.form.FormWidget" />-->
   	<inherits name="com.sencha.gxt.ui.GXT" />
-
+  	
+  	<stylesheet src="reset.css" />
+	<inherits name="com.sencha.gxt.theme.gray.Gray" />
+  	
 	<!--
 		localhost:
 		ABQIAAAAQmTfPsuZgXDEr012HM6trBQ9h4JNsDBcIOxh6bSLCe_wOSHYmhSu62PHB913KvcHTa2D6cm8TEbEsQ
@@ -61,7 +64,7 @@
 	<entry-point class='org.rebioma.client.Portal' />
 
 	<!-- Specify the application specific style sheet.              -->
-<!-- 	<stylesheet src="reset.css" /> -->
+
 <!-- 	<stylesheet src='../Portal.css' /> -->
 	<inherits name="gwtupload.GWTUpload"/>
 <!--  	<stylesheet src="Upload.css"/> -->

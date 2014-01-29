@@ -256,8 +256,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements
         welcomeEmail.setUserPassword(pass);
         welcomeEmail.buildBody();
         System.out.println(pass);
-//        EmailUtil.adminSendEmailTo(user.getEmail(), welcomeEmail.getSubject(),
-//            welcomeEmail.toString());
+        EmailUtil.adminSendEmailTo(user.getEmail(), welcomeEmail.getSubject(),
+            welcomeEmail.toString());
         ManagedSession.commitTransaction(session);
         log.info("user " + user.getFirstName() + " with email "
             + user.getEmail() + " is created, and an Welcome email is sent to "

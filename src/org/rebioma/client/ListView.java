@@ -89,9 +89,9 @@ import com.sencha.gxt.widget.core.client.info.Info;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 public class ListView extends ComponentView implements
-    PageListener<Occurrence>, PageClickListener, DataRequestListener, OccurrencePageSizeChangeHandler {
+    PageListener<Occurrence>, PageClickListener, DataRequestListener, OccurrencePageSizeChangeHandler, ReviewHandler {
 
-  private class CollaboratorsList extends DialogBox implements ResizeHandler,
+  public class CollaboratorsList extends DialogBox implements ResizeHandler,
       ClickHandler, CheckedClickListener {
     final UsersTable usersTable = new UsersTable();
     final ListBox sharedUsers = new ListBox(true);
@@ -243,166 +243,6 @@ public class ListView extends ComponentView implements
       return "";
     }
   }
-
-  private class ReviewerCommentPopup implements ClickHandler {
-    private TextArea commentArea;
-    private Label header;
-    private Button submitButton;
-    private VerticalPanel mainContainer;
-    private boolean isAll;
-    private boolean reviewed;
-    private Set<Integer> occurrenceIds;
-    private CheckBox checkBox;
-
-    public ReviewerCommentPopup() {
-
-    }
-
-    public void display(boolean isAll, boolean reviewed,
-        Set<Integer> occurrenceIds) {
-      if (mainContainer == null) {
-        mainContainer = new VerticalPanel();
-        commentArea = new TextArea();
-        checkBox = new CheckBox();
-        submitButton = new Button(constants.Submit());
-        header = new Label(constants.ReviewComment());
-        mainContainer.add(commentArea);
-        mainContainer.setSpacing(5);
-        HorizontalPanel hp = new HorizontalPanel();
-		Label ckLabel = new Label("Do you want to send an email right now?");
-		hp.setSpacing(5);
-		checkBox.setValue(false);
-		hp.add(checkBox);
-		hp.add(ckLabel);
-		mainContainer.add(hp);
-        mainContainer.add(submitButton);
-        submitButton.addClickHandler(this);
-      }
-      setEnable(true);
-      this.isAll = isAll;
-      this.reviewed = reviewed;
-      this.occurrenceIds = occurrenceIds;
-      DisplayPopup displayPopup = DisplayPopup.getDefaultDisplayPopup();
-      displayPopup.setTitleWidget(header);
-      displayPopup.setContentWidget(mainContainer);
-      displayPopup.show();
-    }
-
-    public void onClick(ClickEvent event) {
-      Object source = event.getSource();
-      if (source == submitButton) {
-        String comment = commentArea.getText().trim();
-        if (!comment.isEmpty() || Window.confirm(constants.NoCommentReview())) {
-          setEnable(false);
-          comment += constants.commentLeftWhenReviewed();  
-          if (isAll) {
-            reviewAllRecords(reviewed, comment, checkBox.getValue());
-          } else {
-        	reviewRecords(occurrenceIds, reviewed, comment, checkBox.getValue());
-          }
-        }
-
-      }
-
-    }
-
-    public void setEnable(boolean enabled) {
-      submitButton.setEnabled(enabled);
-      if (enabled) {
-        submitButton.setText(constants.Submit());
-      } else {
-        submitButton.setText(constants.Submitting());
-      }
-    }
-
-  }
-  
-  private class CommentRecordsPopup extends MultiLinePromptMessageBox {
-	  	
-	  private com.sencha.gxt.widget.core.client.form.CheckBox checkBox;
-	  private boolean isAll;
-	  private boolean review;
-	  private boolean reviewed;
-	  private Set<Integer> occurrenceIds;
-	  public CommentRecordsPopup(String title, String placeHolder) {
-	    	super(title, "");
-	    	checkBox = new com.sencha.gxt.widget.core.client.form.CheckBox();
-//	    	getTextArea().setAllowBlank(false);
-	    	getTextArea().setEmptyText(placeHolder);
-	    	getTextArea().setHeight(70);
-	    	getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
-	    	getButtonById(PredefinedButton.OK.name()).disable();
-	    	getButtonById(PredefinedButton.OK.name()).addSelectHandler(selectHandler);
-	    	checkBox.setBoxLabel("Do you want to send an email right now?");
-	    	contentAppearance.getContentElement(getElement()).appendChild(checkBox.getElement());
-	    	getTextArea().addKeyUpHandler(new KeyUpHandler() {
-				
-				@Override
-				public void onKeyUp(KeyUpEvent event) {
-					getButtonById(PredefinedButton.OK.name()).setEnabled(!getTextArea().getText().trim().equals(""));
-				}
-			});
-	    	setPixelSize(300, 170);
-	    }
-	    
-	  public void display(boolean isAll, boolean reviewed, boolean review,
-		        Set<Integer> occurrenceIds, String header) {
-		  getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
-		  setHeadingText(header);
-		  checkBox.setValue(false);
-		  setEnable(true);
-		  this.isAll = isAll;
-		  this.reviewed = reviewed;
-		  this.review = review;
-		  this.occurrenceIds = occurrenceIds;
-		  super.show();
-		  getTextArea().clear();
-		  getTextArea().setHeight(70);
-		  setPixelSize(300, 170);
-	  }
-	  
-	  SelectHandler selectHandler = new SelectHandler() {
-
-		  @Override
-		  public void onSelect(SelectEvent event) {
-			  if (review) {
-				  String comment = getTextArea().getText().trim();
-				  if (!comment.isEmpty() || Window.confirm(constants.NoCommentReview())) {
-					  setEnable(false);
-//					  comment += constants.commentLeftWhenReviewed();  
-					  if (isAll) {
-						  reviewAllRecords(reviewed, comment, checkBox.getValue());
-					  } else {
-						  reviewRecords(occurrenceIds, reviewed, comment, checkBox.getValue());
-					  }
-				  }
-			  } else {
-				  String comment = getTextArea().getText().trim();
-				  if (!comment.isEmpty() || Window.confirm(constants.NoCommentReview())) {
-					  setEnable(false);
-					  if (isAll) {
-//						  reviewAllRecords(reviewed, comment, checkBox.getValue());
-					  } else {
-						  commentRecords(occurrenceIds, comment, checkBox.getValue());
-					  }
-				  }
-			  }
-		  }
-	      
-
-	  };
-	  
-	  public void setEnable(boolean enabled) {
-		  getButtonById(PredefinedButton.OK.name()).setEnabled(enabled);
-	      if (enabled) {
-	    	  getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
-	      } else {
-	    	  getButtonById(PredefinedButton.OK.name()).setText(constants.Submitting());
-	      }
-	    }
-  }
-  
-  CommentRecordsPopup box = new CommentRecordsPopup("Comment records", "Please enter your comment");  
   
   /**
    * A green check image url for table columns with boolean value true/yes.
@@ -557,7 +397,7 @@ public class ListView extends ComponentView implements
   private boolean isActionInit = false;
   private final Map<Integer, Integer> currentSearchColOccIdsMap = new HashMap<Integer, Integer>();
   private List<ColumnConfig<Occurrence, ?>> currentHeaders = null;
-  private final ReviewerCommentPopup reviewerCommentPopup = new ReviewerCommentPopup();
+  private final ReviewerCommentPopup reviewerCommentPopup = new ReviewerCommentPopup(this, constants);
   
   private ToolBar toolHp = null;
 //  private ScrollPanel scrollPanel;
@@ -1397,7 +1237,8 @@ public class ListView extends ComponentView implements
       public void execute() {
         boolean isAllChecked = applyToAllCb.getValue();
         if (applyToAllCb.getValue()) {
-          reviewerCommentPopup.display(isAllChecked, true, null);
+          reviewerCommentPopup.//display(isAllChecked, true, null);
+          		display(isAllChecked, true, true, null, constants.ReviewComment());
           return;
         } else if (!isUpdated(checkedRecordCount())) {
           return;
@@ -1410,7 +1251,8 @@ public class ListView extends ComponentView implements
             return;
           }
         }
-        reviewerCommentPopup.display(isAllChecked, true, occurrenceIds);
+        reviewerCommentPopup//.display(isAllChecked, true, occurrenceIds);
+        	.display(isAllChecked, true, true, occurrenceIds, constants.ReviewComment());
       }
 
     };
@@ -1418,7 +1260,8 @@ public class ListView extends ComponentView implements
       public void execute() {
         boolean isAllChecked = applyToAllCb.getValue();
         if (applyToAllCb.getValue()) {
-          reviewerCommentPopup.display(isAllChecked, false, null);
+          reviewerCommentPopup//.display(isAllChecked, false, null);
+          		.display(isAllChecked, false, true, null, constants.ReviewComment());
           return;
         } else if (!isUpdated(checkedRecordCount())) {
           return;
@@ -1431,7 +1274,8 @@ public class ListView extends ComponentView implements
             return;
           }
         }
-        reviewerCommentPopup.display(isAllChecked, false, occurrenceIds);
+        reviewerCommentPopup//.display(isAllChecked, false, occurrenceIds);
+        	.display(isAllChecked, false, true, occurrenceIds, constants.ReviewComment());
       }
 
     };
@@ -1535,7 +1379,7 @@ public class ListView extends ComponentView implements
         public void execute() {
           boolean isAllChecked = applyToAllCb.getValue();
           if (applyToAllCb.getValue()) {
-        	  box.display(isAllChecked, false, false, null, COMMENT_RECORDS);
+        	  reviewerCommentPopup.display(isAllChecked, false, false, null, COMMENT_RECORDS);
 //            reviewerCommentPopup.display(isAllChecked, true, null);
             return;
           } else if (!isUpdated(checkedRecordCount())) {
@@ -1550,7 +1394,7 @@ public class ListView extends ComponentView implements
         	  Window.alert(" no valid record to review" + occurrenceIds.size());
         	  return;
           }
-          box.display(isAllChecked, false, false, occurrenceIds, COMMENT_RECORDS);
+          reviewerCommentPopup.display(isAllChecked, false, false, occurrenceIds, COMMENT_RECORDS);
 //        reviewerCommentPopup.display(isAllChecked, true, occurrenceIds);
         }
 
@@ -1592,8 +1436,9 @@ public class ListView extends ComponentView implements
 //      cb.setValue(isChecked == null ? false : isChecked);
     }
   }
-
-  private void reviewAllRecords(final Boolean reviewed, String comment, boolean notified) {
+  
+  @Override
+  public void reviewAllRecords(final Boolean reviewed, String comment, boolean notified) {
     String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
     DataSwitch.get().reviewRecords(sessionId, reviewed, pagerWidget.getQuery(),
         comment, notified, new AsyncCallback<Integer>() {
@@ -1611,8 +1456,9 @@ public class ListView extends ComponentView implements
 
         });
   }
-
-  private void reviewRecords(Set<Integer> occurrenceIds,
+  
+  @Override
+  public void reviewRecords(Set<Integer> occurrenceIds,
       final Boolean reviewed, String comment, boolean notified) {
     String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
     DataSwitch.get().reviewRecords(sessionId, reviewed, occurrenceIds, comment, notified,
@@ -1636,7 +1482,8 @@ public class ListView extends ComponentView implements
         });
   }
 
-  private void commentRecords(Set<Integer> occurrenceIds, String comment, boolean notified) {
+  @Override
+  public void commentRecords(Set<Integer> occurrenceIds, String comment, boolean notified) {
 	    String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
 	    DataSwitch.get().commentRecords(sessionId, occurrenceIds, comment, notified,
 	        new AsyncCallback<Integer>() {
@@ -1836,4 +1683,5 @@ public class ListView extends ComponentView implements
 	public void forceLayout(){
 		toolHp.forceLayout();
 	}
+
 }

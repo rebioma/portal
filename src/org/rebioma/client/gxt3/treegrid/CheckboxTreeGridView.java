@@ -307,6 +307,7 @@ public class CheckboxTreeGridView<M> extends GridView<M> {
 	@Override
 	protected void init(Grid<M> grid) {
 		tree = (CheckboxTreeGrid<M>) grid;
+		tree.addStyleName("text");
 		super.init(grid);
 	}
 

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,7 +103,13 @@ public class CsvUtil {
       if (name.equalsIgnoreCase("class")) {
         map.put(name, "class_");
         continue;
-      } else if (name.equalsIgnoreCase("reviewed")) {
+      } else if (name.equalsIgnoreCase("public")) {
+    	  map.put(name, "public_");
+    	  continue;
+      } else if (name.equalsIgnoreCase("order")) {
+    	  map.put(name, "order_");
+    	  continue;
+      } else if (name.equalsIgnoreCase("reviewed") || name.equalsIgnoreCase("stability")) {
         continue;
       }
 
@@ -247,5 +254,12 @@ public class CsvUtil {
     }
 
     return newFile;
+  }
+  
+  public static void main(String[] args) throws IOException {
+//	  Set<Occurrence> list = CsvUtil.loadOccurrences(new File("C:\\DOCUME~1\\CONSUL~1\\LOCALS~1\\Temp\\_occurrences_Croco.csv7030749315007702413.csv"), ';');
+//	  Set<Occurrence> list = CsvUtil.loadOccurrences(new File("F:\\Consultant\\Mes documents\\REBIOMADATA\\csv\\occurrences_Croco.csv"), ',');
+//	  System.out.println(list.size()); 
+	 
   }
 }
