@@ -515,7 +515,7 @@ body {
 }
 
 .actionlink{
-  background: url("images/actions.png") no-repeat;
+  background: url("images/activity.png") no-repeat;
   text-decoration: none;
   font-size: 14px;
   font-weight: bold;
@@ -1798,5 +1798,39 @@ div#content {
 
 .padding05 {
 	padding: 0 5px 5px 5px;
+}
+.log-all {
+    background: url("images/arrow_grey.png") no-repeat scroll 3px center rgba(0, 0, 0, 0);
+    border-top: 1px solid #D0D0D0;
+    margin-top: 25px;
+    padding: 4px 25px;
+    cursor: pointer;
+}
+
+.log-link {
+    background: url("images/arrow_grey.png") no-repeat scroll 3px center rgba(0, 0, 0, 0);
+    padding: 4px 25px;
+    cursor: pointer;
+}
+.active {
+/* 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAATklEQVR42uWSwQkAQQgDt3l78OtHtBRLEbSGHNuCwj3upoAhJDnnm0QEVgJVhbvPJWaG7oaIYJzgUlVgZowFl8wEEeH9BOsOViusf/AzHmlPUeJeP5BFAAAAAElFTkSuQmCC") no-repeat scroll 4px center rgba(0, 0, 0, 0); */
+	background: url("images/arrow_blue.png") no-repeat scroll 3px center rgba(0, 0, 0, 0);
+    font-weight: bold;
+	cursor: auto;
+}
+.a-link {
+	cursor: pointer;
+	color: blue;
+	font-weight: bold;
+}
+.m-hover {
+	text-decoration: underline;
+}
+.disable {
+	pointer-events: none;
+	color: gray;
+}
+.d-hover #d_id {
+	background: #DEEBF7 !important;
 }
 	

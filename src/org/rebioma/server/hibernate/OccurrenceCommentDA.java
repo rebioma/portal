@@ -26,9 +26,9 @@ import org.rebioma.client.bean.RecapTable;
 import org.rebioma.client.bean.User;
 import org.rebioma.server.util.ManagedSession;
 
-public class OccurrenceCommentHbm {
+public class OccurrenceCommentDA {
 	
-	private static Logger log = Logger.getLogger(OccurrenceCommentHbm.class);
+	private static Logger log = Logger.getLogger(OccurrenceCommentDA.class);
 	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static List<OccurrenceCommentModel> getCommentInfo(Date date1, Date date2){
@@ -99,7 +99,7 @@ public class OccurrenceCommentHbm {
 		while(it.hasNext()){
 			String uid = (String) it.next();
 			List<LastComment> list = map.get(uid);
-			User u = OccurrenceCommentHbm.getUserById(uid);
+			User u = OccurrenceCommentDA.getUserById(uid);
 			OccurrenceCommentModel temp = new OccurrenceCommentModel(
 					u.getId(),
 					u.getFirstName(),
@@ -427,7 +427,7 @@ public class OccurrenceCommentHbm {
 		}
 	}
 	public static void main(String[] args) {
-		OccurrenceCommentHbm hbm = new OccurrenceCommentHbm();
+		OccurrenceCommentDA hbm = new OccurrenceCommentDA();
 		HashMap<String, List<LastComment>> res = hbm.getLastComment(null, null);
 //		hbm.creatCommentMail(res, null, null, null);
 //		HashMap<String, RecapTable> res = hbm.occurrenceTRBState(186);

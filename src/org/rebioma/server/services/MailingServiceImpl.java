@@ -1,8 +1,5 @@
 package org.rebioma.server.services;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ import org.rebioma.client.bean.RecordReview;
 import org.rebioma.client.bean.User;
 import org.rebioma.server.daemon.AppStartUp;
 import org.rebioma.server.daemon.StartUp;
-import org.rebioma.server.hibernate.OccurrenceCommentHbm;
+import org.rebioma.server.hibernate.OccurrenceCommentDA;
 import org.rebioma.server.util.EmailUtil;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -35,6 +32,7 @@ import com.sencha.gxt.data.shared.SortInfo;
 import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
+
 public class MailingServiceImpl extends RemoteServiceServlet implements org.rebioma.client.services.MailingService{
 	
 	private Logger log = Logger.getLogger(MailingServiceImpl.class);
@@ -48,14 +46,14 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 	public List<OccurrenceCommentModel> getOccurrenceComments(Date date1, Date date2) {
 		List<OccurrenceCommentModel> lists = new ArrayList<OccurrenceCommentModel>();
 		if(date1==null && date2==null)return lists;
-		lists = OccurrenceCommentHbm.getCommentInfo(date1, date2);
+		lists = OccurrenceCommentDA.getCommentInfo(date1, date2);
 		return lists;
 	}
 	
 	public HashMap<String, List<LastComment>> getLastComments(Date date1, Date date2) {
 //		HashMap<String, List<LastComment>> lists = new HashMap<String, List<LastComment>>();
 //		if(date1==null && date2==null)return lists;
-		return OccurrenceCommentHbm.getLastComment(date1, date2);	
+		return OccurrenceCommentDA.getLastComment(date1, date2);	
 	}
 	
 	/**
@@ -66,7 +64,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 	public void notifyComment(Set<OccurrenceComments> comments, User user, Integer owner) {
 //		int i=0;
 		String url = new StartUp().load().getProperty("url","http://data.rebioma.net");
-		User dataManager = OccurrenceCommentHbm.getUserById(owner+"");
+		User dataManager = OccurrenceCommentDA.getUserById(owner+"");
 		
 		if(dataManager.getId().equals(user.getId())){
 			HashMap<String, List<OccurrenceComments>> trbMap = new HashMap<String, List<OccurrenceComments>>();
@@ -87,7 +85,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 				while(it.hasNext()){
 					String id = (String) it.next();
 					List<OccurrenceComments> ocTmp = trbMap.get(id);
-					User userTmp = OccurrenceCommentHbm.getUserById(id);
+					User userTmp = OccurrenceCommentDA.getUserById(id);
 					int rowNumber = 0;
 					String userFullName = userTmp.getFirstName() + " " + userTmp.getLastName();
 
@@ -162,7 +160,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		Iterator it = mailData.keySet().iterator();
 		while(it.hasNext()){
 			int id = (Integer) it.next();
-			User userTmp = OccurrenceCommentHbm.getUserById(id+"");
+			User userTmp = OccurrenceCommentDA.getUserById(id+"");
 			List<String> list = mailData.get(id);
 			try {
 				int rowNumber = 0;
@@ -207,7 +205,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 				String mail = CommentTable.getCommentToSend();
 				String userFullName = oc.getFirstName() + " " + oc.getLastName();
 				String recapTable = "";
-				HashMap<String, RecapTable> hRecap = OccurrenceCommentHbm.occurrenceTRBState(oc.getUId());
+				HashMap<String, RecapTable> hRecap = OccurrenceCommentDA.occurrenceTRBState(oc.getUId());
 				Set<String> set = hRecap.keySet();
 				Iterator it = set.iterator();
 				int rowNum =0;
@@ -222,9 +220,9 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 					rowNum++;
 				}
 				
-				String validated[] = OccurrenceCommentHbm.occurrenceState(oc.getUId());
+				String validated[] = OccurrenceCommentDA.occurrenceState(oc.getUId());
 				
-				String tableR = OccurrenceCommentHbm.creatCommentMail(oc, url, date1, date2);
+				String tableR = OccurrenceCommentDA.creatCommentMail(oc, url, date1, date2);
 				
 				mail = mail.replace("#{user}", userFullName);
 				mail = mail.replace("#{recapTable}", recapTable);
@@ -264,13 +262,13 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		while(it.hasNext()){
 			String uid = (String) it.next();
 			List<LastComment> list = map.get(uid);
-			User u = OccurrenceCommentHbm.getUserById(uid);
+			User u = OccurrenceCommentDA.getUserById(uid);
 			try{
 				
 				String mail = CommentTable.getMailToTRB();
 				String userFullName = u.getFirstName() + " " + u.getLastName();
 				
-				String tableR = OccurrenceCommentHbm.creatCommentMail(list, u, url, date1, date2);
+				String tableR = OccurrenceCommentDA.creatCommentMail(list, u, url, date1, date2);
 				
 				if(tableR.length()<=1)
 					continue;
@@ -308,11 +306,11 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 			}
 			if(!doIt)continue;
 			List<LastComment> list = map.get(uid);
-			User u = OccurrenceCommentHbm.getUserById(uid);
+			User u = OccurrenceCommentDA.getUserById(uid);
 			try{
 				String mail = CommentTable.getMailToTRB();
 				String userFullName = u.getFirstName() + " " + u.getLastName();
-				String tableR = OccurrenceCommentHbm.creatCommentMail(list, u, url, date1, date2);
+				String tableR = OccurrenceCommentDA.creatCommentMail(list, u, url, date1, date2);
 				
 				if(tableR.length()<=1)
 					continue;
@@ -412,9 +410,9 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 		if(date1==null && date2==null)return lists;
 		if(mailTo.equals("TRB")){
 			HashMap<String, List<LastComment>> map = getLastComments(date1, date2);
-			lists = OccurrenceCommentHbm.getCommentInfo(map, date1, date2);
+			lists = OccurrenceCommentDA.getCommentInfo(map, date1, date2);
 		}else 
-			lists = OccurrenceCommentHbm.getCommentInfo(date1, date2);
+			lists = OccurrenceCommentDA.getCommentInfo(date1, date2);
 		return lists;	
 	}
 

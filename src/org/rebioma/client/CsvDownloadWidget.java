@@ -60,7 +60,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
   private Set<String> queryFilters;
   private String extraInfomation;
   private Label info;
-  boolean myDownoad;
+  boolean myDownload;
   private final HTML termsOfUseLabel = new HTML(
       "<a href='https://sites.google.com/site/rebiomahelp/home/english#datause' target='_blank'>Data Use Agreement (DUA)</a>");
 
@@ -83,7 +83,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
   public CsvDownloadWidget() {
     super(true);
     AppConstants constants = ApplicationView.getConstants();
-    myDownoad = false;
+    myDownload = false;
     form = new FormPanel();
     downloadButton = new Button(constants.AcceptAndDownload());
     form.setAction(GWT.getModuleBaseURL() + "download");
@@ -172,7 +172,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
   public void onClick(ClickEvent event) {
     Object source = event.getSource();
     if (source == downloadButton) {
-    	if(!form.isValid() && !myDownoad)return;
+    	if(!form.isValid() && !myDownload)return;
       if (queryFilters != null) {
         String sid = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
         submit(sid);
@@ -205,7 +205,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     		show=!(s.trim().contains("ownerEmail")&&s.trim().contains(currentUser.getEmail()));
     	userEmail.setValue(currentUser.getEmail());
     }
-    myDownoad = !show;
+    myDownload = !show;
     showForm(show);
     extraInfo.setValue(extraInfomation);
     setVisible(true);

@@ -32,6 +32,7 @@ import org.rebioma.client.UploadView.UploadListener;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.RevalidationResult;
 import org.rebioma.client.bean.User;
+import org.rebioma.client.gxt.treegrid.ActivityLogDialog;
 import org.rebioma.client.services.RevalidationService;
 import org.rebioma.client.services.ServerPingService;
 import org.rebioma.client.services.ServerPingServiceAsync;
@@ -1003,7 +1004,7 @@ public class OccurrenceView extends ComponentView implements
 
 	private final HTML mapLink = new HTML(constants.Map());
 	private final HTML listLink = new HTML(constants.List());
-	private final HTML actionLink = new HTML("Action");
+	private final HTML ativityLink = new HTML("Activity Log");
 	private final HTML uploadLink = new HTML(constants.Upload());
 	private final HTML revalidateLink = new HTML(constants.Revalidate());
 	private static final String FIELDS_LIST = "<a target='_blank' href='http://www.rebioma.net/index.php?option=com_content&view=article&id=52'>"
@@ -1101,7 +1102,7 @@ public class OccurrenceView extends ComponentView implements
 		mainVp.add(viewPanel);
 		mapLink.setStyleName("maplink");
 		listLink.setStyleName("listlink");
-		actionLink.setStyleName("actionlink");
+		ativityLink.setStyleName("actionlink");
 		uploadLink.setStyleName("uploadlink");
 		revalidateLink.setStyleName("revalidatelink");
 
@@ -1127,7 +1128,7 @@ public class OccurrenceView extends ComponentView implements
 
 		mapLink.addClickHandler(this);
 		listLink.addClickHandler(this);
-		actionLink.addClickHandler(this);
+		ativityLink.addClickHandler(this);
 		uploadLink.addClickHandler(this);
 		revalidateLink.addClickHandler(this);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
@@ -1264,6 +1265,8 @@ public class OccurrenceView extends ComponentView implements
 				revalidateLink.setHTML(constants.Revalidating());
 			}
 			
+		} else if(sender == ativityLink) {
+			new ActivityLogDialog(constants).show();
 		}
 	}
 
@@ -1303,7 +1306,7 @@ public class OccurrenceView extends ComponentView implements
 		revalidateLink.setHTML("");
 		revalidateLink.setVisible(false);
 		revalidateLink.setStyleName("link");
-		actionLink.setVisible(false);
+		ativityLink.setVisible(false);
 		switch (state) {
 		case ADMIN:
 			revalidateLink.setVisible(true);
@@ -1314,7 +1317,7 @@ public class OccurrenceView extends ComponentView implements
 		case RESEARCHER:
 			uploadLink.setHTML(constants.Upload());
 			uploadLink.setStyleName("uploadlink");
-			actionLink.setVisible(true);
+			ativityLink.setVisible(true);
 			break;
 		case UNAUTHENTICATED:
 			uploadLink.setHTML("");
@@ -1578,7 +1581,7 @@ public class OccurrenceView extends ComponentView implements
 			switchViewPanel.add(listLink);
 			switchViewPanel.add(uploadLink);
 		}
-		switchViewPanel.add(actionLink);
+		switchViewPanel.add(ativityLink);
 		activeViewInfo = switchViewInfo;
 		initAdvanceFields();
 //		onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});

@@ -54,6 +54,15 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>ActivityLogService</servlet-name>
+    <servlet-class>org.rebioma.server.services.ActivityLogServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ActivityLogService</servlet-name>
+    <url-pattern>/rebioma/ActivityLogService</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>SpeciesExplorerService</servlet-name>
     <servlet-class>org.rebioma.server.services.SpeciesExplorerServiceImpl</servlet-class>
   </servlet>
@@ -127,7 +136,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>FileDownloadServlet</servlet-name>
-    <url-pattern>/rebioma/download</url-pattern>
+    <url-pattern>/rebioma/downloadFile</url-pattern>
   </servlet-mapping>
   
   <servlet>
