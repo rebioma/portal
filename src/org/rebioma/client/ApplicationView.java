@@ -588,6 +588,7 @@ public class ApplicationView extends View implements ClickHandler {
         }
         if (selectedWidget instanceof OccurrenceView && !isOccViewInitialized) {
             isOccViewInitialized = true;
+            ((OccurrenceView) activeViewInfo.getView()).onStateChanged(ApplicationView.getCurrentState());
         }
         // Widget tabWidget = null;
         // if (listener != null) {

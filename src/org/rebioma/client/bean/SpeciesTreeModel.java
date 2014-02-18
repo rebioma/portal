@@ -277,6 +277,8 @@ public class SpeciesTreeModel implements Serializable{
 			return "AcceptedGenus";
 		} else if ("Species".equalsIgnoreCase(level)) {
 			return "AcceptedSpecies";
+		} else if ("class".equalsIgnoreCase(level)) {
+			return "AcceptedClass";
 		} else {
 			return level;
 		}

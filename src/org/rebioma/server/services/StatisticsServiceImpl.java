@@ -24,18 +24,28 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	public List<StatisticModel> getStatisticsByType(int statisticsType) {
 		List<StatisticModel> ret = new ArrayList<StatisticModel>();
 		String colonne="";
+		String groupColonne="";
 		switch (statisticsType) {
 		case 1:
 			colonne=" u.first_name || ' ' || upper(u.last_name) || ' - ' || u.institution || ' ' || u.email ";
+			groupColonne=colonne;
 			break;
 		case 2:
 			colonne=" institutioncode ";
+			groupColonne=colonne;
 			break;
 		case 3:
 			colonne=" collectioncode ";
+			groupColonne=colonne;
 			break;
 		case 4:
-			colonne=" yearcollected ";
+			colonne=" cast(yearcollected as int)/10 * 10 || ' ~ ' || " +
+					"case " +
+					"	when cast(max(yearcollected)as int)/10 = cast(extract(year from current_date)as int)/10 " +
+					"	then date_part('year', current_date) || '' " +
+					"	else cast(yearcollected as int)/10 * 10 + 9 || '' " +
+					"end  ";
+			groupColonne=" cast(yearcollected as int)/10 ";
 			break;
 		default:
 			break;
@@ -50,42 +60,42 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 						"FROM occurrence LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.\"public\" = FALSE \n" +
-						"GROUP BY " + colonne +
+						"GROUP BY " + groupColonne +
 						"UNION\n" +
 						"SELECT  "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",count(*) as \"public\",0 as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.\"public\" = TRUE \n" +
-						"GROUP BY  " + colonne +
+						"GROUP BY  " + groupColonne +
 						"UNION\n" +
 						"SELECT  "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\",count(*)  as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.reviewed = true\n" +
-						"GROUP BY  " + colonne +
+						"GROUP BY  " + groupColonne +
 						"UNION\n" +
 						"SELECT "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\", 0 as reliable,count(*) as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.reviewed IS NULL AND occurrence.validated=TRUE\n" +
-						"GROUP BY  " + colonne +
+						"GROUP BY  " + groupColonne +
 						"UNION\n" +
 						"SELECT  "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\", 0 as reliable,0 as awaiting,count(*)  as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.reviewed = FALSE\n" +
-						"GROUP BY  " + colonne +
+						"GROUP BY  " + groupColonne +
 						"UNION\n" +
 						"SELECT  "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\", 0 as reliable,0 as awaiting,0 as questionnable,count(*) as invalidated, 0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.validated = FALSE\n" +
-						"GROUP BY  " + colonne +
+						"GROUP BY  " + groupColonne +
 						")as tbl\n" +
 						"GROUP BY libelle ORDER BY libelle";
 		System.out.println(sql);

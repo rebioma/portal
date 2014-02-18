@@ -408,8 +408,8 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 	public List<OccurrenceCommentModel> getOccurrenceComments(String mailTo, Date date1, Date date2) {
 		List<OccurrenceCommentModel> lists = new ArrayList<OccurrenceCommentModel>();
 		if(date1==null && date2==null)return lists;
-		if(mailTo.equals("TRB")){
-			HashMap<String, List<LastComment>> map = getLastComments(date1, date2);
+		if(mailTo.equalsIgnoreCase("TRB")){
+			HashMap<String, List<LastComment>> map = OccurrenceCommentDA.getLastComment(date1, date2);//getLastComments(date1, date2);
 			lists = OccurrenceCommentDA.getCommentInfo(map, date1, date2);
 		}else 
 			lists = OccurrenceCommentDA.getCommentInfo(date1, date2);
@@ -421,7 +421,7 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 			List<OccurrenceCommentModel> list) {
 		String url = AppStartUp.load().getProperty("url","http://data.rebioma.net");
 		if(mailTo.equals("TRB")){
-			HashMap<String, List<LastComment>> map = getLastComments(date1, date2);
+			HashMap<String, List<LastComment>> map = OccurrenceCommentDA.getLastComment(date1, date2);//getLastComments(date1, date2);
 			sendComment(map, list, url, date1, date2);
 		}else 
 			sendComment(list, url, date1, date2);

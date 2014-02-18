@@ -267,7 +267,7 @@ public class OccurrenceQuery extends Query<Occurrence> {
       // filters.add(DEFAULT_FILTER);
     }
     if(ApplicationView.getCurrentState() == ViewState.SUPERADMIN)
-    	this.resultFilter = resultFilter;
+    	this.resultFilter = property==null?ResultFilter.PUBLIC:resultFilter;
     return filters;
   }
 

@@ -35,29 +35,26 @@ public class OccurrenceCommentDA {
 		String date = "";
 		
 		if(date1!=null && date2!=null)
-			date = "OccurrenceComments.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' AND ";
+			date = "ocm.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' AND ";
 		
 		
 		String sql = "SELECT " +
-				"\"user\".id," +
-				"\"user\".first_name," +
-				"\"user\".last_name," +
-				"\"user\".email," +
-				"\"user\".password_hash," +
-				"count(OccurrenceComments.id) AS FIELD_1 " +
+				"	u.id, u.first_name, u.last_name, u.email, u.password_hash, count(ocm.id) as c " +
 				"FROM " +
-				"\"user\" " +
-				"INNER JOIN Occurrence ON (\"user\".id = Occurrence.Owner) " +
-				"INNER JOIN OccurrenceComments ON (Occurrence.ID = OccurrenceComments.oid) " +
+				"	OccurrenceComments ocm " +
+				"	INNER JOIN Occurrence oc ON (" +
+				"		ocm.oid = oc.id" +
+				"		and ocm.uid <> oc.owner " +
+				"	) " +
+				"	INNER JOIN \"user\" u ON ( " +
+				"		oc.owner = u.id " +
+				"	) " +
 				"WHERE " +
 				date +
-				"usercomment <> '\n comment left when reviewed.' " +
+				"	trim(trim(E'\\n' from usercomment)) <> 'comment left when reviewed.' " +
 				"GROUP BY " +
-				"\"user\".first_name," +
-				"\"user\".last_name," +
-				"\"user\".email," +
-				"\"user\".id," +
-				"\"user\".password_hash";
+				"	first_name, last_name, u.email, u.id, u.password_hash " +
+				"order by u.id";
 		log.info(sql);
 		
 		List<OccurrenceCommentModel> lists = new ArrayList<OccurrenceCommentModel>();
@@ -200,15 +197,22 @@ public class OccurrenceCommentDA {
 		String date = "";
 		
 		if(date1!=null && date2!=null)
-			date = "AND OccurrenceComments.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' ";
+			date = "AND o.dateCommented BETWEEN '" + format.format(date1) + "' AND '" + format.format(date2) + "' ";
 		
 		
-		String sql = "select uid, oid, max(datecommented) " +
-				"from occurrencecomments " +
-				"where uid in (select distinct userid from taxonomic_reviewer) " +
-				"and usercomment <> '\n comment left when reviewed.' " +
+		String sql = "select " +
+				"	userid, " +
+				"	oid, max(datecommented) " +
+				"from " +
+				"	occurrencecomments o " +
+				"join record_review r on ( " +
+				"	o.oid = r.occurrenceid " +
+				"	and o.uid <> r.userid " +
+				") " +
+				"where " +
+				"	trim(trim(E'\n' from usercomment)) <> 'comment left when reviewed.' " +
 				date +
-				"group by uid,oid";
+				"group by userid, oid";
 		log.info(sql);
 		
 		HashMap<String, List<LastComment>> lists = new HashMap<String, List<LastComment>>();
@@ -277,7 +281,7 @@ public class OccurrenceCommentDA {
 				"WHERE " +
 				date +
 				"usercomment <> '\n comment left when reviewed.' and " +
-				"(OccurrenceComments.dateCommented >= record_review.reviewed_date OR " +
+				"(date_trunc('minutes',OccurrenceComments.dateCommented) >= date_trunc('minutes',record_review.reviewed_date) OR " +
 				"record_review.reviewed_date IS NULL) AND" +
 				"(record_review.reviewed = false OR " +
 				"record_review.reviewed IS NULL OR " +

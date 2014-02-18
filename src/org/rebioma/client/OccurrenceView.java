@@ -658,11 +658,11 @@ public class OccurrenceView extends ComponentView implements
 		}
 
 		public void search() {
+			query.clearSearchFilter();
 			String searchText = searchBox.getText();
 			String searchType = getSearchType();
 			String activeView = activeViewInfo.getName();
 			ResultFilter resultFilter = getResultFilter();
-
 			query.setBaseFilters(query.getFiltersFromProperty(searchType,
 					ApplicationView.getAuthenticatedUser(), resultFilter));
 			if (!activeView.equalsIgnoreCase(ADVANCE)) {
@@ -2268,11 +2268,14 @@ public class OccurrenceView extends ComponentView implements
 		//on efface toutes les filtres
 		query.reinitFilters();
 		searchForm.clearAdanceSearch();
-		//on ajoute les nouveaus filtres
+		//on ajoute les nouveaux filtres
 		query.setBaseFilters(newquery.getBaseFilters());
 		query.setSearchFilters(newquery.getSearchFilters());
 		query.setDisjunctionSearchFilters(newquery.getDisjunctionSearchFilters());
 	    query.setResults(newquery.getResults());
+	    //{WD ajout du nouveau resultfilter
+	    query.setResultFilter(newquery.getResultFilter());
+	    //}
 	    query.setCount(new Integer(newquery.getCount()).intValue());
 	    query.setCountTotalResults(new Boolean(newquery.countTotalResults).booleanValue());
 	    query.orderingMap = newquery.orderingMap == null ? null : new ArrayList<OrderKey>(newquery.orderingMap);

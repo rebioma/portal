@@ -105,8 +105,8 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 	}
 	private CheckNodes checkNodes = CheckNodes.BOTH;
 	protected boolean checkable = true;
-	private CheckCascade checkStyle = CheckCascade.PARENTS;
-	private boolean cascade = false;
+	private CheckCascade checkStyle = CheckCascade.TRI;
+	private boolean cascade = true;
 
 	protected boolean filtering;
 	protected TreeLoader<M> loader;
@@ -649,6 +649,7 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 				}
 			}
 		}
+		setChecked(model);
 	}
 
 	/**
@@ -723,7 +724,9 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 	public void toggle(M model) {
 		TreeNode<M> node = findNode(model);
 		if (node != null) {
-			setExpanded(model, !node.isExpanded());
+			boolean expanded = node.isExpanded();
+			setExpanded(model, !expanded);
+			if(!expanded)onTriExpandCascade(model);
 		}
 	}
 
@@ -1171,6 +1174,11 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 		List<M> checked = new ArrayList<M>();
 		for (TreeNode<M> n : nodes.values()) {
 			TreeGridNode<M> gn = (TreeGridNode<M>) n;
+			//{WD si le parent est coché on ne recupere plus les children cochés
+			M parent = treeStore.getParent(n.getModel());
+			if(parent != null && ((TreeGridNode<M>)findNode(parent)).getCheckState() == CheckState.CHECKED)
+				continue;
+			//}
 			if (gn.getCheckState() == CheckState.CHECKED) {
 				checked.add(n.getModel());
 			}
@@ -1268,7 +1276,7 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 				parent = treeStore.getParent(parent);
 
 			}
-			//cascade = true;
+			cascade = true;
 		} else if (checked == CheckState.UNCHECKED) {
 			List<M> children = treeStore.getAllChildren(model);
 			cascade = false;
@@ -1294,7 +1302,7 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 				parent = treeStore.getParent(parent);
 			}
 
-			//cascade = true;
+			cascade = true;
 		}
 	}
 
@@ -1315,6 +1323,80 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 		if (node != null) {
 			TreeGridNode<M> gridNode = (TreeGridNode<M>) node;
 			if (gridNode.getCheckState() == checked) {
+				return;
+			}
+
+			boolean leaf = isLeaf(item);
+			if ((!leaf && checkNodes == CheckNodes.LEAF)
+					|| (leaf && checkNodes == CheckNodes.PARENT)) {
+				return;
+			}
+
+			if (fireCancellableEvent(new BeforeCheckChangeEvent<M>(
+					node.getModel(), gridNode.getCheckState()))) {
+
+				gridNode.setCheckState(checked);
+
+				treeGridView.onCheckChange(node, checkable, checked);
+
+				fireEvent(new CheckChangeEvent<M>(item,
+						gridNode.getCheckState()));
+				fireEvent(new CheckChangedEvent<M>(getCheckedSelection()));
+
+				if (cascade) {
+					onCheckCascade(item, checked);
+				}
+			}
+		}
+	}
+	
+	protected void onTriExpandCascade(M model) {
+		if(model == null)return;
+		TreeNode<M> node = findNode(model);
+		TreeGridNode<M> gridN = (TreeGridNode<M>) node;
+		if(gridN.getCheckState()==CheckState.CHECKED) {
+//			List<M> children = treeStore.getAllChildren(model);
+//			for (M child: children) {
+//				TreeNode<M> n = findNode(child);
+//				TreeGridNode<M> gridNode = (TreeGridNode<M>) n;
+//				gridNode.setCheckState(CheckState.CHECKED);
+//	
+//				treeGridView.onCheckChange(n, checkable, CheckState.CHECKED);
+//			
+//			}
+			return;
+		} else {
+			List<M> children = treeStore.getAllChildren(model);
+			
+			if(children ==null || children.size() == 0)return;
+			boolean allChildrenUnChecked = true;
+			for (M child : children) {
+				TreeNode<M> n = findNode(child);
+				if (n != null) {
+					onTriExpandCascade(child);
+					if (isChecked(child)) {
+						allChildrenUnChecked = false;
+					}
+				}
+			}
+			TreeNode<M> n = findNode(model);
+			if (!allChildrenUnChecked) {
+				TreeGridNode<M> gridNode = (TreeGridNode<M>) n;
+				gridNode.setCheckState(CheckState.PARTIAL);
+	
+				treeGridView.onCheckChange(n, checkable, CheckState.PARTIAL);
+			} 
+		}
+	}
+	
+	public void setChecked(M item) {
+		if (!checkable)
+			return;
+		TreeNode<M> node = findNode(item);
+		if (node != null) {
+			TreeGridNode<M> gridNode = (TreeGridNode<M>) node;
+			CheckState checked = gridNode.getCheckState();
+			if (gridNode.getCheckState() != CheckState.CHECKED) {
 				return;
 			}
 

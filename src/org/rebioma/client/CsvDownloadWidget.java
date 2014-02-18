@@ -86,7 +86,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     myDownload = false;
     form = new FormPanel();
     downloadButton = new Button(constants.AcceptAndDownload());
-    form.setAction(GWT.getModuleBaseURL() + "download");
+    form.setAction(GWT.getModuleBaseURL() + "downloadFile");
 
     form.setEncoding(Encoding.MULTIPART);
     form.setMethod(Method.POST);

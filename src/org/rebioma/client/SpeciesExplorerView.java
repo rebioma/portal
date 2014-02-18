@@ -2,6 +2,7 @@ package org.rebioma.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -186,14 +187,15 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		List<SpeciesTreeModel> speciesTreeModels = speciesExplorerPanel.getCheckedSelection();
 
 		if(speciesTreeModels != null && !speciesTreeModels.isEmpty()){
+			Set<String> searchFilters = new HashSet<String>();
 			for(SpeciesTreeModel model: speciesTreeModels){
-				StringBuilder sb = new StringBuilder();
-				sb.append(" ");
-				sb.append(model.getLevelQueryFilter());
-				sb.append(" = ")
-				.append(model.getLabel());
-				query.addSearchFilter(sb.toString(), true);
+				String sb = model.getLevelQueryFilter() + " = " 
+						+ model.getLabel();
+//				query.addSearchFilter(sb.toString(), true);
+				searchFilters.add(sb);
 			}
+//			query.setSearchFilters(searchFilters);
+			query.setDisjunctionSearchFilters(searchFilters);
 		}
 		
 	}
@@ -302,6 +304,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 				propertyMap.put(OccurrenceSearchListener.SHARED_VALUE_KEY, getSharedType());
 			}
 			addCheckedSpeciesToQuery(query);
+			
 			propertyMap.put(OccurrenceSearchListener.RESULT_FILTER_VALUE_KEY, getResultFilterValue());
 			propertyMap.put(OccurrenceSearchListener.SEARCH_TYPE_PROPERTY_KEY, searchType);
 			propertyMap.put(OccurrenceSearchListener.SEARCH_TYPE_VALUE_PROPERTY_KEY, searchTypeValue);
@@ -374,6 +377,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		switch (state) {
 		case SUPERADMIN:
 		case UNAUTHENTICATED:
+			searchTypeBox.setSelectedIndex(typeIndexMap.get(OccurrenceView.ALL_OCC));
 			break;
 		// My Positively Reviewed
 		// My Negatively Reviewed
@@ -431,6 +435,15 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 
 			break;
 		}
+		//{WD
+		int selectedIndex = searchTypeBox.getSelectedIndex();
+		setMyRecordsEnable(selectedIndex > OccurrenceView.SearchForm.ALL_TYPES_END_INDEX);
+		String type = searchTypeBox.getItemText(selectedIndex);
+		setMyRecordsInvalid(type.equalsIgnoreCase(constants
+				.AllInvalid())
+				|| type.equalsIgnoreCase(constants.MyInvalid()));
+		setSharedType(getSearchType());
+		//}
 	}
 	private String getSharedType() {
 		int selectedIndex = sharedListBox.getSelectedIndex();
