@@ -91,7 +91,7 @@ public interface FileValidationService {
 	      throws IOException;
 
   public String proccessOccurrenceFile(File file, User user, boolean showEmail,
-	      boolean isPublic, boolean isVettable, char delimeter, String userIdsCSV,Traitement traitement)
+	      boolean isPublic, boolean isVettable, boolean clearReview, char delimeter, String userIdsCSV,Traitement traitement)
 	      throws IOException;
 
   public String processReviewerAssignmentFile(File file, char delimeter,

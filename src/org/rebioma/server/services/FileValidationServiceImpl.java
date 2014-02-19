@@ -168,7 +168,7 @@ public class FileValidationServiceImpl implements FileValidationService {
   private static final String IS_TERRESTRIAL = "isterrestrial";
   
   public String proccessOccurrenceFile(File file, User loggedinUser, boolean showEmail,
-      boolean isPublic, boolean isVettable, char delimiter, String userIdsCSV,Traitement traitement) throws IOException {
+      boolean isPublic, boolean isVettable, boolean clearReview, char delimiter, String userIdsCSV,Traitement traitement) throws IOException {
 	  traitement.setTraitement("loading occurrences...", 100*1024, 100*1024);
 	  Set<Occurrence> occurrences = CsvUtil.loadOccurrences(file, delimiter);
 	  int totalOccurrences = occurrences.size();
@@ -207,7 +207,7 @@ public class FileValidationServiceImpl implements FileValidationService {
 	  }
     List<RecordReview> rcdrv = recordReviewDb.findByProperty();
     validationService.validate(occurrences, traitement);
-    occurrenceDb.attachDirty(occurrences, traitement,rcdrv);
+    occurrenceDb.attachDirty(occurrences, traitement,rcdrv, clearReview, sAdmin);
     traitement.setTraitement("Updating occurrences...", 100*1024, 0);
 //    if(traitement.getCancel())return "{\"Uploaded\":\"canceled\"}";
     updateService.update();

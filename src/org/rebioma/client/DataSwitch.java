@@ -695,6 +695,30 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
           }
         });
   }
+  
+  /**
+   * 
+   * @param sessionId
+   * @param occurrences
+   * @param resetReview
+   * @param cb
+   * @return
+   */
+  public Request update(String sessionId, Set<Occurrence> occurrences, boolean resetReview,
+	      final AsyncCallback<String> cb) {
+	    fireActivities();
+	    return occurrenceService.update(sessionId, occurrences, resetReview,
+	        new AsyncCallback<String>() {
+	          public void onFailure(Throwable caught) {
+	            cb.onFailure(caught);
+	          }
+
+	          public void onSuccess(String result) {
+	            clearCache(OCCURRENCE_KEY);
+	            cb.onSuccess(result);
+	          }
+	        });
+	  }
 
   public Request update(String userSessionId, User user, String newPass,
       AsyncCallback<Boolean> cb) {

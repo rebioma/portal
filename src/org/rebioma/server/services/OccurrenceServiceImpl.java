@@ -385,6 +385,34 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
     }
   }
 
+  public String update(String sessionId, Set<Occurrence> occurrences, boolean resetReview)
+	      throws OccurrenceServiceException {
+	    try {
+	      User user = sessionService.getUserBySessionId(sessionId);
+	      if ((user != null) && (!occurrences.isEmpty())) {
+	        occurrenceDb.removeBadId(occurrences, user);
+	        validationService.validate(occurrences);
+	        for (Occurrence o : occurrences) {
+	          // do not populate layer when occurrence is update due to performance
+	          // of the provider server
+	          // AscDataUtil.resetLayerValues(o);
+	          // AscDataUtil.setLayerValuesToOccurrence(o);
+	          OccurrenceUtil.populateScientificName(o, false);
+	        }
+	        occurrenceDb.attachDirty(occurrences, resetReview);
+	        updateService.update();
+	      } else {
+	        throw new OccurrenceServiceException(
+	            "Invalid request. No user associated with session id.");
+	      }
+	      StringBuilder result = new StringBuilder();
+	      result.append("Vetting update complete.");
+	      return result.toString();
+	    } catch (Exception e) {
+	      throw new OccurrenceServiceException("Unable to update: " + e.toString());
+	    }
+	  }
+
   public int updateComments(String sessionId, Integer owner, Set<OccurrenceComments> comments, boolean emailing)
       throws OccurrenceServiceException {
     try {
@@ -546,6 +574,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
 			  session.update(occ);
 		  }
 		  ManagedSession.commitTransaction(session);
+		  updateService.update();
 	  }catch(Exception e){
 		  if(session!=null)ManagedSession.rollbackTransaction(session);
 		  return false;

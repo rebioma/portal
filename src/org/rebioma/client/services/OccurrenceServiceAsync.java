@@ -108,8 +108,12 @@ public interface OccurrenceServiceAsync extends IsSerializable {
    * @return error message or null if no error
    */
   public Request update(String sessionId, Set<Occurrence> occurrences,
-      AsyncCallback<String> cb);
+	      AsyncCallback<String> cb);
+  
+  public Request update(String sessionId, Set<Occurrence> occurrences, boolean resetReview,
+	      AsyncCallback<String> cb);
 
+	  
   /**
    * Asynchronously updates a set of {@link OccurrenceComments} objects.
    * 

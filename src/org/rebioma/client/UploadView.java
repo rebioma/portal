@@ -29,6 +29,7 @@ import org.rebioma.client.UsersTable.CheckedClickListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -36,12 +37,16 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -68,6 +73,12 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.event.HideEvent;
+import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.info.Info;
 
 public class UploadView extends ComponentView implements CheckedClickListener {
   public interface UploadListener {
@@ -275,7 +286,8 @@ public class UploadView extends ComponentView implements CheckedClickListener {
   private final RadioButton privateRadioButton = new RadioButton(
       "private_vetter", constants.Private());
   private final RadioButton publicRadioButton = new RadioButton(
-      "public_vetter", constants.Public());
+	      "public_vetter", constants.Public());
+  private final CheckBox clearReviewCheckBox = new CheckBox("Clear review");
   private final CheckBox showEmailBox = new CheckBox(constants.ShowEmail());
   private final Button uploadButton = new Button(constants.AcceptDsaUpload());
   //private final FormPanel uploadForm = new FormPanel();
@@ -309,9 +321,36 @@ public class UploadView extends ComponentView implements CheckedClickListener {
 	    //uploadPanel.add(fileUpload);
 	    uploadPanel.add(delimiterPanel);
 	    showEmailBox.setName("show_email");
+	    clearReviewCheckBox.setName("clear_review");
+	    clearReviewCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if(event.getValue()) {
+					MessageBox boxWarning = new MessageBox("Reset review state?", "");
+	            	boxWarning.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.CANCEL);
+	            	boxWarning.setIcon(MessageBox.ICONS.warning());
+	            	boxWarning.setWidth("415px");
+	            	boxWarning.setMessage("You are resetting all the TRB's review on all occurrences. Would you like to continue?");
+	            	boxWarning.addHideHandler(new HideHandler() {
+
+						@Override
+						public void onHide(HideEvent eventW) {
+							Dialog btnW = (Dialog) eventW.getSource();
+							if(!btnW.getHideButton().getText().equalsIgnoreCase("yes")) {
+								clearReviewCheckBox.setChecked(false);
+							} 
+						}});
+	            	
+	            	boxWarning.show();
+				} 
+			}
+		});
+	    uploadPanel.add(clearReviewCheckBox);
 	    uploadPanel.add(showEmailBox);
 	    uploadPanel.add(privateModelField);
 	    uploadPanel.add(publicRadioButton);
+	    setClearReview(ApplicationView.getCurrentState() == ViewState.SUPERADMIN);
 	    UserQuery query = friendsTable.getQuery();
 	    query.setUsersCollaboratorsOnly(true);
 	    friendsTable.addCheckedListener(this);
@@ -372,6 +411,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
 	        public HandlerRegistration addClickHandler(ClickHandler handler) {
 	            return addDomHandler(handler, ClickEvent.getType());
 	        }
+	        
 	    }
 	    
 	    SingleUploader uploader = new SingleUploader(FileInputType.LABEL, new ModalUploadStatus(), new MyFancyLookingSubmitButton(), form);
@@ -501,6 +541,10 @@ public class UploadView extends ComponentView implements CheckedClickListener {
 
 	  }
 
+  private void setClearReview(boolean visible) {
+	  clearReviewCheckBox.setChecked(false);
+	  clearReviewCheckBox.setVisible(visible);
+  }
   @Override
   public String historyToken() {
     StringBuilder sb = new StringBuilder();
@@ -555,6 +599,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
     privateRadioButton.setValue(false);
     publicRadioButton.setValue(true);
     modelingBox.setValue(false);
+    setClearReview(ApplicationView.getCurrentState() == ViewState.SUPERADMIN);
   }
 
   @Override
@@ -564,6 +609,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
       height = 1;
     }
     mainSp.setPixelSize(width - 22, height - 10);
+    setClearReview(ApplicationView.getCurrentState() == ViewState.SUPERADMIN);
   }
 
   protected void updateChecksMap() {

@@ -559,7 +559,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
    * If an updated {@link Occurrence} contains vetted = true, make sure it is
    * validated otherwise set it back to false.
    */
-  public void attachDirty(Set<Occurrence> instances, Traitement traitement, List<RecordReview> rcdrv) {
+  public void attachDirty(Set<Occurrence> instances, Traitement traitement, List<RecordReview> rcdrv,
+		  boolean clearReview, boolean isSA) {
     log.debug("attaching dirty Occurrence instances");
     Occurrence ref = null;
     try {
@@ -577,7 +578,13 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     	  }
     	  boolean newOccurrence = instance.getId() == null;
     	  ref = instance;
-    	  instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
+    	  // {WD
+    	  if(!isSA)
+    		  instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
+    	  if(isSA && clearReview) {
+    		  instance.setReviewed(null);
+    	  }
+    	  //}
     	  try{
     		  instance.setDecimalLatitude(instance.getDecimalLatitude().replace(',','.'));
     		  instance.setDecimalLongitude(instance.getDecimalLongitude().replace(',','.'));
@@ -591,13 +598,25 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         if (newOccurrence) {
           assignReviewRecords(instance);
         } else {
-          //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(instance.getId());
-          List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
-          for (RecordReview recordReview : recordReviews) {
-            recordReview.setReviewed(null);
-            recordReview.setReviewedDate(null);
-            session.update(recordReview);
-          }
+        			
+        	if(isSA) {
+        		if(clearReview) {
+        			List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
+        			for (RecordReview recordReview : recordReviews) {
+        				recordReview.setReviewed(null);
+        				recordReview.setReviewedDate(null);
+        				session.update(recordReview);
+        			}
+        		}
+        	} else {
+	          //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(instance.getId());
+	          List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
+	          for (RecordReview recordReview : recordReviews) {
+	            recordReview.setReviewed(null);
+	            recordReview.setReviewedDate(null);
+	            session.update(recordReview);
+	          }
+        	}
         }
       }
       //if (isFirstTransaction) {
@@ -651,7 +670,47 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	      throw re;
 	    }
 	  }
-
+  public void attachDirty(Set<Occurrence> instances, boolean resetReview) {
+	    log.debug("attaching dirty Occurrence instances");
+	    Occurrence ref = null;
+	    try {
+	      //Session session = HibernateUtil.getCurrentSession();
+	      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+	      Session session = ManagedSession.createNewSessionAndTransaction();
+	      for (Occurrence instance : instances) {
+	        boolean newOccurrence = instance.getId() == null;
+	        ref = instance;
+	        if(resetReview)
+//	        	instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
+	        	instance.setReviewed(null);
+	        // if (instance.isVetted()) {
+	        // if (!instance.isValidated()) {
+	        // instance.setVetted(false);
+	        // }
+	        // }
+	        session.saveOrUpdate(instance);
+	        if (newOccurrence) {
+	          assignReviewRecords(instance);
+	        } else if(resetReview) {
+	          List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(instance.getId());
+	          for (RecordReview recordReview : recordReviews) {
+	            recordReview.setReviewed(null);
+	            recordReview.setReviewedDate(null);
+	            session.update(recordReview);
+	          }
+	        }
+	      }
+	      //if (isFirstTransaction) {
+	      //  HibernateUtil.commitCurrentTransaction();
+	      //}
+	      ManagedSession.commitTransaction(session);
+	      log.debug("attach successful");
+	    } catch (RuntimeException re) {
+	      log.info("attach failed (" + ref + ") ", re);
+	      //HibernateUtil.rollbackTransaction();
+	      throw re;
+	    }
+	  }
   public boolean checkForReviewedChanged(int occurrenceId) {
     try {
       Session session = HibernateUtil.getCurrentSession();
@@ -1048,6 +1107,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
             notYourRecords.append("\"" + o.getId() + "\"" + ",");
           }
         } else {
+          if(sAdmin)
+        	o.setReviewed(existenceOccurrence.getReviewed());	
           o.setTimeCreated(existenceOccurrence.getTimeCreated());
           if (testDuplicate.containsKey(id)) {
             if (multipleId.indexOf(o.getId() + "") == -1) {

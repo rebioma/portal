@@ -77,11 +77,17 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.util.Format;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.SplitButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
+import com.sencha.gxt.widget.core.client.event.HideEvent;
+import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.info.Info;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.Menu;
@@ -3983,37 +3989,53 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		curaItems.fireOnSaved();
 		geoItems.fireOnSaved();
 		taxoItems.fireOnSaved();
-		String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
-		Set<Occurrence> occurrences = new HashSet<Occurrence>();
+		final String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
+		final Set<Occurrence> occurrences = new HashSet<Occurrence>();
 		occurrences.add(currentOccurrence);
 		setUpdateButtonsEnable(false);
+		if(ApplicationView.getCurrentState() == ViewState.SUPERADMIN) {
+			
+			MessageBox box = new MessageBox("Review state changes?", "");
+	        box.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
+	        box.setWidth("415px");
+	        box.setIcon(MessageBox.ICONS.question());
+	        box.setMessage("Would you like to reset the occurrence's state?");
+	        box.addHideHandler(new HideHandler() {
+	 
+	          @Override
+	          public void onHide(HideEvent event) {
+	            Dialog btn = (Dialog) event.getSource();
+	            if(btn.getHideButton().getText().equalsIgnoreCase("yes")) {
+	            	MessageBox boxWarning = new MessageBox("Reset review state?", "");
+	            	boxWarning.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.CANCEL);
+	            	boxWarning.setIcon(MessageBox.ICONS.warning());
+	            	boxWarning.setWidth("415px");
+	            	boxWarning.setMessage("You are resetting all the TRB's review of this occurrence. Would you like to continue?");
+	            	boxWarning.addHideHandler(new HideHandler() {
 
-		DataSwitch.get().update(sessionId, occurrences,
-				new AsyncCallback<String>() {
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-						GWT.log(caught.getMessage(), caught);
-						setUpdateButtonsEnable(true);
-					}
-
-					/**
-					 * If result != null, update is a successful. Clears the
-					 * {@link DataSwitch} cache.
-					 * 
-					 * @param result
-					 */
-					public void onSuccess(String result) {
-						if (result != null) {
-							if (updatedView) {
-								updateDetailView(currentOccurrence.getId() + "");
-							}
-							isDataUnsaved = false;
-						} else {
-							Window.confirm(constants.UnexpectedError());
-						}
-					}
-
-				});
+						@Override
+						public void onHide(HideEvent eventW) {
+							Dialog btnW = (Dialog) eventW.getSource();
+							if(btnW.getHideButton().getText().equalsIgnoreCase("yes")) {
+								update(sessionId, occurrences, updatedView, true);
+							} else {
+				            	Info.display("Message", "No action was performed");
+				            }
+						}});
+	            	
+	            	boxWarning.show();
+	            } else if(btn.getHideButton().getText().equalsIgnoreCase("no")) {
+	            	update(sessionId, occurrences, updatedView, false);
+	            } else {
+	            	Info.display("Message", "No action was performed");
+	            }
+	            
+	          }
+	        });
+	        box.show();
+		} else {
+			update(sessionId, occurrences, updatedView);
+		}
 	}
 
 	private void setCommentEnable(boolean enabled) {
@@ -4027,7 +4049,63 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			commentMapVp.remove(commentEditor);
 		}
 	}
-
+	public void update(String sessionId, Set<Occurrence> occurrences, 
+			final boolean updatedView, final boolean resetReview) {
+		DataSwitch.get().update(sessionId, occurrences, resetReview,
+				new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+				GWT.log(caught.getMessage(), caught);
+				setUpdateButtonsEnable(true);
+			}
+			
+			/**
+			 * If result != null, update is a successful. Clears the
+			 * {@link DataSwitch} cache.
+			 * 
+			 * @param result
+			 */
+			public void onSuccess(String result) {
+				if (result != null) {
+					if (updatedView) {
+						updateDetailView(currentOccurrence.getId() + "");
+					}
+					isDataUnsaved = false;
+				} else {
+					Window.confirm(constants.UnexpectedError());
+				}
+			}
+			
+		});
+	}
+	public void update(String sessionId, Set<Occurrence> occurrences, final boolean updatedView) {
+		DataSwitch.get().update(sessionId, occurrences,
+				new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+				GWT.log(caught.getMessage(), caught);
+				setUpdateButtonsEnable(true);
+			}
+			
+			/**
+			 * If result != null, update is a successful. Clears the
+			 * {@link DataSwitch} cache.
+			 * 
+			 * @param result
+			 */
+			public void onSuccess(String result) {
+				if (result != null) {
+					if (updatedView) {
+						updateDetailView(currentOccurrence.getId() + "");
+					}
+					isDataUnsaved = false;
+				} else {
+					Window.confirm(constants.UnexpectedError());
+				}
+			}
+			
+		});
+	}
 	/**
 	 * Sets whether a user allow to edit fields in {@link DetailView}.
 	 * 

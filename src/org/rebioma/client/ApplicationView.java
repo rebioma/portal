@@ -576,7 +576,7 @@ public class ApplicationView extends View implements ClickHandler {
         if (activeViewInfo != null
             && selectedWidget != activeViewInfo.getView()) {
           activeViewInfo = ((View) selectedWidget).getViewInfo();
-          if (selectedWidget instanceof FormView || selectedWidget instanceof SpeciesExplorerView) {
+          if (selectedWidget instanceof UploadView || selectedWidget instanceof FormView || selectedWidget instanceof SpeciesExplorerView) {
               activeViewInfo.getView().resetToDefaultState();
           }
           //{ WD fix the resizing issue
@@ -588,7 +588,10 @@ public class ApplicationView extends View implements ClickHandler {
         }
         if (selectedWidget instanceof OccurrenceView && !isOccViewInitialized) {
             isOccViewInitialized = true;
-            ((OccurrenceView) activeViewInfo.getView()).onStateChanged(ApplicationView.getCurrentState());
+            try {
+            	//fixing the statechanged issue on url re-established from navigator's history
+            	((OccurrenceView) activeViewInfo.getView()).onStateChanged(ApplicationView.getCurrentState());
+            } catch(Exception e) {}
         }
         // Widget tabWidget = null;
         // if (listener != null) {

@@ -234,6 +234,7 @@ public class FileUploadServlet extends UploadAction {
     String csvUrl = null;
     String username = null;
     String password = null;
+    boolean clearReview = false;
     traitement = new Traitement("Uploading file...", 100*1024,0);
     traitement.addTraitementListener(listenerAdapteur);
     try {
@@ -246,7 +247,9 @@ public class FileUploadServlet extends UploadAction {
           if (fieldName.equals("sessionId")) {
             sessionId = val;
           } else if (fieldName.equals("show_email")) {
-            showEmail = val.equalsIgnoreCase("on") ? true : false;
+        	  showEmail = val.equalsIgnoreCase("on") ? true : false;
+          } else if (fieldName.equals("clear_review")) {
+        	  clearReview = val.equalsIgnoreCase("on") ? true : false;
           } else if (fieldName.equals("private_vetter")) {
             isPublic = val.equalsIgnoreCase("on") ? false : true;
           } else if (fieldName.equals("public_vetter")) {
@@ -340,7 +343,7 @@ public class FileUploadServlet extends UploadAction {
           //response.getWriter().write(errorMsg);
         }else{
         	String out = fileValidation.proccessOccurrenceFile(file, user,
-                    showEmail, isPublic, isVettable, delimiter.charAt(0),
+                    showEmail, isPublic, isVettable, clearReview, delimiter.charAt(0),
                     collaboratorsCSV,traitement);
         	successMsg = "{\"onSuccess\": " + out + "}";
             //response.getWriter().write("{\"onSuccess\": " + out + "}");

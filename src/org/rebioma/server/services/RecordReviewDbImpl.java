@@ -264,7 +264,7 @@ public class RecordReviewDbImpl implements RecordReviewDb {
   public List<RecordReview> findByProperty(Object value,List<RecordReview> RecordReviews) {
 	  	List<RecordReview> recordReviews =new ArrayList<RecordReview>();
 	    for(RecordReview rv : RecordReviews){
-	    	if(rv.getOccurrenceId()==value)recordReviews.add(rv);
+	    	if(rv.getOccurrenceId().equals(value))recordReviews.add(rv);
 	    }
 	    return recordReviews;
 	  }

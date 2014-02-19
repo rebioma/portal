@@ -135,9 +135,11 @@ public interface OccurrenceDb {
    * 
    * @param instances the set of occurrences
    */
-  public void attachDirty(Set<Occurrence> instances, Traitement traitement, List<RecordReview> rcdrv);
+  public void attachDirty(Set<Occurrence> instances, Traitement traitement, List<RecordReview> rcdrv, boolean clearReview, boolean isSA);
   
   public void attachDirty(Set<Occurrence> instances);
+
+  public void attachDirty(Set<Occurrence> instances, boolean resetReview);
 
   /**
    * Deletes a persistent instance of {@link Occurrence} from the database.
