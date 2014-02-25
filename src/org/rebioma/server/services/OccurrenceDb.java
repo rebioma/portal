@@ -121,7 +121,7 @@ public interface OccurrenceDb {
    * 
    * @param instance an occurrence
    */
-  public void attachClean(Occurrence instance);
+  public void attachClean(Session session,Occurrence instance);
 
   /**
    * Attaches a dirty instance of {@link Occurrence} to the database.

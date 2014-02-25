@@ -1833,4 +1833,7 @@ div#content {
 .d-hover #d_id {
 	background: #DEEBF7 !important;
 }
+.infop {
+	color:blue;font-style:italic;text-align: justify;
+}
 	

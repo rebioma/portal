@@ -60,6 +60,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
   private Set<String> queryFilters;
   private String extraInfomation;
   private Label info;
+  private Label infoP;
   boolean myDownload;
   private final HTML termsOfUseLabel = new HTML(
       "<a href='https://sites.google.com/site/rebiomahelp/home/english#datause' target='_blank'>Data Use Agreement (DUA)</a>");
@@ -132,7 +133,10 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     dataUE.setWidth(270);
     dataUE.setAllowBlank(false);
     dataUE.setName("dataue");
-    info = new Label("* required field");
+    info = new Label("* required fields");
+    infoP = new Label("These informations will be sent to the related data owners and the REBIOMA portal administrator. " +
+    		"Please fill correctly the form and give more explanations as possible!");
+    infoP.setStyleName("infop");
     fieldTitle =new FieldLabel(title, "Title*");
     fieldFirstN =new FieldLabel(firstN, "First name*");
     fieldLastN =new FieldLabel(lastN, "Last name");
@@ -149,6 +153,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     mainVp.add(fieldInstitution);
     mainVp.add(fieldDataUE);
     mainVp.add(info);
+    mainVp.add(infoP);
     mainVp.add(new FieldLabel(delimiterBox, constants.CSVDelimiter()));
 //    mainVp.add(delimiterPanel);
     mainVp.add(termsOfUseLabel);

@@ -1004,7 +1004,7 @@ public class OccurrenceView extends ComponentView implements
 
 	private final HTML mapLink = new HTML(constants.Map());
 	private final HTML listLink = new HTML(constants.List());
-	private final HTML ativityLink = new HTML("Activity Log");
+	private final HTML ativityLink = new HTML("Activities");
 	private final HTML uploadLink = new HTML(constants.Upload());
 	private final HTML revalidateLink = new HTML(constants.Revalidate());
 	private static final String FIELDS_LIST = "<a target='_blank' href='http://www.rebioma.net/index.php?option=com_content&view=article&id=52'>"

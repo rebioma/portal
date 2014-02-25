@@ -495,11 +495,11 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     }
   }
 
-  public void attachClean(Occurrence instance) {
+  public void attachClean(Session session, Occurrence instance) {
     log.debug("attaching clean Occurrence instance");
     try {
 //      ManagedSession.createNewSessionAndTransaction().lock(instance, LockMode.NONE);
-      HibernateUtil.getCurrentSession().lock(instance, LockMode.NONE);
+      session.lock(instance, LockMode.NONE);
       log.debug("attach successful");
     } catch (RuntimeException re) {
       log.error("attach failed", re);
@@ -713,9 +713,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	  }
   public boolean checkForReviewedChanged(int occurrenceId) {
     try {
-      Session session = HibernateUtil.getCurrentSession();
-      boolean isFirstSession = HibernateUtil.beginTransaction(session);
-//      Session session = ManagedSession.createNewSessionAndTransaction();
+//      Session session = HibernateUtil.getCurrentSession();
+//      boolean isFirstSession = HibernateUtil.beginTransaction(session);
+      Session session = ManagedSession.createNewSessionAndTransaction();
       Occurrence occ = findById(occurrenceId);
       Boolean oldReviewed = occ.getReviewed();
       Boolean newReviewed = RecordReviewUtil.isRecordReviewed(
@@ -737,7 +737,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       }
       if (isChanged) {
         occ.setReviewed(newReviewed);
-        attachClean(occ);
+        attachClean(session, occ);
         attachDirty(occ,session);
         // TODO: send user emails
         // User user = DBFactory.getUserDb().findById(occ.getOwner());
@@ -745,10 +745,10 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         // EmailUtil.adminSendEmailTo(user.getEmail(), "", "");
       }
 
-      if (isFirstSession) {
-        HibernateUtil.commitCurrentTransaction();
-      }
-//      ManagedSession.commitTransaction(session);
+//      if (isFirstSession) {
+//        HibernateUtil.commitCurrentTransaction();
+//      }
+      ManagedSession.commitTransaction(session);
       return isChanged;
     } catch (Exception e) {
       //HibernateUtil.rollbackTransaction();
