@@ -595,9 +595,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						   occurrencesCase3 = new HashSet<Integer>();
 						   ownerOccurrencesForCase3.put(ownerId, occurrencesCase3);
 						}
-						occurrencesCase3.add(o.getId());
-			
+						occurrencesCase3.add(o.getId());			
 					}
+					
 					
 					if (!ownerOccurrencesForCase3.isEmpty()) {
 					      for (Integer userId : ownerOccurrencesForCase3.keySet()) {
@@ -870,13 +870,27 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 	}
 	protected void revalidateAction(RevalidationResult result, Map<String, List<Occurrence>> mapOccurences) throws RevalidationException {
 		
+			List<String> keys = new ArrayList<String>();
+			keys.add("1");
+			keys.add("2");
+			keys.add("3");
+			keys.add("4");
+			keys.add("5");
 			
-			for (String key : mapOccurences.keySet()) {
-				List<Occurrence> occurrencies = mapOccurences.get(key);
-				Set<Occurrence> occurrences = new HashSet<Occurrence>(
-						occurrencies);
+//			for (String key : mapOccurences.keySet()) {
+//				System.out.println(" ------------Key -------------------> "+key);
+//				keys.add(key);				
+//			}
+			
+			List<Occurrence> occurrencies;
+			Set<Occurrence> occurrences;
+			for (String key : keys) {
+				 occurrencies = mapOccurences.get(key);
+				 occurrences= new HashSet<Occurrence>(occurrencies);
+				 
+				System.out.println(" ------------Key -------------------> "+key+" ------------ size =>"+occurrencies.size());
 				//int keyInt = Integer.parseInt(key);
-				System.out.println(" ------------Key -------------------> "+key);
+				
 				if(key.equals("2")){
 					System.out.println(" Occurrences 2 : "+ occurrences.size() + " ............");
 					log.info(" Occurrences 2 : "+ occurrences.size() + " ............");
