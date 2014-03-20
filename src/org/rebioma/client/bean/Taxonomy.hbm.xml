@@ -164,5 +164,19 @@
         <property name="stability" type="java.lang.Double">
             <column name="stability" precision="22" scale="0" />
         </property>
+        
+        <property name="acceptedNameUsageID" type="java.lang.Double">
+            <column name="acceptednameusageid" precision="22" scale="0" />
+        </property>
+		<property name="acceptedNameUsage" type="string">
+            <column name="acceptednameusage" />
+        </property>
+        <property name="higherClassification" type="string">
+            <column name="higherclassification" />
+        </property>
+        <property name="basisOfRecord" type="string">
+            <column name="basisofrecord" />
+        </property>
+        
     </class>
 </hibernate-mapping>

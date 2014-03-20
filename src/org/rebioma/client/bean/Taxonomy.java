@@ -1,6 +1,6 @@
 package org.rebioma.client.bean;
 
-// Generated 26 août 2012 20:34:47 by Hibernate Tools 3.3.0.GA
+// Generated 26 aoï¿½t 2012 20:34:47 by Hibernate Tools 3.3.0.GA
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +66,13 @@ public class Taxonomy implements java.io.Serializable {
 	private Date validationDate;
 	private Double stability;
 	
-	public static List<String> COLONNE_DOUBLE = Arrays.asList("Stability", "IsTerrestrial", "IsMarine","TaId","IdAccepted");
+	private Double acceptedNameUsageID;
+	private String acceptedNameUsage;
+	private String basisOfRecord;
+	private String higherClassification;
+	
+	
+	public static List<String> COLONNE_DOUBLE = Arrays.asList("Stability", "IsTerrestrial", "IsMarine","TaId","IdAccepted", "AcceptedNameUsageID");
 	public static List<String> COLONNE_DATE = Arrays.asList("ValidationDate", "ChangeDate");
 
 	public Taxonomy() {
@@ -94,7 +100,8 @@ public class Taxonomy implements java.io.Serializable {
 			Double isMarine, Double isTerrestrial, String comments,
 			String reviewedBy, String reviewDate, String notes, String status,
 			String changedBy, Date changeDate, String validation,
-			String validatedBy, Date validationDate, Double stability) {
+			String validatedBy, Date validationDate, Double stability,
+			Double acceptedNameUsageID, String acceptedNameUsage, String higherClassification, String basisOfRecord) {
 		this.id = id;
 		this.taId = taId;
 		this.idAccepted = idAccepted;
@@ -148,6 +155,10 @@ public class Taxonomy implements java.io.Serializable {
 		this.validatedBy = validatedBy;
 		this.validationDate = validationDate;
 		this.stability = stability;
+		this.acceptedNameUsageID = acceptedNameUsageID;
+		this.acceptedNameUsage = acceptedNameUsage;
+		this.basisOfRecord = basisOfRecord;
+		this.higherClassification = higherClassification;
 	}
 
 	public int getId() {
@@ -572,6 +583,38 @@ public class Taxonomy implements java.io.Serializable {
 
 	public void setStability(Double stability) {
 		this.stability = stability;
+	}
+
+	public Double getAcceptedNameUsageID() {
+		return acceptedNameUsageID;
+	}
+
+	public void setAcceptedNameUsageID(Double acceptedNameUsageID) {
+		this.acceptedNameUsageID = acceptedNameUsageID;
+	}
+
+	public String getAcceptedNameUsage() {
+		return acceptedNameUsage;
+	}
+
+	public void setAcceptedNameUsage(String acceptedNameUsage) {
+		this.acceptedNameUsage = acceptedNameUsage;
+	}
+
+	public String getBasisOfRecord() {
+		return basisOfRecord;
+	}
+
+	public void setBasisOfRecord(String basisOfRecord) {
+		this.basisOfRecord = basisOfRecord;
+	}
+
+	public String getHigherClassification() {
+		return higherClassification;
+	}
+
+	public void setHigherClassification(String higherClassification) {
+		this.higherClassification = higherClassification;
 	}
 
 }
