@@ -13,7 +13,7 @@
         <property name="hibernate.c3p0.timeout">1800</property>
         <property name="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.connection.password">rbm4a3c2b1</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/rebioma_prod</property>
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.current_session_context_class">thread</property>
