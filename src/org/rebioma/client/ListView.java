@@ -734,6 +734,7 @@ public class ListView extends ComponentView implements
       actionTool.addAction(SHOW_EMAIL_ACTION, showEmailCommand);
       actionTool.addAction(HIDE_EMAIL_ACTION, hideEmailCommand);
       actionTool.addAction(UPDATE_COLLABORATORS, showSharedUsersCommand);
+      actionTool.addAction(COMMENT_RECORDS, commentRecordsCommand);
       boolean isMyOccurenceToReviewSelected =
     		    isMyOccurenceToReviewSelected(History
     		    	.getToken());
@@ -840,7 +841,6 @@ public class ListView extends ComponentView implements
   private void addingReviewToolIfAllow(String token) {
     historyState.setHistoryToken(token);
     String type = (String) historyState.getHistoryParameters(UrlParam.TYPE);
-    actionTool.addAction(COMMENT_RECORDS, commentRecordsCommand);
     if (type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW)) {
       actionTool.addAction(POSTIVELY_REVIEWED_ACTION, posReviewedCommand);
       actionTool.addAction(NEGATIVELY_REVIEWED_ACTION, negReviewedCommand);
@@ -851,7 +851,6 @@ public class ListView extends ComponentView implements
       actionTool.addAction(POSTIVELY_REVIEWED_ACTION, posReviewedCommand);
       actionTool.removeAction(NEGATIVELY_REVIEWED_ACTION);
     } else {
-      actionTool.removeAction(COMMENT_RECORDS);
       actionTool.removeAction(POSTIVELY_REVIEWED_ACTION);
       actionTool.removeAction(NEGATIVELY_REVIEWED_ACTION);
     }

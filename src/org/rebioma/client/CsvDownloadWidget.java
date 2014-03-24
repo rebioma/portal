@@ -197,6 +197,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
 	  fieldEmail.setVisible(show);
 	  fieldInstitution.setVisible(show);
 	  fieldDataUE.setVisible(show);
+	  infoP.setVisible(show);
   }
 
   public void show(Set<String> queryFilters, String extraInfomation) {
