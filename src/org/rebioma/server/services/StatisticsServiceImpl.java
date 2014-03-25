@@ -242,54 +242,54 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			break;
 		}
 		
-		String sql = "SELECT UPPER(acceptedclass) as acceptedclass,sum(\"private\") as nbprivate,sum(\"public\") as nbpublic,sum(reliable) as reliable, sum(awaiting) as awaiting,sum(questionnable) as questionnable,sum(invalidated) as invalidated,\n" +
+		String sql = "SELECT UPPER(acceptedorder) as acceptedorder,sum(\"private\") as nbprivate,sum(\"public\") as nbpublic,sum(reliable) as reliable, sum(awaiting) as awaiting,sum(questionnable) as questionnable,sum(invalidated) as invalidated,\n" +
 						"0 as \"all\"\n" +
 						"FROM \n" +
 						"( \n" +
-						"SELECT  acceptedclass, "+colonne+" as libelle , \n" +
+						"SELECT  acceptedorder, "+colonne+" as libelle , \n" +
 						" count(*) as \"private\",0 as \"public\",0 as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.\"public\" = FALSE \n" +
-						"GROUP BY " + colonne + " ,acceptedclass " +
+						"GROUP BY " + colonne + " ,acceptedorder " +
 						"UNION\n" +
-						"SELECT   acceptedclass , "+colonne+"  as libelle, \n" +
+						"SELECT   acceptedorder , "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",count(*) as \"public\",0 as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.\"public\" = TRUE \n" +
-						"GROUP BY  " + colonne +" ,acceptedclass " +
+						"GROUP BY  " + colonne +" ,acceptedorder " +
 						"UNION\n" +
-						"SELECT   acceptedclass , "+colonne+"  as libelle, \n" +
+						"SELECT   acceptedorder , "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\",count(*)  as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.reviewed = true\n" +
-						"GROUP BY  " + colonne +" ,acceptedclass " +
+						"GROUP BY  " + colonne +" ,acceptedorder " +
 						"UNION\n" +
-						"SELECT  acceptedclass , "+colonne+"  as libelle, \n" +
+						"SELECT  acceptedorder , "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\", 0 as reliable,count(*) as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.reviewed IS NULL AND occurrence.validated=TRUE\n" +
-						"GROUP BY  " + colonne +" ,acceptedclass " +
+						"GROUP BY  " + colonne +" ,acceptedorder " +
 						"UNION\n" +
-						"SELECT   acceptedclass , "+colonne+"  as libelle, \n" +
+						"SELECT   acceptedorder , "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\", 0 as reliable,0 as awaiting,count(*)  as questionnable,0 as invalidated,0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.reviewed = FALSE\n" +
-						"GROUP BY  " + colonne +" ,acceptedclass " +
+						"GROUP BY  " + colonne +" ,acceptedorder " +
 						"UNION\n" +
-						"SELECT acceptedclass , "+colonne+"  as libelle, \n" +
+						"SELECT acceptedorder , "+colonne+"  as libelle, \n" +
 						" 0 as \"private\",0 as \"public\", 0 as reliable,0 as awaiting,0 as questionnable,count(*) as invalidated, 0 as \"all\"\n" +
 						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
 						" WHERE 1=1 AND \n" +
 						"occurrence.validated = FALSE\n" +
-						"GROUP BY  " + colonne +" ,acceptedclass " +
+						"GROUP BY  " + colonne +" ,acceptedorder " +
 						")as tbl\n" +
 						" WHERE libelle= ? " +
-						"GROUP BY  upper(acceptedclass) ORDER BY  upper(acceptedclass)";
+						"GROUP BY  upper(acceptedorder) ORDER BY  upper(acceptedorder)";
 		System.out.println(sql);
 		Session sess = null;		
 		Connection conn =null;
@@ -311,7 +311,7 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 					obj.setNbQuestionable(rst.getInt("questionnable"));
 					obj.setNbReliable(rst.getInt("reliable"));				
 					obj.setStatisticType(statisticsType);
-					obj.setTitle(rst.getString("acceptedclass"));
+					obj.setTitle(rst.getString("acceptedorder"));
 					ret.add(obj);
 				//}				
 			}
