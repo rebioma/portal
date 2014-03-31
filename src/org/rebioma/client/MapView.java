@@ -408,6 +408,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
       Object source = event.getSource();
       if (source == searchBox) {
         if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+        	addHistoryItem(false);
           String searchText = searchBox.getText().trim();
           start = 0;
           limit = 10;
@@ -878,7 +879,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
     String historyToken = History.getToken();
 //    leftTab.setTabIndex(1);
-    leftTab.setActiveWidget(modelSearch);
+//    leftTab.setActiveWidget(modelSearch);
 //    leftTab.setTabScroll(true);
 //    leftTab.setResizeTabs(true);
     if (!historyToken.equals("")) {
@@ -1005,7 +1006,9 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 			addHistoryItem(false);
 			if (currentTab.equals(modelSearch.getParent())) {
 				modelSearch.setPage(1);
-				modelSearch.search("");
+				String modelSearchTerm = historyState.getHistoryParameters(
+	      		UrlParam.M_SEARCH).toString();
+				modelSearch.search(modelSearchTerm);
 			} else if (currentTab.equals(markerList.getParent())) {
 				//Exception ?
 				try{
@@ -1122,19 +1125,23 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 //          legend.setDisplay(point, value);
 //        }
 //      }
-//      Integer leftTabIndex = (Integer) historyState
-//          .getHistoryParameters(UrlParam.LEFT_TAB);
-//      if (leftTabIndex == null || leftTabIndex < 0) {
-//        leftTabIndex = 0;
-//      }
-//      leftTab.selectTab(leftTabIndex);
-//      String modelSearchTerm = historyState.getHistoryParameters(
-//          UrlParam.M_SEARCH).toString();
-//      Integer modelSearchPage = (Integer) historyState
-//          .getHistoryParameters(UrlParam.M_PAGE);
-//      modelSearch.setPage(modelSearchPage);
-//      modelSearch.search(modelSearchTerm);
-//      historyState.parseCheckedUrl();
+      Integer leftTabIndex = (Integer) historyState
+          .getHistoryParameters(UrlParam.LEFT_TAB);
+      if (leftTabIndex == null || leftTabIndex < 0) {
+        leftTabIndex = 0;
+      }
+      String modelSearchTerm = historyState.getHistoryParameters(
+      		UrlParam.M_SEARCH).toString();
+//	    Integer modelSearchPage = (Integer) historyState
+//	    		.getHistoryParameters(UrlParam.M_PAGE);
+//	    modelSearch.setPage(modelSearchPage);
+	    historyState.parseCheckedUrl();
+	    if(leftTabIndex!=0) {
+	    	currentTab = leftTab.getWidget((int)leftTabIndex);
+	    	leftTab.setActiveWidget(currentTab);//selectTab(leftTabIndex);
+	    	modelSearch.setPage(1);
+	    	modelSearch.search(modelSearchTerm!=null?modelSearchTerm:"");
+      }
       isHistoryChanging = false;
     }
     
@@ -1267,7 +1274,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
       }
       break;
     case LEFT_TAB:
-      int index = leftTab.getTabIndex();//leftTab.getTabBar().getSelectedTab();
+      int index = leftTab.getWidgetIndex(leftTab.getActiveWidget());//leftTab.getTabBar().getSelectedTab();
       if (index < 0) {
         index = 0;
       }
