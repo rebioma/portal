@@ -131,18 +131,19 @@ public class Portal implements EntryPoint {
 	  	String family = Window.Location.getParameter("family");
 	  	family = (family==null || family.isEmpty())?"":"&asearch=AcceptedFamily like " + family.trim();
 	  	String genus = Window.Location.getParameter("genus");
+	  	String m_search = genus==null?"":genus;
 	  	genus = (genus==null || genus.isEmpty())?"":"&asearch=AcceptedGenus like " + genus.trim();
 	  	String species = Window.Location.getParameter("species");
+	  	m_search = (species==null||species.trim().isEmpty())?m_search:species;
 	  	species = (species==null || species.isEmpty())?"":"&asearch=AcceptedSpecies like " + species.trim();
-  		String type = Window.Location.getParameter("type");
-  		String m_search = Window.Location.getParameter("m_search");
-  		m_search = m_search==null?"":m_search;
+  		String year =  Window.Location.getParameter("year");
+  		year = (year==null || year.isEmpty())?"":"&asearch=YearCollected = " + year.trim();
   		Window.Location.replace(
   				GWT.getHostPageBaseURL() + dev +
   						"#tab=occ&view=Map&zoom=5&center=-19,47&map_type=terrain&left_tab=1&m_search=" + 
   						m_search
   						+ "&asearch=AcceptedOrder = PRIMATES&m_page=1&page=1" + 
-  						family + genus + species + "&error_type=all&type=" + type
+  						family + genus + species + "&error_type=all&type=all occurrences"
   				);
   	} else if(sign!=null){
 		  String email = Window.Location.getParameter("emailc");

@@ -11,7 +11,6 @@ import java.util.Set;
 import org.form.client.api.DisplayPopup;
 import org.form.client.api.table.StaticTable;
 import org.rebioma.client.DataPager.PageListener;
-import org.rebioma.client.ListView.CollaboratorsList;
 import org.rebioma.client.OccurrenceQuery.DataRequestListener;
 import org.rebioma.client.PagerWidget.PageClickListener;
 import org.rebioma.client.bean.Occurrence;
@@ -25,6 +24,7 @@ import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -77,7 +77,6 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sencha.gxt.core.client.util.Format;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
@@ -1886,7 +1885,27 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 
 	// private final PrintView printView = new PrintView();
 
-	private final PlainTabPanel occLinks = new PlainTabPanel();
+	private final PlainTabPanel occLinks = new PlainTabPanel(){
+		@Override
+		public void clear() {
+			onUnload();
+		}
+		@Override 
+		public boolean remove(Widget child) {
+	    int idx = getWidgetIndex(child);
+	    boolean removed = getContainer().remove(child);
+
+	    if (removed) {
+
+	      Element item = findItem(idx);
+	      item.removeFromParent();
+
+	      setActiveWidget(null); 
+	    }
+
+	    return removed;
+	  }
+	};
 	private SplitButton splitItem = new SplitButton("Select action");
 	private Menu actionMenu;
 	private final HistoryState historyState = new HistoryState() {
@@ -2215,14 +2234,14 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 
 	public void onPageLoaded(List<Occurrence> data, int pageNumber) {
 //		occLinks.clear();
-		String id = currentId + "";
+//		String id = currentId + "";
 		clearOccLinks();
 		historyState.setHistoryToken(History.getToken());
-		Widget currentWidget = null;
+//		Widget currentWidget = null;
 		for (Occurrence o : data) {
 			OccurrenceLink occLink = new OccurrenceLink(o);
-//			String id = historyState.getHistoryParameters(UrlParam.ID)
-//					.toString();
+			String id = historyState.getHistoryParameters(UrlParam.ID)
+					.toString();
 			// if (o == currentOccurrence || o.getId().toString().equals(id)) {
 //			occLink.select(o == currentOccurrence
 //					|| o.getId().toString().equals(id));
@@ -2230,19 +2249,21 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			// occLink.select(false);
 			// }
 			occLinks.add(occLink, new TabItemConfig(o.getId()+""));
-			if(o.getId().toString().equals(id)){
-				currentWidget = occLink;
+			if(o == currentOccurrence || o.getId().toString().equals(id)){
+//				currentWidget = occLink;
+				occLinks.setActiveWidget(occLink);
+				occLinks.scrollToTab(occLinks.getActiveWidget(), true);
 //				Info.display("Load", "" + currentOccurrence.getId());
 			}
 		}
 		addHistoryItem(false);
 //		Window.alert("Load");
-		if(currentWidget!=null) {
-			occLinks.setActiveWidget(currentWidget);
-			occLinks.scrollToTab(occLinks.getActiveWidget(), true);
-			currentId = 0;
-//			Info.display("Scrilling", "" + currentOccurrence.getId());
-		}
+//		if(currentWidget!=null) {
+//			occLinks.setActiveWidget(currentWidget);
+//			occLinks.scrollToTab(occLinks.getActiveWidget(), true);
+//			currentId = 0;
+////			Info.display("Scrilling", "" + currentOccurrence.getId());
+//		}
 		toolPanel.forceLayout();
 	}
 
@@ -2260,6 +2281,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			}catch(Exception e){
 			}
 		}
+		occLinks.clear();
 	}
 
 	/**
@@ -2487,6 +2509,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		occLinks.setPixelSize(w, 35);
 		occLinks.setAnimScroll(true);
 		occLinks.setTabScroll(true);
+		occLinks.setAutoSelect(false);
 		occLinks.addSelectionHandler(new SelectionHandler<Widget>() {
 
 			@Override
