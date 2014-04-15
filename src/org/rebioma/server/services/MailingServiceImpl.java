@@ -471,5 +471,26 @@ public class MailingServiceImpl extends RemoteServiceServlet implements org.rebi
 			}
 		}
 	}
+
+	@Override
+	public void sendEmail(String model, String title, String firstN,
+			String lastN, String activity, String email, String institution,
+			String dataUE) {
+		String mail = CommentTable.getDownloadModelMail();
+		mail = mail.replace("#{user}", "Rebioma");
+		mail = mail.replace("#{title}", title);
+		mail = mail.replace("#{model}", model);
+		mail = mail.replace("#{firstN}", firstN);
+		mail = mail.replace("#{lastN}", lastN);
+		mail = mail.replace("#{activity}", activity);
+		mail = mail.replace("#{email}", email);
+		mail = mail.replace("#{institution}", institution);
+		mail = mail.replace("#{dataue}", dataUE);
+		try {
+			EmailUtil.adminSendEmailTo2("aimewilfried2@yahoo.fr", "Model download [Rebioma webportal]", mail);
+		} catch (EmailException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

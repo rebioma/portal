@@ -125,6 +125,10 @@ public class CommentTable implements java.io.Serializable{
 		return downloadMailEn + hr + downloadMailFr;
 	}
 	
+	public static String getDownloadModelMail() {
+		return downloadModelMailFr;
+	}
+	
 	public CommentTable(List<String> lOid, String userComment,
 			String trb, String dateCommented, String url, String email, String passwdHash) {
 		super();
@@ -532,6 +536,28 @@ foot;
 			"</p>" +
 			"<p" + pFrStyle + ">" +
 			"	#{title} #{firstN} #{lastN} a télechargé vos données enregistrées sur le portail de données de REBIOMA." +
+			"</p>" +
+			"<p" + pFrStyle + ">" +
+			"	Les informations sont, en détails, les suivants:" +
+			"</p>" +
+			"<p" + pFrStyle + ">" +
+				"<div" + spanFrStyle + ">Titre: #{title},</div>" +
+				"<div" + spanFrStyle + ">Nom: #{firstN},</div>" +
+				"<div" + spanFrStyle + ">Prénom: #{lastN},</div>" +
+				"<div" + spanFrStyle + ">Activité/Profession: #{activity},</div>" +
+				"<div" + spanFrStyle + ">Email: #{email},</div>" +
+				"<div" + spanFrStyle + ">Institution: #{institution},</div>" +
+				"<div" + spanFrStyle + ">Utilistaion du données: #{dataue},</div>" +
+			"</p>" +
+			signatureFr +
+			foot;
+				
+	private static String downloadModelMailFr = 
+			"<p" + pFrStyle + ">" +
+			"Bonjour #{user}," +
+			"</p>" +
+			"<p" + pFrStyle + ">" +
+			"	#{title} #{firstN} #{lastN} a télechargé le modèle #{model} sur le portail de données de REBIOMA." +
 			"</p>" +
 			"<p" + pFrStyle + ">" +
 			"	Les informations sont, en détails, les suivants:" +

@@ -21,11 +21,14 @@ import java.util.Set;
 import org.rebioma.client.View.ViewState;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.i18n.AppConstants;
+import org.rebioma.client.services.MailingService;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
@@ -49,14 +52,14 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * 
  */
 public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
-  private final VerticalPanel mainVp = new VerticalPanel();
-  private final FormPanel form;
-  private final Hidden hiddenSessionId;
-  private final Hidden hiddenQuery;
-  private final Hidden extraInfo;
-  private final Hidden userEmail;
-  private final Button downloadButton;
-  private final Button cancelButton;
+  private VerticalPanel mainVp = new VerticalPanel();
+  private FormPanel form;
+  private Hidden hiddenSessionId;
+  private Hidden hiddenQuery;
+  private Hidden extraInfo;
+  private Hidden userEmail;
+  private Button downloadButton;
+  private Button cancelButton;
   private Set<String> queryFilters;
   private String extraInfomation;
   private Label info;
@@ -72,7 +75,8 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
   private FieldLabel fieldEmail;
   private FieldLabel fieldInstitution;
   private FieldLabel fieldDataUE;
-  
+  private Button downloadModelButton;
+  private Command command;
   private class RTextField extends TextField {
 	  public RTextField(boolean allowBlank){
 		  super();
@@ -137,13 +141,13 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     infoP = new Label("These informations will be sent to the related data owners and the REBIOMA portal administrator. " +
     		"Please fill correctly the form and give more explanations as possible!");
     infoP.setStyleName("infop");
-    fieldTitle =new FieldLabel(title, "Title*");
-    fieldFirstN =new FieldLabel(firstN, "First name*");
-    fieldLastN =new FieldLabel(lastN, "Last name");
-    fieldActivity =new FieldLabel(activity, "Activities*/ Profession");
-    fieldEmail =new FieldLabel(email, "Email*");
-    fieldInstitution =new FieldLabel(institution, "Institution");
-    fieldDataUE =new FieldLabel(dataUE, "Data use explanation*");
+    fieldTitle = new FieldLabel(title, "Title*");
+    fieldFirstN = new FieldLabel(firstN, "First name*");
+    fieldLastN = new FieldLabel(lastN, "Last name");
+    fieldActivity = new FieldLabel(activity, "Activities*/ Profession");
+    fieldEmail = new FieldLabel(email, "Email*");
+    fieldInstitution = new FieldLabel(institution, "Institution");
+    fieldDataUE = new FieldLabel(dataUE, "Data use explanation*");
     
     mainVp.add(fieldTitle);
     mainVp.add(fieldFirstN);
@@ -168,6 +172,66 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
 
   }
 
+  public CsvDownloadWidget(String downloadModel) {
+	  super(true);
+	  AppConstants constants = ApplicationView.getConstants();
+	  form = new FormPanel();
+	  downloadModelButton = new Button(constants.Download());
+	  userEmail = new Hidden("useremail");
+	  HorizontalPanel downloadPanel = new HorizontalPanel();
+	  downloadPanel.setSpacing(2);
+	  cancelButton = new Button(constants.Close());
+	  downloadPanel.add(downloadModelButton);
+	  downloadPanel.add(cancelButton);
+	  mainVp.setWidth("380px");
+	  mainVp.add(userEmail);
+	  RTextField title = new RTextField(false);
+	  title.setName("title");
+	  title.setEmptyText("Mr, Mme, Pr, Dr, ...");
+	  RTextField firstN = new RTextField(false);
+	  firstN.setName("firstN");
+	  RTextField lastN = new RTextField(true);
+	  lastN.setName("lastN");
+	  RTextField activity = new RTextField(false);
+	  activity.setName("activity");
+	  RTextField email = new RTextField(false);
+	  email.setName("email");
+	  RTextField institution = new RTextField(true);
+	  institution.setName("institution");
+	  TextArea dataUE = new TextArea();
+	  dataUE.setWidth(270);
+	  dataUE.setAllowBlank(false);
+	  dataUE.setName("dataue");
+	  info = new Label("* required fields");
+	  infoP = new Label("These informations will be sent to the related data owners and the REBIOMA portal administrator. " +
+			  "Please fill correctly the form and give more explanations as possible!");
+	  infoP.setStyleName("infop");
+	  fieldTitle =new FieldLabel(title, "Title*");
+	  fieldFirstN =new FieldLabel(firstN, "First name*");
+	  fieldLastN =new FieldLabel(lastN, "Last name");
+	  fieldActivity =new FieldLabel(activity, "Activities*/ Profession");
+	  fieldEmail =new FieldLabel(email, "Email*");
+	  fieldInstitution =new FieldLabel(institution, "Institution");
+	  fieldDataUE =new FieldLabel(dataUE, "Data use explanation*");
+	    
+	  mainVp.add(fieldTitle);
+	  mainVp.add(fieldFirstN);
+	  mainVp.add(fieldLastN);
+	  mainVp.add(fieldActivity);
+	  mainVp.add(fieldEmail);
+	  mainVp.add(fieldInstitution);
+	  mainVp.add(fieldDataUE);
+	  mainVp.add(info);
+	  mainVp.add(infoP);
+	  mainVp.add(downloadPanel);
+	  form.setWidget(mainVp);
+	  setWidget(form);
+	  mainVp.setSpacing(5);
+	  downloadModelButton.addClickHandler(this);
+	  cancelButton.addClickHandler(this);
+
+  }
+
   @Override
   public void hide(boolean autoClose) {
 	form.reset();
@@ -178,13 +242,29 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     Object source = event.getSource();
     if (source == downloadButton) {
     	if(!form.isValid() && !myDownload)return;
-      if (queryFilters != null) {
-        String sid = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
-        submit(sid);
+    	if (queryFilters != null) {
+    		String sid = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
+    		submit(sid);
+    		hide();
+    	}
+    } else if (source == downloadModelButton) {
+    	if(!form.isValid())return;
+    	MailingService.Proxy.get().sendEmail(command!=null?command.toString():"", ((TextField)fieldTitle.getWidget()).getText(), ((TextField)fieldFirstN.getWidget()).getText(), ((TextField)fieldLastN.getWidget()).getText(), 
+    			((TextField)fieldActivity.getWidget()).getText(), ((TextField)fieldEmail.getWidget()).getText(), ((TextField)fieldInstitution.getWidget()).getText(), ((TextArea)fieldDataUE.getWidget()).getText(), 
+    			new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+        if(command!=null)command.execute();
         hide();
-      }
     } else if (source == cancelButton) {
-      hide();
+    	hide();
     }
   }
   
@@ -218,6 +298,13 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
     center();
   }
 
+  public void show(Command command) {
+	  this.command = command;
+	  showForm(true);
+	  setVisible(true);
+	  center();
+  }
+  
   public void show(String filter, String extraInfo) {
     if (filter != null && !filter.equals("")) {
       Set<String> filters = new HashSet<String>();

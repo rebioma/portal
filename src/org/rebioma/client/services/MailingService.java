@@ -1,6 +1,7 @@
 package org.rebioma.client.services;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.rebioma.client.bean.OccurrenceCommentModel;
@@ -41,4 +42,8 @@ public interface MailingService extends RemoteService {
 	PagingLoadResult<OccurrenceCommentModel> getOccurrenceComments(PagingLoadConfig config, String mailTo, Date date1, Date date2);
 	 
 	boolean sendSelected(String mailTo, Date date1, Date date2, List<OccurrenceCommentModel> list);
+	
+	public void sendEmail(String  model, String title,
+			String firstN, String lastN, String activity, String email,
+			String institution, String dataUE);
 }

@@ -24,5 +24,9 @@ public interface MailingServiceAsync {
 
 	void sendSelected(String mailTo, Date date1, Date date2,
 			List<OccurrenceCommentModel> list, AsyncCallback<Boolean> callback);
+
+	void sendEmail(String model, String title, String firstN, String lastN,
+			String activity, String email, String institution, String dataUE,
+			AsyncCallback<Void> callback);
 	 
 }

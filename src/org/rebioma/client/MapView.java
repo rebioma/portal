@@ -159,6 +159,10 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
           + ascModel.getModelLocation() + ".zip", "_blank", "");
 
     }
+    @Override
+    public String toString() {
+    	return ascModel.getModelLocation() + ".zip";
+    }
   }
 
   private class DownloadClimateCommand implements Command {
@@ -175,6 +179,11 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
           + ascModel.getModelLocation() + "/" + climateName + ".zip", "_blank",
           "");
     }
+    @Override
+	public String toString() {
+		return ascModel.getModelLocation() + "/" + climateName + ".zip";
+	}
+    
   }
 
   private static class MapGeocoderResult extends Composite {
@@ -188,7 +197,9 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
       initWidget(vp);
     }
   }
-
+  
+  private CsvDownloadWidget modelDownloadWidget = new CsvDownloadWidget("modelDownload");
+  
   private class ModelItem extends TreeItem implements ClickHandler,
       AsyncCallback<List<String>>, Command, ValueChangeHandler<Boolean> {
     private Command clickCommand;
@@ -198,7 +209,6 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     private CheckBox checkbox;;
     private final AscModel ascModel;
     private ModelEnvLayer envLayer;
-
     ModelItem(String text, AscModel ascModel, boolean addedCheckBox,
         Command downloadCommand) {
       super();
@@ -265,9 +275,8 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
           clickCommand.execute();
         }
       } else if (source == downloadLink) {
-        if (downloadCommand != null) {
-          downloadCommand.execute();
-        }
+    	modelDownloadWidget.show(downloadCommand); 
+//    	  downloadCommand.execute();
       }
     }
 
