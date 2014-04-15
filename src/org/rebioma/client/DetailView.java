@@ -2256,6 +2256,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 //				Info.display("Load", "" + currentOccurrence.getId());
 			}
 		}
+		if(occLinks.getActiveWidget()==null)
+			occLinks.setActiveWidget(occLinks.getWidget(0));
 		addHistoryItem(false);
 //		Window.alert("Load");
 //		if(currentWidget!=null) {
