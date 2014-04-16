@@ -18,7 +18,11 @@ package org.rebioma.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.LoadListener;
+import com.sencha.gxt.core.client.dom.XElement;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * This abstract base class supports paging functionality across generic data
@@ -30,8 +34,37 @@ import com.google.gwt.user.client.ui.LoadListener;
  * @param <D> the type of data to page
  */
 public abstract class DataPager<D> {
+	
+  private ToolBar toolHp;
+  
+  private XElement mask;
+  
+  public void setToolHp(ToolBar toolHp) {
+	this.toolHp = toolHp;
+  }
+  
+  public void forceLayout() {
+	  if(toolHp!=null)toolHp.forceLayout();
+//	  GWT.log(toolHp!=null?"toolHp--tsy null":"toolHp--null");
+//	  Window.alert(toolHp!=null?"toolHp--tsy null":"toolHp--null");
+  }
 
-  /**
+  public void setMask(XElement mask) {
+	this.mask = mask;
+  }
+  
+  public XElement getMask() {
+	return this.mask;
+  }
+
+  private void mask(String mask) {
+	if(this.mask!=null)this.mask.mask(mask);
+  }
+  
+  private void unmask() {
+	if(mask!=null)mask.unmask();
+  }
+/**
    * Interface for data page listeners.
    * 
    * @param <D> the type of data in the page
@@ -114,6 +147,8 @@ public abstract class DataPager<D> {
    * then notifies listeners.
    */
   public void backPage() {
+	mask(ApplicationView.getConstants().Loading()+"...");
+//	forceLayout();
     loadData(new PageCallback<D>() {
       public void onPageReady(List<D> data) {
         currentPageNum--;
@@ -162,6 +197,8 @@ public abstract class DataPager<D> {
    * listeners.
    */
   public void init() {
+	mask(ApplicationView.getConstants().Loading()+"...");
+//	forceLayout();
     totalDataCount = UNDEFINED;
     loadData(new PageCallback<D>() {
       public void onPageReady(List<D> data) {
@@ -207,6 +244,8 @@ public abstract class DataPager<D> {
    * then notifies listeners.
    */
   public void nextPage() {
+	mask(ApplicationView.getConstants().Loading()+"...");
+//	forceLayout();
     loadData(new PageCallback<D>() {
       public void onPageReady(List<D> data) {
         currentPageNum++;
@@ -239,6 +278,8 @@ public abstract class DataPager<D> {
    * @param pageNumber the page number to load
    */
   public void toPage(int pageNumber) {
+	mask(ApplicationView.getConstants().Loading()+"...");
+//	forceLayout();
     currentPageNum = pageNumber;
     loadData(new PageCallback<D>() {
       public void onPageReady(List<D> data) {
@@ -261,6 +302,7 @@ public abstract class DataPager<D> {
     for (PageListener<D> l : listeners) {
       l.onPageLoaded(data, currentPageNum);
     }
+    unmask();
   }
 
   /**

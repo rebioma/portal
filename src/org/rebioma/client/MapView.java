@@ -841,6 +841,9 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
 //    HorizontalPanel toolHp = new HorizontalPanel();
     toolHp = new ToolBar();
+    //{WD force toolbar layout view
+    pager.setToolBar(toolHp);
+    //}
 //    actionTool.setWidth("200px");
     toolHp.add(actionTool);
     toolHp.add(new FillToolItem());

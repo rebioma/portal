@@ -77,12 +77,15 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.dom.DefaultScrollSupport;
+import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.SplitButton;
+import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
@@ -1941,6 +1944,10 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			pageSize = OccurrencePagerWidget.DEFAULT_PAGE_SIZE;
 		}
 		pagerWidget = new OccurrencePagerWidget(pageSize, query, false);
+
+	    //{WD force toolbar layout view
+		pagerWidget.setToolBar(toolPanel);
+	    //}
 		pagerWidget.addPageClickListener(this);
 		pagerWidget.addPageListener(pageListener);
 		pagerWidget.addPageListener(this);
@@ -1980,10 +1987,14 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 				HasVerticalAlignment.ALIGN_TOP);
 		hp.setCellHorizontalAlignment(reviewersReviewed,
 				HasHorizontalAlignment.ALIGN_LEFT);
-		ScrollPanel detailContainer = new ScrollPanel();
+//		ScrollPanel detailContainer = new ScrollPanel();
+		FlowLayoutContainer detailContainer = new FlowLayoutContainer();
+		// add your content
+		detailContainer.getScrollSupport().setScrollMode(ScrollMode.AUTO);
+		detailContainer.setScrollSupport(new DefaultScrollSupport(detailContainer.getElement()));
 //		detailContainer.setStyleName("margin5");
 		detailContainer.add(hp);
-		
+		pagerWidget.setXElement(detailContainer.getElement());
 //		SimplePanel toolContainer = new SimplePanel();
 //		toolContainer.setWidget(toolPanel);
 //		toolContainer.setStyleName(TOOL_STYLE);

@@ -28,6 +28,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.dom.XElement;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * The DataPagerWidget abstract class provides a simple paging interface backed
@@ -157,6 +159,20 @@ public abstract class PagerWidget<D> extends Composite implements ClickHandler {
     lastLink.setVisible(false);
     firstLink.setVisible(false);
   }
+  /**
+   * Pour actualiser l'affichge pendant le chargment
+   * @param toolHp
+   */
+  public void setToolBar(ToolBar toolHp) {
+	  pager.setToolHp(toolHp);
+  }
+  /**
+   * Setters pour masquer un element 
+   * @param mask
+   */
+  public void setXElement(XElement mask) {
+	pager.setMask(mask);
+  }
 
   public void addPageClickListener(PageClickListener listener) {
     pageClickListeners.add(listener);
@@ -276,6 +292,7 @@ public abstract class PagerWidget<D> extends Composite implements ClickHandler {
     lastLink.setVisible(false);
     firstLink.setVisible(false);
     onPagingDisabled();
+	pager.forceLayout();
   }
 
   protected int getDataOrderStart() {
@@ -305,7 +322,7 @@ public abstract class PagerWidget<D> extends Composite implements ClickHandler {
  	// Updated so that color is set in Portal.css (under .Pager .gwt-HTML { color:red; })
 	// In original, color was hard-wired: 
 	// status.setHTML("<font color='" + "black" + "'>" + message + "</font>");
-	  status.setHTML(message);    
+	  status.setHTML(message);  
   }
 
   private void fireOnPageClicked() {

@@ -407,7 +407,7 @@ public class ListView extends ComponentView implements
     
     ColumnModel<Occurrence> cm = new ColumnModel<Occurrence>(currentHeaders);
     
-    final ListStore<Occurrence> store = new ListStore<Occurrence>(OccurrenceSummary.properties.key());
+    ListStore<Occurrence> store = new ListStore<Occurrence>(OccurrenceSummary.properties.key());
     
 //    store.addAll();
     cm.getColumn(1).setCell(cellRebiomaId);
@@ -459,6 +459,10 @@ public class ListView extends ComponentView implements
     actionTool.addWidget(applyToAllCb);
 //    HorizontalPanel toolHp = new HorizontalPanel();
     toolHp = new ToolBar();
+    //{WD
+    this.pagerWidget.setXElement(table.getElement());
+    this.pagerWidget.setToolBar(toolHp);
+    //}
 //    WidgetComponent wc = new WidgetComponent(actionTool);
     
 //    actionTool.setWidth("480px");
@@ -641,10 +645,9 @@ public class ListView extends ComponentView implements
 	    showModifLink(signedIn && ApplicationView.getCurrentState()==ViewState.SUPERADMIN);
 	    
     ColumnModel<Occurrence> cm = new ColumnModel<Occurrence>(headers);
-	    
-    final ListStore<Occurrence> store = new ListStore<Occurrence>(OccurrenceSummary.properties.key());
-	    
-    store.addAll(data);
+	table.getStore().clear();
+	table.getStore().addAll(data);
+    ListStore<Occurrence> store = table.getStore();
     cm.getColumn(1).setCell(cellRebiomaId);
     //set forcefit if column number is more than 10
     table.getView().setForceFit(headers.size()<=10);
@@ -1668,6 +1671,7 @@ public class ListView extends ComponentView implements
 	
 	public void forceLayout(){
 		toolHp.forceLayout();
+		table.getView().layout();
 	}
 
 }

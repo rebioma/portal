@@ -203,7 +203,7 @@ public class CsvDownloadWidget extends PopupPanel implements ClickHandler {
 	  dataUE.setAllowBlank(false);
 	  dataUE.setName("dataue");
 	  info = new Label("* required fields");
-	  infoP = new Label("These informations will be sent to the related data owners and the REBIOMA portal administrator. " +
+	  infoP = new Label("These informations will be sent to the REBIOMA portal administrator. " +
 			  "Please fill correctly the form and give more explanations as possible!");
 	  infoP.setStyleName("infop");
 	  fieldTitle =new FieldLabel(title, "Title*");
