@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `AscData` (
   `description` varchar(128) default NULL,
   `units` varchar(16) default NULL,
   `variable_type` varchar(16) default NULL,
-  `year` varchar(8) default NULL,
+  `year` varchar(16) default NULL,
   `env_data_type` varchar(255) default NULL,
   `env_data_subtype` varchar(255) default NULL,
   `metadata` text,
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS `AscData` (
 --
 -- Dumping data for table `AscData`
 --
-
-INSERT INTO `AscData` (`id`, `data_type`, `file_name`, `south_boundary`, `west_boundary`, `north_boundary`, `east_boundary`, `width`, `height`, `min_value`, `max_value`, `description`, `units`, `variable_type`, `year`, `env_data_type`, `env_data_subtype`, `metadata`) VALUES
+INSERT INTO ascdata (id, data_type, file_name, south_boundary, west_boundary, north_boundary, east_boundary, width, height, min_value, max_value, description, units, variable_type, year, env_data_type, env_data_subtype, metadata) 
+VALUES
 (1, 'climate', 'etptotal_00.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 879, 1648, 621.0372, 1655.935, 'Annual total evapotranspiration calculated by summing 12 monthly evapotranspiration rates', 'mm', 'Continuous', '2000', 'Evapotranspiration', 'Total rate/12 months', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata'),
 (2, 'climate', 'wbyear_2X.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 879, 1648, -1054.511, 1294.463, 'Annual water balance', 'mm', 'Continuous', 'Future', 'Water balance', 'Annual', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata'),
 (3, 'climate', 'wbyear_00.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 879, 1648, -926.3455, 2127.329, 'Annual water balance', 'mm', 'Continuous', '2000', 'Water balance', 'Annual', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata'),
@@ -85,4 +85,12 @@ INSERT INTO `AscData` (`id`, `data_type`, `file_name`, `south_boundary`, `west_b
 (32, 'climate', 'sapm_oct08.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 883, 1633, 0, 5, 'Parks', 'Park', 'Discrete', '2008', 'Parks', 'Madagascar', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata'),
 (36, 'env_variable', 'wbyear_50.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 879, 1648, -921.4669, 1996.459, 'Annual water balance', 'mm', 'Continuous', '1950', 'Water balance', 'Annual', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata'),
 (33, 'GeolStrech', 'geolstrech.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 879, 1648, 1, 11, 'Geology Strech', 'GeolStrech', 'Discrete', '2000', 'GeolStrech', 'Madagascar', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata'),
-(34, 'env_variable', 'topex.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 5640, 4800, -7083, 5578, 'DEM Elevation', 'm', 'Continuous', '2000', 'DEM elevatiom', 'WIOMER', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata');
+(34, 'env_variable', 'topex.asc', -25.64166487474, 43.183344973251, -11.9083308251576, 50.5083453552795, 5640, 4800, -7083, 5578, 'DEM Elevation', 'm', 'Continuous', '2000', 'DEM elevatiom', 'WIOMER', 'http://code.google.com/p/rebioma/wiki/EnvironmentalLayerMetadata'),
+(37,'Oceanography','bathy.asc',-28.7,40.6,-10.3,53.3,1524,2208,-5600,531,'Bathymetrie','m','Continuous','-','Bathymetry','Madagascar','http://seawifs.gsfc.nasa.gov/cgi/reefs.pl'),
+(38,'Oceanography','chloro1.asc',-28.7,40.6,-10.3,53.3,1524,2208,0.08,29.43,'Taux de Chlorophylle','mg/m3','Continuous','1997 - 2006','Chlorophyla-Monthly mean','Madagascar','http://oceancolor.gsfc.nasa.gov/cgi/level3'),
+(39,'Oceanography','cv1.asc',-28.7,40.6,-10.3,53.3,1524,2208,4.9,7.9,'Vitesse du courant de surface','m/s','Continuous','1992 - 2007','Current velocity-Monthly mean','Madagascar','http://www.oscar.noaa.gov/datadisplay/datadownload-nj.htm'),
+(40,'Oceanography','par1.asc',-28.7,40.6,-10.3,53.3,1524,2208,35.62,51.84,'Photosynthetic Active Radiation','Einstein/m2/day','Continuous','1997 - 2006','Photosynthetic Active Radiation-Monthly mean','Madagascar','http://oceancolor.gsfc.nasa.gov/cgi/level3'),
+(41,'Oceanography','reef.asc',-28.7,40.6,-10.3,53.3,1524,2208,0,1,'Reef percentage','Percent','Continuous','2006','Reef percentage-Reef','Madagascar','Atlas of Western and Central Indian Ocean Coral Reefs (Andrefouet et Al. 2009)'),
+(42,'Oceanography','sali1.asc',-28.7,40.6,-10.3,53.3,1524,2208,34.81,35.3,'Salinity','Percent','Continuous','1997 - 2006','Salinity-Monthly mean','Madagascar','http://oceancolor.gsfc.nasa.gov/cgi/l3'),
+(43,'Oceanography','sst.asc',-28.7,40.6,-10.3,53.3,1524,2208,23.38,27.85,'Sea surface temperature','Degrees C','Continuous','1985 - 2006','Sea surface temperature-Monthly mean','Madagascar','http://data.nodc.noaa.gov/pathfinder/Version5.0/Monthly/'),
+(44,'Oceanography','uv1.asc',-28.7,40.6,-10.3,53.3,1524,2208,203.25,288.4,'Ultra Violet','Milliwatts/m2/nm','Continuous','1996 - 2005','Ultra Violet-Daily mean','Madagascar','ftp://jwocky.gsfc.nasa.gov/pub/eptoms/data');
