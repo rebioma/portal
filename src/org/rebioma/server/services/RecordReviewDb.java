@@ -31,7 +31,9 @@ public interface RecordReviewDb {
   RecordReview reviewedRecord(int userId, int occurrenceId, boolean reviewed, Date date);
 
   RecordReview save(RecordReview recordReview);
-
+  
+  RecordReview save(RecordReview recordReview, Session session);
+  
   // RecordReview update(RecordReview recordReview);
   
   	List<RecordReview> findByProperty();

@@ -28,6 +28,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -508,52 +509,32 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   }
 
   public void attachDirty(Occurrence instance) {
-	    log.debug("attaching dirty Occurrence instance");
-	    try {
-	      //Session session = HibernateUtil.getCurrentSession();
-	      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-	      Session session = ManagedSession.createNewSessionAndTransaction();
-	      instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
-	      boolean newOccurrence = instance.getId() == null;
-	      session.saveOrUpdate(instance);
-	      if (newOccurrence) {
-	        assignReviewRecords(instance);
-	      }
-	      log.debug("attach successful");
-	      //if (isFirstTransaction) {
-	      //  HibernateUtil.commitCurrentTransaction();
-	      //}
-	      ManagedSession.commitTransaction(session);
-	    } catch (RuntimeException re) {
-	      log.error("attach failed", re);
-	      //HibernateUtil.rollbackTransaction();
-	      throw re;
-	    }
+	  try {
+		  //Session session = HibernateUtil.getCurrentSession();
+		  //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
+		  Session session = ManagedSession.createNewSessionAndTransaction();
+		  attachDirty(instance, session);
+		  //if (isFirstTransaction) {
+		  //  HibernateUtil.commitCurrentTransaction();
+		  //}
+		  ManagedSession.commitTransaction(session);
+	  } catch (RuntimeException re) {
+		  log.error("attach failed", re);
+		  //HibernateUtil.rollbackTransaction();
+		  throw re;
 	  }
+  }
 
   	public void attachDirty(Occurrence instance, Session session) {
-	    log.debug("attaching dirty Occurrence instance");
-//	    try {
-	      //Session session = HibernateUtil.getCurrentSession();
-	      //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
-//	      Session session = ManagedSession.createNewSessionAndTransaction();
-	      instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
-	      boolean newOccurrence = instance.getId() == null;
-	      session.saveOrUpdate(instance);
-	      if (newOccurrence) {
-	        assignReviewRecords(instance);
-	      }
-	      log.debug("attach successful");
-	      //if (isFirstTransaction) {
-	      //  HibernateUtil.commitCurrentTransaction();
-	      //}
-//	      ManagedSession.commitTransaction(session);
-//	    } catch (RuntimeException re) {
-//	      log.error("attach failed", re);
-	      //HibernateUtil.rollbackTransaction();
-//	      throw re;
-//	    }
-	  }
+  		log.debug("attaching dirty Occurrence instance");
+  		instance.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());
+  		boolean newOccurrence = instance.getId() == null;
+  		session.saveOrUpdate(instance);
+  		if (newOccurrence) {
+  			assignReviewRecords(instance);
+  		}
+  		log.debug("attach successful");
+  	}
 
    /**
    * If an updated {@link Occurrence} contains vetted = true, make sure it is
@@ -563,6 +544,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 		  boolean clearReview, boolean isSA) {
     log.debug("attaching dirty Occurrence instances");
     Occurrence ref = null;
+    Date date = new Date();
     try {
       //Session session = HibernateUtil.getCurrentSession();
       //boolean isFirstTransaction = HibernateUtil.beginTransaction(session);
@@ -594,12 +576,17 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     	  // instance.setVetted(false);
     	  // }
     	  // }
-        session.saveOrUpdate(instance);
-        if (newOccurrence) {
-          assignReviewRecords(instance);
-        } else {
+    	  session.saveOrUpdate(instance);
+    	  if (newOccurrence) {
+    		  // on vérifie si l'occ est valide et est trbData
+    		  if((instance.isValidated()==null || instance.isValidated())&&assignAndReviewRecords(instance, date, session)) {
+    			  instance.setReviewed(true);
+    			  session.saveOrUpdate(instance);
+    		  }
+    		  assignReviewRecords(instance, session);
+    	  } else {
         			
-        	if(isSA) {
+    		  if(isSA) {
         		if(clearReview) {
         			List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
         			for (RecordReview recordReview : recordReviews) {
@@ -608,16 +595,19 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         				session.update(recordReview);
         			}
         		}
-        	} else {
-	          //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(instance.getId());
-	          List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
-	          for (RecordReview recordReview : recordReviews) {
-	            recordReview.setReviewed(null);
-	            recordReview.setReviewedDate(null);
-	            session.update(recordReview);
-	          }
-        	}
-        }
+    		  } else {
+    			  //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(instance.getId());
+    			  if(instance.getTrbData()!=null && instance.getTrbData()) {
+    				  continue;
+    			  }
+    			  List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
+    			  for (RecordReview recordReview : recordReviews) {
+    				  recordReview.setReviewed(null);
+    				  recordReview.setReviewedDate(null);
+    				  session.update(recordReview);
+    			  }
+    		  }
+    	  }
       }
       //if (isFirstTransaction) {
       //  HibernateUtil.commitCurrentTransaction();
@@ -1599,7 +1589,28 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     return queryFilters;
   }
 
-  private void assignReviewRecords(Occurrence occ) {
+  /**
+   * Vérifie si l'occurrence appartient à un trb et qu'elle sera révisé et ne seta pas assigné à d'autre trb
+   * @param occ
+   * @param date
+   * @return 
+   */
+  private boolean assignAndReviewRecords(Occurrence occ, Date date, Session session) {
+	  boolean trbData = false;
+	  if(occ.getTrbData()!=null && occ.getTrbData()) {
+			for (TaxonomicReviewer taxonomicReviewer: taxonomiKRB) {
+				if(trbData = occ.getOwner().equals(taxonomicReviewer.getUserId())) {
+					session.saveOrUpdate(new RecordReview(taxonomicReviewer.getUserId(), occ.getId(),
+							true, date));
+				}
+			}
+	  }
+	  return trbData;
+  }
+  
+  private void assignReviewRecords(Occurrence occ, Session session) {
+	if (occ.getTrbData()!=null && occ.getTrbData())
+	  return;
     AttributeValue attributeValue = new AttributeValue();
     for (TaxonomicReviewer taxonomicReviewer : taxonomiKRB) {
       attributeValue.setAttribute(taxonomicReviewer.getTaxonomicField());
@@ -1607,10 +1618,17 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       if (isTaxonomicMatch(attributeValue, occ) && checkAcceptedspeciesLocation(taxonomicReviewer, occ.getAcceptedSpecies())) {
         RecordReview recordReview = new RecordReview(taxonomicReviewer.getUserId(), occ.getId(),
             null);
-        recordReviewDb.save(recordReview);
+        if(session==null)
+        	recordReviewDb.save(recordReview);
+        else recordReviewDb.save(recordReview, session);
       }
     }
   }
+  
+  private void assignReviewRecords(Occurrence occ) {
+	  assignReviewRecords(occ, null);
+  }
+  
   //{WD}
   /**
    * 
@@ -2021,7 +2039,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 			st = con.createStatement();
 			ResultSet rst = st.executeQuery("select o.id from Occurrence o left join taxonomy t on (upper(o.acceptedspecies) = upper(t.acceptedspecies)) where upper(o."
 		        + attributeValue.getAttribute() + ")=upper('" + attributeValue.getValue()
-		        + "') and o.validated=true and (t.ismarine = " + isM + " or t.isterrestrial = " + isT + ")");
+		        + "') and o.validated=true and (t.ismarine = " + isM + " or t.isterrestrial = " + isT + ") and o.trbdata is not true");
 			
 		    while(rst.next()) {
 				ids.add(new Integer(rst.getInt(1)));
@@ -2257,7 +2275,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   	
   }
   
-  public void resetRecordReview(Occurrence occurrence, boolean isStable,Session sess) {
+  public void resetRecordReview(Occurrence occurrence, boolean isStable, Session sess) {
 	  	 log.debug("attaching dirty Occurrence instance");
 	  	   
   	      occurrence.setLastUpdated((new Timestamp(System.currentTimeMillis())).toString());

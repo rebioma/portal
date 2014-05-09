@@ -179,26 +179,31 @@ public class RecordReviewDbImpl implements RecordReviewDb {
 	    }
 	  }
 
-  public RecordReview save(RecordReview recordReview) {
-    Session session = ManagedSession.createNewSessionAndTransaction();
+  	public RecordReview save(RecordReview recordReview) {
+  		Session session = ManagedSession.createNewSessionAndTransaction();
 
-    try {
-      RecordReview existenceRecordReview = getRecordReview(recordReview
-          .getUserId(), recordReview.getOccurrenceId());
-      if (existenceRecordReview == null) {
-        session.save(recordReview);
-      } else {
-        recordReview = null;
-      }
-      ManagedSession.commitTransaction(session);
-      return recordReview;
-    } catch (RuntimeException re) {
-      ManagedSession.rollbackTransaction(session);
-      log.error("error :" + re.getMessage() + " on save(RecordReview)", re);
-      throw re;
-    }
-  }
-
+  		try {
+  			recordReview = save(recordReview, session);
+  			ManagedSession.commitTransaction(session);
+  			return recordReview;
+  		} catch (RuntimeException re) {
+  			ManagedSession.rollbackTransaction(session);
+  			log.error("error :" + re.getMessage() + " on save(RecordReview)", re);
+  			throw re;
+	    }
+  	}
+  	
+  	public RecordReview save(RecordReview recordReview, Session session) {
+        RecordReview existenceRecordReview = getRecordReview(recordReview
+            .getUserId(), recordReview.getOccurrenceId());
+        if (existenceRecordReview == null) {
+          session.save(recordReview);
+        } else {
+          recordReview = null;
+        }
+        return recordReview;
+  	}
+  
   public RecordReview update(RecordReview recordReview) {
     Session session = ManagedSession.createNewSessionAndTransaction();
 

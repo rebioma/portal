@@ -443,5 +443,29 @@
         <property name="sharedUsersCSV" type="string">
         	<column name="SharedUsers" />
         </property>
+        <property name="bibliographicCitation" type="string">
+        	<column name="BibliographicCitation" />
+        </property>
+        <property name="preparator" type="string">
+        	<column name="Preparator" />
+        </property>
+        <property name="verbatimLocality" type="string">
+        	<column name="VerbatimLocality" />
+        </property>
+        <property name="habitat" type="string">
+        	<column name="Habitat" />
+        </property>
+        <property name="vernacularName" type="string">
+        	<column name="VernacularName" />
+        </property>
+        <property name="AssociatedReferences" type="string">
+        	<column name="AssociatedReferences" />
+        </property>
+        <property name="localityDescription" type="string">
+        	<column name="LocalityDescription" />
+        </property>
+        <property name="trbData" type="java.lang.Boolean">
+            <column name="trbData" />
+        </property>
     </class>
 </hibernate-mapping>

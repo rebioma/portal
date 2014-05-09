@@ -159,7 +159,14 @@ public class Occurrence implements java.io.Serializable {
 	private String wbyear2000;
 	private String wbyearfuture;
 	private String yearCollected;
-
+	private String bibliographicCitation;
+	private String preparator;
+	private String verbatimLocality;
+	private String habitat;
+	private String vernacularName;
+	private String associatedReferences;
+	private String localityDescription;
+	private Boolean trbData;
 	private Boolean reviewed;
 
 	private Boolean stability;
@@ -1370,6 +1377,70 @@ public class Occurrence implements java.io.Serializable {
 
 	public void setYearCollected(String yearCollected) {
 		this.yearCollected = yearCollected;
+	}
+
+	public String getBibliographicCitation() {
+		return bibliographicCitation;
+	}
+
+	public void setBibliographicCitation(String bibliographicCitation) {
+		this.bibliographicCitation = bibliographicCitation;
+	}
+
+	public String getPreparator() {
+		return preparator;
+	}
+
+	public void setPreparator(String preparator) {
+		this.preparator = preparator;
+	}
+
+	public String getVerbatimLocality() {
+		return verbatimLocality;
+	}
+
+	public void setVerbatimLocality(String verbatimLocality) {
+		this.verbatimLocality = verbatimLocality;
+	}
+
+	public String getHabitat() {
+		return habitat;
+	}
+
+	public void setHabitat(String habitat) {
+		this.habitat = habitat;
+	}
+
+	public String getVernacularName() {
+		return vernacularName;
+	}
+
+	public void setVernacularName(String vernacularName) {
+		this.vernacularName = vernacularName;
+	}
+
+	public String getAssociatedReferences() {
+		return associatedReferences;
+	}
+
+	public void setAssociatedReferences(String associatedReferences) {
+		this.associatedReferences = associatedReferences;
+	}
+
+	public String getLocalityDescription() {
+		return localityDescription;
+	}
+
+	public void setLocalityDescription(String localityDescription) {
+		this.localityDescription = localityDescription;
+	}
+	
+	public Boolean getTrbData() {
+		return trbData;
+	}
+
+	public void setTrbData(Boolean trbData) {
+		this.trbData = trbData;
 	}
 
 	@Override

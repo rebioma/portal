@@ -180,7 +180,7 @@ public class FileValidationServiceImpl implements FileValidationService {
 	  //List<Occurrence> newOccurrences = new ArrayList<Occurrence>();
 	  if(!sAdmin)
 	  for (Occurrence occurrence : occurrences) {
-	      // String createdDate = (new Timestamp(System.currentTimeMillis()))
+		  // String createdDate = (new Timestamp(System.currentTimeMillis()))
 	      // .toString();
 	      // System.out.println(occurrence.getTimeCreated());
 	      // System.out.println(Timestamp.parse(occurrence.getTimeCreated()));
@@ -205,19 +205,19 @@ public class FileValidationServiceImpl implements FileValidationService {
 	        // newOccurrences.add(occurrence);
 	      }
 	  }
-    List<RecordReview> rcdrv = recordReviewDb.findByProperty();
-    validationService.validate(occurrences, traitement);
-    occurrenceDb.attachDirty(occurrences, traitement,rcdrv, clearReview, sAdmin);
-    traitement.setTraitement("Updating occurrences...", 100*1024, 0);
+	  List<RecordReview> rcdrv = recordReviewDb.findByProperty();
+	  validationService.validate(occurrences, traitement);
+	  occurrenceDb.attachDirty(occurrences, traitement, rcdrv, clearReview, sAdmin);
+	  traitement.setTraitement("Updating occurrences...", 100*1024, 0);
 //    if(traitement.getCancel())return "{\"Uploaded\":\"canceled\"}";
-    updateService.update();
-    traitement.setTraitement("Updating occurrences...", 100*1024, 100*1024);
-    List<TaxonomicReviewer> txrv = taxnomicReviewDb.findByProperty();    
-    try {
-      log.info("sending notification emails");
-      //Session session = HibernateUtil.getCurrentSession();
-      //HibernateUtil.beginTransaction(session);
-      Session session = ManagedSession.createNewSessionAndTransaction();
+	  updateService.update();
+	  traitement.setTraitement("Updating occurrences...", 100*1024, 100*1024);
+	  List<TaxonomicReviewer> txrv = taxnomicReviewDb.findByProperty();    
+	  try {
+		  log.info("sending notification emails");
+		  //Session session = HibernateUtil.getCurrentSession();
+		  //HibernateUtil.beginTransaction(session);
+		  Session session = ManagedSession.createNewSessionAndTransaction();
       int j=0;
       for (Occurrence occurrence : occurrences) {
     	  traitement.setTraitement("emails notification", occurrences.size()*1024, 1024*++j);    
@@ -226,32 +226,32 @@ public class FileValidationServiceImpl implements FileValidationService {
     		  //HibernateUtil.rollbackTransaction();
     		  return "{\"Uploaded\":\"canceled2\"}";
     	  }
-        if (occurrence.isValidated()) {
-          continue;
-        }
-        //Long debut = new Date().getTime();
-        //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(occurrence.getId());
-        List<RecordReview> recordReviews = recordReviewDb.findByProperty(occurrence.getId(),rcdrv);        
-        //Long fin = new Date().getTime();
+    	  if (occurrence.isValidated()) {
+    		  continue;
+    	  }
+    	  //Long debut = new Date().getTime();
+    	  //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(occurrence.getId());
+    	  List<RecordReview> recordReviews = recordReviewDb.findByProperty(occurrence.getId(),rcdrv);        
+    	  //Long fin = new Date().getTime();
         
-        for (RecordReview recordReview : recordReviews) {
-          int userId = recordReview.getUserId();
-          List<TaxonomicReviewer> reviewers = taxnomicReviewDb.findByProperty(userId,txrv);
-          //List<TaxonomicReviewer> reviewers = tReviewers.get(userId+"");
-          for (TaxonomicReviewer reviewer : reviewers) {
-            String taxoField = reviewer.getTaxonomicField();
-            String taxoValue = reviewer.getTaxonomicValue();
-            if (isTaxonomicMatch(new AttributeValue(taxoField, taxoValue), occurrence)) {
-              User u = userDb.findById(userId);
-              Set<Occurrence> notifyingOccs = userOccurrencesMap.get(u);
-              if (notifyingOccs == null) {
-                notifyingOccs = new HashSet<Occurrence>();
-                userOccurrencesMap.put(u, notifyingOccs);
-              }
-              notifyingOccs.add(occurrence);
-            }
-          }
-        }
+    	  for (RecordReview recordReview : recordReviews) {
+    		  int userId = recordReview.getUserId();
+    		  List<TaxonomicReviewer> reviewers = taxnomicReviewDb.findByProperty(userId,txrv);
+    		  //List<TaxonomicReviewer> reviewers = tReviewers.get(userId+"");
+    		  for (TaxonomicReviewer reviewer : reviewers) {
+    			  String taxoField = reviewer.getTaxonomicField();
+    			  String taxoValue = reviewer.getTaxonomicValue();
+    			  if (isTaxonomicMatch(new AttributeValue(taxoField, taxoValue), occurrence)) {
+    				  User u = userDb.findById(userId);
+    				  Set<Occurrence> notifyingOccs = userOccurrencesMap.get(u);
+    				  if (notifyingOccs == null) {
+    					  notifyingOccs = new HashSet<Occurrence>();
+    					  userOccurrencesMap.put(u, notifyingOccs);
+    				  }
+    				  notifyingOccs.add(occurrence);
+    			  }
+    		  }
+    	  }
       }
       log.info("committing transaction");
       ManagedSession.commitTransaction(session);
