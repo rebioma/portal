@@ -464,8 +464,8 @@
         <property name="localityDescription" type="string">
         	<column name="LocalityDescription" />
         </property>
-        <property name="trbData" type="java.lang.Boolean">
-            <column name="trbData" />
+        <property name="noAssignation" type="java.lang.Boolean">
+            <column name="noAssignation" />
         </property>
     </class>
 </hibernate-mapping>

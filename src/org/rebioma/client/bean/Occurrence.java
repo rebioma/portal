@@ -166,7 +166,7 @@ public class Occurrence implements java.io.Serializable {
 	private String vernacularName;
 	private String associatedReferences;
 	private String localityDescription;
-	private Boolean trbData;
+	private Boolean noAssignation;
 	private Boolean reviewed;
 
 	private Boolean stability;
@@ -1435,12 +1435,12 @@ public class Occurrence implements java.io.Serializable {
 		this.localityDescription = localityDescription;
 	}
 	
-	public Boolean getTrbData() {
-		return trbData;
+	public Boolean getNoAssignation() {
+		return noAssignation;
 	}
 
-	public void setTrbData(Boolean trbData) {
-		this.trbData = trbData;
+	public void setNoAssignation(Boolean noAssignation) {
+		this.noAssignation = noAssignation;
 	}
 
 	@Override

@@ -597,7 +597,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         		}
     		  } else {
     			  //List<RecordReview> recordReviews = recordReviewDb.getRecordReviewsByOcc(instance.getId());
-    			  if(instance.getTrbData()!=null && instance.getTrbData()) {
+    			  if(instance.getNoAssignation()!=null && instance.getNoAssignation()) {
     				  continue;
     			  }
     			  List<RecordReview> recordReviews = recordReviewDb.findByProperty(instance.getId(), rcdrv);        
@@ -1596,20 +1596,20 @@ public class OccurrenceDbImpl implements OccurrenceDb {
    * @return 
    */
   private boolean assignAndReviewRecords(Occurrence occ, Date date, Session session) {
-	  boolean trbData = false;
-	  if(occ.getTrbData()!=null && occ.getTrbData()) {
+	  boolean noAssignation = false;
+	  if(occ.getNoAssignation()!=null && occ.getNoAssignation()) {
 			for (TaxonomicReviewer taxonomicReviewer: taxonomiKRB) {
-				if(trbData = occ.getOwner().equals(taxonomicReviewer.getUserId())) {
+				if(noAssignation = occ.getOwner().equals(taxonomicReviewer.getUserId())) {
 					session.saveOrUpdate(new RecordReview(taxonomicReviewer.getUserId(), occ.getId(),
 							true, date));
 				}
 			}
 	  }
-	  return trbData;
+	  return noAssignation;
   }
   
   private void assignReviewRecords(Occurrence occ, Session session) {
-	if (occ.getTrbData()!=null && occ.getTrbData())
+	if (occ.getNoAssignation()!=null && occ.getNoAssignation())
 	  return;
     AttributeValue attributeValue = new AttributeValue();
     for (TaxonomicReviewer taxonomicReviewer : taxonomiKRB) {
