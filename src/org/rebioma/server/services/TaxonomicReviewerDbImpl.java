@@ -59,7 +59,7 @@ public class TaxonomicReviewerDbImpl implements TaxonomicReviewerDb {
       ManagedSession.commitTransaction(session);
       return reviewers;
     } catch (RuntimeException re) {
-      log.error("error :" + re.getMessage() + " on delete(TaxonomicReviewer)",
+      log.error("error :" + re.getMessage() + " on findAll()",
           re);
       throw re;
     }

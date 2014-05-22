@@ -100,7 +100,9 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
     sb.append("rf_" + query.getResultFilter());
     sb.append(SEPARATOR);
     sb.append("pagesize_" + query.getLimit());
-
+    if(query.getOccurrenceIdsFilter() != null && !query.getOccurrenceIdsFilter().isEmpty()){
+    	sb.append(SEPARATOR).append("withdrawingfilters");
+    }
     System.out.println(sb.toString());
     return sb.toString();
   }
@@ -317,12 +319,15 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
         final String cacheKey = addKey(OCCURRENCE_KEY,
             getOccurrenceQueryKey(query));
         GWT.log(cacheKey, null);
-        if (cache.containsKey(cacheKey)) {
-          OccurrenceQuery cachedQuery = (OccurrenceQuery) cache.get(cacheKey);
-          if (cachedQuery.getCount() != -1) {
-            cb.onSuccess(cachedQuery);
-            return;
-          }
+        //on ne charge pas la cache quand on a des filtres sur les id des occurrences(depuis le mapDrawingControl)
+        if(query.getOccurrenceIdsFilter() == null || query.getOccurrenceIdsFilter().isEmpty()){
+        	if (cache.containsKey(cacheKey)) {
+                OccurrenceQuery cachedQuery = (OccurrenceQuery) cache.get(cacheKey);
+                if (cachedQuery.getCount() != -1) {
+                  cb.onSuccess(cachedQuery);
+                  return;
+                }
+              }
         }
         query.setCountTotalResults(true);
         Request request = OccurrenceService.Proxy.get().fetch(sessionId, query,

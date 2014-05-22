@@ -979,6 +979,15 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @DefaultStringValue("Toggle Control Visibility")
   @Key("HideControls")
   String HideControls();
+  
+  /**
+   * Translated "Delete polygon".
+   * 
+   * @return translated "Delete polygon"
+   */
+  @DefaultStringValue("Delete polygon")
+  @Key("DeleteDrawedPolygon")
+  String DeleteDrawedPolygon();
 
   /**
    * Translated "You can only hide your Email in your own records.".

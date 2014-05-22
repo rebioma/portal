@@ -1,0 +1,2 @@
+serviceClass: org.rebioma.client.services.RebiomaModelService
+path: A2356A41D09CC472193156950B7E10D4.gwt.rpc

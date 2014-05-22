@@ -1,0 +1,2 @@
+serviceClass: org.rebioma.client.services.MapGisService
+path: B07F15C3947781B7CD998C3DF3BD3B46.gwt.rpc

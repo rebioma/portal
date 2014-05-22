@@ -1,0 +1,2 @@
+serviceClass: org.rebioma.client.services.StatisticsService
+path: FA7FC72A329D6112A8FAF8F26EE5433E.gwt.rpc

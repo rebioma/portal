@@ -15,7 +15,6 @@
  */
 package org.rebioma.server.util;
 
-import java.io.IOException;
 import java.security.Security;
 import java.util.Enumeration;
 import java.util.Map;
@@ -368,7 +367,7 @@ public class EmailUtil {
   public static synchronized void sendMail(String subject, String body,
       String sender, String recipients, final String username,
       final String password) throws Exception {
-    Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+    //Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
     Properties props = new Properties();
     props.setProperty("mail.transport.protocol", "smtp");
     props.setProperty("mail.host", "smtp.gmail.com");
@@ -406,7 +405,7 @@ public class EmailUtil {
   public static synchronized void sendMail2(String subject, String body,
 	      String sender, String recipients, final String username,
 	      final String password) throws Exception {
-	    Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+	    //Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	    Properties props = new Properties();
 	    props.setProperty("mail.transport.protocol", "smtp");
 	    props.setProperty("mail.host", "smtp.gmail.com");

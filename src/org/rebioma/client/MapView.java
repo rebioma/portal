@@ -32,10 +32,16 @@ import org.rebioma.client.PagerWidget.PageClickListener;
 import org.rebioma.client.bean.AscModel;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceSummary;
+import org.rebioma.client.bean.ShapeFileInfo;
 import org.rebioma.client.maps.AscTileLayer.LayerInfo;
+import org.rebioma.client.maps.ClearMapDrawingControl;
+import org.rebioma.client.maps.CoordinatesControl;
 import org.rebioma.client.maps.GeocoderControl;
 import org.rebioma.client.maps.HideControl;
+import org.rebioma.client.maps.KmlGenerator;
 import org.rebioma.client.maps.MapControlsGroup;
+import org.rebioma.client.maps.MapDrawingControl;
+import org.rebioma.client.maps.MapDrawingControlListener;
 import org.rebioma.client.maps.ModelEnvLayer;
 import org.rebioma.client.maps.ModelingControl;
 import org.rebioma.client.maps.OccurrenceMarkerManager;
@@ -43,6 +49,8 @@ import org.rebioma.client.maps.TileLayerLegend;
 import org.rebioma.client.maps.TileLayerLegend.LegendCallback;
 import org.rebioma.client.maps.TileLayerSelector;
 import org.rebioma.client.maps.TileLayerSelector.TileLayerCallback;
+import org.rebioma.client.services.MapGisService;
+import org.rebioma.client.services.MapGisServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptException;
@@ -72,9 +80,13 @@ import com.google.gwt.maps.client.events.maptypeid.MapTypeIdChangeMapEvent;
 import com.google.gwt.maps.client.events.maptypeid.MapTypeIdChangeMapHandler;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapEvent;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapHandler;
+import com.google.gwt.maps.client.layers.KmlLayer;
+import com.google.gwt.maps.client.layers.KmlLayerOptions;
+import com.google.gwt.maps.client.layers.KmlLayerStatus;
 import com.google.gwt.maps.client.overlays.InfoWindow;
 import com.google.gwt.maps.client.overlays.InfoWindowOptions;
 import com.google.gwt.maps.client.overlays.Marker;
+import com.google.gwt.maps.client.overlays.Polygon;
 import com.google.gwt.maps.client.services.GeocoderRequestHandler;
 import com.google.gwt.maps.client.services.GeocoderStatus;
 import com.google.gwt.user.client.Command;
@@ -83,6 +95,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -107,6 +120,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sencha.gxt.core.client.dom.Mask;
+import com.sencha.gxt.core.client.dom.XElement;
 
 /**
  * A type of view that shows a Google map displaying pageable occurrence data
@@ -114,8 +129,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class MapView extends ComponentView implements CheckedSelectionListener,
     DataRequestListener, PageClickListener, PageListener<Occurrence>,
-    TileLayerCallback, ItemSelectionListener, SelectionHandler<Widget>, OccurrencePageSizeChangeHandler, GeocoderRequestHandler {
+    TileLayerCallback, ItemSelectionListener, SelectionHandler<Widget>, OccurrencePageSizeChangeHandler, 
+    GeocoderRequestHandler,	MapDrawingControlListener {
 
+	
   /**
    * Manage history states of map View.
    */
@@ -198,6 +215,10 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     }
   }
   
+ 
+ private final MapGisServiceAsync mapGisService = GWT
+			.create(MapGisService.class);
+ 
   private CsvDownloadWidget modelDownloadWidget = new CsvDownloadWidget("modelDownload");
   
   private class ModelItem extends TreeItem implements ClickHandler,
@@ -576,6 +597,8 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
    * map.
    */
   private static final int DEFAULT_ZOOM = 5;
+
+	private Set<KmlLayer> kmlLayers = new HashSet<KmlLayer>();
 
   /**
    * Display field for map info window.
@@ -1368,6 +1391,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
     map = new MapWidget(mapOptions);
     map.setWidth("100%");
     map.setHeight("100%");
+    final MapView mapView = this;
     // map.addControl(getModelControl());
     Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 		@Override
@@ -1389,6 +1413,14 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 //	        envLayerSelector.setMap(map, ControlPosition.TOP_RIGHT);
 	        hideControl.addControlWidgetToHide(geocoder);
 	        hideControl.addControlWidgetToHide(envLayerSelector);
+	        
+	        CoordinatesControl coordinatesControl = new CoordinatesControl(map);
+			
+			MapDrawingControl mapDrawingControl = new MapDrawingControl(map,
+					ControlPosition.TOP_CENTER);
+			mapDrawingControl.addListener(mapView);
+			ClearMapDrawingControl clearMapDrawingControl = new ClearMapDrawingControl(mapDrawingControl);
+			map.setControls(ControlPosition.TOP_LEFT, clearMapDrawingControl);
 		}
     });
    map.addClickHandler(mapClickHandler);
@@ -1493,4 +1525,131 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 	public void forceLayout(){
 		toolHp.forceLayout();
 	}
+	
+		private void reloadPageWithOccurrenceIds(List<Integer> occurrenceIds){
+		// on prepare le query
+		pager.getQuery().setOccurrenceIdsFilter(
+				new HashSet<Integer>());
+		pager.getQuery().getOccurrenceIdsFilter()
+				.addAll(occurrenceIds);
+		// on recharge les vue DetailView et ListView
+		//requestData(1);
+		
+		//prendre en compte les eventuelle changement de critère dans les comboboxes de la barre horizontal en haut
+		OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
+		occView.getSearchForm().search();
+	}
+
+	/**
+	 * appeler quand l'user a fini de dessiner un polygone sur le map (à l'aide
+	 * du control MapDrawingControl)
+	 */
+	@Override
+	public void polygonDrawingCompleteHandler(Polygon polygon) {
+//		final List<LatLng> coords = new ArrayList<LatLng>();
+		if (polygon != null) {
+			/*polygon.getPath().forEach(new MVCArrayCallback<LatLng>() {
+				@Override
+				public void forEach(LatLng arg0, int arg1) {
+					coords.add(arg0);
+				}
+			});*/
+			String kml = KmlGenerator.polygon2Kml(polygon);
+			GWT.log("Polygon completed paths=" + kml);
+			/*
+			 * Window.alert(" Representation en kml du polygon\n" + kml);
+			 * pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
+			 * pager.getQuery().getOccurrenceIdsFilter().add(115408);//teste
+			 * requestData(1);
+			 */
+			Mask.mask((XElement)map.getElement(), "Loading");
+			mapGisService.findOccurrenceIdByGeom(kml,
+					new AsyncCallback<List<Integer>>() {
+						@Override
+						public void onSuccess(List<Integer> result) {
+							reloadPageWithOccurrenceIds(result);
+							Mask.unmask((XElement)map.getElement());
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Mask.unmask((XElement)map.getElement());
+							Window.alert("Failure =>" + caught.getMessage());
+						}
+					});
+		}
+	}
+
+	@Override
+	public void polygonDeletedHandler() {
+		pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
+		OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
+		occView.getSearchForm().search();
+	}
+	
+	private Map<String, List<Integer>> getTableGidsMap(List<ShapeFileInfo> shapeFileInfos){
+		Map<String, List<Integer>> tableGidsMap = new HashMap<String, List<Integer>>();
+		for(ShapeFileInfo info: shapeFileInfos){
+			if(!tableGidsMap.containsKey(info.getTableName())){
+				tableGidsMap.put(info.getTableName(), new ArrayList<Integer>());
+			}
+			if(info.getGid() > 0){
+				tableGidsMap.get(info.getTableName()).add(info.getGid());
+			}
+			
+		}
+		return tableGidsMap;
+	}
+	
+	public void loadKmlLayer(List<ShapeFileInfo> shapeFileInfos){
+		//chargement des occurrences
+		/* ------------------------ chargement des layers ------------------------------- */
+		//en mode local on doit copier le fichier kml généré par notre servlet dans http://41.74.23.114/kmlfiles/ pour voir le layer sur le map
+//		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+//			@Override
+//			public void execute() {
+//				KmlLayer layer = KmlLayer.newInstance("http://41.74.23.114/kmlfiles/lim_region_aout0681891013141617.kmz");
+//				layer.setMap(map);
+//			}
+//		});
+		Map<String, List<Integer>> tableGidsMap = this.getTableGidsMap(shapeFileInfos);
+		//en mode production on peut utiliser directement le servlet puisque l'url est public
+		final Set<String> urls = KmlUtil.getKmlFileUrl(tableGidsMap);
+		//suppression des layers existants
+		for(KmlLayer layer: kmlLayers){
+			if(layer != null){
+				layer.setMap(null);
+			}
+		}
+		//Chargement des layers kml
+
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				for(String url: urls){
+					KmlLayer layer = KmlLayer.newInstance(url);
+					layer.setMap(map);
+					kmlLayers.add(layer);
+				}
+			}
+		});
+		
+		
+		Mask.mask((XElement)map.getElement(), "Loading");
+		mapGisService.findOccurrenceIdsByShapeFiles(tableGidsMap, new AsyncCallback<List<Integer>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Mask.unmask((XElement)map.getElement());
+				Window.alert("Failure =>" + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<Integer> result) {
+				reloadPageWithOccurrenceIds(result);
+				Mask.unmask((XElement)map.getElement());
+			}
+		});
+		
+	}
+	
 }

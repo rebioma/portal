@@ -1836,4 +1836,12 @@ div#content {
 .infop {
 	color:blue;font-style:italic;text-align: justify;
 }
+
+.coordinate_label {
+	width: 115px;
+	height: 14px;
+	margin: 2px 2px;
+  	font-family: Trebuchet MS, Verdana,Helvetica,Arial,sans-serif;
+  	/*background-color: #D9D9D9;*/
+}
 	

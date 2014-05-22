@@ -1,0 +1,2 @@
+serviceClass: org.rebioma.client.services.SpeciesExplorerService
+path: 66B5E26D564598F1E36FD22F47F6E0DA.gwt.rpc

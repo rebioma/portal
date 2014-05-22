@@ -24,8 +24,7 @@
 		localhost:
 		ABQIAAAAQmTfPsuZgXDEr012HM6trBQ9h4JNsDBcIOxh6bSLCe_wOSHYmhSu62PHB913KvcHTa2D6cm8TEbEsQ
 	-->
-	
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;libraries=drawing&amp;sensor=false"></script>
 
 
 	<!--

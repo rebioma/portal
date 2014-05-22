@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+
+	<listener>
+		<listener-class>org.rebioma.server.daemon.AppStartUp</listener-class>
+	</listener>
+
+	<context-param>
+		<param-name>pathShape</param-name>
+		<param-value>D:\\shape\\</param-value>
+	</context-param>
+	<context-param>
+		<param-name>pathShp2pgsql</param-name>
+		<param-value>C:\\Program Files\\PostgreSQL\\9.1\\bin\\shp2pgsql -W LATIN1 -s 29702  </param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>batchDelayInMinute</param-name>
+		<param-value>30</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>maxSize</param-name>
+		<param-value>25600000</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>slowUploads</param-name>
+		<param-value>1</param-value>
+	</context-param>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>Portal.html</welcome-file>
+	</welcome-file-list>
+
+	<listener>
+		<listener-class>
+			org.rebioma.server.inject.GuiceServletContextListener
+		</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>Mailing</servlet-name>
+		<servlet-class>org.rebioma.server.services.MailingServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mailing</servlet-name>
+		<url-pattern>/rebioma/mailingService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RevalidationService</servlet-name>
+		<servlet-class>org.rebioma.server.services.RevalidationServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RevalidationService</servlet-name>
+		<url-pattern>/rebioma/revalidationService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ServerPingService</servlet-name>
+		<servlet-class>org.rebioma.server.services.ServerPingServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServerPingService</servlet-name>
+		<url-pattern>/rebioma/serverPingService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SpeciesExplorerService</servlet-name>
+		<servlet-class>org.rebioma.server.services.SpeciesExplorerServiceImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>MapGisService</servlet-name>
+		<servlet-class>org.rebioma.server.services.MapGisServiceImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SpeciesExplorerService</servlet-name>
+		<url-pattern>/rebioma/speciesExplorerService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MapGisService</servlet-name>
+		<url-pattern>/rebioma/mapGisService</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>StatisticsService</servlet-name>
+		<servlet-class>org.rebioma.server.services.StatisticsServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>StatisticsService</servlet-name>
+		<url-pattern>/rebioma/statisticsService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>kmlFileServlet</servlet-name>
+		<servlet-class>org.rebioma.server.KmlFileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>kmlFileServlet</servlet-name>
+		<url-pattern>/rebioma/kmlfile</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UserService</servlet-name>
+		<servlet-class>org.rebioma.server.services.UserServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserService</servlet-name>
+		<url-pattern>/rebioma/userService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>OccurrenceService</servlet-name>
+		<servlet-class>org.rebioma.server.services.OccurrenceServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OccurrenceService</servlet-name>
+		<url-pattern>/rebioma/occurrenceService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AscDataService</servlet-name>
+		<servlet-class>org.rebioma.server.services.AscDataServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AscDataService</servlet-name>
+		<url-pattern>/rebioma/ascDataService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ASCGMapsTileRenderer</servlet-name>
+		<servlet-class>org.rebioma.server.overlays.ASCGMapsTileRenderer
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ASCGMapsTileRenderer</servlet-name>
+		<url-pattern>/rebioma/ascOverlay</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-class>org.rebioma.server.FileUploadServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<url-pattern>*.file</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FileDownloadServlet</servlet-name>
+		<servlet-class>org.rebioma.server.FileDownloadServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FileDownloadServlet</servlet-name>
+		<url-pattern>/rebioma/download</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>testServlet</servlet-name>
+		<servlet-class>org.rebioma.server.TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>testServlet</servlet-name>
+		<url-pattern>/rebioma/test</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>reviewAssignment</servlet-name>
+		<servlet-class>org.rebioma.server.ReviewAssignmentsServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>reviewAssignment</servlet-name>
+		<url-pattern>/rebioma/reviewAssignment</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ModelServlet</servlet-name>
+		<servlet-class>org.rebioma.server.services.ModelServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ModelServlet</servlet-name>
+		<url-pattern>/rebioma/model</url-pattern>
+	</servlet-mapping>
+
+</web-app>

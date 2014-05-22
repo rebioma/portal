@@ -17,17 +17,21 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.sencha.gxt.data.client.loader.RpcProxy;
+import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.ChildTreeStoreBinding;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.StoreFilterField;
+import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
-import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * @author Mikajy
@@ -44,6 +48,24 @@ public class SpeciesExplorerPanel {
 	
 	NumberFormat format = NumberFormat.getDecimalFormat();
 	
+	private TextButton findButton;
+	private TextButton resetButton;
+	private TextButton filterButton;
+	private ToolBar toolBarHaut;
+	private TextArea criteriArea;
+	
+	public TextButton getFindButton() {
+		return findButton;
+	}
+
+	public TextButton getResetButton() {
+		return resetButton;
+	}
+
+	public TextButton getFilterButton() {
+		return filterButton;
+	}
+
 	public SpeciesExplorerPanel() {
 		// Generate the key provider and value provider for the Data class
 		SpeciesTreeModelProperties speciesTreeModelProperties = GWT
@@ -108,6 +130,44 @@ public class SpeciesExplorerPanel {
 
 		loader.addLoadHandler(new ChildTreeStoreBinding<SpeciesTreeModel>(s));
 		
+		StoreFilterField<SpeciesTreeModel> criteria = new StoreFilterField<SpeciesTreeModel>() {
+
+			@Override
+			protected boolean doSelect(Store<SpeciesTreeModel> store,
+					SpeciesTreeModel parent, SpeciesTreeModel item,
+					String filter) {
+				
+				 /*if (item instanceof SpeciesTreeModel) {
+			          return false;
+			        }
+			        
+			 */
+					//SpeciesTreeModel treeModel = treeGrid.findNode(getElement().)
+			        String name = item.getKingdom();
+			        String class_ = item.getClass_();
+			        if(class_!=null)
+			        	class_ = class_.toLowerCase();
+			        else
+			        	class_ = "";
+			        name = name.toLowerCase();
+			        
+			        if (name.startsWith(filter.toLowerCase())) {
+			          return true;
+			        }
+			        return false;
+				
+			}
+			
+		};
+		criteria.bind(s);
+		toolBarHaut = new ToolBar();
+		findButton = new TextButton("Find");
+		resetButton = new TextButton("Reset");
+		filterButton = new TextButton("Filter");
+		toolBarHaut.add(findButton);
+		toolBarHaut.add(resetButton);
+		toolBarHaut.add(filterButton);
+		toolBarHaut.add(criteria);
 		// Create the tree grid using the store, column model and column config
 		// for the tree column
 		treeGrid = new CheckboxTreeGrid<SpeciesTreeModel>(s, cm, ccs.get(0));
@@ -117,6 +177,33 @@ public class SpeciesExplorerPanel {
 		treeGrid.getView().setForceFit(true);
 		// treeGrid.setWidth(300);
 //		treeGrid.setHeight(400);
+		
+		resetButton.addSelectHandler(new SelectHandler() {
+			
+			@Override
+			public void onSelect(SelectEvent event) {
+				
+				
+			}
+		});
+        
+		findButton.addSelectHandler(new SelectHandler() {
+			
+			@Override
+			public void onSelect(SelectEvent event) {
+				
+				
+			}
+		});
+
+        filterButton.addSelectHandler(new SelectHandler() {
+	
+	@Override
+	public void onSelect(SelectEvent event) {
+		
+		
+	}
+});
 
 	}
 	
@@ -130,5 +217,21 @@ public class SpeciesExplorerPanel {
 
 	public CheckboxTreeGrid<SpeciesTreeModel> getTreeGrid() {
 		return this.treeGrid;
+	}
+
+	public void setToolBarHaut(ToolBar toolBarHaut) {
+		this.toolBarHaut = toolBarHaut;
+	}
+
+	public ToolBar getToolBarHaut() {
+		return toolBarHaut;
+	}
+
+	public void setCriteriArea(TextArea criteriArea) {
+		this.criteriArea = criteriArea;
+	}
+
+	public TextArea getCriteriArea() {
+		return criteriArea;
 	}
 }

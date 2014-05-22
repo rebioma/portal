@@ -1,0 +1,2 @@
+serviceClass: org.rebioma.client.services.AscDataService
+path: E2B6259ED67C8346B5FEF577DCC82E86.gwt.rpc

@@ -23,16 +23,21 @@ import org.apache.log4j.Logger;
 import org.rebioma.client.bean.LastComment;
 import org.rebioma.client.bean.OccurrenceCommentModel;
 import org.rebioma.server.services.MailingServiceImpl;
+import org.rebioma.server.services.MapGisServiceImpl;
  
 public class AppStartUp implements ServletContextListener {
 	
 	private Timer t = new Timer();
+	
+	private Timer batchTimer = new Timer();
 	
 	private boolean initialized = false;
 	
 	private Logger log = Logger.getLogger(MailingServiceImpl.class);
 	
 	private MailingServiceImpl mail = null;
+	
+	private MapGisServiceImpl mapService=null; 
 	
 	private static String fileName = "mailing.properties";
 	
@@ -114,12 +119,13 @@ public class AppStartUp implements ServletContextListener {
         System.out.println("Cleanup activity: mailing service set to null");
     }
     
-    public void invokeIndefinitePrintTask(){
+    public void invokeIndefinitePrintTask(ServletContextEvent arg0){
 		
     	if(initialized){
     		return;
     	}
     	initialized = true;
+    	
         t.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
@@ -128,13 +134,29 @@ public class AppStartUp implements ServletContextListener {
 				log.info("mailing check");
 			}
 		}, 2000, 1000000);
+        
+        final String pathShape = arg0.getServletContext().getInitParameter("pathShape");
+        final String pathShp2pgsql = arg0.getServletContext().getInitParameter("pathShp2pgsql");
+        final int delay = Integer.parseInt(arg0.getServletContext().getInitParameter("batchDelayInMinute"));
+        
+        batchTimer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {				
+				log.info("TESTING  BATCH");
+				 
+				mapService.launchBatch(pathShape,pathShp2pgsql);
+			}
+		}, 2000, delay*60*1000); //21600000
        
     }
  
     public void contextInitialized(ServletContextEvent arg0) {
         // Invoke the daemon/background process code
         mail = new MailingServiceImpl();
-        invokeIndefinitePrintTask();
+        mapService = new MapGisServiceImpl();
+        
+        invokeIndefinitePrintTask(arg0);
     }
     
     public static void main(String[] args) {

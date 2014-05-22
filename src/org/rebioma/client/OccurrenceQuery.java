@@ -70,6 +70,8 @@ public class OccurrenceQuery extends Query<Occurrence> {
   private final List<DataRequestListener> dataRequestListeners = new ArrayList<DataRequestListener>();
   private ResultFilter resultFilter;
 
+  private Set<Integer> occurrenceIdsFilter = new HashSet<Integer>();
+  
   /**
    * The default constructor.
    */
@@ -326,5 +328,13 @@ public class OccurrenceQuery extends Query<Occurrence> {
     out.append(resultFilter);
     return out.toString();
   }
+  
+  public Set<Integer> getOccurrenceIdsFilter() {
+		return occurrenceIdsFilter;
+	}
+
+	public void setOccurrenceIdsFilter(Set<Integer> occurrenceIdsFilter) {
+		this.occurrenceIdsFilter = occurrenceIdsFilter;
+	}
 
 }

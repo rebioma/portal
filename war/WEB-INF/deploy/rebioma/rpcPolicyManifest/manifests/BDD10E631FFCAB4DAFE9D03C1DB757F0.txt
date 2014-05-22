@@ -1,0 +1,2 @@
+serviceClass: org.rebioma.client.services.OccurrenceService
+path: 24677E17A566EF267C6818D9F9F33C42.gwt.rpc

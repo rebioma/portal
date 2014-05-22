@@ -1,0 +1,2 @@
+serviceClass: org.rebioma.client.services.UserService
+path: AB6BF7479F4D8327BBD609CFC919C8D3.gwt.rpc

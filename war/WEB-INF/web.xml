@@ -5,6 +5,20 @@
 	<listener-class>org.rebioma.server.daemon.AppStartUp</listener-class>
 </listener>
   
+	<context-param>
+		<param-name>pathShape</param-name>
+		<param-value>C:\\Users\\vahatra\\Downloads\\Region\\hafa\\</param-value>
+	</context-param>
+	<context-param>
+		<param-name>pathShp2pgsql</param-name>
+		<param-value>C:\\Program Files (x86)\\PostgreSQL\\9.0\\bin\\shp2pgsql -W LATIN1 -s 29702  </param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>batchDelayInMinute</param-name>
+		<param-value>30</param-value>
+	</context-param>
+	
 <context-param>
     <param-name>maxSize</param-name>
     <param-value>25600000</param-value>
@@ -70,10 +84,27 @@
     <servlet-name>SpeciesExplorerService</servlet-name>
     <url-pattern>/rebioma/speciesExplorerService</url-pattern>
   </servlet-mapping>
-  <servlet>
+  <servlet-mapping>
+		<servlet-name>MapGisService</servlet-name>
+		<url-pattern>/rebioma/mapGisService</url-pattern>
+</servlet-mapping>
+<servlet>
+		<servlet-name>MapGisService</servlet-name>
+		<servlet-class>org.rebioma.server.services.MapGisServiceImpl
+		</servlet-class>
+	</servlet>
+  <servlet>	
     <servlet-name>StatisticsService</servlet-name>
     <servlet-class>org.rebioma.server.services.StatisticsServiceImpl</servlet-class>
   </servlet>
+  	<servlet>
+		<servlet-name>kmlFileServlet</servlet-name>
+		<servlet-class>org.rebioma.server.KmlFileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>kmlFileServlet</servlet-name>
+		<url-pattern>/rebioma/kmlfile</url-pattern>
+	</servlet-mapping>
   <servlet-mapping>
     <servlet-name>StatisticsService</servlet-name>
     <url-pattern>/rebioma/statisticsService</url-pattern>

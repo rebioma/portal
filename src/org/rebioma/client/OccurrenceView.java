@@ -31,7 +31,10 @@ import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.UploadView.UploadListener;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.RevalidationResult;
+import org.rebioma.client.bean.ShapeFileInfo;
 import org.rebioma.client.bean.User;
+import org.rebioma.client.maps.ShapeFileWindow;
+import org.rebioma.client.maps.ShapeSelectionHandler;
 import org.rebioma.client.gxt.treegrid.ActivityLogDialog;
 import org.rebioma.client.services.RevalidationService;
 import org.rebioma.client.services.ServerPingService;
@@ -50,9 +53,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -72,13 +73,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 
 /**
  * A view that supports searching occurrences and paging through results which
  * can be displayed as a map view, a list view, or a detail view.
  */
 public class OccurrenceView extends ComponentView implements
-		PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener {
+		PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelectionHandler {
 
 	/**
 	 * Temporally solution for earth map type bug switching view bug. This
@@ -260,6 +262,7 @@ public class OccurrenceView extends ComponentView implements
 		final Map<String, Integer> typeIndexMap = new HashMap<String, Integer>();
 		private final Button searchButton;
 		private final HTML advanceLink = new HTML(constants.AdvanceSearch());
+		private final HTML shapeDialogLink = new HTML(" | Shape file");
 		private final ListBox resultFilterLb = new ListBox();
 		private final ListBox invalidatedLb = new ListBox();
 		private final Label forLabel = new Label(" " + constants.For() + " ");
@@ -275,7 +278,9 @@ public class OccurrenceView extends ComponentView implements
 			final Label searchLabel = new Label(" " + constants.Search() + " ");
 			searchLabel.setStyleName("searchLabel");
 			advanceLink.setStyleName("link");
+			shapeDialogLink.setStyleName("link");
 			advanceLink.addStyleName("AdvanceLink");
+			
 			resultFilterLb.addItem(constants.Both(), "both");
 			resultFilterLb.addItem(constants.Public(), "public");
 			resultFilterLb.addItem(constants.Private(), "private");
@@ -345,9 +350,12 @@ public class OccurrenceView extends ComponentView implements
 			mainHp.add(searchBox);
 			mainHp.add(searchButton);
 			mainHp.add(advanceLink);
+			//mainHp.add(new SeparatorToolItem());
+			mainHp.add(shapeDialogLink);
 			initWidget(mainHp);
 			mainHp.setStyleName("Search-Form");
 			advanceLink.addClickHandler(OccurrenceView.this);
+			shapeDialogLink.addClickHandler(OccurrenceView.this);
 			onStateChanged(ApplicationView.getCurrentState());
 			resultFilterLb.addChangeHandler(this);
 		}
@@ -1061,6 +1069,10 @@ public class OccurrenceView extends ComponentView implements
 	private OccurrenceView() {
 		this(null);
 	}
+	
+	public SearchForm getSearchForm(){
+		return searchForm;
+	}
 
 	/**
 	 * Note: This constructor sets the query's base filters.
@@ -1201,6 +1213,12 @@ public class OccurrenceView extends ComponentView implements
 			helpLink.setStyleName("helplink");
 			switchViewPanel.add(helpLink);
 			addHistoryItem(false);
+		}else if (sender == searchForm.shapeDialogLink) {
+			ShapeFileWindow window = new ShapeFileWindow();
+			window.setWidth(400);
+			window.setHeight(300);
+			window.show();
+			window.addTreeSelectHandler(this);
 		} else if (sender == revalidateLink){
 			addHistoryItem(false);
 		    String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
@@ -2291,5 +2309,13 @@ public class OccurrenceView extends ComponentView implements
 		resetToDefaultState();
 		addHistoryItem(false);
 		query.requestData(1);
+	}
+
+	@Override
+	public void onShapeSelect(List<ShapeFileInfo> selectedItems) {
+		switchView(MAP, false);
+		ViewInfo mapViewInfo = viewInfos.get(MAP.toLowerCase());
+		MapView mapView = (MapView)mapViewInfo.getView();
+		mapView.loadKmlLayer(selectedItems);
 	}
 }

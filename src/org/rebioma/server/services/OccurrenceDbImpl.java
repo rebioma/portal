@@ -1834,7 +1834,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     return deletedRecord;
   }
 
-  private List<Occurrence> find(OccurrenceQuery query, Set<OccurrenceFilter> filters, User user,
+  @SuppressWarnings("unchecked")
+private List<Occurrence> find(OccurrenceQuery query, Set<OccurrenceFilter> filters, User user,
       int tryCount) throws Exception {
     log.debug("finding Occurrence instances by query.");
     try {
@@ -1874,6 +1875,11 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         }
         idsFilter = new OccurrenceFilter("id", Operator.IN, occIds);
         filters.add(idsFilter);
+      }
+      //filtre sur les identifiants d'occurrence 
+      if(query.getOccurrenceIdsFilter() != null && !query.getOccurrenceIdsFilter().isEmpty()){
+    	  OccurrenceFilter occIdsFilter = new OccurrenceFilter("id", Operator.IN, query.getOccurrenceIdsFilter());
+    	  filters.add(occIdsFilter);
       }
       log.info("find filters: "
           + addCreterionByFilters(criteria, user, filters, resultFilter, tryCount));
