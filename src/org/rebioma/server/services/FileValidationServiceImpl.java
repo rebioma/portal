@@ -89,25 +89,25 @@ public class FileValidationServiceImpl implements FileValidationService {
   // }
 
   public static void main(String args[]) throws IOException {
-    if (args.length < 1) {
-      System.out
-          .println("FileValidationServiceImpl csvFileLocation [delimiter (default ,)] [is cleear old assignments (default false)] ");
-      System.exit(1);
-    }
-    String fileLocation = args[0];
-    char delimiter = ',';
-    boolean isClearOldAssignments = false;
-    if (args.length > 1) {
-      delimiter = args[1].charAt(0);
-    }
-    if (args.length > 2) {
-      isClearOldAssignments = Boolean.parseBoolean(args[2]);
-    }
+//    if (args.length < 1) {
+//      System.out
+//          .println("FileValidationServiceImpl csvFileLocation [delimiter (default ,)] [is cleear old assignments (default false)] ");
+//      System.exit(1);
+//    }
+//    String fileLocation = args[0];
+//    char delimiter = ',';
+//    boolean isClearOldAssignments = false;
+//    if (args.length > 1) {
+//      delimiter = args[1].charAt(0);
+//    }
+//    if (args.length > 2) {
+//      isClearOldAssignments = Boolean.parseBoolean(args[2]);
+//    }
     
 //    /*
-//	String fileLocation = "D:\\ADMIN\\Documents\\travail\\util\\trb_plante.csv";
-//	char delimiter = ',';
-//	boolean isClearOldAssignments = false;
+	String fileLocation = "D:\\Users\\Travail\\util\\Assignation TRB(Totondrabesa).csv";
+	char delimiter = ',';
+	boolean isClearOldAssignments = false;
 //	*/
     File file = new File(fileLocation);
     try {
@@ -118,7 +118,7 @@ public class FileValidationServiceImpl implements FileValidationService {
 
       System.out.println("script takes " + ((endTime - startTime) / (1000 * 60)) + " mins");
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+      // TODO Auto-generated catch block trbdata
       e.printStackTrace();
     }
     // String test = "\"1\",\"1,23,4,,5\",\"7\"";

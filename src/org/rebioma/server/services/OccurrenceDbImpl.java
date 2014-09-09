@@ -1090,8 +1090,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
             log.error("attach failed (" + o + ") Id not found in Database");
             idNotinDb.append("\"" + o.getId() + "\"" + ",");
           }
-        } else if ((!existenceOwnerEmail.equalsIgnoreCase(ownerEmail)
-            || !existenceOwnerEmail.equalsIgnoreCase(currentUserEmail)) && !sAdmin) {
+        } else if ((!existenceOwnerEmail.equalsIgnoreCase(ownerEmail) || !existenceOwnerEmail.equalsIgnoreCase(currentUserEmail)) 
+        		&& !sAdmin 
+        		&& !((o.getSharedUsersCSV()+"").contains(currentUserEmail) && o.getNoAssignation())) {
           if (toRemove.add(o)) {
             log.error("attach failed (" + o + ") record is not belong to " + currentUserEmail);
             notYourRecords.append("\"" + o.getId() + "\"" + ",");
@@ -1792,7 +1793,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     // Set<Filter> privateFilters = isMyOccurrenceOnly(userId, searchFilters);
     Set<String> queryFilters = this.addCreterionByFilters(criteria, user, searchFilters,
         resultFilter, tryCount);
-    StringBuilder sb = new StringBuilder(" where (ownerEmail='" + user.getEmail() + "')");
+    StringBuilder sb = new StringBuilder(" where (ownerEmail='" + user.getEmail() + "' or (sharedusers like '%" + user.getEmail() + "%' and noassignation = true))");
     for (String filter : queryFilters) {
       sb.append(" and (" + filter + ")");
     }
@@ -2045,7 +2046,7 @@ private List<Occurrence> find(OccurrenceQuery query, Set<OccurrenceFilter> filte
 			st = con.createStatement();
 			ResultSet rst = st.executeQuery("select o.id from Occurrence o left join taxonomy t on (upper(o.acceptedspecies) = upper(t.acceptedspecies)) where upper(o."
 		        + attributeValue.getAttribute() + ")=upper('" + attributeValue.getValue()
-		        + "') and o.validated=true and (t.ismarine = " + isM + " or t.isterrestrial = " + isT + ") and o.trbdata is not true");
+		        + "') and o.validated=true and (t.ismarine = " + isM + " or t.isterrestrial = " + isT + ") and o.noassignation is not true");
 			
 		    while(rst.next()) {
 				ids.add(new Integer(rst.getInt(1)));

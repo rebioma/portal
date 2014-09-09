@@ -2180,6 +2180,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 					&& (
 						((currentUser.getEmail().equals(userEmail)) && signedIn) 
 						|| ApplicationView.getCurrentState() == ViewState.SUPERADMIN
+						|| ((occurrence.getSharedUsersCSV()+"").contains(currentUser.getEmail()) && occurrence.getNoAssignation())
 					);
 
 			setFieldsEditable(isEditable);
@@ -2275,7 +2276,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 //			occLinks.setActiveWidget(currentWidget);
 //			occLinks.scrollToTab(occLinks.getActiveWidget(), true);
 //			currentId = 0;
-////			Info.display("Scrilling", "" + currentOccurrence.getId());
+////			Info.display("Scrolling", "" + currentOccurrence.getId());
 //		}
 		toolPanel.forceLayout();
 	}
@@ -4402,7 +4403,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	    
 	    String email = currentOccurrence.getOwnerEmail();
 	    boolean myRecord = email.equals(user.getEmail());
-	    if (!myRecord) {
+	    boolean myShared = (currentOccurrence.getSharedUsersCSV()+"").contains(user.getEmail()) && currentOccurrence.getNoAssignation();
+	    if (!(myRecord || myShared)) {
 	    	return occurrences;
 	    }
 	    if (action.equals(MAKE_PUBLIC_ACTION) && !currentOccurrence.isPublic_()) {

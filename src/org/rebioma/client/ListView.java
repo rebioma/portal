@@ -1138,7 +1138,8 @@ public class ListView extends ComponentView implements
 //        Occurrence o = currentPageOccurrences.get(i);
         String email = o.getOwnerEmail();
         boolean myRecord = email.equals(user.getEmail());
-        if (!myRecord) {
+        boolean myShared = (o.getSharedUsersCSV()+"").contains(user.getEmail()) && o.getNoAssignation();
+        if (!(myRecord || myShared)) {
           continue;
         }
         // if (action.equals(POSTIVELY_REVIEWED_ACTION) && o.isValidated()) {

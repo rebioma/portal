@@ -358,7 +358,7 @@ public class OccurrenceServiceImpl extends RemoteServiceServlet implements
    */
   public String update(String sessionId, Set<Occurrence> occurrences)
       throws OccurrenceServiceException {
-  	System.out.println("####### update");
+//  	System.out.println("####### update");
     try {
       User user = sessionService.getUserBySessionId(sessionId);
       if ((user != null) && (!occurrences.isEmpty())) {
