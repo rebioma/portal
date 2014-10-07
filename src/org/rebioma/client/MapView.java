@@ -16,6 +16,7 @@
 package org.rebioma.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,6 +69,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapTypeId;
 import com.google.gwt.maps.client.MapWidget;
@@ -251,7 +253,10 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
               + ascModel.getModelLocation() + "/" + itemLabel.getText() + "/"
               + ascModel.getModelLocation() + ".asc");
         }
+        Label modelDate = new Label(DateTimeFormat.getFormat("d/M/yyyy").format(ascModel.getDate()));
+        modelDate.setStyleName("flou");
         panel.add(itemLabel);
+        panel.add(modelDate);
         panel.add(downloadLink);
         panel.setSpacing(0);
         setWidget(panel);

@@ -1,6 +1,7 @@
 package org.rebioma.client.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 
 // Generated May 25, 2010 8:09:07 PM by Hibernate Tools 3.3.0.GA
 
@@ -13,7 +14,8 @@ public class AscModel implements Serializable {
   private String acceptedSpecies;
   private String modelLocation;
   private String indexFile;
-
+  private Date date;
+  
   public AscModel() {
   }
 
@@ -38,6 +40,10 @@ public class AscModel implements Serializable {
   public String getModelLocation() {
     return this.modelLocation;
   }
+  
+  public Date getDate() {
+	return date;
+  }
 
   public void setAcceptedSpecies(String acceptedSpecies) {
     this.acceptedSpecies = acceptedSpecies;
@@ -55,4 +61,8 @@ public class AscModel implements Serializable {
     this.modelLocation = modelLocation;
   }
 
+  public void setDate(Date date) {
+	this.date = date;
+  }
+  
 }

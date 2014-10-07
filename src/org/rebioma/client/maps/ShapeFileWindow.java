@@ -64,7 +64,7 @@ public class ShapeFileWindow extends Window implements SelectHandler {
 	    
 		this.setHeadingText("Liste des fichiers shapes");
 		//panel.setPixelSize(315, 400);
-		panel.addStyleName("margin-10");
+//		panel.addStyleName("margin-10");
 		panel.setHeight(300);
 		
 		final MapGisServiceAsync mapGisService = GWT.create(MapGisService.class);

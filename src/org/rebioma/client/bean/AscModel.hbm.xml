@@ -17,5 +17,8 @@
         <property name="indexFile" type="string">
             <column name="index_file" length="256" not-null="true" />
         </property>
+        <property name="date" type="java.util.Date">
+            <column name="date"/>
+        </property>
     </class>
 </hibernate-mapping>
