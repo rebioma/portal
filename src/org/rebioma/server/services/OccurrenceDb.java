@@ -297,5 +297,10 @@ public interface OccurrenceDb {
   public void resetRecordReview(Occurrence occurrence, boolean isStable,Session sess);
   
   public void updateStability(Occurrence o, Boolean stability,Session sess);
+  
+  /**
+   * refreshing the all the variable (list of trb)
+   */
+  public void refresh();
 
 }

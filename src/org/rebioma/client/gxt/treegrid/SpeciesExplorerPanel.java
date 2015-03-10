@@ -164,6 +164,11 @@ public class SpeciesExplorerPanel {
 		findButton = new TextButton("Find");
 		resetButton = new TextButton("Reset");
 		filterButton = new TextButton("Filter");
+		
+		findButton.addStyleName("text");
+		resetButton.addStyleName("text");
+		filterButton.addStyleName("text");
+		
 		toolBarHaut.add(findButton);
 		toolBarHaut.add(resetButton);
 		toolBarHaut.add(filterButton);

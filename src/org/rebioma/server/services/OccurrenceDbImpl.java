@@ -393,7 +393,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   RecordReviewDb recordReviewDb = DBFactory.getRecordReviewDb();
 
   TaxonomicReviewerDb taxonomicReviewerDb = DBFactory.getTaxonomicReviewerDb();
-  List<TaxonomicReviewer> taxonomiKRB =taxonomicReviewerDb.findAll();
+  List<TaxonomicReviewer> taxonomiKRB = taxonomicReviewerDb.findAll();
   public OccurrenceDbImpl() {
   }
 
@@ -623,6 +623,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   
   public void attachDirty(Set<Occurrence> instances) {
 	    log.debug("attaching dirty Occurrence instances");
+	    refresh();
 	    Occurrence ref = null;
 	    try {
 	      //Session session = HibernateUtil.getCurrentSession();
@@ -662,6 +663,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	  }
   public void attachDirty(Set<Occurrence> instances, boolean resetReview) {
 	    log.debug("attaching dirty Occurrence instances");
+	    refresh();
 	    Occurrence ref = null;
 	    try {
 	      //Session session = HibernateUtil.getCurrentSession();
@@ -1591,7 +1593,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   }
 
   /**
-   * Vérifie si l'occurrence appartient à un trb et qu'elle sera révisé et ne seta pas assigné à d'autre trb
+   * Vérifie si l'occurrence appartient à un trb et qu'elle sera révisée et ne sera pas assigné à d'autre trb
    * @param occ
    * @param date
    * @return 
@@ -1612,6 +1614,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
   private void assignReviewRecords(Occurrence occ, Session session) {
 	if (occ.getNoAssignation()!=null && occ.getNoAssignation())
 	  return;
+	refresh();
     AttributeValue attributeValue = new AttributeValue();
     for (TaxonomicReviewer taxonomicReviewer : taxonomiKRB) {
       attributeValue.setAttribute(taxonomicReviewer.getTaxonomicField());
@@ -2292,5 +2295,9 @@ private List<Occurrence> find(OccurrenceQuery query, Set<OccurrenceFilter> filte
   	      assignReviewRecords(occurrence);
   	      
   	      log.debug("attach successful");	  	   
-	  }  
+  }
+  
+  public void refresh() {
+	  taxonomiKRB = taxonomicReviewerDb.findAll();
+  }
 }

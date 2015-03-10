@@ -479,6 +479,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		 */
 
 		if (!occurrences.isEmpty()) {
+			occurrenceDb.refresh();
 			log.info(" Occurrences 2 : "
 					+ occurrences.size() + " ............");
 			try {
@@ -546,7 +547,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		
 		
 		if (!occurrences.isEmpty()) {
-			
+			occurrenceDb.refresh();
 			int max= RevalidationFileUtil.getBatch(); int size=occurrences.size();
 			try {
 				logFileWriter.write("\nNumber of Occurrences case 3 :"+occurrences.size());

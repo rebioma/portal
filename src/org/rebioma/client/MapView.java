@@ -253,7 +253,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
               + ascModel.getModelLocation() + "/" + itemLabel.getText() + "/"
               + ascModel.getModelLocation() + ".asc");
         }
-        Label modelDate = new Label(DateTimeFormat.getFormat("d/M/yyyy").format(ascModel.getDate()));
+        Label modelDate = new Label(""/*DateTimeFormat.getFormat("d/M/yyyy").format(new Date())*/);
         modelDate.setStyleName("flou");
         panel.add(itemLabel);
         panel.add(modelDate);

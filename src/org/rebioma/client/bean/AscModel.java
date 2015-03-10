@@ -14,7 +14,6 @@ public class AscModel implements Serializable {
   private String acceptedSpecies;
   private String modelLocation;
   private String indexFile;
-  private Date date;
   
   public AscModel() {
   }
@@ -41,10 +40,6 @@ public class AscModel implements Serializable {
     return this.modelLocation;
   }
   
-  public Date getDate() {
-	return date;
-  }
-
   public void setAcceptedSpecies(String acceptedSpecies) {
     this.acceptedSpecies = acceptedSpecies;
   }
@@ -61,8 +56,4 @@ public class AscModel implements Serializable {
     this.modelLocation = modelLocation;
   }
 
-  public void setDate(Date date) {
-	this.date = date;
-  }
-  
 }
