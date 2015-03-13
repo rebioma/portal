@@ -10,6 +10,7 @@ public class KmlDbRow implements Serializable {
 	private int gid;
 	private String name;
 	private String gisAsKmlResult;
+	private String group;
 
 	public int getGid() {
 		return gid;
@@ -33,6 +34,14 @@ public class KmlDbRow implements Serializable {
 
 	public void setGisAsKmlResult(String gisAsKmlResult) {
 		this.gisAsKmlResult = gisAsKmlResult;
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
 	}
 
 }

@@ -9,5 +9,5 @@ public interface ShapeSelectionHandler {
 	 * 
 	 * @param selectedItems
 	 */
-	void onShapeSelect(List<ShapeFileInfo> selectedItems);
+	void onShapeSelect(List<ShapeFileInfo> selectedItems, boolean search);
 }

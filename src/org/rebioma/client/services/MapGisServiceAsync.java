@@ -12,7 +12,7 @@ public interface MapGisServiceAsync {
 	void findOccurrenceIdByGeom(String kml,
 			AsyncCallback<List<Integer>> callback);
 
-	void getShapeFileItems(ShapeFileInfo shapeFile,
+	void getShapeFileItems(ShapeFileInfo shapeFile, 
 			AsyncCallback<List<ShapeFileInfo>> callback);
 
 	void findOccurrenceIdsByShapeFiles(Map<String, List<Integer>> tableGidsMap,
@@ -21,5 +21,6 @@ public interface MapGisServiceAsync {
 	void launchBatch(String pathShape, String pathShp2pgsql,
 			AsyncCallback<Void> callback);
 
+	void listAreaAdmin(AsyncCallback<List<String>> callback);
 
 }

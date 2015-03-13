@@ -14,6 +14,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -70,14 +71,18 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 			try {
 				sess = HibernateUtil.getSessionFactory().openSession();
 				StringBuilder sqlBuilder = new StringBuilder();
+				String table = shapeFile.getTableName().toLowerCase().equals("protected_areas")?
+						", dataadmin as \"group\" FROM " + shapeFile.getTableName() : ", cast('--' as character varying(4)) as \"group\" FROM " + shapeFile.getTableName();
 				sqlBuilder.append("SELECT ")
 							.append(shapeFile.getNomChampGid()).append(" as ").append("gid, ")
 							.append(shapeFile.getNomChampLibelle()).append(" as ").append("name ")
-							.append(" FROM ").append(shapeFile.getTableName())
+							.append(table)
 							.append(" ORDER BY ").append(shapeFile.getNomChampLibelle());
+				System.out.println(sqlBuilder);
 				SQLQuery sqlQuery = sess.createSQLQuery(sqlBuilder.toString());
 				sqlQuery.addScalar("gid");
 				sqlQuery.addScalar("name");
+				sqlQuery.addScalar("group");
 				sqlQuery.setResultTransformer(Transformers
 						.aliasToBean(KmlDbRow.class));
 				List<KmlDbRow> kmlDbRows = sqlQuery.list();
@@ -90,6 +95,7 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 					info.setNomChampGeometrique(shapeFile.getNomChampGeometrique());
 					info.setNomChampGid(shapeFile.getNomChampGid());
 					info.setNomChampLibelle(shapeFile.getNomChampLibelle());
+					info.setGroup(row.getGroup());
 					infos.add(info);
 				}
 			} catch (Exception e) {
@@ -258,6 +264,18 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 		}
 		System.out.println("*** END DELETING FILES ");
 		System.out.println("END batch");
+	}
+
+	@Override
+	public List<String> listAreaAdmin() {
+		
+		List<String> admins = new ArrayList<String>();
+		Session sess = HibernateUtil.getSessionFactory().openSession();
+		SQLQuery sqlQuery = sess
+				.createSQLQuery("SELECT distinct dataadmin from protected_areas order by dataadmin");
+		admins = sqlQuery.list();
+		
+		return admins;
 	}
 
 }

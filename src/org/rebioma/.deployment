@@ -1,5 +1,5 @@
-#Thu May 22 13:16:11 EAT 2014
+#Thu Mar 12 14:32:24 EAT 2015
 war.name=latestpg.war
 compiler.style=OBFUSCATED
-server.path=D\:\\Deploy\\data portal
-compiler.memory.max=512m
+server.path=D\:\\
+compiler.memory.max=1024m

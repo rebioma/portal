@@ -262,7 +262,7 @@ public class OccurrenceView extends ComponentView implements
 		final Map<String, Integer> typeIndexMap = new HashMap<String, Integer>();
 		private final Button searchButton;
 		private final HTML advanceLink = new HTML(constants.AdvanceSearch());
-		private final HTML shapeDialogLink = new HTML(" | Shape file");
+		private final HTML shapeDialogLink = new HTML(" | Shapefile");
 		private final ListBox resultFilterLb = new ListBox();
 		private final ListBox invalidatedLb = new ListBox();
 		private final Label forLabel = new Label(" " + constants.For() + " ");
@@ -1214,7 +1214,7 @@ public class OccurrenceView extends ComponentView implements
 			switchViewPanel.add(helpLink);
 			addHistoryItem(false);
 		}else if (sender == searchForm.shapeDialogLink) {
-			ShapeFileWindow window = new ShapeFileWindow();
+			ShapeFileWindow window = new ShapeFileWindow(constants);
 			window.setWidth(400);
 			window.setHeight(300);
 			window.show();
@@ -2312,10 +2312,11 @@ public class OccurrenceView extends ComponentView implements
 	}
 
 	@Override
-	public void onShapeSelect(List<ShapeFileInfo> selectedItems) {
+	public void onShapeSelect(List<ShapeFileInfo> selectedItems, boolean search) {
 		switchView(MAP, false);
 		ViewInfo mapViewInfo = viewInfos.get(MAP.toLowerCase());
 		MapView mapView = (MapView)mapViewInfo.getView();
-		mapView.loadKmlLayer(selectedItems);
+		mapView.loadKmlLayer(selectedItems, search);
 	}
+	
 }

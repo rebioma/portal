@@ -22,19 +22,26 @@ public interface MapGisService  extends RemoteService {
 	 * @param geomCoordonnees
 	 * @return
 	 */
-//	List<Integer> findOccurrenceIdByGeom(/*OverlayType overlayType, */List<LatLng> geomCoordonnees);
-	
+	//	List<Integer> findOccurrenceIdByGeom(/*OverlayType overlayType, */List<LatLng> geomCoordonnees);
+
 	List<Integer> findOccurrenceIdByGeom(String kml);
-	
-	
+
+
 	List<ShapeFileInfo> getShapeFileItems(ShapeFileInfo shapeFile);
-	
+
 	/**
 	 * 
 	 * @param tableGidsMap - couple du nom de la table et les gid de la table
 	 * @return liste d'identifiant d'occurrence
 	 */
 	List<Integer> findOccurrenceIdsByShapeFiles(Map<String, List<Integer>> tableGidsMap);
-	
+
 	void launchBatch(String pathShape,String pathShp2pgsql);
+	
+	/**
+	 * Recuperer la liste des dadaadmin
+	 * @return
+	 */
+	List<String> listAreaAdmin();
+	
 }

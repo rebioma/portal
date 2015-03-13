@@ -3145,4 +3145,8 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @Key("mailing")
   String mailing();
   
+  @DefaultStringValue("List of shapefiles")
+  @Key("shapefileList")
+  String shapefileList();
+  
 }

@@ -20,6 +20,8 @@ public class ShapeFileInfo implements Serializable{
 	private String nomChampLibelle;
 	
 	private String nomChampGeometrique;
+	
+	private String group;
 
 	public int getGid() {
 		return gid;
@@ -68,4 +70,13 @@ public class ShapeFileInfo implements Serializable{
 	public void setNomChampGeometrique(String nomChampGeometrique) {
 		this.nomChampGeometrique = nomChampGeometrique;
 	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
 }
