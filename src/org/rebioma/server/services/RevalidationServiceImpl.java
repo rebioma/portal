@@ -34,21 +34,21 @@ import org.taxonomy.CsvClassificationOracle;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class RevalidationServiceImpl extends RemoteServiceServlet implements
-		RevalidationService, Revalidation {
+RevalidationService, Revalidation {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4384588011807855692L;
-	
+
 	private SessionIdService sessionService = DBFactory.getSessionIdService();
 	OccurrenceDb occurrenceDb = DBFactory.getOccurrenceDb();
 	RecordReviewDb recordReviewDb = DBFactory.getRecordReviewDb();
 	ValidationService validationService = DBFactory.getValidationService();
 	OccurrenceCommentsService commentsService = DBFactory.getOccurrentCommentService();
-	 UserDb userDb = DBFactory.getUserDb();
+	UserDb userDb = DBFactory.getUserDb();
 	ClassificationOracle taxonomicAuthority;
 	protected FileWriter logFileWriter = null;
-	
+
 	protected static final String MAIL_SUBJECT_CASE3 = "Revalidation case 3";
 	protected static final String MAIL_SUBJECT_CASE2 = "Revalidation case 2";
 	protected static final String MAIL_SUBJECT_CASE4 = "Revalidation case 4";
@@ -125,7 +125,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					.createQuery("from Occurrence o where o.validated=:validated and (o.stability is null or o.stability=:unstable)  ");//and o.id IN (1767489,1768452,1773931,1782761,1769247,1802900,1802131,1790105,1779527,1774533,1837145,1837401)");
 			query.setParameter("validated", Boolean.TRUE);
 			query.setParameter("unstable", Boolean.FALSE);
-			
+
 			results = query.list();
 			log.debug("all Occurrences invalids successful, result size: "
 					+ results.size());
@@ -133,7 +133,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			log.info("valids Occurrences  : " + results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find valids occurrences  failed", re);
+			log.error("find valids occurrences failed", re);
 			throw re;
 		}
 	}
@@ -205,10 +205,10 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			String ir = occurrence.getInfraspecificRank();
 			String ie = occurrence.getInfraspecificEpithet();
 			Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
-																				 * ie
-																				 * before
-																				 * nc
-																				 */
+			 * ie
+			 * before
+			 * nc
+			 */
 
 			Session session = ManagedSession.createNewSessionAndTransaction();
 			if (c != null) {
@@ -227,10 +227,10 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 							.getSpecificEpithet());
 					occurrence.setAcceptedSpecies(c.getAcceptedSpecies());
 					occurrence.setVerbatimSpecies(c.getVerbatimSpecies()); /*
-																			 * Fix
-																			 * Issue
-																			 * 329
-																			 */
+					 * Fix
+					 * Issue
+					 * 329
+					 */
 					occurrence.setStability(true);
 
 				} else if (ok.equals("KO")) {
@@ -255,23 +255,23 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		}
 
 	}
-	
+
 	protected void validateTaxonomy(Session session, Occurrence occurrence) {
 		try {
-			
-			
+
+
 			String genus = occurrence.getGenus();
 			String se = occurrence.getSpecificEpithet();
 			String nc = occurrence.getNomenclaturalCode();
 			String ir = occurrence.getInfraspecificRank();
 			String ie = occurrence.getInfraspecificEpithet();
 			Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
-																				 * ie
-																				 * before
-																				 * nc
-																				 */
+			 * ie
+			 * before
+			 * nc
+			 */
 
-			
+
 			if (c != null) {
 				String ok = c.getValidation();
 				if (ok.equals("OK")) {
@@ -288,10 +288,10 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 							.getSpecificEpithet());
 					occurrence.setAcceptedSpecies(c.getAcceptedSpecies());
 					occurrence.setVerbatimSpecies(c.getVerbatimSpecies()); /*
-																			 * Fix
-																			 * Issue
-																			 * 329
-																			 */
+					 * Fix
+					 * Issue
+					 * 329
+					 */
 					occurrence.setStability(true);
 
 				} else if (ok.equals("KO")) {
@@ -309,7 +309,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			}
 
 			session.saveOrUpdate(occurrence);
-			
+
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);			
 			throw re;
@@ -318,7 +318,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@SuppressWarnings("finally")
-	
+
 	private RevalidationResult revalidateAll(String sessionId) throws Exception {
 		long dateStart = System.currentTimeMillis();
 		RevalidationResult result=new RevalidationResult();
@@ -330,7 +330,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				}
 			}
 			logFileWriter = new FileWriter(logFile, false);
-			log.info("avy nicr�er fichier");
+			log.info("avy nicréer fichier");
 			if(!logFile.exists()){
 				log.info("tsis");
 			}else{
@@ -355,10 +355,10 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				String ir = occurrence.getInfraspecificRank();
 				String ie = occurrence.getInfraspecificEpithet();
 				Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
-																					 * ie
-																					 * before
-																					 * nc
-																					 */
+				 * ie
+				 * before
+				 * nc
+				 */
 				if (c != null) {
 					String ok = c.getValidation();
 					if (ok.equals("OK")) {
@@ -380,10 +380,10 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				String ir = occurrence.getInfraspecificRank();
 				String ie = occurrence.getInfraspecificEpithet();
 				Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
-																					 * ie
-																					 * before
-																					 * nc
-																					 */
+				 * ie
+				 * before
+				 * nc
+				 */
 				if (c != null) {
 					String ok = c.getValidation();
 					if (ok.equals("OK")) {
@@ -411,52 +411,53 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					System.out.println("    ****** " + o.getId());
 				}
 			}
-			*/
-			
+			 */
+
 			List<Occurrence> occurrencies = map.get("2");
 			System.out.println("----------------> Cas 2 ---------------------->"+occurrencies.size());
 			revalidateAction(result, map);
 			long dateEnd = System.currentTimeMillis();
 			long duration = (dateEnd - dateStart)/1000;
 			logFileWriter.write("\n Duration of operation : "+duration+"seconds");
-		}finally{			
+		}catch(Exception e){
+			e.printStackTrace();
 			if(logFileWriter != null){
 				//logFileWriter.flush();
 				logFileWriter.close();
 			}
-			return result;
 		}
+		return result;
 	}
-	
+
 	public List<Integer> getIndiceSubList(int size,int max){		
-		 List<Integer> ret = new ArrayList<Integer>();
-		 if(size<=max) {
-			 ret.add(0);
-			 max=size;
-		 }else {
-			 int taille=size;
-			 int mod= taille/max;
-			 int i=0;
-			 for(i=0;i<mod;i++) {
-				 ret.add(i*max);				 
-			 }
-			 ret.add(i*max);
-		 }
-		 return ret;
+		List<Integer> ret = new ArrayList<Integer>();
+		if(size<=max) {
+			ret.add(0);
+			max=size;
+		}else {
+			int taille=size;
+			int mod= taille/max;
+			int i=0;
+			for(i=0;i<mod;i++) {
+				ret.add(i*max);				 
+			}
+			ret.add(i*max);
+		}
+		return ret;
 	}
-	
+
 	private Set<Occurrence> getSubList(Set<Occurrence> sets, int i,int j){
 		Set<Occurrence> ret = new HashSet<Occurrence>();
 		Occurrence[] tabs = new Occurrence[sets.size()];
 		sets.toArray(tabs);
-		
+
 		for(int idx=i;idx<j;idx++) {
 			ret.add(tabs[idx]);
 		}
-		
+
 		return ret;
 	}
-	
+
 	private String getLogTemplate(String title, Occurrence o){
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n");
@@ -470,9 +471,9 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		}
 		return sb.toString();
 	}
-	
+
 	private RevalidationResult treatCase2(RevalidationResult result, Set<Occurrence> occurrences) throws RevalidationException{
-			
+
 		/**
 		 * OCCURENCE MATCHES NEW NAME: => Same as upload: do the
 		 * validation attach occurrences to RecordReview
@@ -491,24 +492,24 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			List<Integer> ret =getIndiceSubList(size, max);
 			int indice=1;
 			int nbtotal=0;
-			 for(Integer j:ret) {
-				
-				 int idx=max*indice;
-				 if(size<idx)
-					 idx=size;
-					 
-				 
+			for(Integer j:ret) {
+
+				int idx=max*indice;
+				if(size<idx)
+					idx=size;
+
+
 				// occurrences.subList(j, idx );
-				System.out.println("j:"+j+" idx:"+idx);
+				//				System.out.println("j:"+j+" idx:"+idx);
 				Set<Occurrence> subOccurrences=getSubList(occurrences, j, idx);
-				 
+
 				validationService.validate(subOccurrences);
 				Session session=null;
 				Transaction tx=null;
 				try {
 					session = ManagedSession.createNewSessionAndTransaction();
 					//tx=session.beginTransaction();				    
-					
+
 					for (Occurrence o : subOccurrences) {						
 						occurrenceDb.resetRecordReview(o, true,session);
 						String uneLigne = getLogTemplate(MAIL_SUBJECT_CASE2, o);
@@ -517,7 +518,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					ManagedSession.commitTransaction(session);
 					//tx.commit();
 					nbtotal+=subOccurrences.size();
-		  	    }catch (IOException e) {
+				}catch (IOException e) {
 					e.printStackTrace();
 				} 
 				catch (RuntimeException re) {	
@@ -525,27 +526,27 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(2, nbtotal);
 					exc.setResult(result);
-		  	      	if(session!=null)ManagedSession.rollbackTransaction(session);
+					if(session!=null)ManagedSession.rollbackTransaction(session);
 					//if(tx!=null)tx.rollback();
-		  	      throw exc;
-		  	    } 
+					throw exc;
+				} 
 				finally {					 
-				     //if(session!=null) session.close();
-				 }
-		  	    
+					//if(session!=null) session.close();
+				}
+
 				indice++;
-			 }
+			}
 			result.getResultMap().put(2, nbtotal);
 		}
 
 		log.info(" fin 2 : ............");
-		
+
 		return result;
 	}
-	
+
 	private RevalidationResult treatCase3(RevalidationResult result, Set<Occurrence> occurrences) throws RevalidationException {
-		
-		
+
+
 		if (!occurrences.isEmpty()) {
 			occurrenceDb.refresh();
 			int max= RevalidationFileUtil.getBatch(); int size=occurrences.size();
@@ -556,20 +557,20 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			}
 			List<Integer> ret =getIndiceSubList(size, max);
 			int indice=1;int nbtotal=0;
-	  	    Map<Integer, Set<Integer>> ownerOccurrencesForCase3 = new HashMap<Integer, Set<Integer>>();
-	  	    Map<Integer, RevalidationMailNotification> mailNotificationUserMap = new HashMap<Integer, RevalidationMailNotification>();
+			Map<Integer, Set<Integer>> ownerOccurrencesForCase3 = new HashMap<Integer, Set<Integer>>();
+			Map<Integer, RevalidationMailNotification> mailNotificationUserMap = new HashMap<Integer, RevalidationMailNotification>();
 			for(Integer j:ret) {
-				 
-				 int idx=max*indice;
-				 if(size<idx)
-					 idx=size;
+
+				int idx=max*indice;
+				if(size<idx)
+					idx=size;
 				//System.out.println(j+" "+idx);
 				Set<Occurrence> subOccurrences=getSubList(occurrences, j, idx);
-				
+
 				Session session=null;
 				try {
 					session = ManagedSession.createNewSessionAndTransaction();
-					
+
 					validationService.validate(subOccurrences);
 					for (Occurrence o : subOccurrences) {
 						String uneLigne = getLogTemplate(MAIL_SUBJECT_CASE3, o);
@@ -579,46 +580,46 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 						for (RecordReview recordReview : recordReviews) {
 							recordReviewDb.delete(session,recordReview);
 						}
-						
+
 						/*
-						 * Tantely:J'ai ajout� ces deux lignes codes pour
-						 * r�initialiser l'occurrence et puis le revalider
+						 * Tantely:J'ai ajoutéces deux lignes codes pour
+						 * réinitialiser l'occurrence et puis le revalider
 						 */
 						occurrenceDb.resetRecordReview(o, false,session);
 						validateTaxonomy(session, o);
-						
+
 						int ownerId = o.getOwner();
-			         
-						
+
+
 						Set<Integer> occurrencesCase3 = ownerOccurrencesForCase3
-				            .get(ownerId);
+								.get(ownerId);
 						if (occurrencesCase3 == null) {
-						   occurrencesCase3 = new HashSet<Integer>();
-						   ownerOccurrencesForCase3.put(ownerId, occurrencesCase3);
+							occurrencesCase3 = new HashSet<Integer>();
+							ownerOccurrencesForCase3.put(ownerId, occurrencesCase3);
 						}
 						occurrencesCase3.add(o.getId());			
 					}
-					
-					
+
+
 					if (!ownerOccurrencesForCase3.isEmpty()) {
-					      for (Integer userId : ownerOccurrencesForCase3.keySet()) {
-						    if(mailNotificationUserMap.containsKey(userId) && mailNotificationUserMap.get(userId) != null){
-						    	Set<Integer> occurrenceIds = mailNotificationUserMap.get(userId).getOccurrenceIds();
-						    	if(occurrenceIds == null){
-						    		occurrenceIds = new HashSet<Integer>();
-						    	}
-						    	occurrenceIds.addAll(ownerOccurrencesForCase3.get(userId));
-						    }else{
-						    	User owner = userDb.findById(session,userId);
-						    	RevalidationMailNotification mailNotifier = new RevalidationMailNotification(owner, ownerOccurrencesForCase3.get(userId), MAIL_SUBJECT_CASE3, MAIL_BODY_CASE3);
-						    	mailNotificationUserMap.put(userId, mailNotifier);
-						    }
-					      }
+						for (Integer userId : ownerOccurrencesForCase3.keySet()) {
+							if(mailNotificationUserMap.containsKey(userId) && mailNotificationUserMap.get(userId) != null){
+								Set<Integer> occurrenceIds = mailNotificationUserMap.get(userId).getOccurrenceIds();
+								if(occurrenceIds == null){
+									occurrenceIds = new HashSet<Integer>();
+								}
+								occurrenceIds.addAll(ownerOccurrencesForCase3.get(userId));
+							}else{
+								User owner = userDb.findById(session,userId);
+								RevalidationMailNotification mailNotifier = new RevalidationMailNotification(owner, ownerOccurrencesForCase3.get(userId), MAIL_SUBJECT_CASE3, MAIL_BODY_CASE3);
+								mailNotificationUserMap.put(userId, mailNotifier);
+							}
+						}
 					}
-					
+
 					ManagedSession.commitTransaction(session);	
 					nbtotal+=subOccurrences.size();
-		  	    }catch (IOException e) {
+				}catch (IOException e) {
 					e.printStackTrace();
 				} 
 				catch (RuntimeException re) {	
@@ -626,18 +627,18 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(3, nbtotal);
 					exc.setResult(result);
-		  	      	ManagedSession.rollbackTransaction(session);
-		  	      throw exc;
-		  	    } 
+					ManagedSession.rollbackTransaction(session);
+					throw exc;
+				} 
 				finally {					 
-				     if(session!=null) session.close();
-				 }
-		  	    
+					if(session!=null && session.isOpen()) session.close();
+				}
+
 				indice++;
-			 }
+			}
 			//on envoie les mail
 			try{
-			    log.info("sending email notification of revalidation case 3");
+				log.info("sending email notification of revalidation case 3");
 				notifyOwners(mailNotificationUserMap);
 			}catch(IOException e){
 				e.printStackTrace();
@@ -646,7 +647,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		}
 		return  result;
 	}
-	
+
 	private void notifyOwners(Map<Integer, RevalidationMailNotification> mailNotificationUserMap) throws IOException{
 		for(Map.Entry<Integer, RevalidationMailNotification> entry: mailNotificationUserMap.entrySet()){
 			RevalidationMailNotification mailNotification = entry.getValue();
@@ -654,7 +655,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			Set<Integer> occurenceIds = mailNotification.getOccurrenceIds();
 			String sujet = mailNotification.getSubject();
 			String body = mailNotification.getBody();
-		      log.info("sending email with subject: " + sujet + " to "+ destinataire.getEmail());
+			log.info("sending email with subject: " + sujet + " to "+ destinataire.getEmail());
 			try {
 				logFileWriter.write("\n ----------------------------------------------------------");
 				logFileWriter.write("\n D�but d'envoie de mail pour: " + destinataire.getFirstName() );
@@ -666,17 +667,17 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				logFileWriter.write("\n ----------------------------------------------------------");
 			} catch (EmailException e) {
 				log.error(
-	              "unable to send email reviewed changes notification email to user "
-	                  + destinataire.getEmail(), e);
-	        	e.printStackTrace();
+						"unable to send email reviewed changes notification email to user "
+								+ destinataire.getEmail(), e);
+				e.printStackTrace();
 				logFileWriter.write("\n Oups !!!! erreur d'envoie de mail pour :" + destinataire.getEmail());
 				logFileWriter.write("\n ----------------------------------------------------------");
-	        }
+			}
 		}
 	}
-	
+
 	private RevalidationResult treatCase4(RevalidationResult result, Set<Occurrence> occurrences) throws RevalidationException{
-		
+
 		/**
 		 * OCCURENCE MATCHES NEW NAME: => Same as upload: do the
 		 * validation attach occurrences to RecordReview
@@ -692,33 +693,33 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			}
 			List<Integer> ret =getIndiceSubList(size, max);
 			int indice=1;int nbtotal=0;
-			 for(Integer j:ret) {
-				 
-				 int idx=max*indice;
-				 if(size<idx)
-					 idx=size;
-					 
-				 
+			for(Integer j:ret) {
+
+				int idx=max*indice;
+				if(size<idx)
+					idx=size;
+
+
 				// occurrences.subList(j, idx );
 				System.out.println(j+" "+idx);
 				Set<Occurrence> subOccurrences=getSubList(occurrences, j, idx);
-				 
-				
+
+
 				Session session=null;
 				try {
 					session = ManagedSession.createNewSessionAndTransaction();
-				    
-				    for (Occurrence o : subOccurrences) {
+
+					for (Occurrence o : subOccurrences) {
 						validateTaxonomy(session,o);
 						String uneLigne = getLogTemplate(MAIL_SUBJECT_CASE4, o);
 						logFileWriter.write(uneLigne);
 						// o.setStability(true);
 
 					}
-					
-				    ManagedSession.commitTransaction(session);
-				    nbtotal+=subOccurrences.size();
-		  	    }catch (IOException e) {
+
+					ManagedSession.commitTransaction(session);
+					nbtotal+=subOccurrences.size();
+				}catch (IOException e) {
 					e.printStackTrace();
 				} 
 				catch (RuntimeException re) {	
@@ -727,24 +728,24 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.getResultMap().put(4, nbtotal);
 					exc.setResult(result);
 					ManagedSession.commitTransaction(session);
-		  	      throw exc;
-		  	    } 
+					throw exc;
+				} 
 				finally {					 
-				     if(session!=null) session.close();
-				 }
-		  	    
+					if(session!=null && session.isOpen()) session.close();
+				}
+
 				indice++;
-			 }
-			 result.getResultMap().put(4, nbtotal);
+			}
+			result.getResultMap().put(4, nbtotal);
 		}
 
 		log.info(" fin 4 : ............");
-		
+
 		return result;
 	}
-	
+
 	private RevalidationResult treatCase5(RevalidationResult result, Set<Occurrence> occurrences) throws RevalidationException{
-		
+
 		/**
 		 * OCCURENCE MATCHES NEW NAME: => Same as upload: do the
 		 * validation attach occurrences to RecordReview
@@ -753,28 +754,28 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 			log.info(" Occurrences 5 : "
 					+ occurrences.size() + " ............");
 			int max= RevalidationFileUtil.getBatch(); int size=occurrences.size();
-			
+
 			writeLog("\nNumber of Occurrences case 5 :"+occurrences.size());			
 			Map<Integer, RevalidationMailNotification> mailNotificationUserMap = new HashMap<Integer, RevalidationMailNotification>();
 			List<Integer> ret =getIndiceSubList(size, max);
 			int indice=1;int nbtotal=0;
-			 for(Integer j:ret) {
-				 
-				 int idx=max*indice;
-				 if(size<idx)
-					 idx=size;
-					 
-				 
+			for(Integer j:ret) {
+
+				int idx=max*indice;
+				if(size<idx)
+					idx=size;
+
+
 				// occurrences.subList(j, idx );
 				System.out.println(j+" "+idx);
 				Set<Occurrence> subOccurrences=getSubList(occurrences, j, idx);
-				 
+
 				Session session=null;
 				try {
 					session = ManagedSession.createNewSessionAndTransaction();
-				    
-				    
-				    Map<Integer, Set<Integer>> ownerOccurrencesForCase5 = new HashMap<Integer, Set<Integer>>();
+
+
+					Map<Integer, Set<Integer>> ownerOccurrencesForCase5 = new HashMap<Integer, Set<Integer>>();
 					Set<OccurrenceComments> allComments = new HashSet<OccurrenceComments>();
 					Date date = new Date();
 					for (Occurrence o : subOccurrences) {
@@ -799,38 +800,38 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 
 						occurrenceDb.resetRecordReview(o, false,session);
 						occurrenceDb.updateStability(o, Boolean.TRUE,session);
-						
+
 						int ownerId = o.getOwner();
-			         
-						
+
+
 						Set<Integer> occurrencesCase5 = ownerOccurrencesForCase5
-				            .get(ownerId);
+								.get(ownerId);
 						if (occurrencesCase5 == null) {
-						   occurrencesCase5 = new HashSet<Integer>();
-						   ownerOccurrencesForCase5.put(ownerId, occurrencesCase5);
+							occurrencesCase5 = new HashSet<Integer>();
+							ownerOccurrencesForCase5.put(ownerId, occurrencesCase5);
 						}
 						occurrencesCase5.add(o.getId());
-						
+
 					}
 					commentsService.attachDirty(session,allComments);
 					if (!ownerOccurrencesForCase5.isEmpty()) {
-					      for (Integer userId : ownerOccurrencesForCase5.keySet()) {
-						    if(mailNotificationUserMap.containsKey(userId) && mailNotificationUserMap.get(userId) != null){
-						    	Set<Integer> occurrenceIds = mailNotificationUserMap.get(userId).getOccurrenceIds();
-						    	if(occurrenceIds == null){
-						    		occurrenceIds = new HashSet<Integer>();
-						    	}
-						    	occurrenceIds.addAll(ownerOccurrencesForCase5.get(userId));
-						    }else{
-						    	User owner = userDb.findById(session,userId);
-						    	RevalidationMailNotification mailNotifier = new RevalidationMailNotification(owner, ownerOccurrencesForCase5.get(userId), MAIL_SUBJECT_CASE5, MAIL_BODY_CASE5);
-						    	mailNotificationUserMap.put(userId, mailNotifier);
-						    }
-					      }
+						for (Integer userId : ownerOccurrencesForCase5.keySet()) {
+							if(mailNotificationUserMap.containsKey(userId) && mailNotificationUserMap.get(userId) != null){
+								Set<Integer> occurrenceIds = mailNotificationUserMap.get(userId).getOccurrenceIds();
+								if(occurrenceIds == null){
+									occurrenceIds = new HashSet<Integer>();
+								}
+								occurrenceIds.addAll(ownerOccurrencesForCase5.get(userId));
+							}else{
+								User owner = userDb.findById(session,userId);
+								RevalidationMailNotification mailNotifier = new RevalidationMailNotification(owner, ownerOccurrencesForCase5.get(userId), MAIL_SUBJECT_CASE5, MAIL_BODY_CASE5);
+								mailNotificationUserMap.put(userId, mailNotifier);
+							}
+						}
 					}
 					ManagedSession.commitTransaction(session);
 					nbtotal+=subOccurrences.size();
-		  	    }catch (IOException e) {
+				}catch (IOException e) {
 					e.printStackTrace();
 				} 
 				catch (RuntimeException re) {		
@@ -838,27 +839,27 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 					result.setErrorMessage(re.getMessage());
 					result.getResultMap().put(5, nbtotal);
 					exc.setResult(result);
-		  	      	if(session!=null)ManagedSession.rollbackTransaction(session);
-		  	      throw exc;
-		  	    } 
+					if(session!=null)ManagedSession.rollbackTransaction(session);
+					throw exc;
+				} 
 				finally {					 
-				     //if(session!=null) session.close();
-				 }
-		  	    
+					//if(session!=null) session.close();
+				}
+
 				indice++;
-			 }
+			}
 			//on envoie les mail
 			try{
-			    log.info("sending email notification of revalidation case 5");
+				log.info("sending email notification of revalidation case 5");
 				notifyOwners(mailNotificationUserMap);
 			}catch(IOException e){
 				e.printStackTrace();
 			}
-			 result.getResultMap().put(5, nbtotal);
+			result.getResultMap().put(5, nbtotal);
 		}
 
 		log.info(" fin 5 : ............");
-		
+
 		return result;
 	}
 
@@ -870,111 +871,115 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		}	
 	}
 	protected void revalidateAction(RevalidationResult result, Map<String, List<Occurrence>> mapOccurences) throws RevalidationException {
-		
-			List<String> keys = new ArrayList<String>();
-			keys.add("1");
-			keys.add("2");
-			keys.add("3");
-			keys.add("4");
-			keys.add("5");
-			
-//			for (String key : mapOccurences.keySet()) {
-//				System.out.println(" ------------Key -------------------> "+key);
-//				keys.add(key);				
-//			}
-			
-			List<Occurrence> occurrencies;
-			Set<Occurrence> occurrences;
-			for (String key : keys) {
-				 occurrencies = mapOccurences.get(key);
-				 occurrences= new HashSet<Occurrence>(occurrencies);
-				 
-				System.out.println(" ------------Key -------------------> "+key+" ------------ size =>"+occurrencies.size());
-				//int keyInt = Integer.parseInt(key);
-				
-				if(key.equals("2")){
-					System.out.println(" Occurrences 2 : "+ occurrences.size() + " ............");
-					log.info(" Occurrences 2 : "+ occurrences.size() + " ............");
-					treatCase2(result,occurrences);
-				}else if(key.equals("3")){
-					/**
-					 * For 1:MANY-or 1:0 synonomy: => 1.delete all recordreviews
-					 * for each occurence 2.send mail to owner to request more
-					 * information 3.set the status of occurence as invalid <=>
-					 * it is the same as doing the validation , we are sure that
-					 * theses occurrences will be invalid
-					 */
-					log.info(" Occurrences 3 : " + occurrences.size()
-							+ " ............");
-					
-					treatCase3(result,occurrences);
-					log.info(" fin 3 : ............");
-				}else if(key.equals("4")){
-					/**
-					 * For 1:1 or Many:1 Synonomy: => Change the taxonomy in the
-					 * occurence table , no other change
-					 */
-					log.info(" Occurrences 4 : " + occurrences.size()
-							+ " ............");
-					/*
+
+		List<String> keys = new ArrayList<String>();
+		keys.add("1");
+		keys.add("2");
+		keys.add("3");
+		keys.add("4");
+		keys.add("5");
+
+		//			for (String key : mapOccurences.keySet()) {
+		//				System.out.println(" ------------Key -------------------> "+key);
+		//				keys.add(key);				
+		//			}
+
+		List<Occurrence> occurrencies;
+		Set<Occurrence> occurrences;
+		for (String key : keys) {
+			occurrencies = mapOccurences.get(key);
+
+			// wd 
+			if(occurrencies == null) continue;
+
+			occurrences= new HashSet<Occurrence>(occurrencies);
+
+			System.out.println(" ------------Key -------------------> "+key+" ------------ size =>"+occurrencies.size());
+			//int keyInt = Integer.parseInt(key);
+
+			if(key.equals("2")){
+				System.out.println(" Occurrences 2 : "+ occurrences.size() + " ............");
+				log.info(" Occurrences 2 : "+ occurrences.size() + " ............");
+				treatCase2(result,occurrences);
+			}else if(key.equals("3")){
+				/**
+				 * For 1:MANY-or 1:0 synonomy: => 1.delete all recordreviews
+				 * for each occurence 2.send mail to owner to request more
+				 * information 3.set the status of occurence as invalid <=>
+				 * it is the same as doing the validation , we are sure that
+				 * theses occurrences will be invalid
+				 */
+				log.info(" Occurrences 3 : " + occurrences.size()
+						+ " ............");
+
+				treatCase3(result,occurrences);
+				log.info(" fin 3 : ............");
+			}else if(key.equals("4")){
+				/**
+				 * For 1:1 or Many:1 Synonomy: => Change the taxonomy in the
+				 * occurence table , no other change
+				 */
+				log.info(" Occurrences 4 : " + occurrences.size()
+						+ " ............");
+				/*
 					for (Occurrence o : occurrences) {
 						validateTaxonomy(o);
 						// o.setStability(true);
 
 					}
-					*/
-					treatCase4(result,occurrences);
-					log.info(" fin 4 : ............");
-					
-				}else if(key.equals("5")){
-					log.info(" Occurrences 5 : " + occurrences.size()
-							+ " ............");
-					treatCase5(result,occurrences);					
-					log.info(" fin 5 : ............");
-				}
-				
-				
-				/*switch (keyInt) {
+				 */
+				treatCase4(result,occurrences);
+				log.info(" fin 4 : ............");
+
+			}else if(key.equals("5")){
+				log.info(" Occurrences 5 : " + occurrences.size()
+						+ " ............");
+				treatCase5(result,occurrences);					
+				log.info(" fin 5 : ............");
+			}
+
+
+			/*switch (keyInt) {
 				case 2:
 					//System.out.println(" Occurrences 2 : "+ occurrences.size() + " ............");
 					log.info(" Occurrences 2 : "+ occurrences.size() + " ............");
 					treatCase2(result,occurrences);
 					break;
 				case 3:
-					
-					
-					*//**
-					 * For 1:MANY-or 1:0 synonomy: => 1.delete all recordreviews
-					 * for each occurence 2.send mail to owner to request more
-					 * information 3.set the status of occurence as invalid <=>
-					 * it is the same as doing the validation , we are sure that
-					 * theses occurrences will be invalid
-					 *//*
+
+
+			 *//**
+			 * For 1:MANY-or 1:0 synonomy: => 1.delete all recordreviews
+			 * for each occurence 2.send mail to owner to request more
+			 * information 3.set the status of occurence as invalid <=>
+			 * it is the same as doing the validation , we are sure that
+			 * theses occurrences will be invalid
+			 *//*
 					log.info(" Occurrences 3 : " + occurrences.size()
 							+ " ............");
-					
+
 					treatCase3(result,occurrences);
 					log.info(" fin 3 : ............");
-					
-					
-					
-					
+
+
+
+
 					break;
 
 				case 4:
-					*//**
-					 * For 1:1 or Many:1 Synonomy: => Change the taxonomy in the
-					 * occurence table , no other change
-					 *//*
+			  *//**
+			  * For 1:1 or Many:1 Synonomy: => Change the taxonomy in the
+			  * occurence table , no other change
+			  *//*
 					log.info(" Occurrences 4 : " + occurrences.size()
 							+ " ............");
-					
+
 					for (Occurrence o : occurrences) {
 						validateTaxonomy(o);
 						// o.setStability(true);
 
 					}
-					
+
 					treatCase4(result,occurrences);
 					log.info(" fin 4 : ............");
 					break;
@@ -989,15 +994,15 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 				default:
 					break;
 				}*/
-			}
-			log.info("FIN");
-			
+		}
+		log.info("FIN");
+
 	}
 
 	@Override
 	public RevalidationResult revalidate(String sessionId) throws Exception {
 		RevalidationResult result = new RevalidationResult();
-		
+
 		try{
 			result=revalidateAll(sessionId);
 		}catch(RevalidationException ex) {
@@ -1009,7 +1014,7 @@ public class RevalidationServiceImpl extends RemoteServiceServlet implements
 		    System.out.println(entry.getKey() + "/" + entry.getValue());
 		}
 		System.out.println(result.getErrorMessage());
-		*/
+		 */
 		return result;
 	}
 

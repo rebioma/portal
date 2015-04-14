@@ -15,6 +15,9 @@
  */
 package org.rebioma.client;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.activation.URLDataSource;
 
 import org.rebioma.client.DataPager.PageListener;
 import org.rebioma.client.DetailView.FieldConstants;
@@ -83,8 +88,6 @@ import com.google.gwt.maps.client.events.maptypeid.MapTypeIdChangeMapHandler;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapEvent;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapHandler;
 import com.google.gwt.maps.client.layers.KmlLayer;
-import com.google.gwt.maps.client.layers.KmlLayerOptions;
-import com.google.gwt.maps.client.layers.KmlLayerStatus;
 import com.google.gwt.maps.client.overlays.InfoWindow;
 import com.google.gwt.maps.client.overlays.InfoWindowOptions;
 import com.google.gwt.maps.client.overlays.Marker;
@@ -97,20 +100,24 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.dom.Mask;
+import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.util.Margins;
+import com.sencha.gxt.theme.gray.client.tabs.GrayTabPanelBottomAppearance;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
-import //com.google.gwt.user.client.ui.TabPanel;
-com.sencha.gxt.widget.core.client.TabPanel;
+import com.sencha.gxt.widget.core.client.TabPanel;
+import com.sencha.gxt.widget.core.client.TabPanel.TabPanelAppearance;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.MarginData;
@@ -118,12 +125,6 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sencha.gxt.core.client.dom.Mask;
-import com.sencha.gxt.core.client.dom.XElement;
 
 /**
  * A type of view that shows a Google map displaying pageable occurrence data
@@ -485,6 +486,7 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 				}
 				next.setVisible((start + count) >= (start + limit));
 				previous.setVisible(start >= 10);
+				next.setVisible(start + 10 <= count);
 			} else {
 
 			}
@@ -830,11 +832,27 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 		TabItemConfig modelTb = new TabItemConfig(constants.ModelSearch());
 		ScrollPanel mrspanel = new ScrollPanel(markerList);
 		ScrollPanel mdspanel = new ScrollPanel(modelSearch);
+		
+		TabPanel modelTab = new TabPanel(GWT.<TabPanelAppearance> create(GrayTabPanelBottomAppearance.class));
+		modelTab.addStyleName("d-text");
+		modelTab.setBodyBorder(false);
+		modelTab.setBorders(false);
+		modelTab.getElement().getStyle().setBackgroundColor("white");
+		TabItemConfig dateModel = new TabItemConfig("Last update : " + getUpdateDate());
+		modelTab.add(mdspanel, dateModel); 
+		modelTab.setHeight(modelTab.getOffsetHeight()-10);
 		//    mrspanel.add(markerList);
 		//    mdspanel.add(modelSearch);
+		
 		currentTab = mrspanel;
 		leftTab.add(mrspanel, markerTb);
-		leftTab.add(mdspanel, modelTb); // Add Model Tab
+		leftTab.add(modelTab, modelTb); // Add Model Tab
+		
+		//init model affichage
+		String modelSearchTerm = historyState.getHistoryParameters(
+				UrlParam.M_SEARCH).toString();
+		modelSearch.search(modelSearchTerm);
+		
 		//leftTab.addSelectionHandler(this);
 		leftTab.addSelectionHandler(this);
 		//    hsp = new HorizontalSplitPanel();
@@ -934,6 +952,23 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 			}
 
 		});
+	}
+	
+	private String getUpdateDate() {
+		String line = "";
+		try {
+			URLDataSource source = new URLDataSource(
+					new URL(GWT.getHostPageBaseURL() + "ModelOutput/update.txt"));
+			BufferedReader stream = new BufferedReader(new InputStreamReader(
+					source.getInputStream()));
+			line = stream.readLine();
+			Date date = DateTimeFormat.getFormat("d/M/yyyy").parse(line);
+			line = DateTimeFormat.getFormat("d MMM. yyyy").format(date);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return line;
 	}
 
 	public MapWidget getMapWidget() {

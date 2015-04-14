@@ -1187,6 +1187,20 @@ text-decoration: none;
   text-overflow: ellipsis;
 }
 
+.d-text a em span {
+  white-space: nowrap;
+  padding: 2px 0px 0px 0px ! important;
+  color: #555 !important;
+  font-size: 10px !important;
+  font-family: Trebuchet MS, Verdana,Helvetica,Arial,sans-serif !important;
+  text-overflow: ellipsis;
+}
+
+.d-text div>ul>li>a, .d-text div>ul>li>a>em {
+  background: none !important;
+  padding-left: 2px !important;
+}
+
 .gwt-Label {
   font-size: 14px;
 } 
