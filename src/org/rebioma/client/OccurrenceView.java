@@ -80,7 +80,7 @@ import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
  * can be displayed as a map view, a list view, or a detail view.
  */
 public class OccurrenceView extends ComponentView implements
-		PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelectionHandler {
+PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelectionHandler {
 
 	/**
 	 * Temporally solution for earth map type bug switching view bug. This
@@ -91,43 +91,43 @@ public class OccurrenceView extends ComponentView implements
 	 * @author Tri
 	 * 
 	 */
-//	private class CustomPopupPanel extends Composite {
-//		public CustomPopupPanel(View w) {
-//			super(/*false*/);
-//			setWidget(w);
-//			setWidth("100%");
-//			//int wi = Window.getClientWidth()-40;
-//			//setWidth(wi+"px");
-//			setStyleName(ComponentView.STYLE_NAME);
-//		}
-//
-////		@Override
-////		public void hide(boolean autoClose) {
-////			setVisible(false);
-////			Widget view = getWidget();
-////			if (view instanceof MapView) {
-////				((MapView) view).setVisible(false);
-////			}
-////
-////		}
-//
-////		public void reshow() {
-////			show();
-////		}
-//
-////		@Override
-////		public void show() {
-////			setPopupPosition(toolHp.getAbsoluteLeft()-1, toolHp.getAbsoluteTop()
-////					+ toolHp.getOffsetHeight());
-////			super.show();
-////			setVisible(true);
-////			View view = (View) getWidget();
-////			view.onShow();
-////			if (view instanceof MapView) {
-////				((MapView) view).setVisible(true);
-////			}
-////		}
-//	}
+	//	private class CustomPopupPanel extends Composite {
+	//		public CustomPopupPanel(View w) {
+	//			super(/*false*/);
+	//			setWidget(w);
+	//			setWidth("100%");
+	//			//int wi = Window.getClientWidth()-40;
+	//			//setWidth(wi+"px");
+	//			setStyleName(ComponentView.STYLE_NAME);
+	//		}
+	//
+	////		@Override
+	////		public void hide(boolean autoClose) {
+	////			setVisible(false);
+	////			Widget view = getWidget();
+	////			if (view instanceof MapView) {
+	////				((MapView) view).setVisible(false);
+	////			}
+	////
+	////		}
+	//
+	////		public void reshow() {
+	////			show();
+	////		}
+	//
+	////		@Override
+	////		public void show() {
+	////			setPopupPosition(toolHp.getAbsoluteLeft()-1, toolHp.getAbsoluteTop()
+	////					+ toolHp.getOffsetHeight());
+	////			super.show();
+	////			setVisible(true);
+	////			View view = (View) getWidget();
+	////			view.onShow();
+	////			if (view instanceof MapView) {
+	////				((MapView) view).setVisible(true);
+	////			}
+	////		}
+	//	}
 
 	private class CustomSimplePanel extends SimplePanel implements HasWidgets {
 		public CustomSimplePanel(View w) {
@@ -137,7 +137,7 @@ public class OccurrenceView extends ComponentView implements
 			//setWidth(wi+"px");
 			setStyleName(ComponentView.STYLE_NAME);
 		}
-		
+
 		public CustomSimplePanel() {
 			super();
 			//int wi = Window.getClientWidth()-40;
@@ -219,7 +219,7 @@ public class OccurrenceView extends ComponentView implements
 	 * processed by onHistoryChanged().
 	 */
 	protected class SearchForm extends Composite implements
-			ViewStateChangeListener, ChangeHandler {
+	ViewStateChangeListener, ChangeHandler {
 		/**
 		 * The index for the default selected occurrence type in the list box.
 		 */
@@ -237,6 +237,7 @@ public class OccurrenceView extends ComponentView implements
 		protected static final String SHARED_BY_ME = "sbm";
 		protected static final String UNSHARED_BY_ME = "uswm";
 		protected static final String ALL_ERROR = "all";
+		protected static final String XY_ERROR = "Coordinate";
 		protected static final String YEAR_ERROR = "YearCollected";
 		protected static final String GENUS_ERROR = "GENUS";
 		protected static final String SPECIFIC_EPTHET_ERROR = "SpecificEpithet";
@@ -280,7 +281,7 @@ public class OccurrenceView extends ComponentView implements
 			advanceLink.setStyleName("link");
 			shapeDialogLink.setStyleName("link");
 			advanceLink.addStyleName("AdvanceLink");
-			
+
 			resultFilterLb.addItem(constants.Both(), "both");
 			resultFilterLb.addItem(constants.Public(), "public");
 			resultFilterLb.addItem(constants.Private(), "private");
@@ -292,24 +293,29 @@ public class OccurrenceView extends ComponentView implements
 			invalidatedLb.addItem(constants.InvalidGenus(), GENUS_ERROR);
 			typeIndexMap.put(GENUS_ERROR.toLowerCase(), 2);
 			invalidatedLb.addItem(constants.InvalidSpecificEpthet(),
+					SPECIFIC_EPTHET_ERROR);
 
-			SPECIFIC_EPTHET_ERROR);
 			typeIndexMap.put(SPECIFIC_EPTHET_ERROR.toLowerCase(), 3);
 
 			invalidatedLb.addItem(constants.InvalidDecimalLatitude(),
+					DECIMAL_LAT_ERROR);
 
-			DECIMAL_LAT_ERROR);
 			typeIndexMap.put(DECIMAL_LAT_ERROR.toLowerCase(), 4);
 
 			invalidatedLb.addItem(constants.InvalidDecimalLongitude(),
+					DECIMAL_LNG_ERROR);
 
-			DECIMAL_LNG_ERROR);
 			typeIndexMap.put(DECIMAL_LNG_ERROR.toLowerCase(), 5);
 
 			invalidatedLb.addItem(constants.InvalidTaxonomicClassification(),
+					TAXO_ERROR);
 
-			TAXO_ERROR);
 			typeIndexMap.put(TAXO_ERROR.toLowerCase(), 6);
+
+			invalidatedLb.addItem(constants.WrongCoordinate(),
+					XY_ERROR);
+
+			typeIndexMap.put(XY_ERROR.toLowerCase(), 7);
 
 			invalidatedLb.setStyleName("ResultFilter");
 			searchTypeBox.setStyleName("TypeBox");
@@ -486,19 +492,19 @@ public class OccurrenceView extends ComponentView implements
 			searchTypeBox.addItem(constants.AllPositivelyReviewed(),
 					ALL_POS_REVIEWED);
 			typeIndexMap
-					.put(ALL_POS_REVIEWED, searchTypeBox.getItemCount() - 1);
+			.put(ALL_POS_REVIEWED, searchTypeBox.getItemCount() - 1);
 
 			// All Negatively Reviewed
 			searchTypeBox.addItem(constants.AllNegativelyReviewed(),
 					ALL_NEG_REVIEWED);
 			typeIndexMap
-					.put(ALL_NEG_REVIEWED, searchTypeBox.getItemCount() - 1);
+			.put(ALL_NEG_REVIEWED, searchTypeBox.getItemCount() - 1);
 
 			// All Awaiting Review
 			searchTypeBox.addItem(constants.AllAwaitingReview(),
 					ALL_AWAIT_REVIEW);
 			typeIndexMap
-					.put(ALL_AWAIT_REVIEW, searchTypeBox.getItemCount() - 1);
+			.put(ALL_AWAIT_REVIEW, searchTypeBox.getItemCount() - 1);
 
 			// All Invalidated
 			searchTypeBox.addItem(constants.AllInvalid(), ALL_INVALID);
@@ -514,12 +520,12 @@ public class OccurrenceView extends ComponentView implements
 			case UNAUTHENTICATED:
 				mainHp.remove(sharedListBox);
 				break;
-			// My Positively Reviewed
-			// My Negatively Reviewed
-			// My Awaiting Review
-			// My Invalidated
-			// My Occurrences
-			// Occurrences to Review
+				// My Positively Reviewed
+				// My Negatively Reviewed
+				// My Awaiting Review
+				// My Invalidated
+				// My Occurrences
+				// Occurrences to Review
 			case ADMIN:
 			case REVIEWER:
 				// // Occurrences to Review
@@ -561,12 +567,12 @@ public class OccurrenceView extends ComponentView implements
 
 				// My Occurrences
 				searchTypeBox
-						.addItem(constants.MyOccurrences(), MY_OCCURRENCES);
+				.addItem(constants.MyOccurrences(), MY_OCCURRENCES);
 				typeIndexMap.put(MY_OCCURRENCES,
 						searchTypeBox.getItemCount() - 1);
 
 				mainHp.insert(sharedListBox, 2);
-				
+
 				break;
 			}
 
@@ -688,7 +694,7 @@ public class OccurrenceView extends ComponentView implements
 			if (!searchText.equals("")) {
 				query.addSearchFilter(QUICK_SEARCH + " = " + searchText);
 			}
-			
+
 			addErrorQuery();
 			addSharedSearchToQuery();
 			GWT.log(query.getBaseFilters() + "");
@@ -737,10 +743,10 @@ public class OccurrenceView extends ComponentView implements
 					|| searchType.equalsIgnoreCase(constants.AllOccurrences())
 					|| searchType.equalsIgnoreCase(constants
 							.AllPositivelyReviewed())
-					|| searchType.equalsIgnoreCase(constants
-							.AllNegativelyReviewed())
-					|| searchType.equalsIgnoreCase(constants
-							.AllAwaitingReview());
+							|| searchType.equalsIgnoreCase(constants
+									.AllNegativelyReviewed())
+									|| searchType.equalsIgnoreCase(constants
+											.AllAwaitingReview());
 		}
 
 		/**
@@ -985,7 +991,7 @@ public class OccurrenceView extends ComponentView implements
 	public static final String OCCURRENCES_TO_REVIEW = "occurrences to review";
 
 	public static final String DEFAULT_VIEW = MAP;
-	
+
 	public static final int REVALIDATION_SERVER_PING_INTERVAL = 5 * 60 * 1000;//5mn
 
 	public static ViewInfo init(final View parent, final String name,
@@ -1069,7 +1075,7 @@ public class OccurrenceView extends ComponentView implements
 	private OccurrenceView() {
 		this(null);
 	}
-	
+
 	public SearchForm getSearchForm(){
 		return searchForm;
 	}
@@ -1127,7 +1133,7 @@ public class OccurrenceView extends ComponentView implements
 		// Window.getClientHeight());
 		mainVp.setCellHeight(toolHp, "20px");
 		addHistoryItem(false);
-//		Window.addResizeHandler(this);
+		//		Window.addResizeHandler(this);
 		History.addValueChangeHandler(this);
 		// History.fireCurrentHistoryState();
 		String historyToken = History.getToken();
@@ -1221,29 +1227,29 @@ public class OccurrenceView extends ComponentView implements
 			window.addTreeSelectHandler(this);
 		} else if (sender == revalidateLink){
 			addHistoryItem(false);
-		    String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
+			String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
 			if(revalidateLink.getText().equals(constants.Revalidating())){
 				/*RevalidationService.Proxy.get().cancelRevalidation(sessionId, new AsyncCallback<Void>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
 						revalidateLink.setHTML(constants.Revalidate());
-						
+
 					}
 
 					@Override
 					public void onSuccess(Void result) {
 						revalidateLink.setHTML(constants.Revalidate());
-						
+
 					}
 				});*/
 			}else{
-				
+
 				revalidateLink.setStyleName("revalidating", true);//add loading image
 				final ServerPingServiceAsync pingService = ServerPingService.Proxy.get();
 				final Timer sessionAliveTimer = new Timer() {
-				   public void run() {
-					   pingService.ping(new AsyncCallback<Void>() {
+					public void run() {
+						pingService.ping(new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								GWT.log("Error while pinging the server", caught);
@@ -1252,13 +1258,13 @@ public class OccurrenceView extends ComponentView implements
 							public void onSuccess(Void result) {
 								GWT.log("Ping success");
 							}
-					   });
-				   }
+						});
+					}
 				};
 				sessionAliveTimer.scheduleRepeating(REVALIDATION_SERVER_PING_INTERVAL);
-				
+
 				RevalidationService.Proxy.get().revalidate(sessionId, new AsyncCallback<RevalidationResult>() {
-					
+
 					@Override
 					public void onSuccess(RevalidationResult result) {
 						GWT.log("Revalidation success");
@@ -1268,7 +1274,7 @@ public class OccurrenceView extends ComponentView implements
 						revalidateLink.setStyleName("revalidatelink_success", true);
 						//Window.alert(constants.RevalidationSuccess());
 						sessionAliveTimer.cancel();
-						
+
 					}
 					@Override
 					public void onFailure(Throwable caught) {
@@ -1282,7 +1288,7 @@ public class OccurrenceView extends ComponentView implements
 				});
 				revalidateLink.setHTML(constants.Revalidating());
 			}
-			
+
 		} else if(sender == ativityLink) {
 			new ActivityLogDialog(constants).show();
 		}
@@ -1295,7 +1301,7 @@ public class OccurrenceView extends ComponentView implements
 
 	@Override
 	public void onResize(ResizeEvent event) {
-//		Window.alert("oresize OccurrenceView");
+		//		Window.alert("oresize OccurrenceView");
 		resize(event.getWidth(), event.getHeight());
 
 	}
@@ -1320,7 +1326,7 @@ public class OccurrenceView extends ComponentView implements
 		}
 		queryFiltersMap.init(ApplicationView.getAuthenticatedUser());
 		searchForm.onStateChanged(state);
-		
+
 		revalidateLink.setHTML("");
 		revalidateLink.setVisible(false);
 		revalidateLink.setStyleName("link");
@@ -1349,14 +1355,14 @@ public class OccurrenceView extends ComponentView implements
 		}
 	}
 
-//	@Override
-//	public void setVisible(boolean visible) {
-//		if (visible) {
-//			getPopupView(activeViewInfo.getName()).show();
-//		} else {
-//			getPopupView(activeViewInfo.getName()).hide();
-//		}
-//	};
+	//	@Override
+	//	public void setVisible(boolean visible) {
+	//		if (visible) {
+	//			getPopupView(activeViewInfo.getName()).show();
+	//		} else {
+	//			getPopupView(activeViewInfo.getName()).hide();
+	//		}
+	//	};
 
 	@Override
 	protected void handleOnValueChange(String historyToken) {
@@ -1371,7 +1377,7 @@ public class OccurrenceView extends ComponentView implements
 		}
 		switchView(view,
 				view.equalsIgnoreCase(MAP) || view.equalsIgnoreCase(LIST)
-						|| view.equalsIgnoreCase(DETAIL));
+				|| view.equalsIgnoreCase(DETAIL));
 		historyButtonClicked = false;
 		parent.historyButtonClicked = false;
 	}
@@ -1409,7 +1415,7 @@ public class OccurrenceView extends ComponentView implements
 
 	@Override
 	protected void resize(final int width, int height) {
-//		Window.alert("My view " + History.getToken() + " = " + isMyView(History.getToken()));
+		//		Window.alert("My view " + History.getToken() + " = " + isMyView(History.getToken()));
 		if (!isMyView(History.getToken())) {
 			return;
 		}
@@ -1421,10 +1427,10 @@ public class OccurrenceView extends ComponentView implements
 		}
 		mainSp.setPixelSize(w, height-10);
 		if (activeViewInfo != null) {
-//			getPopupView(activeViewInfo.getName()).reshow();
-//			viewPanel.setWidget(activeViewInfo.getView());
+			//			getPopupView(activeViewInfo.getName()).reshow();
+			//			viewPanel.setWidget(activeViewInfo.getView());
 			if(viewPanel.getWidget()!=null)
-			viewPanel.getWidget().setHeight((height-10-toolHp.getOffsetHeight())+ "px");
+				viewPanel.getWidget().setHeight((height-10-toolHp.getOffsetHeight())+ "px");
 		}
 		Window.enableScrolling(toolHp.getOffsetWidth() - 10 > w);
 
@@ -1519,7 +1525,7 @@ public class OccurrenceView extends ComponentView implements
 	 */
 	protected void switchView2(String view, final boolean isLoadRecord) {
 		if (view.equals(ADVANCE)) { // If we are going into Advanced View turn
-									// off
+			// off
 			// the old search
 			searchForm.mainHp.remove(searchForm.advanceLink);
 			searchForm.mainHp.remove(searchForm.forLabel);
@@ -1533,7 +1539,7 @@ public class OccurrenceView extends ComponentView implements
 			}
 		} else if (activeViewInfo != null
 				&& activeViewInfo.getName().equalsIgnoreCase(ADVANCE)) { // if
-																			// we
+			// we
 			/**
 			 * are leaving Advanced View turn on the Simple Search
 			 */
@@ -1549,7 +1555,7 @@ public class OccurrenceView extends ComponentView implements
 			switchViewInfo = viewInfos.get(DEFAULT_VIEW);
 		}
 		if (activeViewInfo != null) {
-//			getPopupView(activeViewInfo.getName()).hide();
+			//			getPopupView(activeViewInfo.getName()).hide();
 			// mainVp.remove(activeViewInfo.getView());
 		}
 		switchViewPanel.clear();
@@ -1560,15 +1566,15 @@ public class OccurrenceView extends ComponentView implements
 				if (isLoadRecord) {
 					searchForm.restoreStatesFromHistory(History.getToken());
 				}
-//				view.show();
+				//				view.show();
 				viewPanel.setWidget(view);
 				view.onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});
-//				if (view instanceof MapView) {
-////					Window.alert("MapView");
-////					((MapView)view).forceLayout();
-//				} else if (view instanceof ListView) {
-////					((ListView)view).forceLayout();
-//				}
+				//				if (view instanceof MapView) {
+				////					Window.alert("MapView");
+				////					((MapView)view).forceLayout();
+				//				} else if (view instanceof ListView) {
+				////					((ListView)view).forceLayout();
+				//				}
 			}
 		});
 		// View switchView = switchViewInfo.getView();
@@ -1602,7 +1608,7 @@ public class OccurrenceView extends ComponentView implements
 		switchViewPanel.add(ativityLink);
 		activeViewInfo = switchViewInfo;
 		initAdvanceFields();
-//		onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});
+		//		onResize(new ResizeEvent(Window.getClientWidth(), Window.getClientHeight()){});
 		// switchView.onShow();
 	}
 
@@ -1699,64 +1705,64 @@ public class OccurrenceView extends ComponentView implements
 						.getView();
 				// Darwin Core
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_SPECIES,
-								"AcceptedSpecies", null,
-								"http://code.google.com/p/rebioma/wiki/AcceptedSpecies"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_SPECIES,
+						"AcceptedSpecies", null,
+						"http://code.google.com/p/rebioma/wiki/AcceptedSpecies"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_SPECIES,
-								"VerbatimSpecies", null,
-								"http://code.google.com/p/rebioma/wiki/VerbatimedSpecies"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_SPECIES,
+						"VerbatimSpecies", null,
+						"http://code.google.com/p/rebioma/wiki/VerbatimedSpecies"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.GLOBAL_UNIQUE_IDENTIFIER,
-								"GlobalUniqueIdentifier", null,
-								"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/GlobalUniqueIdentifier"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.GLOBAL_UNIQUE_IDENTIFIER,
+						"GlobalUniqueIdentifier", null,
+						"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/GlobalUniqueIdentifier"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.DATE,
-								FieldConstants.DATE_LAST_MODIFIED,
-								"DateLastModified", null,
-								"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/DateLastModified"));
+				.add(new ASearchType(ValueType.DATE,
+						FieldConstants.DATE_LAST_MODIFIED,
+						"DateLastModified", null,
+						"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/DateLastModified"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.FIXED,
-								FieldConstants.BASIS_OF_RECORD,
-								"BasisOfRecord",
-								new String[] { "FossilSpecimen",
-										"HumanObservation", "LivingSpecimen",
-										"MachineObservation", "MovingImage",
-										"PreservedSpecimen", "SoundRecording",
-										"StillImage", "OtherSpecimen",
-										"Non-standardSpecimen" },
-								"http://rs.tdwg.org/dwc/terms/index.htm#BasisOfRecord"));
+				.add(new ASearchType(ValueType.FIXED,
+						FieldConstants.BASIS_OF_RECORD,
+						"BasisOfRecord",
+						new String[] { "FossilSpecimen",
+						"HumanObservation", "LivingSpecimen",
+						"MachineObservation", "MovingImage",
+						"PreservedSpecimen", "SoundRecording",
+						"StillImage", "OtherSpecimen",
+				"Non-standardSpecimen" },
+						"http://rs.tdwg.org/dwc/terms/index.htm#BasisOfRecord"));
 				darwinCoreFields.add(new ASearchType(ValueType.NUMBER,
 						FieldConstants.YEAR_COLLECTED, "YearCollected", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#YearSampled"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.INSTITUTION_CODE,
-								"InstitutionCode", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#InstitutionCode"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.INSTITUTION_CODE,
+						"InstitutionCode", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#InstitutionCode"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.COLLECTION_CODE,
-								"CollectionCode", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#CollectionCode"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.COLLECTION_CODE,
+						"CollectionCode", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#CollectionCode"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.CATALOG_NUMBER, "CatalogNumber",
-								null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#CatalogNumber"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.CATALOG_NUMBER, "CatalogNumber",
+						null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#CatalogNumber"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.INFORMATION_WITHHELD,
-								"InformationWidthHeld", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#InformationWithheld"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.INFORMATION_WITHHELD,
+						"InformationWidthHeld", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#InformationWithheld"));
 				darwinCoreFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.SCIENTIFIC_NAME,
-								"ScientificName", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#ScientificName"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.SCIENTIFIC_NAME,
+						"ScientificName", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#ScientificName"));
 				darwinCoreFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.REMARKS, "Remarks", null, ""));
 				// Taxonomic Elements
@@ -1782,98 +1788,98 @@ public class OccurrenceView extends ComponentView implements
 						FieldConstants.GENUS, "Genus", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#Genus"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.SPECIFIC_EPITHET,
-								"SpecificEpithet", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#SpecificEpithet"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.SPECIFIC_EPITHET,
+						"SpecificEpithet", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#SpecificEpithet"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.INFRASPECIFIC_RANK,
-								"InfraspecificRank", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#InfraspecificRank"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.INFRASPECIFIC_RANK,
+						"InfraspecificRank", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#InfraspecificRank"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.INFRASPECIFIC_EPITHET,
-								"InfraspecificEpithet", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#InfraspecificEpithet"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.INFRASPECIFIC_EPITHET,
+						"InfraspecificEpithet", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#InfraspecificEpithet"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.AUTHOR_YEAR_OF_SCIENTIFIC_NAME,
-								"AuthorYearOfScientificName", null,
-								"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/AuthorYearOfScientificName"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.AUTHOR_YEAR_OF_SCIENTIFIC_NAME,
+						"AuthorYearOfScientificName", null,
+						"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/AuthorYearOfScientificName"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.NOMENCLATURAL_CODE,
-								"NomenclaturalCode", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#NomenclaturalCode"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.NOMENCLATURAL_CODE,
+						"NomenclaturalCode", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#NomenclaturalCode"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_CLASS, "AcceptedClass",
-								null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_CLASS, "AcceptedClass",
+						null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_FAMILY,
-								"AcceptedFamily", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_FAMILY,
+						"AcceptedFamily", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_GENUS, "AcceptedGenus",
-								null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_GENUS, "AcceptedGenus",
+						null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_KINGDOM,
-								"AcceptedKingdom", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_KINGDOM,
+						"AcceptedKingdom", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_NOMENCLATURAL_CODE,
-								"AcceptedNomenclaturalCode", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_NOMENCLATURAL_CODE,
+						"AcceptedNomenclaturalCode", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_ORDER, "AcceptedOrder",
-								null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_ORDER, "AcceptedOrder",
+						null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_PHYLUM,
-								"AcceptedPhylum", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_PHYLUM,
+						"AcceptedPhylum", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_SPECIFIC_EPITHET,
-								"AcceptedSpecificEpithet", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_SPECIFIC_EPITHET,
+						"AcceptedSpecificEpithet", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_SUBFAMILY,
-								"AcceptedSubfamily", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_SUBFAMILY,
+						"AcceptedSubfamily", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_SUBGENUS,
-								"AcceptedSubgenus", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_SUBGENUS,
+						"AcceptedSubgenus", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				toxonomicFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ACCEPTED_SUBORDER,
-								"AcceptedSuborder", null,
-								"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ACCEPTED_SUBORDER,
+						"AcceptedSuborder", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
 				// Identification Elements
 				identificationFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.IDENTIFICATION_QUALIFER,
-								"IdentificationQualifier", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#IdentificationQualifier"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.IDENTIFICATION_QUALIFER,
+						"IdentificationQualifier", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#IdentificationQualifier"));
 				// Locality Elements
 				localityFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.HIGHER_GEOGRAPHY,
-								"HigherGeography", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#HigherGeography"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.HIGHER_GEOGRAPHY,
+						"HigherGeography", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#HigherGeography"));
 				localityFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.CONTINENT, "Continent", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#Continent"));
@@ -1890,10 +1896,10 @@ public class OccurrenceView extends ComponentView implements
 						FieldConstants.COUNTRY, "Country", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#Country"));
 				localityFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.STATE_PROVINCE,
-								"State_Province", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#StateProvince"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.STATE_PROVINCE,
+						"State_Province", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#StateProvince"));
 				localityFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.COUNTY, "County", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#County"));
@@ -1901,47 +1907,47 @@ public class OccurrenceView extends ComponentView implements
 						FieldConstants.LOCALITY, "Locality", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#Locality"));
 				localityFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.MINIMUM_ELEVATION_IN_METERS,
-								"MinimumElevationInMeters", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#MinimumElevationInMeters"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.MINIMUM_ELEVATION_IN_METERS,
+						"MinimumElevationInMeters", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#MinimumElevationInMeters"));
 				localityFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.MAXIMUM_ELEVATION_IN_METERS,
-								"MaximumElevationInMeters", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#MaximumElevationInMeters"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.MAXIMUM_ELEVATION_IN_METERS,
+						"MaximumElevationInMeters", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#MaximumElevationInMeters"));
 				localityFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.MINIMUM_DEPTH_IN_METERS,
-								"MinimumDepthInMeters", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#MinimumDepthInMeters"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.MINIMUM_DEPTH_IN_METERS,
+						"MinimumDepthInMeters", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#MinimumDepthInMeters"));
 				localityFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.MAXIMUM_DEPTH_IN_METERS,
-								"MaximumDepthInMeters", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#MaximumDepthInMeters"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.MAXIMUM_DEPTH_IN_METERS,
+						"MaximumDepthInMeters", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#MaximumDepthInMeters"));
 				// Collecting Events Elements
 				collectingEventsFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.COLLECTING_METHOD,
-								"CollectingMethod", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#CollectingMethod"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.COLLECTING_METHOD,
+						"CollectingMethod", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#CollectingMethod"));
 				collectingEventsFields
-						.add(new ASearchType(ValueType.FIXED,
-								FieldConstants.VALID_DISTRIBUTION_FLAG,
-								"ValidDistributionFlag", new String[] { "true",
-										"false" },
-								"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/ValidDistributionFlag"));
+				.add(new ASearchType(ValueType.FIXED,
+						FieldConstants.VALID_DISTRIBUTION_FLAG,
+						"ValidDistributionFlag", new String[] { "true",
+				"false" },
+						"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/ValidDistributionFlag"));
 				collectingEventsFields
-						.add(new ASearchType(ValueType.DATE,
-								FieldConstants.EARLIEST_DATE_COLLECTED,
-								"EarliestDateCollected", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#EarliestDateCollected"));
+				.add(new ASearchType(ValueType.DATE,
+						FieldConstants.EARLIEST_DATE_COLLECTED,
+						"EarliestDateCollected", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#EarliestDateCollected"));
 				collectingEventsFields
-						.add(new ASearchType(ValueType.DATE,
-								FieldConstants.LATEST_DATE_COLLECTED,
-								"LatestDateCollected", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#LatestDateCollected"));
+				.add(new ASearchType(ValueType.DATE,
+						FieldConstants.LATEST_DATE_COLLECTED,
+						"LatestDateCollected", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#LatestDateCollected"));
 				collectingEventsFields.add(new ASearchType(ValueType.NUMBER,
 						FieldConstants.DAY_OF_YEAR, "DayOfYear", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#DayOfYear"));
@@ -1951,44 +1957,44 @@ public class OccurrenceView extends ComponentView implements
 				// Biological Elements
 				biologicalFields.add(new ASearchType(ValueType.FIXED,
 						FieldConstants.SEX, "Sex", new String[] { "Male",
-								"Female", "Hermaphroditic", "Unknown" },
+						"Female", "Hermaphroditic", "Unknown" },
 						"http://rs.tdwg.org/dwc/terms/index.htm#Sex"));
 				biologicalFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.LIFE_STAGE, "LifeStage", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#LifeStage"));
 				biologicalFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.ATTRIBUTES, "Attributes", null,
-								"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/Attributes"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.ATTRIBUTES, "Attributes", null,
+						"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/Attributes"));
 				// References Elements
 				referenceFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.IMAGE_URL, "ImageURL", null,
-								"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/ImageURL"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.IMAGE_URL, "ImageURL", null,
+						"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/ImageURL"));
 				referenceFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.RELATED_INFORMATION,
-								"RelatedInformation", null,
-								"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/RelatedInformation"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.RELATED_INFORMATION,
+						"RelatedInformation", null,
+						"http://wiki.tdwg.org/twiki/bin/view/DarwinCore/RelatedInformation"));
 				// Curatorial Extension Concept
 				curaExtFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.CATALOG_NUMBER_NUMERIC,
-								"CatalogNumberNumeric", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#CatalogNumberNumeric"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.CATALOG_NUMBER_NUMERIC,
+						"CatalogNumberNumeric", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#CatalogNumberNumeric"));
 				curaExtFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.IDENTIFIED_BY, "IdentifiedBy", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#IdentifiedBy"));
 				curaExtFields
-						.add(new ASearchType(ValueType.DATE,
-								FieldConstants.DATE_IDENTIFIED,
-								"DateIdentified", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#DateIdentified"));
+				.add(new ASearchType(ValueType.DATE,
+						FieldConstants.DATE_IDENTIFIED,
+						"DateIdentified", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#DateIdentified"));
 				curaExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.CATALOG_NUMBER, "CatalogNumber",
-								null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#CatalogNumber"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.CATALOG_NUMBER, "CatalogNumber",
+						null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#CatalogNumber"));
 				curaExtFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.FIELD_NUMBER, "FieldNumber", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#FieldNumber"));
@@ -1996,20 +2002,20 @@ public class OccurrenceView extends ComponentView implements
 						FieldConstants.FIELD_NOTES, "FieldNotes", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#FieldNotes"));
 				curaExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_COLLECTING_DATE,
-								"VerbatimCollectingDate", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimCollectingDate"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_COLLECTING_DATE,
+						"VerbatimCollectingDate", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimCollectingDate"));
 				curaExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_ELEVATION,
-								"VerbatimElevation", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimElevation"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_ELEVATION,
+						"VerbatimElevation", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimElevation"));
 				curaExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_DEPTH, "VerbatimDepth",
-								null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimDepth"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_DEPTH, "VerbatimDepth",
+						null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimDepth"));
 				curaExtFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.PREPARATIONS, "Preparations", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#Preparations"));
@@ -2020,10 +2026,10 @@ public class OccurrenceView extends ComponentView implements
 						FieldConstants.GEN_BANK_NUMBER, "GenBankNumber", null,
 						""));
 				curaExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.OTHER_CATALOG_NUMBERS,
-								"OtherCatalogNumbers", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#OtherCatalogNumbers"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.OTHER_CATALOG_NUMBERS,
+						"OtherCatalogNumbers", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#OtherCatalogNumbers"));
 				curaExtFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.RELATED_CATALOGED_ITEMS,
 						"RelatedCatalogedItems", null, ""));
@@ -2031,86 +2037,86 @@ public class OccurrenceView extends ComponentView implements
 						FieldConstants.DISPOSITION, "Disposition", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#Disposition"));
 				curaExtFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.INDIVIDUAL_COUNT,
-								"IndividualCount", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#IndividualCount"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.INDIVIDUAL_COUNT,
+						"IndividualCount", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#IndividualCount"));
 				// Geospatial Extension Concept List
 				geoExtFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.DECIMAL_LATITUDE,
-								"DecimalLatitude", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#DecimalLatitude"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.DECIMAL_LATITUDE,
+						"DecimalLatitude", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#DecimalLatitude"));
 				geoExtFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.DECIMAL_LONGITUDE,
-								"DecimalLongitude", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#DecimalLongitude"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.DECIMAL_LONGITUDE,
+						"DecimalLongitude", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#DecimalLongitude"));
 				geoExtFields
-						.add(new ASearchType(ValueType.NUMBER,
-								FieldConstants.GEODETIC_DATUM, "GeodeticDatum",
-								null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#GeodeticDatum"));
+				.add(new ASearchType(ValueType.NUMBER,
+						FieldConstants.GEODETIC_DATUM, "GeodeticDatum",
+						null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#GeodeticDatum"));
 				geoExtFields
-						.add(new ASearchType(
-								ValueType.NUMBER,
-								FieldConstants.COORDINATE_UNCERTAINTY_IN_METERS,
-								"CoordinateUncertaintyInMeters", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#CoordinateUncertaintyInMeters"));
+				.add(new ASearchType(
+						ValueType.NUMBER,
+						FieldConstants.COORDINATE_UNCERTAINTY_IN_METERS,
+						"CoordinateUncertaintyInMeters", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#CoordinateUncertaintyInMeters"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.POINT_RADIUS_SPATIAL_FIT,
-								"PointRadiusSpatialFit", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#PointRadiusSpatialFit"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.POINT_RADIUS_SPATIAL_FIT,
+						"PointRadiusSpatialFit", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#PointRadiusSpatialFit"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_COORDINATES,
-								"VerbatimCoordinates", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimCoordinates"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_COORDINATES,
+						"VerbatimCoordinates", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimCoordinates"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_LATITUDE,
-								"VerbatimLatitude", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimLatitude"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_LATITUDE,
+						"VerbatimLatitude", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimLatitude"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_LONGITUDE,
-								"VerbatimLongitude", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimLongitude"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_LONGITUDE,
+						"VerbatimLongitude", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimLongitude"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.VERBATIM_COORDINATE_SYSTEM,
-								"VerbatimCoordinateSystem", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimCoordinateSystem"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.VERBATIM_COORDINATE_SYSTEM,
+						"VerbatimCoordinateSystem", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#VerbatimCoordinateSystem"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.GEOREFERENCE_PROTOCOL,
-								"GeoreferenceProtocol", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceProtocol"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.GEOREFERENCE_PROTOCOL,
+						"GeoreferenceProtocol", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceProtocol"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.GEOREFERENCE_SOURCES,
-								"GeoreferenceSources", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceSources"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.GEOREFERENCE_SOURCES,
+						"GeoreferenceSources", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceSources"));
 				geoExtFields
-						.add(new ASearchType(
-								ValueType.TEXT,
-								FieldConstants.GEOREFERENCE_VERIFICATION_STATUS,
-								"GeoreferenceVerificationStatus", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceVerificationStatus"));
+				.add(new ASearchType(
+						ValueType.TEXT,
+						FieldConstants.GEOREFERENCE_VERIFICATION_STATUS,
+						"GeoreferenceVerificationStatus", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceVerificationStatus"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.GEOREFERENCE_REMARKS,
-								"GeoreferenceRemarks", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceRemarks"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.GEOREFERENCE_REMARKS,
+						"GeoreferenceRemarks", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#GeoreferenceRemarks"));
 				geoExtFields.add(new ASearchType(ValueType.TEXT,
 						FieldConstants.FOOTPRINT_WKT, "FootprintWKT", null,
 						"http://rs.tdwg.org/dwc/terms/index.htm#FootprintWKT"));
 				geoExtFields
-						.add(new ASearchType(ValueType.TEXT,
-								FieldConstants.FOOTPRINT_SPATIAL_FIT,
-								"FootprintSpatialFit", null,
-								"http://rs.tdwg.org/dwc/terms/index.htm#FootprintSpatialFit"));
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.FOOTPRINT_SPATIAL_FIT,
+						"FootprintSpatialFit", null,
+						"http://rs.tdwg.org/dwc/terms/index.htm#FootprintSpatialFit"));
 				// record Info Fields
 				recordInfoFields.add(new ASearchType(ValueType.DATE,
 						FieldConstants.TIME_CREATED, "TimeCreated", null,
@@ -2194,11 +2200,11 @@ public class OccurrenceView extends ComponentView implements
 		});
 		viewInfos.put(UPLOAD.toLowerCase(), uploadView);
 	}
-	
+
 	public int getPageSize(){
 		return this.queryPageSize;
 	}
-	
+
 	public void setPageSize(int ps){
 		this.queryPageSize = ps;
 		query.setLimit(ps);
@@ -2218,66 +2224,66 @@ public class OccurrenceView extends ComponentView implements
 			}
 		}
 	}
-	
+
 	private void setFieldsValue(Map<String, Object> propertyMap){
 		String searchTypeValue = (String)propertyMap.get(OccurrenceSearchListener.SEARCH_TYPE_VALUE_PROPERTY_KEY);
-	    if(searchTypeValue != null){
-	    		 int index = searchForm.typeIndexMap.get(searchTypeValue);
-	    		 searchForm.searchTypeBox.setSelectedIndex(index);
-	    		 //fire changeEvent manuellement
-	    		 DomEvent.fireNativeEvent(Document.get().createChangeEvent(), searchForm.searchTypeBox.asWidget());
-	    		 if(searchForm.invalidatedLb.isAttached()){
-	    			 String errorLbValue = (String)propertyMap.get(OccurrenceSearchListener.ERROR_QUERY_VALUE_KEY);
-	    			 if(errorLbValue != null){
-	    				 int selectedIndex = -1;
-		    			 for(int i=0;i< searchForm.invalidatedLb.getItemCount();i++){
-		    				 String value = searchForm.invalidatedLb.getValue(i);
-		    				 if(errorLbValue.equalsIgnoreCase(value)){
-		    					 selectedIndex = i;
-		    					 break;
-		    				 }
-		    			 }
-		    			 if(selectedIndex >= 0){
-		    				 searchForm.invalidatedLb.setItemSelected(selectedIndex, true);
-		    			 }
-	    			 }
-	    		 }
-	    		 if(searchForm.sharedListBox.isAttached()){
-	    			 String sharedLbValue = (String)propertyMap.get(OccurrenceSearchListener.SHARED_VALUE_KEY);
-	    			 if(sharedLbValue != null){
-	    				 int selectedIndex = -1;
-		    			 for(int i=0;i< searchForm.sharedListBox.getItemCount();i++){
-		    				 String value = searchForm.sharedListBox.getValue(i);
-		    				 if(sharedLbValue.equalsIgnoreCase(value)){
-		    					 selectedIndex = i;
-		    					 break;
-		    				 }
-		    			 }
-		    			 if(selectedIndex >= 0){
-		    				 searchForm.sharedListBox.setItemSelected(selectedIndex, true);
-		    			 }
-	    			 }
-	    			 
-	    		 }
-	    		 if(searchForm.resultFilterLb.isAttached()){
-	    			 String resultFilterValue = (String)propertyMap.get(OccurrenceSearchListener.RESULT_FILTER_VALUE_KEY);
-	    			 if(resultFilterValue != null){
-	    				 int selectedIndex = -1;
-		    			 for(int i=0;i< searchForm.resultFilterLb.getItemCount();i++){
-		    				 String value = searchForm.resultFilterLb.getValue(i);
-		    				 if(resultFilterValue.equalsIgnoreCase(value)){
-		    					 selectedIndex = i;
-		    					 break;
-		    				 }
-		    			 }
-		    			 if(selectedIndex >= 0){
-		    				 searchForm.resultFilterLb.setItemSelected(selectedIndex, true);
-		    			 }
-	    			 }
-	    		 }
-	    		 
-	    		 
-	    }
+		if(searchTypeValue != null){
+			int index = searchForm.typeIndexMap.get(searchTypeValue);
+			searchForm.searchTypeBox.setSelectedIndex(index);
+			//fire changeEvent manuellement
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), searchForm.searchTypeBox.asWidget());
+			if(searchForm.invalidatedLb.isAttached()){
+				String errorLbValue = (String)propertyMap.get(OccurrenceSearchListener.ERROR_QUERY_VALUE_KEY);
+				if(errorLbValue != null){
+					int selectedIndex = -1;
+					for(int i=0;i< searchForm.invalidatedLb.getItemCount();i++){
+						String value = searchForm.invalidatedLb.getValue(i);
+						if(errorLbValue.equalsIgnoreCase(value)){
+							selectedIndex = i;
+							break;
+						}
+					}
+					if(selectedIndex >= 0){
+						searchForm.invalidatedLb.setItemSelected(selectedIndex, true);
+					}
+				}
+			}
+			if(searchForm.sharedListBox.isAttached()){
+				String sharedLbValue = (String)propertyMap.get(OccurrenceSearchListener.SHARED_VALUE_KEY);
+				if(sharedLbValue != null){
+					int selectedIndex = -1;
+					for(int i=0;i< searchForm.sharedListBox.getItemCount();i++){
+						String value = searchForm.sharedListBox.getValue(i);
+						if(sharedLbValue.equalsIgnoreCase(value)){
+							selectedIndex = i;
+							break;
+						}
+					}
+					if(selectedIndex >= 0){
+						searchForm.sharedListBox.setItemSelected(selectedIndex, true);
+					}
+				}
+
+			}
+			if(searchForm.resultFilterLb.isAttached()){
+				String resultFilterValue = (String)propertyMap.get(OccurrenceSearchListener.RESULT_FILTER_VALUE_KEY);
+				if(resultFilterValue != null){
+					int selectedIndex = -1;
+					for(int i=0;i< searchForm.resultFilterLb.getItemCount();i++){
+						String value = searchForm.resultFilterLb.getValue(i);
+						if(resultFilterValue.equalsIgnoreCase(value)){
+							selectedIndex = i;
+							break;
+						}
+					}
+					if(selectedIndex >= 0){
+						searchForm.resultFilterLb.setItemSelected(selectedIndex, true);
+					}
+				}
+			}
+
+
+		}
 	}
 
 	@Override
@@ -2290,19 +2296,19 @@ public class OccurrenceView extends ComponentView implements
 		query.setBaseFilters(newquery.getBaseFilters());
 		query.setSearchFilters(newquery.getSearchFilters());
 		query.setDisjunctionSearchFilters(newquery.getDisjunctionSearchFilters());
-	    query.setResults(newquery.getResults());
-	    //{WD ajout du nouveau resultfilter
-	    query.setResultFilter(newquery.getResultFilter());
-	    //}
-	    query.setCount(new Integer(newquery.getCount()).intValue());
-	    query.setCountTotalResults(new Boolean(newquery.countTotalResults).booleanValue());
-	    query.orderingMap = newquery.orderingMap == null ? null : new ArrayList<OrderKey>(newquery.orderingMap);
-	    ApplicationView.getApplication().switchView(ApplicationView.OCCURRENCES, true);
+		query.setResults(newquery.getResults());
+		//{WD ajout du nouveau resultfilter
+		query.setResultFilter(newquery.getResultFilter());
+		//}
+		query.setCount(new Integer(newquery.getCount()).intValue());
+		query.setCountTotalResults(new Boolean(newquery.countTotalResults).booleanValue());
+		query.orderingMap = newquery.orderingMap == null ? null : new ArrayList<OrderKey>(newquery.orderingMap);
+		ApplicationView.getApplication().switchView(ApplicationView.OCCURRENCES, true);
 		String activeView = activeViewInfo.getName();
-	    if (!activeView.equals(MAP) && !activeView.equals(LIST)) {
+		if (!activeView.equals(MAP) && !activeView.equals(LIST)) {
 			switchView(DEFAULT_VIEW, false);
 		}
-	    setFieldsValue(propertyMap);
+		setFieldsValue(propertyMap);
 		//addErrorQuery();
 		//addSharedSearchToQuery();
 		GWT.log(query.getBaseFilters() + "");
@@ -2318,5 +2324,5 @@ public class OccurrenceView extends ComponentView implements
 		MapView mapView = (MapView)mapViewInfo.getView();
 		mapView.loadKmlLayer(selectedItems, search);
 	}
-	
+
 }

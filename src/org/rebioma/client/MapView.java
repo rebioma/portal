@@ -15,9 +15,6 @@
  */
 package org.rebioma.client;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,8 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.activation.URLDataSource;
 
 import org.rebioma.client.DataPager.PageListener;
 import org.rebioma.client.DetailView.FieldConstants;
@@ -58,6 +53,7 @@ import org.rebioma.client.maps.TileLayerSelector.TileLayerCallback;
 import org.rebioma.client.services.MapGisService;
 import org.rebioma.client.services.MapGisServiceAsync;
 
+import com.google.gwt.ajaxloader.client.ArrayHelper;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.JsArray;
@@ -74,6 +70,11 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapTypeId;
@@ -92,6 +93,7 @@ import com.google.gwt.maps.client.overlays.InfoWindow;
 import com.google.gwt.maps.client.overlays.InfoWindowOptions;
 import com.google.gwt.maps.client.overlays.Marker;
 import com.google.gwt.maps.client.overlays.Polygon;
+import com.google.gwt.maps.client.overlays.PolygonOptions;
 import com.google.gwt.maps.client.services.GeocoderRequestHandler;
 import com.google.gwt.maps.client.services.GeocoderStatus;
 import com.google.gwt.user.client.Command;
@@ -133,7 +135,7 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 public class MapView extends ComponentView implements CheckedSelectionListener,
 DataRequestListener, PageClickListener, PageListener<Occurrence>,
 TileLayerCallback, ItemSelectionListener, SelectionHandler<Widget>, OccurrencePageSizeChangeHandler, 
-GeocoderRequestHandler,	MapDrawingControlListener {
+GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 
 
 	/**
@@ -486,7 +488,7 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 				}
 				next.setVisible((start + count) >= (start + limit));
 				previous.setVisible(start >= 10);
-				next.setVisible(start + 10 <= count);
+				next.setVisible(start + 10 < count);
 			} else {
 
 			}
@@ -783,6 +785,7 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 	private int currentSelectedTab = 0;
 	private Widget currentTab = null;
 	private ToolBar toolHp;
+	TabPanel modelTab;
 	/**
 	 * Creates a new map view. The map view is intended to be part of a composite
 	 * view which displays a page of occurrences on a map or in a list.
@@ -833,12 +836,12 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 		ScrollPanel mrspanel = new ScrollPanel(markerList);
 		ScrollPanel mdspanel = new ScrollPanel(modelSearch);
 		
-		TabPanel modelTab = new TabPanel(GWT.<TabPanelAppearance> create(GrayTabPanelBottomAppearance.class));
+		modelTab = new TabPanel(GWT.<TabPanelAppearance> create(GrayTabPanelBottomAppearance.class));
 		modelTab.addStyleName("d-text");
 		modelTab.setBodyBorder(false);
 		modelTab.setBorders(false);
 		modelTab.getElement().getStyle().setBackgroundColor("white");
-		TabItemConfig dateModel = new TabItemConfig("Last update : " + getUpdateDate());
+		TabItemConfig dateModel = new TabItemConfig("__");
 		modelTab.add(mdspanel, dateModel); 
 		modelTab.setHeight(modelTab.getOffsetHeight()-10);
 		//    mrspanel.add(markerList);
@@ -847,7 +850,7 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 		currentTab = mrspanel;
 		leftTab.add(mrspanel, markerTb);
 		leftTab.add(modelTab, modelTb); // Add Model Tab
-		
+		setDateModel("String dmggfd");
 		//init model affichage
 		String modelSearchTerm = historyState.getHistoryParameters(
 				UrlParam.M_SEARCH).toString();
@@ -948,27 +951,61 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 			public void execute() {
 				resize(Window.getClientWidth(), Window.getClientHeight());
 				isInitializing = false;
+				getUpdateDate();
 				forceLayout();
 			}
 
 		});
 	}
-	
-	private String getUpdateDate() {
-		String line = "";
+
+	private void setDateModel(String dm) {
+		Widget w = modelTab.getActiveWidget();
+		if(w != null) {
+			TabItemConfig config = modelTab.getConfig(w);
+			if(dm==null) config.setText("");
+			else {
+				config.setText("last update : " + dm);
+			}
+			modelTab.update(w, config);
+		}
+	}
+		
+	@Override
+	public void onSuccess(String line) {
 		try {
-			URLDataSource source = new URLDataSource(
-					new URL(GWT.getHostPageBaseURL() + "ModelOutput/update.txt"));
-			BufferedReader stream = new BufferedReader(new InputStreamReader(
-					source.getInputStream()));
-			line = stream.readLine();
 			Date date = DateTimeFormat.getFormat("d/M/yyyy").parse(line);
 			line = DateTimeFormat.getFormat("d MMM. yyyy").format(date);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return line;
+			
+		} catch (Exception e){}
+		setDateModel(line);
+	}
+	
+	@Override
+	public void onFailure(Throwable arg0) {
+		
+	}
+	
+	private void getUpdateDate() {
+		mapGisService.getMUpdate(GWT.getHostPageBaseURL(), this);
+
+//		try {
+//			new RequestBuilder(RequestBuilder.GET, "ModelOutput/update.txt").sendRequest("", new RequestCallback() {
+//				  @Override
+//				  public void onResponseReceived(Request req, Response resp) {
+//				    line = resp.getText();
+//				    // do stuff with the text
+//				  }
+//
+//				  @Override
+//				  public void onError(Request res, Throwable throwable) {
+//				    // handle errors
+//				  }
+//				});
+//		} catch (RequestException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
 	}
 
 	public MapWidget getMapWidget() {
@@ -1412,6 +1449,143 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 		}
 
 	}
+	
+	private LatLng[] marineLatLng() {
+		LatLng[] a = new LatLng[60];
+		
+		a[0] = LatLng.newInstance(-24.821639,47.101136);
+		a[1] = LatLng.newInstance(-25.065697,46.518860);
+		a[2] = LatLng.newInstance(-25.234758,46.051941);
+		a[3] = LatLng.newInstance(-25.497827,45.634461);
+		a[4] = LatLng.newInstance(-25.547397,45.208740);
+		a[5] = LatLng.newInstance(-25.284438,44.714355);
+		a[6] = LatLng.newInstance(-25.110472,44.266663);
+		a[7] = LatLng.newInstance(-24.961160,44.093628);
+		a[8] = LatLng.newInstance(-24.612064,43.972779);
+		a[9] = LatLng.newInstance(-24.352101,43.720093);
+		a[10] = LatLng.newInstance(-23.503552,43.807983);
+		a[11] = LatLng.newInstance(-23.322080,43.769531);
+		a[12] = LatLng.newInstance(-22.907803,43.500366);
+		a[13] = LatLng.newInstance(-22.593726,43.341065);
+		a[14] = LatLng.newInstance(-22.100909,43.352051);
+		a[15] = LatLng.newInstance(-21.672743,43.500366);
+		a[16] = LatLng.newInstance(-21.361013,43.549805);
+		a[17] = LatLng.newInstance(-21.243303,43.862915);
+		a[18] = LatLng.newInstance(-20.843412,43.983764);
+		a[19] = LatLng.newInstance(-20.014645,44.555053);
+		a[20] = LatLng.newInstance(-19.777043,44.467163);
+		a[21] = LatLng.newInstance(-19.445874,44.538574);
+		a[22] = LatLng.newInstance(-19.067310,44.302368);
+		a[23] = LatLng.newInstance(-18.823117,44.318847);
+		a[24] = LatLng.newInstance(-18.396230,44.088134);
+		a[25] = LatLng.newInstance(-18.004856,44.071656);
+		a[26] = LatLng.newInstance(-17.748687,44.085388);
+		a[27] = LatLng.newInstance(-17.488221,43.975525);
+		a[28] = LatLng.newInstance(-16.636192,44.497376);
+		a[29] = LatLng.newInstance(-16.301688,44.501495);
+		a[30] = LatLng.newInstance(-16.212038,45.271911);
+		a[31] = LatLng.newInstance(-16.035255,46.485901);
+		a[32] = LatLng.newInstance(-15.482799,47.210999);
+		a[33] = LatLng.newInstance(-15.149020,47.614746);
+		a[34] = LatLng.newInstance(-14.743011,48.034973);
+		a[35] = LatLng.newInstance(-14.277692,48.084412);
+		a[36] = LatLng.newInstance(-13.928736,48.180542);
+		a[37] = LatLng.newInstance(-13.800741,48.386536);
+		a[38] = LatLng.newInstance(-13.459080,48.820496);
+		a[39] = LatLng.newInstance(-13.068777,48.935852);
+		a[40] = LatLng.newInstance(-12.771625,48.988037);
+		a[41] = LatLng.newInstance(-12.517028,49.029236);
+		a[42] = LatLng.newInstance(-12.366831,49.202270);
+		a[43] = LatLng.newInstance(-12.736801,49.537353);
+		a[44] = LatLng.newInstance(-12.957580,49.794159);
+		a[45] = LatLng.newInstance(-13.285392,49.891662);
+		a[46] = LatLng.newInstance(-13.982046,50.092163);
+		a[47] = LatLng.newInstance(-14.626109,50.136109);
+		a[48] = LatLng.newInstance(-15.331870,50.405273);
+		a[49] = LatLng.newInstance(-15.874168,50.141602);
+		a[50] = LatLng.newInstance(-15.371599,49.883423);
+		a[51] = LatLng.newInstance(-15.416615,49.627991);
+		a[52] = LatLng.newInstance(-15.660065,49.570312);
+		a[53] = LatLng.newInstance(-16.507199,49.740601);
+		a[54] = LatLng.newInstance(-17.363746,49.369812);
+		a[55] = LatLng.newInstance(-17.719910,49.438477);
+		a[56] = LatLng.newInstance(-18.140632,49.309387);
+		a[57] = LatLng.newInstance(-19.804983,48.729859);
+		a[58] = LatLng.newInstance(-21.490058,48.202515);
+		a[59] = LatLng.newInstance(-24.819146,47.098389);
+
+		return a;
+	}
+	
+	private LatLng[] terrestrialLatLng() {
+		LatLng[] a = new LatLng[47];
+		a[0] = LatLng.newInstance(-17.977411,49.553833);
+		a[1] = LatLng.newInstance(-25.107900,47.189026);
+		a[2] = LatLng.newInstance(-25.562265,45.703125);
+		a[3] = LatLng.newInstance(-25.641526,45.175781);
+		a[4] = LatLng.newInstance(-25.373810,44.692383);
+		a[5] = LatLng.newInstance(-25.344027,44.307861);
+		a[6] = LatLng.newInstance(-25.045792,43.989258);
+		a[7] = LatLng.newInstance(-24.676970,43.879395);
+		a[8] = LatLng.newInstance(-24.357105,43.648682);
+		a[9] = LatLng.newInstance(-23.563987,43.593750);
+		a[10] = LatLng.newInstance(-23.019076,43.374023);
+		a[11] = LatLng.newInstance(-22.030911,43.154297);
+		a[12] = LatLng.newInstance(-21.657428,43.330078);
+		a[13] = LatLng.newInstance(-21.268900,43.494873);
+		a[14] = LatLng.newInstance(-21.217701,43.769531);
+		a[15] = LatLng.newInstance(-20.756114,43.901367);
+		a[16] = LatLng.newInstance(-19.951405,44.450683);
+		a[17] = LatLng.newInstance(-19.766704,44.346313);
+		a[18] = LatLng.newInstance(-19.435514,44.428711);
+		a[19] = LatLng.newInstance(-19.051734,44.176025);
+		a[20] = LatLng.newInstance(-18.791918,44.208984);
+		a[21] = LatLng.newInstance(-18.375379,43.978271);
+		a[22] = LatLng.newInstance(-17.748687,43.978271);
+		a[23] = LatLng.newInstance(-17.476432,43.879395);
+		a[24] = LatLng.newInstance(-16.627639,44.411545);
+		a[25] = LatLng.newInstance(-16.152028,44.375152);
+		a[26] = LatLng.newInstance(-16.183024,44.846191);
+		a[27] = LatLng.newInstance(-15.903226,45.225219);
+		a[28] = LatLng.newInstance(-15.421910,46.538086);
+		a[29] = LatLng.newInstance(-14.689881,47.416992);
+		a[30] = LatLng.newInstance(-13.581921,47.776795);
+		a[31] = LatLng.newInstance(-13.154376,48.208008);
+		a[32] = LatLng.newInstance(-12.358783,48.672180);
+		a[33] = LatLng.newInstance(-11.872726,49.262695);
+		a[34] = LatLng.newInstance(-13.052723,50.020752);
+		a[35] = LatLng.newInstance(-15.268288,50.520630);
+		a[36] = LatLng.newInstance(-15.725770,50.419006);
+		a[37] = LatLng.newInstance(-16.045814,50.202027);
+		a[38] = LatLng.newInstance(-15.876809,49.976806);
+		a[39] = LatLng.newInstance(-15.665222,49.910889);
+		a[40] = LatLng.newInstance(-15.543668,49.806519);
+		a[41] = LatLng.newInstance(-15.591293,49.652710);
+		a[42] = LatLng.newInstance(-15.910895,49.768067);
+		a[43] = LatLng.newInstance(-16.086531,49.748841);
+		a[44] = LatLng.newInstance(-16.230498,49.905396);
+		a[45] = LatLng.newInstance(-16.736167,50.064697);
+		a[46] = LatLng.newInstance(-17.164223,49.839477);
+		return a;
+	}
+	
+	private void drawPolygon(LatLng a[]) {
+		
+	    JsArray<LatLng> paths = ArrayHelper.toJsArray(a);
+
+	    PolygonOptions pOpts = PolygonOptions.newInstance();
+	    pOpts.setFillColor("#0000FF");
+	    pOpts.setStrokeColor("FFFFFF");
+	    pOpts.setFillOpacity(0.0);
+	    pOpts.setStrokeOpacity(0.9d);
+	    pOpts.setStrokeWeight(1);
+	    pOpts.setPaths(paths);
+	    pOpts.setMap(map);
+	    @SuppressWarnings("unused")
+	    Polygon polygon = Polygon.newInstance(pOpts);
+	    
+//	    mapPanel.add(map);
+	}
 
 	private void initMap() {
 		MapOptions mapOptions = MapOptions.newInstance();
@@ -1432,6 +1606,10 @@ GeocoderRequestHandler,	MapDrawingControlListener {
 		map.setWidth("100%");
 		map.setHeight("100%");
 		final MapView mapView = this;
+		
+//		drawPolygon(marineLatLng());
+//		drawPolygon(terrestrialLatLng());
+		
 		// map.addControl(getModelControl());
 		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 			@Override

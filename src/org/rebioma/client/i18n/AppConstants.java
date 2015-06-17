@@ -1125,6 +1125,15 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   String InvalidTaxonomicClassification();
 
   /**
+   * Translated "Coordinate".
+   * 
+   * @return translated "Coordinate"
+   */
+  @DefaultStringValue("Coordinate")
+  @Key("WrongCoordinate")
+  String WrongCoordinate();
+
+  /**
    * Translated "Year Collected".
    * 
    * @return translated "Year Collected"

@@ -1605,6 +1605,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 				if(noAssignation = occ.getOwner().equals(taxonomicReviewer.getUserId())) {
 					session.saveOrUpdate(new RecordReview(taxonomicReviewer.getUserId(), occ.getId(),
 							true, date));
+					break;
 				}
 			}
 	  }
@@ -1622,9 +1623,10 @@ public class OccurrenceDbImpl implements OccurrenceDb {
       if (isTaxonomicMatch(attributeValue, occ) && checkAcceptedspeciesLocation(taxonomicReviewer, occ.getAcceptedSpecies())) {
         RecordReview recordReview = new RecordReview(taxonomicReviewer.getUserId(), occ.getId(),
             null);
-        if(session==null)
+        // à verifier car il y a une pb de commit
+//        if(session==null)
         	recordReviewDb.save(recordReview);
-        else recordReviewDb.save(recordReview, session);
+//        else recordReviewDb.save(recordReview, session);
       }
     }
   }

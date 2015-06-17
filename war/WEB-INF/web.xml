@@ -7,11 +7,11 @@
   
 	<context-param>
 		<param-name>pathShape</param-name>
-		<param-value>C:\\Users\\vahatra\\Downloads\\Region\\hafa\\</param-value>
+		<param-value>D:\\Users\\Travail\\Data\\Shape_fil\\dissolve_mnp_dd</param-value>
 	</context-param>
 	<context-param>
 		<param-name>pathShp2pgsql</param-name>
-		<param-value>C:\\Program Files (x86)\\PostgreSQL\\9.0\\bin\\shp2pgsql -W LATIN1 -s 29702  </param-value>
+		<param-value>C:\\Program Files (x86)\\PostgreSQL\\9.1\\bin\\shp2pgsql -W LATIN1 -I -d -s 29702:4326</param-value>
 	</context-param>
 	
 	<context-param>

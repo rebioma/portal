@@ -105,7 +105,7 @@ public class FileValidationServiceImpl implements FileValidationService {
 //    }
     
 //    /*
-	String fileLocation = "D:\\Users\\Travail\\util\\Assignation TRB(Totondrabesa).csv";
+	String fileLocation = "E:\\assign.txt";
 	char delimiter = ',';
 	boolean isClearOldAssignments = false;
 //	*/

@@ -1154,12 +1154,11 @@ text-decoration: none;
   overflow: hidden;
 }
 
-
 .Table-TableWidget .table .row .col-validation-error {
   font-size: 14px;
   padding-left: 0px;
   padding-right: 0px;
-  min-width:150px;
+  min-width: 150px;
 }
 
 .text {

@@ -2,6 +2,7 @@ package org.rebioma.server.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -9,8 +10,6 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.ibm.icu.text.SimpleDateFormat;
 
 public class RevalidationFileUtil {
  private static Properties revalidationProperties = null;

@@ -44,4 +44,6 @@ public interface MapGisService  extends RemoteService {
 	 */
 	List<String> listAreaAdmin();
 	
+	String getMUpdate(String url);
+	
 }

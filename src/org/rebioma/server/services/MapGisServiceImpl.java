@@ -1,14 +1,19 @@
 package org.rebioma.server.services;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.activation.URLDataSource;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -27,13 +32,13 @@ import org.rebioma.server.util.ManagedSession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class MapGisServiceImpl extends RemoteServiceServlet implements
-		MapGisService {
+MapGisService {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1166479109921202488L;
-	
+
 	private ShapeFileService shapeFileService = ShapeFileServiceImpl.getInstance();
 
 	@Override
@@ -73,31 +78,31 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 				StringBuilder sqlBuilder = new StringBuilder();
 				String table = shapeFile.getTableName().toLowerCase().equals("protected_areas")?
 						", dataadmin as \"group\" FROM " + shapeFile.getTableName() : ", cast('--' as character varying(4)) as \"group\" FROM " + shapeFile.getTableName();
-				sqlBuilder.append("SELECT ")
-							.append(shapeFile.getNomChampGid()).append(" as ").append("gid, ")
-							.append(shapeFile.getNomChampLibelle()).append(" as ").append("name ")
-							.append(table)
-							.append(" ORDER BY ").append(shapeFile.getNomChampLibelle());
-				System.out.println(sqlBuilder);
-				SQLQuery sqlQuery = sess.createSQLQuery(sqlBuilder.toString());
-				sqlQuery.addScalar("gid");
-				sqlQuery.addScalar("name");
-				sqlQuery.addScalar("group");
-				sqlQuery.setResultTransformer(Transformers
-						.aliasToBean(KmlDbRow.class));
-				List<KmlDbRow> kmlDbRows = sqlQuery.list();
-				// recuperer les lignes d'un fichier shape
-				for (KmlDbRow row : kmlDbRows) {
-					ShapeFileInfo info = new ShapeFileInfo();
-					info.setGid(row.getGid());
-					info.setLibelle(row.getName());
-					info.setTableName(shapeFile.getTableName());
-					info.setNomChampGeometrique(shapeFile.getNomChampGeometrique());
-					info.setNomChampGid(shapeFile.getNomChampGid());
-					info.setNomChampLibelle(shapeFile.getNomChampLibelle());
-					info.setGroup(row.getGroup());
-					infos.add(info);
-				}
+						sqlBuilder.append("SELECT ")
+						.append(shapeFile.getNomChampGid()).append(" as ").append("gid, ")
+						.append(shapeFile.getNomChampLibelle()).append(" as ").append("name ")
+						.append(table)
+						.append(" ORDER BY ").append(shapeFile.getNomChampLibelle());
+						System.out.println(sqlBuilder);
+						SQLQuery sqlQuery = sess.createSQLQuery(sqlBuilder.toString());
+						sqlQuery.addScalar("gid");
+						sqlQuery.addScalar("name");
+						sqlQuery.addScalar("group");
+						sqlQuery.setResultTransformer(Transformers
+								.aliasToBean(KmlDbRow.class));
+						List<KmlDbRow> kmlDbRows = sqlQuery.list();
+						// recuperer les lignes d'un fichier shape
+						for (KmlDbRow row : kmlDbRows) {
+							ShapeFileInfo info = new ShapeFileInfo();
+							info.setGid(row.getGid());
+							info.setLibelle(row.getName());
+							info.setTableName(shapeFile.getTableName());
+							info.setNomChampGeometrique(shapeFile.getNomChampGeometrique());
+							info.setNomChampGid(shapeFile.getNomChampGid());
+							info.setNomChampLibelle(shapeFile.getNomChampLibelle());
+							info.setGroup(row.getGroup());
+							infos.add(info);
+						}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -140,7 +145,7 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 				sqlWhereBuilder.append(" OR ");
 			}
 			sqlWhereBuilder.append(" ST_Within(").append("o.geom,")
-					.append(tableName).append(".").append(tableInfo.getNomChampGeometrique()).append(")='t' ");
+			.append(tableName).append(".").append(tableInfo.getNomChampGeometrique()).append(")='t' ");
 			// gidsParamMap.put(paramName, gids);
 			index++;
 		}
@@ -221,7 +226,7 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 
 					// session.createSQLQuery("SET CLIENT_ENCODING TO LATIN1 ").executeUpdate();
 					session.createSQLQuery("DROP TABLE  IF EXISTS " + filename)
-							.executeUpdate();
+					.executeUpdate();
 					session.createSQLQuery(
 							"DELETE FROM info_shape WHERE shapetable='"
 									+ filename + "'").executeUpdate();
@@ -231,7 +236,7 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 					session.createSQLQuery(sql).executeUpdate();
 					session.createSQLQuery(
 							"CREATE INDEX idx_" + filename + " ON " + filename
-									+ " USING GIST(geom)").executeUpdate();
+							+ " USING GIST(geom)").executeUpdate();
 
 					ManagedSession.commitTransaction(session);
 					// tx.commit();
@@ -268,14 +273,29 @@ public class MapGisServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public List<String> listAreaAdmin() {
-		
+
 		List<String> admins = new ArrayList<String>();
 		Session sess = HibernateUtil.getSessionFactory().openSession();
 		SQLQuery sqlQuery = sess
 				.createSQLQuery("SELECT distinct dataadmin from protected_areas order by dataadmin");
 		admins = sqlQuery.list();
-		
+
 		return admins;
+	}
+
+	@Override
+	public String getMUpdate(String url) {
+		try {
+			URLDataSource source = new URLDataSource(
+					new URL(url + "ModelOutput/update.txt"));
+			BufferedReader stream = new BufferedReader(new InputStreamReader(
+					source.getInputStream()));
+			return stream.readLine();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

@@ -23,4 +23,6 @@ public interface MapGisServiceAsync {
 
 	void listAreaAdmin(AsyncCallback<List<String>> callback);
 
+	void getMUpdate(String url, AsyncCallback<String> callback);
+
 }

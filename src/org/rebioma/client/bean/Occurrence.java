@@ -170,6 +170,10 @@ public class Occurrence implements java.io.Serializable {
 	private Boolean reviewed;
 
 	private Boolean stability;
+	
+	private String accessRights;
+	private String license;
+	private String references;
 
 	public Occurrence() {
 	}
@@ -1441,6 +1445,30 @@ public class Occurrence implements java.io.Serializable {
 
 	public void setNoAssignation(Boolean noAssignation) {
 		this.noAssignation = noAssignation;
+	}
+
+	public String getAccessRights() {
+		return accessRights;
+	}
+
+	public void setAccessRights(String accessRights) {
+		this.accessRights = accessRights;
+	}
+
+	public String getLicense() {
+		return license;
+	}
+
+	public void setLicense(String license) {
+		this.license = license;
+	}
+
+	public String getReferences() {
+		return references;
+	}
+
+	public void setReferences(String references) {
+		this.references = references;
 	}
 
 	@Override

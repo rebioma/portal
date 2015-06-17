@@ -467,5 +467,14 @@
         <property name="noAssignation" type="java.lang.Boolean">
             <column name="noAssignation" />
         </property>
+        <property name="accessRights" type="string">
+            <column name="accessRights" />
+        </property>
+        <property name="license" type="string">
+            <column name="license" />
+        </property>
+        <property name="references" type="string">
+            <column name='"references"' />
+        </property>
     </class>
 </hibernate-mapping>
