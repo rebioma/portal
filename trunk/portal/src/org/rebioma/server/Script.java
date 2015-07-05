@@ -14,7 +14,7 @@ public class Script {
       "institutionCode", "collectionCode", "catalogNumber", "scientificName",
       "globalUniqueIdentifier", "informationWithheld", "remarks",
       "higherTaxon", "kingdom", "phylum", "class_", "order", "family",
-      "infraspecificRank", "infraspecificEpithet",
+      "taxonRank"/*"infraspecificRank"*/, "infraspecificEpithet",
       "authorYearOfScientificName", "nomenclaturalCode",
       "identificationQualifer", "higherGeography", "continent", "waterBody",
       "islandGroup", "island", "country", "stateProvince", "county",

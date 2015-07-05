@@ -2735,11 +2735,11 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		});
 		coreItems.addFieldEditorItem(new FieldEditor(
 				FieldConstants.INFRASPECIFIC_RANK,
-				toNoNullString(currentOccurrence.getInfraspecificRank())) {
+				toNoNullString(currentOccurrence.getTaxonRank())) {
 
 			public void onOccurrenceUpdated() {
 				String value = input.getText();
-				currentOccurrence.setInfraspecificRank(value);
+				currentOccurrence.setTaxonRank(value);
 			}
 		});
 		coreItems.addFieldEditorItem(new FieldEditor(
@@ -2943,20 +2943,20 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		});
 		coreItems.addFieldEditorItem(new FieldEditor(
 				FieldConstants.MONTH_COLLECTED,
-				toNoNullString(currentOccurrence.getMonthCollected())) {
+				toNoNullString(currentOccurrence.getMonth())) {
 
 			public void onOccurrenceUpdated() {
 				String value = input.getText();
-				currentOccurrence.setMonthCollected(value);
+				currentOccurrence.setMonth(value);
 			}
 		});
 		coreItems.addFieldEditorItem(new FieldEditor(
 				FieldConstants.DAY_COLLECTED, toNoNullString(currentOccurrence
-						.getDayCollected())) {
+						.getDay())) {
 
 			public void onOccurrenceUpdated() {
 				String value = input.getText();
-				currentOccurrence.setDayCollected(value);
+				currentOccurrence.setDay(value);
 			}
 		});
 		coreItems.addFieldEditorItem(new FieldEditor(FieldConstants.COLLECTOR,
@@ -3534,11 +3534,11 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		});
 		geoItems.addFieldEditorItem(new FieldEditor(
 				FieldConstants.FOOTPRINT_WKT, toNoNullString(currentOccurrence
-						.getFootprintWkt())) {
+						.getFootprintWKT())) {
 
 			public void onOccurrenceUpdated() {
 				String value = input.getText();
-				currentOccurrence.setFootprintWkt(value);
+				currentOccurrence.setFootprintWKT(value);
 			}
 		});
 		geoItems.addFieldEditorItem(new FieldEditor(
@@ -3716,11 +3716,11 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		});
 		requiredItems.addFieldEditorItem(new FieldEditor(
 				FieldConstants.YEAR_COLLECTED, toNoNullString(currentOccurrence
-						.getYearCollected())) {
+						.getYear())) {
 
 			public void onOccurrenceUpdated() {
 				String value = input.getText();
-				currentOccurrence.setYearCollected(value);
+				currentOccurrence.setYear(value);
 			}
 		});
 		requiredItems.addFieldEditorItem(new FieldEditor(FieldConstants.GENUS,

@@ -202,7 +202,7 @@ RevalidationService, Revalidation {
 			String genus = occurrence.getGenus();
 			String se = occurrence.getSpecificEpithet();
 			String nc = occurrence.getNomenclaturalCode();
-			String ir = occurrence.getInfraspecificRank();
+			String ir = occurrence.getTaxonRank();
 			String ie = occurrence.getInfraspecificEpithet();
 			Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 			 * ie
@@ -263,7 +263,7 @@ RevalidationService, Revalidation {
 			String genus = occurrence.getGenus();
 			String se = occurrence.getSpecificEpithet();
 			String nc = occurrence.getNomenclaturalCode();
-			String ir = occurrence.getInfraspecificRank();
+			String ir = occurrence.getTaxonRank();
 			String ie = occurrence.getInfraspecificEpithet();
 			Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 			 * ie
@@ -352,7 +352,7 @@ RevalidationService, Revalidation {
 				String genus = occurrence.getGenus();
 				String se = occurrence.getSpecificEpithet();
 				String nc = occurrence.getNomenclaturalCode();
-				String ir = occurrence.getInfraspecificRank();
+				String ir = occurrence.getTaxonRank();
 				String ie = occurrence.getInfraspecificEpithet();
 				Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 				 * ie
@@ -377,7 +377,7 @@ RevalidationService, Revalidation {
 				String genus = occurrence.getGenus();
 				String se = occurrence.getSpecificEpithet();
 				String nc = occurrence.getNomenclaturalCode();
-				String ir = occurrence.getInfraspecificRank();
+				String ir = occurrence.getTaxonRank();
 				String ie = occurrence.getInfraspecificEpithet();
 				Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /*
 				 * ie
@@ -785,7 +785,7 @@ RevalidationService, Revalidation {
 						String genus = o.getGenus();
 						String se = o.getSpecificEpithet();
 						String nc = o.getNomenclaturalCode();
-						String ir = o.getInfraspecificRank();
+						String ir = o.getTaxonRank();
 						String ie = o.getInfraspecificEpithet();
 						Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc);
 						String oComment = c.getNotes();

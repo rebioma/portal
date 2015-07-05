@@ -39,13 +39,13 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			groupColonne=colonne;
 			break;
 		case 4:
-			colonne=" cast(yearcollected as int)/10 * 10 || ' ~ ' || " +
+			colonne=" cast(year as int)/10 * 10 || ' ~ ' || " +
 					"case " +
-					"	when cast(max(yearcollected)as int)/10 = cast(extract(year from current_date)as int)/10 " +
+					"	when cast(max(year)as int)/10 = cast(extract(year from current_date)as int)/10 " +
 					"	then date_part('year', current_date) || '' " +
-					"	else cast(yearcollected as int)/10 * 10 + 9 || '' " +
+					"	else cast(year as int)/10 * 10 + 9 || '' " +
 					"end  ";
-			groupColonne=" cast(yearcollected as int)/10 ";
+			groupColonne=" cast(year as int)/10 ";
 			break;
 		default:
 			break;
@@ -236,7 +236,7 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			colonne=" collectioncode ";
 			break;
 		case 4:
-			colonne=" yearcollected ";
+			colonne=" year ";
 			break;
 		default:
 			break;

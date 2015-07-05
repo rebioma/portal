@@ -204,7 +204,7 @@ public class AscDataUtil {
    * @throws AscDataServiceException
    */
   public static void setLayerValuesToOccurrence(Occurrence occurrence) {
-    String year = occurrence.getYearCollected();
+    String year = occurrence.getYear();
     Integer intYear = null;
     try {
       intYear = Integer.parseInt(year);
@@ -342,7 +342,7 @@ public class AscDataUtil {
       Occurrence occurrence = new Occurrence();
       occurrence.setDecimalLatitude(lat + "");
       occurrence.setDecimalLongitude(lng + "");
-      occurrence.setYearCollected(year + "");
+      occurrence.setYear(year + "");
       occurrences.add(occurrence);
     }
     return occurrences;

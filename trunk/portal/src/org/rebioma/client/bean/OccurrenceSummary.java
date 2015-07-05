@@ -345,7 +345,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
         occurrence.getAttributes(),
         occurrence.getVerbatimCollectingDate(), 
         occurrence.getVerbatimElevation(),
-        occurrence.getYearCollected(),
+        occurrence.getYear(),
         occurrence.getRelatedInformation()
         
     };

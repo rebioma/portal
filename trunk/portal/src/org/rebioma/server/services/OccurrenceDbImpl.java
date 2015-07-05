@@ -173,8 +173,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         property = "dateIdentified";
       } else if (property.equalsIgnoreCase("dateLastModified")) {
         property = "dateLastModified";
-      } else if (property.equalsIgnoreCase("dayCollected")) {
-        property = "dayCollected";
+      } else if (property.equalsIgnoreCase("day"/*"dayCollected"*/)) {
+        property = "day"/*"dayCollected"*/;
       } else if (property.equalsIgnoreCase("dayOfYear")) {
         property = "dayOfYear";
       } else if (property.equalsIgnoreCase("decimalLatitude")) {
@@ -227,8 +227,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         property = "informationWithheld";
       } else if (property.equalsIgnoreCase("infraspecificEpithet")) {
         property = "infraspecificEpithet";
-      } else if (property.equalsIgnoreCase("infraspecificRank")) {
-        property = "infraspecificRank";
+      } else if (property.equalsIgnoreCase("taxonRank"/*"infraspecificRank"*/)) {
+        property = "taxonRank"/*"infraspecificRank"*/;
       } else if (property.equalsIgnoreCase("institutionCode")) {
         property = "institutionCode";
       } else if (property.equalsIgnoreCase("islandGroup")) {
@@ -249,8 +249,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         property = "minimumDepthInMeters";
       } else if (property.equalsIgnoreCase("maximumElevationInMeters")) {
         property = "maximumElevationInMeters";
-      } else if (property.equalsIgnoreCase("monthCollected")) {
-        property = "monthCollected";
+      } else if (property.equalsIgnoreCase("month"/*"monthCollected"*/)) {
+        property = "month"/*"monthCollected"*/;
       } else if (property.equalsIgnoreCase("nomenclaturalCode")) {
         property = "nomenclaturalCode";
       } else if (property.equalsIgnoreCase("order")) {
@@ -303,8 +303,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         property = "verbatimSpecies";
       } else if (property.equalsIgnoreCase("waterBody")) {
         property = "waterBody";
-      } else if (property.equalsIgnoreCase("yearCollected")) {
-        property = "yearCollected";
+      } else if (property.equalsIgnoreCase("year"/*"yearCollected"*/)) {
+        property = "year"/*"yearCollected"*/;
       } else if (property.equalsIgnoreCase("Locality")) {
         property = "locality";
       } else if (property.equalsIgnoreCase("County")) {

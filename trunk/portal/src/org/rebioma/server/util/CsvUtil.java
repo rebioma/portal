@@ -45,7 +45,7 @@ public class CsvUtil {
   private static final String[] REQUIRED_HEADER_COLUMNS = {
       "CoordinateUncertaintyInMeters", "DecimalLatitude", "DecimalLongitude",
       "Genus", "GeodeticDatum", "NomenclaturalCode", "SpecificEpithet",
-      "YearCollected" };
+      "Year" };
 
   /**
    * The complete list of valid CSV header column names from darwin core, the
