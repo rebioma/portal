@@ -242,7 +242,7 @@ public class LayerInfoPopup extends DialogBox {
             + occurrence.getDecimalLatitude() + ", "
             + occurrence.getDecimalLongitude() + "<br>";
     String yearCollected = constants.YearCollected() + " "
-            + occurrence.getYearCollected();
+            + occurrence.getYear();
     setHTML(tittle + cord + yearCollected);
     super.setAutoHideEnabled(false);
     layersValues.clear();

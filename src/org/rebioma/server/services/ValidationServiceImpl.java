@@ -314,10 +314,10 @@ public class ValidationServiceImpl implements ValidationService {
 		isError = false;
 		Integer yearCollected;
 		try {
-			yearCollected = Integer.parseInt(occurrence.getYearCollected());
+			yearCollected = Integer.parseInt(occurrence.getYear());
 		} catch (Exception e) {
 			yearCollected = null;
-			occurrence.setYearCollected(null);
+			occurrence.setYear(null);
 		}
 		if (yearCollected == null) {
 			isError = true;
@@ -465,10 +465,21 @@ public class ValidationServiceImpl implements ValidationService {
 		String genus = occurrence.getGenus();
 		String se = occurrence.getSpecificEpithet();
 		String nc = occurrence.getNomenclaturalCode();
-		String ir = occurrence.getInfraspecificRank();
+		String tr = occurrence.getTaxonRank();
 		String ie = occurrence.getInfraspecificEpithet();
+		
+		/* removing taxonRank if species or genus
+		 * changing suspecies to subsp.
+		 * */
+		if(tr!=null){
+			tr = tr.toLowerCase().trim();
+			if(tr.equals("genus") || tr.equals("species"))
+				tr = "";
+			if(tr.equals("subspecies")  || tr.equals("sspp."))
+				tr = "subsp.";
+		}
 
-		Classification c = taxonomicAuthority.classify(genus, se, ir, ie, nc); /* ie before nc */
+		Classification c = taxonomicAuthority.classify(genus, se, tr, ie, nc); /* ie before nc */
 		if (c != null) {
 			String ok = c.getValidation();  
 			if (ok.equals("OK")){	
@@ -567,19 +578,19 @@ public class ValidationServiceImpl implements ValidationService {
 			occurrence.setDayOfYear(null);
 		}
 		try {
-			Integer.parseInt(occurrence.getYearCollected());
+			Integer.parseInt(occurrence.getYear());
 		} catch (Exception e) {
-			occurrence.setYearCollected(null);
+			occurrence.setYear(null);
 		}
 		try {
-			Integer.parseInt(occurrence.getMonthCollected());
+			Integer.parseInt(occurrence.getMonth());
 		} catch (Exception e) {
-			occurrence.setMonthCollected(null);
+			occurrence.setMonth(null);
 		}
 		try {
-			Integer.parseInt(occurrence.getDayCollected());
+			Integer.parseInt(occurrence.getDay());
 		} catch (Exception e) {
-			occurrence.setDayCollected(null);
+			occurrence.setDay(null);
 		}
 		try {
 			Integer.parseInt(occurrence.getIndividualCount());
