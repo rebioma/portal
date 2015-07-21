@@ -287,7 +287,7 @@ MapGisService {
 	public String getMUpdate(String url) {
 		try {
 			URLDataSource source = new URLDataSource(
-					new URL(url + "ModelOutput/update.txt"));
+					new URL("http://localhost/ModelOutput"));
 			BufferedReader stream = new BufferedReader(new InputStreamReader(
 					source.getInputStream()));
 			return stream.readLine();

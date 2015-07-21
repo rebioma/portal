@@ -26,7 +26,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/mail.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/mailapi.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/opencsv-2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/pop3.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/postgresql-9.2-1002.jdbc4.jar"/>
