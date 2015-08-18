@@ -23,7 +23,7 @@ public class OccurrenceSearch {
 	private static OccurrenceSearch instance;
 	
 	private OccurrenceSearch(){
-		esNode = NodeBuilder.nodeBuilder().clusterName("elasticsearch_rebioma-dev").node();
+		esNode = NodeBuilder.nodeBuilder().clusterName(OccurrenceIndexation.REBIOMA_ES_CLUSTER_NAME).node();
 	}
 	
 	public void end(){
@@ -42,14 +42,14 @@ public class OccurrenceSearch {
 	
 	public SearchResponse doSearch(String text, int from, int size){
 		MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery(text)
-					.field("full_name", 4).field("accepted_biologic_path", 2).field("biologic_path")
+					.field("full_identity", 4).field("biologic_classification", 2).field("autre_nom")
 					.type(MultiMatchQueryBuilder.Type.CROSS_FIELDS);
 		QueryStringQueryBuilder queryStringQueryBuilder = QueryBuilders.queryStringQuery(/*"*" + */text + "*");
 		QueryBuilder disMaxQuery = QueryBuilders.disMaxQuery()
 					.add(multiMatchQueryBuilder)
 					.add(queryStringQueryBuilder);
-		SearchRequestBuilder requestBuilder = esNode.client().prepareSearch("rebioma-dev")
-				.setTypes("occurrence");//.setFrom(offset).setSize(pageSize);
+		SearchRequestBuilder requestBuilder = esNode.client().prepareSearch(OccurrenceIndexation.REBIOMA_ES_INDEX_NAME)
+				.setTypes(OccurrenceIndexation.REBIOMA_ES_OCCURRENCE_TYPE_NAME);//.setFrom(offset).setSize(pageSize);
 		requestBuilder.setFrom(from).setSize(size);
 		SearchResponse searchResponse = requestBuilder.setQuery(disMaxQuery)
 				.execute().actionGet();

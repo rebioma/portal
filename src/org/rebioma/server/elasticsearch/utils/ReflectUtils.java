@@ -25,8 +25,19 @@ public class ReflectUtils {
 	}
 	
 	public static Method getGetterMethod(Class<?> clazz, Field field) throws NoSuchMethodException, SecurityException{
-		String getterName = "get" + upperCaseFirstLetter(field.getName());
-		Method getter = clazz.getMethod(getterName);
+		
+		Method getter;
+		try{
+			String getterName = "get" + upperCaseFirstLetter(field.getName());
+			getter = clazz.getMethod(getterName);
+		}catch(NoSuchMethodException e){
+			if(Boolean.class.isAssignableFrom(field.getType())){
+				String getterName = "is" + upperCaseFirstLetter(field.getName());
+				getter = clazz.getMethod(getterName);
+			}else{
+				throw e;
+			}
+		}
 		Type[] parameterTypes = getter.getParameterTypes();
 		if(parameterTypes == null || parameterTypes.length == 0){
 			//un getter n'a pas de paramètre
