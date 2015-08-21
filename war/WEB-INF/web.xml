@@ -40,6 +40,12 @@
     </listener-class>
   </listener>
   
+  <listener>
+    <listener-class>
+      org.rebioma.server.inject.ElasticsearchListener
+    </listener-class>
+  </listener>
+  
   <servlet>
     <servlet-name>Mailing</servlet-name>
     <servlet-class>org.rebioma.server.services.MailingServiceImpl</servlet-class>
