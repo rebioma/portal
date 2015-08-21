@@ -24,8 +24,10 @@
 			"collectioncode":{"type": "string"},
 			"catalognumber":{"type": "string"},
 			"scientificname":{
-				"type": "string", 
-				"copy_to": "full_identity"},
+				"type": "string",
+				"analyzer": "standard_no_doublon",
+				"copy_to": "identity"
+			},
 			"globaluniqueidentifier":{"type": "string"},
 			"informationwithheld":{"type": "string"},
 			"remarks":{"type": "string"},
@@ -107,10 +109,16 @@
 			"georeferenceremarks":{"type": "string"},
 			"footprintwkt":{"type": "string"},
 			"footprintspatialfit":{"type": "string"},
-			"verbatimspecies":{"type": "string"},
+			"verbatimspecies":{
+				"type": "string",
+				"analyzer": "standard_no_doublon", 
+				"copy_to":"identity"
+			},
 			"acceptedspecies":{
-				"type": "string", 
-				"copy_to":"full_identity"},
+				"type": "string",
+				"analyzer": "standard_no_doublon", 
+				"copy_to":"identity"
+			},
 			"acceptednomenclaturalcode":{"type": "string"},
 			"acceptedkingdom":{
 				"type": "string", 
@@ -341,7 +349,23 @@
 			"relationshipofresource":{"type": "string"},
 			"relationshipaccordingto":{"type": "string"},
 			"relationshipestablisheddate":{"type": "string"},
-			"relationshipremarks":{"type": "string"}
+			"relationshipremarks":{"type": "string"},
+			"identity":{
+				"type": "string",
+				"analyzer": "standard_no_doublon",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
+			}
 		}
 	}
 }

@@ -18,7 +18,6 @@ package org.rebioma.server.services;
 import static org.hibernate.criterion.Example.create;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -36,18 +35,25 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import java_cup.internal_error;
-
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolFilterBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.OccurrenceQuery;
@@ -56,13 +62,13 @@ import org.rebioma.client.OrderKey;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.RecordReview;
-import org.rebioma.client.bean.Role;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
+import org.rebioma.server.elasticsearch.search.OccurrenceMapping;
+import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
 import org.rebioma.server.services.QueryFilter.Operator;
 import org.rebioma.server.upload.Traitement;
-import org.rebioma.server.util.HibernateUtil;
 import org.rebioma.server.util.ManagedSession;
 import org.rebioma.server.util.RecordReviewUtil;
 import org.rebioma.server.util.StringUtil;
@@ -79,7 +85,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
    * (column, operator, value). Provides methods for testing the filter
    * operation.
    */
-  protected static class OccurrenceFilter extends QueryFilter {
+  public static class OccurrenceFilter extends QueryFilter {
 
     public OccurrenceFilter(String filter) throws InvalidFilter {
       super(filter, Occurrence.class);
@@ -1362,6 +1368,106 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     }
     return message;
   }
+  
+  private QueryBuilder getEsQueriesAndFilters(User user,
+	      Set<OccurrenceDbImpl.OccurrenceFilter> searchFilters, ResultFilter resultFilter, int tryCount) {
+	    BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+	    BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
+	    for (OccurrenceFilter filter : searchFilters) {
+	    	if ((filter.getOperator() != Operator.IS_EMPTY && filter.getOperator() != Operator.IS_NOT_EMPTY)
+	    			&& filter.value instanceof String && ((String) filter.value).equals("")) {
+	    		continue;
+	    	}
+	    	if (filter.column.equalsIgnoreCase(filter.getPropertyName("quickSearch"))) {
+	    		String quickSearchValue = filter.getValue().toString();
+	    		/*
+	    		 * le field identity l'ensemble des fields 
+	    		 * 		acceptedspecies, verbatimspecies, scientificname
+	    		 */
+	    		MultiMatchQueryBuilder query = QueryBuilders.multiMatchQuery(quickSearchValue)
+	    			.field("identity", 10)
+	    			.field("identity.edge_ngram", 3)
+	    			.field("identity.ngram")
+	    			.type(MultiMatchQueryBuilder.Type.MOST_FIELDS);
+	    		boolQueryBuilder.must(query);
+	 	    }else{
+	 	    	 Operator op = filter.getOperator();
+	 	    	String field = filter.column.toLowerCase();
+	 	        switch (op) {
+	 	        	case CONTAIN:
+	 	        	case NOT_CONTAIN:
+	 	        		String ngramField = field +".ngram";
+	 	        		MatchQueryBuilder containquery = QueryBuilders.matchQuery(ngramField, (String)filter.getValue());
+	 	        		if(op.equals(Operator.CONTAIN)){
+	 	        			boolQueryBuilder.must(containquery);
+	 	        		}else if(op.equals(Operator.NOT_CONTAIN)){
+	 	        			boolQueryBuilder.mustNot(containquery);
+	 	        		}
+	 	        		break;
+	 	        	case NOT_START_WITH:
+	 	        	case START_WITH:
+	 	        		String edgeNgramField = field +".edge_ngram";
+	 	        		MatchQueryBuilder startWithquery = QueryBuilders.matchQuery(edgeNgramField, (String)filter.getValue());
+	 	        		if(op.equals(Operator.CONTAIN)){
+	 	        			boolQueryBuilder.must(startWithquery);
+	 	        		}else if(op.equals(Operator.NOT_CONTAIN)){
+	 	        			boolQueryBuilder.mustNot(startWithquery);
+	 	        		}
+	 	        		break;
+	 	        	case EQUAL:
+	 	        	case NOT_EQUAL:
+	 	        		FilterBuilder eqFilter = null;
+	 	        		if (filter.column.equals(filter.getPropertyName("sex"))) {
+	 	                   //TODO - Mikajy
+	 	                 } else if (filter.column.equals(filter.getPropertyName("BasisOfRecord"))) {
+	 	                	//TODO - Mikajy
+	 	                 } else {
+	 	                	eqFilter = FilterBuilders.termFilter(filter.column.toLowerCase(), filter.getValue());
+	 	                 }
+	 	        		boolFilterBuilder.must(op.equals(Operator.EQUAL) ? eqFilter : FilterBuilders.notFilter(eqFilter));
+	 	                break;	
+	 	        	case GREATER:
+	 	        		boolFilterBuilder.must(FilterBuilders.rangeFilter(field).gt(filter.getValue()));
+	 	        		break;
+	 	        	case GREATER_EQUAL:
+	 	        		boolFilterBuilder.must(FilterBuilders.rangeFilter(field).gte(filter.getValue()));
+	 	        		break;
+	 	        	case LESS:
+	 	        		boolFilterBuilder.must(FilterBuilders.rangeFilter(field).lt(filter.getValue()));
+	 	        		break;
+	 	        	case LESS_EQUAL:
+	 	        		boolFilterBuilder.must(FilterBuilders.rangeFilter(field).lte(filter.getValue()));
+	 	        		break;
+	 	        	case IN:
+	 	        	case NOT_IN:
+	 	        		Object[] values = null;
+	 	        		if (filter.getValue() instanceof Collection<?>) {
+	 	        			values = ((Collection<?>)filter.getValue()).toArray(new Object[0]);
+	 	                 } else if (StringUtil.isType(Occurrence.class, filter.column, Integer.class)){
+	 	               	  	values = filter.getIntegerValues();
+	 	                 } else {
+	 	                	values = filter.getCollectionValues();
+	 	                 }
+	 	        		FilterBuilder inFilter = FilterBuilders.inFilter(field, values);
+	 	        		boolFilterBuilder.must(op.equals(Operator.IN) ? inFilter : FilterBuilders.notFilter(inFilter));
+	 	        		break;
+	 	        	case IS_EMPTY:
+	 	        	case IS_NOT_EMPTY:
+	 	        		//TODO Mikajy
+	 	        		break;
+	 	        }
+	 	    }
+	    }
+	    QueryBuilder queryBuilder;
+	    if(boolFilterBuilder.hasClauses() && boolQueryBuilder.hasClauses()){
+	    	queryBuilder = QueryBuilders.filteredQuery(boolQueryBuilder, boolFilterBuilder);
+	    }else if(boolFilterBuilder.hasClauses()){
+	    	queryBuilder = QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), boolFilterBuilder);
+	    }else{
+	    	queryBuilder = boolQueryBuilder;
+	    }
+	    return queryBuilder;
+ }
 
   /**
    * Adds a {@link Set} of search {@link OccurrenceFilter} to the
@@ -1840,14 +1946,13 @@ public class OccurrenceDbImpl implements OccurrenceDb {
     return deletedRecord;
   }
 
-  @SuppressWarnings("unchecked")
 private List<Occurrence> find(OccurrenceQuery query, Set<OccurrenceFilter> filters, User user,
       int tryCount) throws Exception {
     log.debug("finding Occurrence instances by query.");
     try {
-      Session session = ManagedSession.createNewSessionAndTransaction();
+//      Session session = ManagedSession.createNewSessionAndTransaction();
       List<Occurrence> results = null;
-      Criteria criteria = session.createCriteria(Occurrence.class);
+//      Criteria criteria = session.createCriteria(Occurrence.class);
       OccurrenceFilter userReviewFilter = null;
       OccurrenceFilter myreviewPublicFilter = null;
       ResultFilter resultFilter = query.getResultFilter();
@@ -1887,33 +1992,47 @@ private List<Occurrence> find(OccurrenceQuery query, Set<OccurrenceFilter> filte
     	  OccurrenceFilter occIdsFilter = new OccurrenceFilter("id", Operator.IN, query.getOccurrenceIdsFilter());
     	  filters.add(occIdsFilter);
       }
-      log.info("find filters: "
-          + addCreterionByFilters(criteria, user, filters, resultFilter, tryCount));
-      if (userReviewFilter != null) {
-        filters.remove(idsFilter);
-        filters.add(userReviewFilter);
+//      log.info("find filters: "
+//          + addCreterionByFilters(criteria, user, filters, resultFilter, tryCount));
+      QueryBuilder queryBuilder = getEsQueriesAndFilters(user, filters, resultFilter, tryCount);
+      int from = query.getStart();
+      int size = 10;
+      if (query.getLimit() > 0) {
+    	  size = query.getLimit();
       }
-      if (myreviewPublicFilter != null) {
-        filters.remove(myreviewPublicFilter);
+      SearchResponse searchResponse = OccurrenceSearch.getInstance().doSearch(queryBuilder, from, size);
+      SearchHits searchHits = searchResponse.getHits();
+      query.setCount((int)searchHits.getTotalHits());
+      results = new ArrayList<Occurrence>();
+      for(SearchHit hit: searchHits.getHits()){
+    	  Occurrence o = OccurrenceMapping.asOccurrence(hit.getSource());
+    	  results.add(o);
       }
-      List<OrderKey> orderingMap = query.getOrderingMap();
-      log.info("order map = " + orderingMap);
-      if (query.isCountTotalResults()) {
-          criteria.setFirstResult(0);
-          criteria.setProjection(Projections.count("id"));
-          Integer count = (Integer) criteria.uniqueResult();
-          if (count != null) {
-            query.setCount(count);
-          }
-      } else {
-          query.setCount(-1);
-      }
+//      if (userReviewFilter != null) {
+//        filters.remove(idsFilter);
+//        filters.add(userReviewFilter);
+//      }
+//      if (myreviewPublicFilter != null) {
+//        filters.remove(myreviewPublicFilter);
+//      }
+//      List<OrderKey> orderingMap = query.getOrderingMap();
+//      log.info("order map = " + orderingMap);
+//      if (query.isCountTotalResults()) {
+//          criteria.setFirstResult(0);
+//          criteria.setProjection(Projections.count("id"));
+//          Integer count = (Integer) criteria.uniqueResult();
+//          if (count != null) {
+//            query.setCount(count);
+//          }
+//      } else {
+//          query.setCount(-1);
+//      }
       // Sets the start, limit, and order by accepted species:
-      criteria.setFirstResult(query.getStart());
-      if (query.getLimit() != OccurrenceQuery.UNLIMITED) {
-        criteria.setMaxResults(query.getLimit());
-      }
-      criteria.setProjection(null);
+//      criteria.setFirstResult(query.getStart());
+//      if (query.getLimit() != OccurrenceQuery.UNLIMITED) {
+//        criteria.setMaxResults(query.getLimit());
+//      }
+//      criteria.setProjection(null);
       /*for (OrderKey orderKey : orderingMap) {
         String property = orderKey.getAttributeName();
         String occAttribute = getOccurrencePropertyName(property);
@@ -1925,12 +2044,12 @@ private List<Occurrence> find(OccurrenceQuery query, Set<OccurrenceFilter> filte
           criteria.addOrder(Order.desc(occAttribute));
         }
       }*/
-      criteria.addOrder(Order.asc("id"));
-      results = criteria.list();
+//      criteria.addOrder(Order.asc("id"));
+//      results = criteria.list();
       
       // filters.addAll(removedFilters);
       log.debug("find by example successful, result size: " + results.size());
-      ManagedSession.commitTransaction(session);
+//      ManagedSession.commitTransaction(session);
       return results;
     } catch (RuntimeException re) {
       log.error("find by example failed", re);
