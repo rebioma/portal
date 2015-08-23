@@ -58,6 +58,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
@@ -689,7 +690,11 @@ public class ApplicationView extends View implements ClickHandler {
    */
   public void setTitleWidget(Widget title) {
     topPanel.setWidget(1, 0, title);
-
+    SearchPanel searchPanel = new SearchPanel();
+    searchPanel.addStyleName("search-panel");
+    searchPanel.addTextBoxStyleName("search-panel-textbox");
+    searchPanel.addButtonStyleName("search-panel-btn");
+    topPanel.setWidget(1, 1, searchPanel);
   }
 
   @Override

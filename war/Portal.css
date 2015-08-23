@@ -38,6 +38,46 @@ body {
   
 }
 
+.rebioma-txtinput {
+	font-family: Trebuchet MS, Verdana,Helvetica,Arial,sans-serif;
+	font-size: 14px;
+}
+
+.rebioma-txtinput-watermark {
+   /* background-image: url('images/overlay.gif');
+   background-repeat: no-repeat;
+   padding-left: 20px;
+   vertical-align: middle; */
+   font-style: italic;
+   color: Gray;
+}
+.search-panel{
+	float: right;
+	margin-top: 18px;
+	margin-right: 16px;
+    height: 28px;
+    border: 1px solid #DCEDA7;
+}
+.search-panel-btn {
+    height: 30px;
+	width: 30px;
+	background: url("images/search-icon.png") no-repeat center;
+	margin: 0;
+	padding: 0;
+	float:right;
+	text-align: right;
+	border: none;
+	cursor: pointer;
+}
+.search-panel-textbox {
+    padding: 5px;	
+	width: 200px;
+    font-family:Trebuchet MS, Verdana,Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    cursor: inherit;
+    border: none;
+}
+
 .rebioma-Form-buttons {
   position:relative;
   left:5px;
