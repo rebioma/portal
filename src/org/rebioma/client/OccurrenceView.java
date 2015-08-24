@@ -364,7 +364,7 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			onStateChanged(ApplicationView.getCurrentState());
 			resultFilterLb.addChangeHandler(this);
 		}
-
+		
 		public String getCurrentStateToken() {
 			StringBuilder sb = new StringBuilder();
 			String searchQuery = constructHistoryUrl(UrlParam.QUERY);
@@ -669,7 +669,62 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			query.requestData(pageNum);
 			currentPageNum = pageNum;
 		}
+		
+		private void resetForTextSearch(){
+			/*
+			 * 1- init searchTypeBox
+			 */
+			int count = searchTypeBox.getItemCount();
+//			boolean isAuthenticatedUser = ApplicationView.getAuthenticatedUser() != null && ApplicationView.getAuthenticatedUser().getId() != null;
+			int allOccurrenceIndex = ALL_TYPES_END_INDEX, allSharedUnsharedIndex = -1;
+			for(int i=0;i < count;i++){
+				String value = searchTypeBox.getValue(i);
+				if(ALL_SHARED_UNSHARED.equalsIgnoreCase(value)) allSharedUnsharedIndex = i;
+				if(ALL_OCC.equalsIgnoreCase(value)) allOccurrenceIndex = i;
+			}
+			if(allSharedUnsharedIndex != -1) searchTypeBox.setSelectedIndex(allSharedUnsharedIndex);
+			else searchTypeBox.setSelectedIndex(allOccurrenceIndex);
 
+			String activeView = activeViewInfo.getName();
+			if (!activeView.equals(MAP) && !activeView.equals(LIST)) {
+				switchView(DEFAULT_VIEW, false);
+			}
+			/*
+			 * 2- init  searchBox
+			 */
+			setQueryText("");
+			/*
+			 * 3- init advancesearch
+			 */
+			clearAdanceSearch();
+			
+			/*
+			 * 4- init resultFilterLb
+			 */
+			if(resultFilterLb.isAttached()){
+				count = resultFilterLb.getItemCount();
+				for(int i=0;i< count;i++){
+					if("both".equalsIgnoreCase(resultFilterLb.getValue(i))){
+						resultFilterLb.setSelectedIndex(i);
+						break;
+					}
+				}
+			}
+		}
+		
+		public void searchText(String text){
+			query.clearSearchFilter();
+			query.addSearchFilter(GLOBAL_SEARCH_TEXT + " = " + text);
+			resetForTextSearch();
+			ResultFilter resultFilter = getResultFilter();
+			String searchType = getSearchType();
+			query.setBaseFilters(query.getFiltersFromProperty(searchType,
+					ApplicationView.getAuthenticatedUser(), resultFilter));
+			resetToDefaultState();
+			addHistoryItem(false);
+			query.requestData(1);
+		}
+		
 		public void search() {
 			query.clearSearchFilter();
 			String searchText = searchBox.getText();
@@ -693,10 +748,8 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			if (!searchText.equals("")) {
 				query.addSearchFilter(QUICK_SEARCH + " = " + searchText);
 			}
-			String globalSearchText = ApplicationView.getApplication().getGlobalSearchPanelText();
-			if(globalSearchText != null && globalSearchText.trim().length() != 0){
-				query.addSearchFilter(GLOBAL_SEARCH_TEXT + " = " + globalSearchText);
-			}
+			
+			ApplicationView.getApplication().resetGlobalSearchPanel();
 
 			addErrorQuery();
 			addSharedSearchToQuery();

@@ -674,7 +674,9 @@ public class ApplicationView extends View implements ClickHandler {
     } else if (sender == homeLink) {
       switchView(OCCURRENCES);
     } else if(sender == globalSearchPanel.getSearchButton()) {
-    	getOccurrenceView().getSearchForm().search();
+    	String text = globalSearchPanel.getText();
+    	GWT.log("Recherche des occurrences contenant le terme >" + text + "< ...");
+    	getOccurrenceView().getSearchForm().searchText(text);
     }
     /*
        * else if (sender == changePassLink) { switchView(CHANGE_PASS); } else if
@@ -703,6 +705,10 @@ public class ApplicationView extends View implements ClickHandler {
     globalSearchPanel.addTextBoxStyleName("search-panel-textbox");
     globalSearchPanel.addButtonStyleName("search-panel-btn");
     topPanel.setWidget(1, 1, globalSearchPanel);
+  }
+  
+  public void resetGlobalSearchPanel(){
+	  globalSearchPanel.reset();
   }
   
   public String getGlobalSearchPanelText(){
