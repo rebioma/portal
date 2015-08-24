@@ -88,18 +88,18 @@ public class OccurrenceIndexation {
 		Query countQuery = statelessSession.createQuery("select count(id) from Occurrence");
 		long rowCount = (Long)countQuery.uniqueResult();
 		System.out.println(rowCount + " occurrences à indexer ...");
-		int maxResult = 50000;
+		int maxResult = 5000;
 		try{
 			Occurrence o;
-//			for(int i=0; i< rowCount; i+= maxResult){
-//	//			Transaction tx = statelessSession.beginTransaction();
-//				System.out.println("********************************");
-//				System.out.println("********************************");
-//				System.out.println("from " + i + " to " + maxResult);
-//				System.out.println("********************************");
-//				System.out.println("********************************");
+			for(int i=0; i< rowCount; i+= maxResult){
+	//			Transaction tx = statelessSession.beginTransaction();
+				System.out.println("********************************");
+				System.out.println("********************************");
+				System.out.println("from " + i + " to " + maxResult);
+				System.out.println("********************************");
+				System.out.println("********************************");
 				ScrollableResults scrollableResults = HibernateUtil.getSessionFactory().openStatelessSession().createQuery("from Occurrence order by id desc")
-//						.setFirstResult(i)
+						.setFirstResult(i)
 						.setMaxResults(maxResult)
 						.setCacheable(false)
 						.scroll(ScrollMode.FORWARD_ONLY);
@@ -111,7 +111,7 @@ public class OccurrenceIndexation {
 					}
 					bulkProcessor.flush();
 				
-//			}
+			}
 		}finally{
 			bulkProcessor.flush();
 //			bulkProcessor.awaitClose(10, TimeUnit.MINUTES);

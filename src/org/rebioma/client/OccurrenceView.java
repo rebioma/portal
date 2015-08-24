@@ -33,9 +33,9 @@ import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.RevalidationResult;
 import org.rebioma.client.bean.ShapeFileInfo;
 import org.rebioma.client.bean.User;
+import org.rebioma.client.gxt.treegrid.ActivityLogDialog;
 import org.rebioma.client.maps.ShapeFileWindow;
 import org.rebioma.client.maps.ShapeSelectionHandler;
-import org.rebioma.client.gxt.treegrid.ActivityLogDialog;
 import org.rebioma.client.services.RevalidationService;
 import org.rebioma.client.services.ServerPingService;
 import org.rebioma.client.services.ServerPingServiceAsync;
@@ -72,8 +72,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 
 /**
  * A view that supports searching occurrences and paging through results which
@@ -230,6 +228,7 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 		// static final int MY_INVALIDATED_INDEX = 8;
 		protected static final int ALL_TYPES_END_INDEX = 4;
 
+		protected static final String GLOBAL_SEARCH_TEXT = "GlobalSearchText";
 		protected static final String QUICK_SEARCH = "QuickSearch";
 		protected static final String VALIDATION_ERROR = "ValidationError";
 		protected static final String ALL_SHARED_UNSHARED = "all";
@@ -693,6 +692,10 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			}
 			if (!searchText.equals("")) {
 				query.addSearchFilter(QUICK_SEARCH + " = " + searchText);
+			}
+			String globalSearchText = ApplicationView.getApplication().getGlobalSearchPanelText();
+			if(globalSearchText != null && globalSearchText.trim().length() != 0){
+				query.addSearchFilter(GLOBAL_SEARCH_TEXT + " = " + globalSearchText);
 			}
 
 			addErrorQuery();

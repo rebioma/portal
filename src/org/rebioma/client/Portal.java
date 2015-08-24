@@ -191,7 +191,6 @@ public class Portal implements EntryPoint {
     }
   }
 
-  @SuppressWarnings("deprecation")
 private void initApplication(User user) {
     ApplicationView.setAuthenticatedUser(user);
     // Make sure the server is notify when the session is longer valid when
@@ -205,6 +204,7 @@ private void initApplication(User user) {
     logo.addStyleName("rebioma-logo");
     ApplicationView appView = ApplicationView.getApplication();
     appView.setTitleWidget(logo);
+    appView.initSearchWidget();
     History.addValueChangeHandler(appView);
     if (History.getToken().length() > 0) {
         History.fireCurrentHistoryState();

@@ -436,6 +436,8 @@ public class ApplicationView extends View implements ClickHandler {
   private static ApplicationView instance = null;
 
   private static String sessionId;
+  
+  private SearchPanel globalSearchPanel;
 
   public static AppConstants getConstants() {
     return constants;
@@ -671,7 +673,10 @@ public class ApplicationView extends View implements ClickHandler {
       signOutUser(true);
     } else if (sender == homeLink) {
       switchView(OCCURRENCES);
-    } /*
+    } else if(sender == globalSearchPanel.getSearchButton()) {
+    	getOccurrenceView().getSearchForm().search();
+    }
+    /*
        * else if (sender == changePassLink) { switchView(CHANGE_PASS); } else if
        * (sender == editCollaboratorsLink) { switchView(EDIT_COLLABORATORS); }
        */
@@ -690,11 +695,19 @@ public class ApplicationView extends View implements ClickHandler {
    */
   public void setTitleWidget(Widget title) {
     topPanel.setWidget(1, 0, title);
-    SearchPanel searchPanel = new SearchPanel();
-    searchPanel.addStyleName("search-panel");
-    searchPanel.addTextBoxStyleName("search-panel-textbox");
-    searchPanel.addButtonStyleName("search-panel-btn");
-    topPanel.setWidget(1, 1, searchPanel);
+  }
+  
+  public void initSearchWidget(){
+	globalSearchPanel = new SearchPanel(this);
+    globalSearchPanel.addStyleName("search-panel");
+    globalSearchPanel.addTextBoxStyleName("search-panel-textbox");
+    globalSearchPanel.addButtonStyleName("search-panel-btn");
+    topPanel.setWidget(1, 1, globalSearchPanel);
+  }
+  
+  public String getGlobalSearchPanelText(){
+	  String text = globalSearchPanel.getText();
+	  return text;
   }
 
   @Override
@@ -917,7 +930,7 @@ public class ApplicationView extends View implements ClickHandler {
           .setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
     }
     formatter.setColSpan(0, 0, 2);
-
+    
     // Setup the title cell
     setTitleWidget(null);
     formatter.setStyleName(1, 0, DEFAULT_STYLE_NAME + "-title");

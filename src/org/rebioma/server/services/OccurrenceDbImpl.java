@@ -101,8 +101,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
         property = "validated";
       } else if (property.equalsIgnoreCase("quickSearch")) {
         property = "quickSearch";
+      } else if( property.equalsIgnoreCase("globalsearchtext")){
+    	  property = "globalsearchtext";
       }
-
       // A private column doesn't exist, so we map it to public here:
       else if (property.equalsIgnoreCase("private") || property.equalsIgnoreCase("public")
           || property.equalsIgnoreCase("public_")) {
@@ -1378,7 +1379,31 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	    			&& filter.value instanceof String && ((String) filter.value).equals("")) {
 	    		continue;
 	    	}
-	    	if (filter.column.equalsIgnoreCase(filter.getPropertyName("quickSearch"))) {
+	    	
+	    	if(filter.column.equalsIgnoreCase(filter.getPropertyName("globalsearchtext"))){
+	    		String globalSearchText = filter.getValue().toString();
+	    		if(globalSearchText != null && globalSearchText.trim().length() > 0){
+	    			MultiMatchQueryBuilder query1 = QueryBuilders.multiMatchQuery(globalSearchText)
+			    			.field("biologic_identity.ngram", 10)
+			    			.field("biologic_classification.ngram", 5)
+			    			.field("biologic_autre_nom.ngram", 3)
+			    			.field("localisation.ngram")
+			    			.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+		    		MultiMatchQueryBuilder query2 = QueryBuilders.multiMatchQuery(globalSearchText)
+			    			.field("biologic_identity.edge_ngram", 10)
+			    			.field("biologic_classification.edge_ngram", 5)
+			    			.field("biologic_autre_nom.edge_ngram", 3)
+			    			.field("localisation.edge_ngram")
+			    			.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+		    		MultiMatchQueryBuilder query3 = QueryBuilders.multiMatchQuery(globalSearchText)
+			    			.field("biologic_identity", 10)
+			    			.field("biologic_classification", 5)
+			    			.field("biologic_autre_nom", 3)
+			    			.field("localisation")
+			    			.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+			    	boolQueryBuilder.must(query1).should(QueryBuilders.boolQuery().should(query2).should(query3));
+	    		}
+	    	}else if (filter.column.equalsIgnoreCase(filter.getPropertyName("quickSearch"))) {
 	    		String quickSearchValue = filter.getValue().toString();
 	    		/*
 	    		 * le field identity l'ensemble des fields 

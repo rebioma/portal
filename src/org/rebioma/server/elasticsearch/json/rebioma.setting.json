@@ -3,72 +3,58 @@
 	"number_of_shards": "1",
 	"analysis": {
 	   "analyzer": {
-		  "no_doublon": {
-			 "type": "custom",
-			 "char_filter": "html_strip",
-			 "filter": [
-				"lowercase",
-				"remove_doublon"
-			 ],
-			 "tokenizer": "pattern"
-		  },
-		  "bigram_analyzer": {
-			 "type": "custom",
-			 "filter": [
-				"lowercase",
-				"english_simple_stop",
-				"english_simple_stemmer",
-				"shingle_filter"
-			 ],
-			 "tokenizer": "standard"
-		  },
-		  "code": {
-			 "type": "custom",
-			 "char_filter": "html_strip",
-			 "filter": [
-				"code",
-				"lowercase"
-			 ],
-			 "tokenizer": "pattern"
-		  },
-		  "english_no_doublon": {
-			 "type": "custom",
-			 "filter": [
-				"lowercase",
-				"english_simple_stop",
-				"remove_doublon",
-				"english_simple_stemmer"
-			 ],
-			 "tokenizer": "standard"
-		  }
+		   	"edge_ngram_analyzer": {
+		        "type":      "custom",
+		        "tokenizer" : "edge_ngram_tokenizer",
+				"char_filter": ["html_strip", "my_mapping_char_filter"],
+		        "filter": ["stopwords", "asciifolding", "lowercase", "english_snowball", "remove_doublon", "word_delimiter"]
+		    },
+		    "ngram_analyzer": {
+		    	"type":      "custom",
+		        "tokenizer" : "ngram_tokenizer",
+				"char_filter": ["html_strip", "my_mapping_char_filter"],
+		        "filter": ["stopwords", "asciifolding", "lowercase", "english_snowball", "remove_doublon", "word_delimiter"]
+		    },
+		  	"standard_no_doublon": {
+		  		"type": "custom",
+				"tokenizer": "standard",
+				"char_filter": ["html_strip", "my_mapping_char_filter"],
+		        "filter": ["stopwords", "asciifolding", "lowercase", "english_snowball", "remove_doublon", "word_delimiter"]
+		  	}
 	   },
+	   "char_filter" : {
+	   		"my_mapping_char_filter": {
+	   			"type": "mapping",
+	   			"mappings": ["y=>i", "ph=>f"]
+	   		}
+	   },
+	   "tokenizer" : {
+            "ngram_tokenizer" : {
+                "type" : "nGram",
+                "min_gram" : "4",
+                "max_gram" : "30",
+                "token_chars": [ "letter", "digit" ]
+            },
+            "edge_ngram_tokenizer":{
+            	"type" : "edgeNGram",
+                "min_gram" : "3",
+                "max_gram" : "30",
+                "token_chars": [ "letter", "digit" ]
+            }
+        },
 	   "filter": {
-		  "english_simple_stop": {
-			 "type": "stop",
-			 "stopwords": "_english_"
-		  },
+	   	  "stopwords": {
+          	"type": "stop",
+          	"stopwords": "_english_"
+          },	
 		  "remove_doublon": {
 			 "type": "pattern_replace",
 			 "pattern": "(\\p{Alpha})\\1",
 			 "replacement": "$1"
 		  },
-		  "shingle_filter": {
-			 "max_shingle_size": "2",
-			 "type": "shingle",
-			 "min_shingle_size": "2",
-			 "output_unigrams": "false"
-		  },
-		  "code": {
-			 "preserve_original": "1",
-			 "type": "pattern_capture",
-			 "patterns": [
-				"(\\p{Ll}+|\\p{Lu}\\p{Ll}+|\\p{Lu}+|\\p{Lu}+)",
-				"(\\d+)"
-			 ]
-		  },
-		  "english_simple_stemmer": {
-			 "type": "stemmer",
-			 "language": "english"
+		  "english_snowball": {
+		  	 "type": "snowball",
+		  	 "language" : "English"
 		  }
 	   }
 	}

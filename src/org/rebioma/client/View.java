@@ -430,6 +430,13 @@ public abstract class View extends Composite implements
      * Current lookup query in {@link OccurrenceView}.
      */
     QUERY,
+    
+    /**
+     *  Current lookup query in {@link SearchPanel}}
+     *  
+     *  Paramètre utilisé pour la recherche textuelle global du header
+     */
+    GLOBAL_TEXT_SEARCH,
     /**
      * Current selected tab (i.e occurrences) in {@link OccurrenceView}.
      */

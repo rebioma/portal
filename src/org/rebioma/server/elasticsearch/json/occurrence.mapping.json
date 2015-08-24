@@ -8,11 +8,17 @@
 			"validated":{"type": "boolean"},
 			"vetted":{"type": "boolean"},
 			"tapiraccessible":{"type": "boolean"},
-			"email":{"type": "string"},
+			"email":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
 			"vettingerror":{"type": "string"},
 			"validationerror":{"type": "string"},
 			"basisofrecord":{"type": "string"},
-			"year":{"type": "integer"},
+			"year":{
+				"type": "integer",
+				"copy_to": ["biologic_classification"]
+			},
 			"genus":{"type": "string"},
 			"specificepithet":{"type": "string"},
 			"decimallatitude":{"type": "string"},
@@ -20,13 +26,16 @@
 			"geodeticdatum":{"type": "string"},
 			"coordinateuncertaintyinmeters":{"type": "string"},
 			"datelastmodified":{"type": "string"},
-			"institutioncode":{"type": "string"},
+			"institutioncode":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
 			"collectioncode":{"type": "string"},
 			"catalognumber":{"type": "string"},
 			"scientificname":{
 				"type": "string",
 				"analyzer": "standard_no_doublon",
-				"copy_to": "identity"
+				"copy_to": ["identity", "biologic_identity"]
 			},
 			"globaluniqueidentifier":{"type": "string"},
 			"informationwithheld":{"type": "string"},
@@ -49,24 +58,45 @@
 				"copy_to" : "biologic_classification"},
 			"taxonrank":{
 				"type": "string", 
-				"copy_to":"full_identity"},
+				"copy_to": ["biologic_identity"]
+			},
 			"infraspecificepithet":{
 				"type": "string", 
 				"copy_to" : "biologic_classification"},
 			"authoryearofscientificname":{"type": "string"},
-			"nomenclaturalcode":{"type": "string"},
+			"nomenclaturalcode":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
 			"identificationqualifier":{"type": "string"},
 			"highergeography":{"type": "string"},
 			"continent":{"type": "string"},
 			"waterbody":{"type": "string"},
 			"islandgroup":{"type": "string"},
 			"island":{"type": "string"},
-			"country":{"type": "string"},
-			"stateprovince":{"type": "string"},
-			"county":{"type": "string"},
-			"locality":{"type": "string"},
-			"minimumelevationinmeters":{"type": "string"},
-			"maximumelevationinmeters":{"type": "string"},
+			"country":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
+			"stateprovince":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
+			"county":{"type": "string",
+				"copy_to": ["localisation"]
+			},
+			"locality":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
+			"minimumelevationinmeters":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
+			"maximumelevationinmeters":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
 			"minimumdepthinmeters":{"type": "string"},
 			"maximumdepthinmeters":{"type": "string"},
 			"collectingmethod":{"type": "string"},
@@ -89,7 +119,10 @@
 			"fieldnumber":{"type": "string"},
 			"fieldnotes":{"type": "string"},
 			"verbatimcollectingdate":{"type": "string"},
-			"verbatimelevation":{"type": "string"},
+			"verbatimelevation":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
 			"verbatimdepth":{"type": "string"},
 			"preparations":{"type": "string"},
 			"typestatus":{"type": "string"},
@@ -112,12 +145,12 @@
 			"verbatimspecies":{
 				"type": "string",
 				"analyzer": "standard_no_doublon", 
-				"copy_to":"identity"
+				"copy_to": ["identity", "biologic_identity"]
 			},
 			"acceptedspecies":{
 				"type": "string",
 				"analyzer": "standard_no_doublon", 
-				"copy_to":"identity"
+				"copy_to":["identity", "biologic_identity"]
 			},
 			"acceptednomenclaturalcode":{"type": "string"},
 			"acceptedkingdom":{
@@ -196,24 +229,37 @@
 			"bibliographiccitation":{"type": "string"},
 			"preparator":{"type": "string"},
 			"verbatimlocality":{"type": "string"},
-			"habitat":{"type": "string"},
+			"habitat":{
+				"type": "string",
+				"copy_to": "localisation"
+			},
 			"vernacularname":{
 				"type": "string", 
-				"copy_to":"full_identity"
+				"copy_to": ["biologic_identity"]
 			},
 			"associatedreferences":{"type": "string"},
 			"localitydescription":{"type": "string"},
 			"noassignation":{"type": "boolean"},
-			"accessrights":{"type": "string"},
-			"license":{"type": "string"},
-			"references":{"type": "string"},
+			"accessrights":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
+			"license":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
+			"references":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
 			"acceptednameusage":{
 				"type": "string", 
-				"copy_to":"full_identity"
+				"copy_to":"biologic_identity"
 			},
 			"acceptednameusageid":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"associatedmedia":{"type": "string"},
 			"associatedoccurrences":{"type": "string"},
 			"associatedorganisms":{"type": "string"},
@@ -245,14 +291,20 @@
 			"georeferencedby":{"type": "string"},
 			"georeferenceddate":{"type": "string"},
 			"group":{"type": "string"},
-			"higherclassification":{"type": "string"},
+			"higherclassification":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
 			"highergeographyid":{"type": "string"},
 			"highestbiostratigraphiczone":{"type": "string"},
 			"identificationid":{"type": "string"},
 			"identificationreferences":{"type": "string"},
 			"identificationremarks":{"type": "string"},
 			"identificationverificationstatus":{"type": "string"},
-			"institutionid":{"type": "string"},
+			"institutionid":{
+				"type": "string",
+				"copy_to":["localisation"]
+			},
 			"language":{"type": "string"},
 			"latestageorhigheststage":{"type": "string"},
 			"latesteonorhighesteonothem":{"type": "string"},
@@ -272,20 +324,28 @@
 			"municipality":{"type": "string"},
 			"nameaccordingto":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"nameaccordingtoid":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"namepublishedin":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"namepublishedinid":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"namepublishedinyear":{
 				"type": "string",
-				"copy_to": "autre_nom"},
-			"nomenclaturalstatus":{"type": "string"},
+				"copy_to": "biologic_autre_nom"
+			},
+			"nomenclaturalstatus":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
 			"occurrenceid":{"type": "string"},
 			"occurrenceremarks":{"type": "string"},
 			"occurrencestatus":{"type": "string"},
@@ -297,17 +357,25 @@
 			"organismscope":{"type": "string"},
 			"originalnameusage":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"originalnameusageid":{
 				"type": "string",
-				"copy_to": "autre_nom"},
-			"ownerinstitutioncode":{"type": "string"},
+				"copy_to": "biologic_autre_nom"
+			},
+			"ownerinstitutioncode":{
+				"type": "string",
+				"copy_to": ["localisation"]
+			},
 			"parenteventid":{"type": "string"},
-			"parentnameusage":{"type": "string",
-				"copy_to": "autre_nom"},
+			"parentnameusage":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
 			"parentnameusageid":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"previousidentifications":{"type": "string"},
 			"recordedby":{"type": "string"},
 			"recordnumber":{"type": "string"},
@@ -317,23 +385,39 @@
 			"samplesizevalue":{"type": "string"},
 			"samplingeffort":{"type": "string"},
 			"samplingprotocol":{"type": "string"},
-			"scientificnameauthorship":{"type": "string"},
-			"scientificnameid":{"type": "string",
-				"copy_to": "autre_nom"},
+			"scientificnameauthorship":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
+			"scientificnameid":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
 			"startdayofyear":{"type": "string"},
 			"subgenus":{"type": "string"},
 			"taxonconceptid":{
 				"type": "string",
-				"copy_to": "autre_nom"},
+				"copy_to": "biologic_autre_nom"
+			},
 			"taxonid":{
 				"type": "string",
-				"copy_to": "autre_nom"},
-			"taxonomicstatus":{"type": "string"},
-			"taxonremarks":{"type": "string"},
+				"copy_to": "biologic_autre_nom"
+			},
+			"taxonomicstatus":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
+			"taxonremarks":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
 			"type":{"type": "string"},
 			"verbatimeventdate":{"type": "string"},
 			"verbatimsrs":{"type": "string"},
-			"verbatimtaxonrank":{"type": "string"},
+			"verbatimtaxonrank":{
+				"type": "string",
+				"copy_to": "biologic_autre_nom"
+			},
 			"measurementid":{"type": "string"},
 			"measurementtype":{"type": "string"},
 			"measurementvalue":{"type": "string"},
@@ -351,6 +435,70 @@
 			"relationshipestablisheddate":{"type": "string"},
 			"relationshipremarks":{"type": "string"},
 			"identity":{
+				"type": "string",
+				"analyzer": "standard_no_doublon",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
+			},
+			"biologic_identity":{
+				"type": "string",
+				"analyzer": "standard_no_doublon",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
+			},
+			"biologic_classification":{
+				"type": "string",
+				"analyzer": "standard_no_doublon",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
+			},
+			"biologic_autre_nom":{
+				"type": "string",
+				"analyzer": "standard_no_doublon",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
+			},
+			"localisation":{
 				"type": "string",
 				"analyzer": "standard_no_doublon",
 				"fields": {
