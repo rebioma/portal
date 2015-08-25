@@ -206,4 +206,22 @@
     <url-pattern>/rebioma/model</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+      <servlet-name>JsonAPIInterfaceServlet</servlet-name>
+      <servlet-class>org.rebioma.server.JsonAPIInterfaceServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>JsonAPIInterfaceServlet</servlet-name>
+      <url-pattern>/json</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+      <servlet-name>XmlAPIInterfaceServlet</servlet-name>
+      <servlet-class>org.rebioma.server.XmlAPIInterfaceServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>XmlAPIInterfaceServlet</servlet-name>
+      <url-pattern>/xml</url-pattern>
+  </servlet-mapping>
+  
 </web-app>

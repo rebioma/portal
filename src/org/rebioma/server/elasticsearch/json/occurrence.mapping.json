@@ -3,11 +3,19 @@
 		"properties": {
 			"id":{"type": "integer"},
 			"owner":{"type": "integer"},
-			"public":{"type": "boolean"},
+			"public_":{"type": "boolean"},
 			"vettable":{"type": "boolean"},
 			"validated":{"type": "boolean"},
 			"vetted":{"type": "boolean"},
 			"tapiraccessible":{"type": "boolean"},
+			"owneremail": {
+				"type": "string",
+				"analyzer": "standard"
+			},
+			"shareduserscsv": {
+				"type": "string",
+				"analyzer": "standard"
+			},
 			"email":{
 				"type": "string",
 				"copy_to": ["localisation"]

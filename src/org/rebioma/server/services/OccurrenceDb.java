@@ -23,11 +23,14 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.OccurrenceQuery;
+import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
+import org.rebioma.client.bean.PaginationOccurrences;
 import org.rebioma.client.bean.RecordReview;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
+import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
 import org.rebioma.server.upload.Traitement;
 
 /**
@@ -242,6 +245,19 @@ public interface OccurrenceDb {
    */
   public List<Occurrence> findByOccurrenceQuery(OccurrenceQuery query, User user)
       throws Exception;
+  
+  /**
+   * 
+   * @param filters
+   * @param user
+   * @param resultFilter
+   * @param from
+   * @param size
+   * @return
+   * @throws Exception
+   */
+  public PaginationOccurrences findByOccurrenceFilters(Set<OccurrenceFilter> filters, User user,
+			ResultFilter resultFilter, int from, int size) throws Exception;
 
   /**
    * Merges changes in a detached instance of {@link Occurrence}.

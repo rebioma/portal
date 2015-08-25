@@ -20,12 +20,16 @@
 				"tokenizer": "standard",
 				"char_filter": ["html_strip", "my_mapping_char_filter"],
 		        "filter": ["stopwords", "asciifolding", "lowercase", "english_snowball", "remove_doublon", "word_delimiter"]
-		  	}
+		  	},
+		  	"email": {
+	          "tokenizer": "uax_url_email",
+	          "filter": ["email","lowercase","unique"]
+	        }
 	   },
 	   "char_filter" : {
 	   		"my_mapping_char_filter": {
 	   			"type": "mapping",
-	   			"mappings": ["y=>i", "ph=>f"]
+	   			"mappings": ["y=>i", "ph=>f", ",=> " ]
 	   		}
 	   },
 	   "tokenizer" : {
@@ -55,7 +59,12 @@
 		  "english_snowball": {
 		  	 "type": "snowball",
 		  	 "language" : "English"
-		  }
+		  },
+		  "email": {
+	          "type": "pattern_capture",
+	          "preserve_original": 1,
+	          "patterns": ["([^@]+)", "(\\p{L}+)", "(\\d+)", "@(.+)", "([^-@]+)"]
+        }
 	   }
 	}
 }

@@ -92,6 +92,12 @@ public class OccurrenceQuery extends Query<Occurrence> {
     super.addOrdering("validated", false);
     super.addOrdering("AcceptedSpecies", true);
   }
+  
+  public OccurrenceQuery(String property, User loggedinUser, ResultFilter resultFilter){
+	  this(0, 10);
+	  Set<String> baseFilters = getFiltersFromProperty(property, loggedinUser, resultFilter);
+	  this.setBaseFilters(baseFilters);
+  }
 
   public OccurrenceQuery(OccurrenceQuery other) {
     this(other.start, other.limit);
@@ -170,28 +176,28 @@ public class OccurrenceQuery extends Query<Occurrence> {
     Set<String> filters = new HashSet<String>();
     boolean isLoggedIn = loggedinUser != null;
     if (property != null) {
-      if (property.equalsIgnoreCase(constants.AllOccurrences())) {
+      if (property.equalsIgnoreCase(constants.AllOccurrences()) || OccurrenceView.ALL_OCC.equalsIgnoreCase(property)) {
         this.resultFilter = isLoggedIn ? ResultFilter.BOTH : ResultFilter.PUBLIC;
         // filters.add("public = true");
       } else if (property.equalsIgnoreCase(constants.AllValidated())) {
         this.resultFilter = isLoggedIn ? ResultFilter.BOTH : ResultFilter.PUBLIC;
         // filters.add("public = true");
         filters.add("validated = true");
-      } else if (property.equalsIgnoreCase(constants.AllInvalid())) {
+      } else if (property.equalsIgnoreCase(constants.AllInvalid()) || OccurrenceView.ALL_INVALID.equalsIgnoreCase(property)) {
         // filters.add("public = true");
         this.resultFilter = isLoggedIn ? ResultFilter.BOTH : ResultFilter.PUBLIC;
         filters.add("validated = false");
-      } else if (property.equalsIgnoreCase(constants.AllPositivelyReviewed())) {
+      } else if (property.equalsIgnoreCase(constants.AllPositivelyReviewed()) || OccurrenceView.ALL_POS_REVIEWED.equalsIgnoreCase(property)) {
         // filters.add("public = true");
         this.resultFilter = isLoggedIn ? ResultFilter.BOTH : ResultFilter.PUBLIC;
         filters.add("validated = true");
         filters.add("reviewed = true");
-      } else if (property.equalsIgnoreCase(constants.AllNegativelyReviewed())) {
+      } else if (property.equalsIgnoreCase(constants.AllNegativelyReviewed()) || OccurrenceView.ALL_NEG_REVIEWED.equalsIgnoreCase(property)) {
         // filters.add("public = true");
         this.resultFilter = isLoggedIn ? ResultFilter.BOTH : ResultFilter.PUBLIC;
         filters.add("validated = true");
         filters.add("reviewed = false");
-      } else if (property.equalsIgnoreCase(constants.AllAwaitingReview())) {
+      } else if (property.equalsIgnoreCase(constants.AllAwaitingReview()) || OccurrenceView.ALL_AWAIT_REVIEW.equalsIgnoreCase(property)) {
         // filters.add("public = true");
         this.resultFilter = isLoggedIn ? ResultFilter.BOTH : ResultFilter.PUBLIC;
         filters.add("validated = true");
@@ -199,7 +205,7 @@ public class OccurrenceQuery extends Query<Occurrence> {
       } else if (loggedinUser == null) {
         this.resultFilter = ResultFilter.PUBLIC;
         // filters.add(DEFAULT_FILTER);
-      } else if (property.equalsIgnoreCase(constants.MyOccurrences())) {
+      } else if (property.equalsIgnoreCase(constants.MyOccurrences()) || OccurrenceView.MY_OCCURRENCES.equalsIgnoreCase(property)) {
         this.resultFilter = resultFilter;
         // filters.add("public = " + !privateOnly);
         filters.add("ownerEmail = " + loggedinUser.getEmail());
@@ -208,12 +214,12 @@ public class OccurrenceQuery extends Query<Occurrence> {
         this.resultFilter = resultFilter;
         filters.add("ownerEmail = " + loggedinUser.getEmail());
         filters.add("validated = true");
-      } else if (property.equalsIgnoreCase(constants.MyInvalid())) {
+      } else if (property.equalsIgnoreCase(constants.MyInvalid()) || OccurrenceView.MY_INVALID.equalsIgnoreCase(property)) {
         // filters.add("public = " + !privateOnly);
         this.resultFilter = resultFilter;
         filters.add("ownerEmail = " + loggedinUser.getEmail());
         filters.add("validated = false");
-      } else if (property.equalsIgnoreCase(constants.MyAwaitingReview())) {
+      } else if (property.equalsIgnoreCase(constants.MyAwaitingReview()) || OccurrenceView.MY_AWAITING_REVIEW.equalsIgnoreCase(property)) {
         // filters.add("public = " + !privateOnly);
         this.resultFilter = resultFilter;
         /* fixing issue1 "my awaiting review" */
@@ -221,31 +227,31 @@ public class OccurrenceQuery extends Query<Occurrence> {
         filters.add("ownerEmail = " + loggedinUser.getEmail());
         /* end fixing issue 1 */
         //filters.add("reviewed empty");
-      } else if (property.equalsIgnoreCase(constants.MyOverallNegativelyReviewed())) {
+      } else if (property.equalsIgnoreCase(constants.MyOverallNegativelyReviewed()) || OccurrenceView.MY_OVERALL_NEG_REVIEW.equalsIgnoreCase(property)) {
         this.resultFilter = resultFilter;
         // filters.add("public = " + !privateOnly);
         filters.add("ownerEmail = " + loggedinUser.getEmail());
         filters.add("validated = true");
         filters.add("reviewed = false");
-      } else if (property.equalsIgnoreCase(constants.MyOverallPositivelyReviewed())) {
+      } else if (property.equalsIgnoreCase(constants.MyOverallPositivelyReviewed()) || OccurrenceView.MY_OVERALL_POS_REVIEW.equalsIgnoreCase(property)) {
         this.resultFilter = resultFilter;
         // filters.add("public = " + !privateOnly);
         filters.add("ownerEmail = " + loggedinUser.getEmail());
         filters.add("validated = true");
         filters.add("reviewed = true");
-      } else if (property.equalsIgnoreCase(constants.MyPositivelyReviewed())) {
+      } else if (property.equalsIgnoreCase(constants.MyPositivelyReviewed()) || OccurrenceView.MY_POS_REVIEWED.equalsIgnoreCase(property)) {
         this.resultFilter = resultFilter == ResultFilter.BOTH ? null : resultFilter;
         // filters.add("public = " + !privateOnly);
         // filters.add("ownerEmail = " + loggedinUser.getEmail());
         filters.add("validated = true");
         filters.add("userReviewed = true");
-      } else if (property.equalsIgnoreCase(constants.MyNegativelyReviewed())) {
+      } else if (property.equalsIgnoreCase(constants.MyNegativelyReviewed()) || OccurrenceView.MY_NEG_REVIEWED.equalsIgnoreCase(property)) {
         this.resultFilter = resultFilter == ResultFilter.BOTH ? null : resultFilter;
         // filters.add("public = " + !privateOnly);
         // filters.add("ownerEmail = " + loggedinUser.getEmail());
         filters.add("validated = true");
         filters.add("userReviewed = false");
-      } else if (property.equalsIgnoreCase(constants.OccurrencesToReview())) {
+      } else if (property.equalsIgnoreCase(constants.OccurrencesToReview()) || OccurrenceView.OCCURRENCES_TO_REVIEW.equalsIgnoreCase(property)) {
         this.resultFilter = resultFilter == ResultFilter.BOTH ? null : resultFilter;
         // this.resultFilter = null;
         // switch (resultFilter) {
