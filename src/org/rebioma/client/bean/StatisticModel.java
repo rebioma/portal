@@ -1,14 +1,19 @@
 package org.rebioma.client.bean;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.gwt.editor.client.Editor.Path;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
 
+@XmlRootElement(name="statistics")
+@XmlAccessorType (XmlAccessType.FIELD)
 public class StatisticModel implements Serializable{
 	
 	/**
@@ -41,7 +46,9 @@ public class StatisticModel implements Serializable{
 		
 }
 	
+	@XmlTransient
 	private int idKey;
+	@XmlTransient
 	private int statisticType;
 	private String title;
 	private int nbPrivateData;
@@ -107,9 +114,11 @@ public class StatisticModel implements Serializable{
 	}
 	public void setNbPrivateData(int nbPrivateData) {
 		this.nbPrivateData = nbPrivateData;
+		this.nbTotal = nbPrivateData + nbPublicData;
 	}
 	public void setNbPublicData(int nbPublicData) {
 		this.nbPublicData = nbPublicData;
+		this.nbTotal = nbPrivateData + nbPublicData;
 	}
 	public void setNbReliable(int nbReliable) {
 		this.nbReliable = nbReliable;

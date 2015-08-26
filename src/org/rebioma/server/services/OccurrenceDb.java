@@ -26,7 +26,7 @@ import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
-import org.rebioma.client.bean.PaginationOccurrences;
+import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.RecordReview;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
@@ -256,7 +256,7 @@ public interface OccurrenceDb {
    * @return
    * @throws Exception
    */
-  public PaginationOccurrences findByOccurrenceFilters(Set<OccurrenceFilter> filters, User user,
+  public ListOccurrenceAPIModel findByOccurrenceFilters(Set<OccurrenceFilter> filters, User user,
 			ResultFilter resultFilter, int from, int size) throws Exception;
 
   /**

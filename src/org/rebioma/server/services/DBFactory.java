@@ -1,5 +1,7 @@
 package org.rebioma.server.services;
 
+import org.rebioma.client.services.StatisticsService;
+
 public class DBFactory {
 
   private static UserDb userDb = null;
@@ -15,6 +17,14 @@ public class DBFactory {
   private static RecordReviewDb recordReviewDb;
   private static TaxonomicReviewerDb taxonomicReviewerDb;
   private static AscModelDb ascModelDb;
+  private static StatisticsService statisticsService = null;
+  
+  public static StatisticsService getStatisticsService(){
+	  if(statisticsService == null){
+		  statisticsService = new StatisticsServiceImpl();
+	  }
+	  return statisticsService;
+  }
 
   public static AscDataDb getAscDataDb() {
     if (ascDataDb == null) {

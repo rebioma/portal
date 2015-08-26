@@ -14,12 +14,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Mika
  *
  */
-@XmlRootElement(name="root")
+@XmlRootElement(name="response")
 @XmlAccessorType (XmlAccessType.FIELD)
-public class PaginationOccurrences {
+public class ListOccurrenceAPIModel {
 	
 	@XmlElement
-	private boolean success;
+	private boolean success = true;
 	
 	@XmlElement
 	private String message;
@@ -47,11 +47,11 @@ public class PaginationOccurrences {
 	@XmlElement(name="occurrence")
 	private List<Occurrence> occurrences;
 	
-	public PaginationOccurrences(){
+	public ListOccurrenceAPIModel(){
 		
 	}
 	
-	public PaginationOccurrences(int pageNum, int pageSize, int nbTotal,
+	public ListOccurrenceAPIModel(int pageNum, int pageSize, int nbTotal,
 			List<Occurrence> items) {
 		super();
 		this.pageNum = pageNum;

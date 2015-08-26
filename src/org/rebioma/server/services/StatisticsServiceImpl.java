@@ -19,6 +19,10 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 public class StatisticsServiceImpl extends RemoteServiceServlet implements StatisticsService {
+	
+	
+	public StatisticsServiceImpl() {
+	}
 
 	@Override
 	public List<StatisticModel> getStatisticsByType(int statisticsType) {

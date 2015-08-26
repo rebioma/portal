@@ -3,7 +3,9 @@
  */
 package org.rebioma.server;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServlet;
@@ -11,8 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
-import org.rebioma.client.bean.PaginationOccurrences;
+import org.rebioma.client.bean.ListOccurrenceAPIModel;
+import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
+import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.services.DBFactory;
 import org.rebioma.server.services.OccurrenceDb;
 import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
@@ -24,6 +28,9 @@ import org.rebioma.server.services.QueryFilter.InvalidFilter;
  *
  */
 public class APIInterfaceServlet extends HttpServlet {
+	
+	protected static final String RES_OCCURRENCES = "occ";
+	protected static final String RES_STATISTICS = "stats";
 	
 	private static final int DEFAULT_PAGE_SIZE = 50;
 	//type possible values
@@ -44,6 +51,8 @@ public class APIInterfaceServlet extends HttpServlet {
 	protected static final String TAXO_ERROR = "Taxonomic classification";
 	
 	OccurrenceDb occurrenceDb = DBFactory.getOccurrenceDb();
+	StatisticsService statisticsService = DBFactory.getStatisticsService();
+	
 	/**
 	 * 
 	 */
@@ -92,14 +101,33 @@ public class APIInterfaceServlet extends HttpServlet {
 		return filters;
 	}
 	
-	protected PaginationOccurrences findOccurrences(HttpServletRequest request) throws Exception{
-		PaginationOccurrences paginationResponse;
+	protected List<StatisticModel> findStatisticByType(HttpServletRequest request) throws Exception{
+		String statistic = request.getParameter("statistic");
+		int statType;
+		switch (statistic) {
+		case StatisticsService.TYPE_COLLECTION_CODE:
+			statType = 3;
+			break;
+		case StatisticsService.TYPE_DATA_MANAGER:
+			statType = 1;
+			break;
+		case StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION:
+			statType = 2;
+			break;
+		case StatisticsService.TYPE_YEAR_COLLECTED:
+			statType = 4;
+			break;
+		default:
+			throw new IllegalArgumentException("Le type de statistique [" + statistic + "] n'est pas géré par l'application.");
+		}
+		List<StatisticModel> statisticModels = statisticsService.getStatisticsByType(statType);
+		return statisticModels;
+	}
+	
+	protected ListOccurrenceAPIModel findOccurrences(HttpServletRequest request) throws Exception{
+		ListOccurrenceAPIModel paginationResponse;
 		try{
-			String res = request.getParameter("res");
-			Set<OccurrenceFilter> filters = new HashSet<OccurrenceFilter>();
-			if(StringUtils.isBlank(res) || "occ".equalsIgnoreCase(res)){
-				filters = getOccurrenceViewFilters(request);
-			}
+			Set<OccurrenceFilter> filters = getOccurrenceViewFilters(request);
 			String page = request.getParameter("page");
 			String nombreEltParPage = request.getParameter("pagesize");
 			int numPage = 1, pageSize;
@@ -123,7 +151,7 @@ public class APIInterfaceServlet extends HttpServlet {
 			paginationResponse = occurrenceDb.findByOccurrenceFilters(filters, user, ResultFilter.PUBLIC, from, pageSize);
 			paginationResponse.setSuccess(true);
 		}catch(IllegalArgumentException e){
-			paginationResponse = new PaginationOccurrences();
+			paginationResponse = new ListOccurrenceAPIModel();
 			paginationResponse.setSuccess(false);
 			paginationResponse.setMessage(e.getMessage());
 		}

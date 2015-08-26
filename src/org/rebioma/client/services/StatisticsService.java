@@ -11,6 +11,12 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 
 @RemoteServiceRelativePath("statisticsService")
 public interface StatisticsService extends RemoteService{
+	
+	public static final String TYPE_DATA_MANAGER = "data_manager";
+	public static final String TYPE_DATA_PROVIDER_INSTITUTION = "institution";
+	public static final String TYPE_COLLECTION_CODE = "collection_code";
+	public static final String TYPE_YEAR_COLLECTED = "year_collected";
+	
 	/**
 	 * 1=...
 	 * @return

@@ -60,7 +60,7 @@ import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.OrderKey;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
-import org.rebioma.client.bean.PaginationOccurrences;
+import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.PaginationResponse;
 import org.rebioma.client.bean.RecordReview;
 import org.rebioma.client.bean.User;
@@ -2254,7 +2254,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	}
 	
 	@Override
-	public PaginationOccurrences findByOccurrenceFilters(Set<OccurrenceFilter> filters, User user,
+	public ListOccurrenceAPIModel findByOccurrenceFilters(Set<OccurrenceFilter> filters, User user,
 			ResultFilter resultFilter, int from, int size) throws Exception {
 		SearchResponse searchResponse = _findByOccurrenceFilters(filters, user, resultFilter, from, size);
 		SearchHits searchHits = searchResponse.getHits();
@@ -2264,7 +2264,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 			Occurrence o = OccurrenceMapping.asOccurrence(hit.getSource());
 			results.add(o);
 		}
-		PaginationOccurrences result = new PaginationOccurrences(from, size, (int)total, results);
+		ListOccurrenceAPIModel result = new ListOccurrenceAPIModel(from, size, (int)total, results);
 		result.setTookInMillis(searchResponse.getTookInMillis());
 		return result;
 	}
