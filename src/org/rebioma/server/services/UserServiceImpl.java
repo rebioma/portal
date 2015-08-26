@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sourceforge.htmlunit.corejs.javascript.tools.debugger.Main;
-
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -142,7 +140,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
     int passwordReturnStatus = -1;
     try {
       User user = sessionService.getUserBySessionId(sessionId);
-      if (BCrypt.checkpw(oldPass, user.getPasswordHash())) {
+      if (user != null && BCrypt.checkpw(oldPass, user.getPasswordHash())) {
         user.setPasswordHash(BCrypt.hashpw(newPass, BCrypt.gensalt()));
         session.update(user);
         email.setUserFirstName(user.getFirstName());
@@ -256,8 +254,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements
         welcomeEmail.setUserPassword(pass);
         welcomeEmail.buildBody();
         System.out.println(pass);
-        EmailUtil.adminSendEmailTo(user.getEmail(), welcomeEmail.getSubject(),
-            welcomeEmail.toString());
+        /*EmailUtil.adminSendEmailTo(user.getEmail(), welcomeEmail.getSubject(),
+            welcomeEmail.toString());*/
         ManagedSession.commitTransaction(session);
         log.info("user " + user.getFirstName() + " with email "
             + user.getEmail() + " is created, and an Welcome email is sent to "

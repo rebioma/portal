@@ -56,6 +56,9 @@ public class OccurrenceMapping {
 		source.startObject();
 		Field[] fields = o.getClass().getDeclaredFields();
 		for(Field f: fields){
+			if("serialVersionUID".equals(f.getName())){
+				continue;
+			}
 			try{
 				Method	getterMethod = ReflectUtils.getGetterMethod(Occurrence.class, f);
 				if(!getterMethod.isAccessible()) getterMethod.setAccessible(true);

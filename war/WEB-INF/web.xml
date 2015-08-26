@@ -224,4 +224,58 @@
       <url-pattern>/xml</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+      <servlet-name>JsonAPIRegisterServlet</servlet-name>
+      <servlet-class>org.rebioma.server.JsonAPIRegisterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>JsonAPIRegisterServlet</servlet-name>
+      <url-pattern>/json-sing_up</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+      <servlet-name>XmlAPIRegisterServlet</servlet-name>
+      <servlet-class>org.rebioma.server.XmlAPIRegisterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>XmlAPIRegisterServlet</servlet-name>
+      <url-pattern>/xml-sing_up</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+      <servlet-name>JsonAPISigninServlet</servlet-name>
+      <servlet-class>org.rebioma.server.JsonAPISigninServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>JsonAPISigninServlet</servlet-name>
+      <url-pattern>/json-sing_in</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+      <servlet-name>XmlAPISigninServlet</servlet-name>
+      <servlet-class>org.rebioma.server.XmlAPISigninServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>XmlAPISigninServlet</servlet-name>
+      <url-pattern>/xml-sing_in</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+      <servlet-name>JsonAPIChangePasswordServlet</servlet-name>
+      <servlet-class>org.rebioma.server.JsonAPIChangePasswordServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>JsonAPIChangePasswordServlet</servlet-name>
+      <url-pattern>/json-change_cp</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+      <servlet-name>XmlAPIChangePasswordServlet</servlet-name>
+      <servlet-class>org.rebioma.server.XmlAPIChangePasswordServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>XmlAPIChangePasswordServlet</servlet-name>
+      <url-pattern>/xml-change_cp</url-pattern>
+  </servlet-mapping>
+  
 </web-app>
