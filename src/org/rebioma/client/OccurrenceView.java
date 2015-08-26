@@ -731,8 +731,9 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			String searchType = getSearchType();
 			String activeView = activeViewInfo.getName();
 			ResultFilter resultFilter = getResultFilter();
-			query.setBaseFilters(query.getFiltersFromProperty(searchType,
-					ApplicationView.getAuthenticatedUser(), resultFilter));
+			Set<String> baseFilters = query.getFiltersFromProperty(searchType,
+					ApplicationView.getAuthenticatedUser(), resultFilter); 
+			query.setBaseFilters(baseFilters);
 			if (!activeView.equalsIgnoreCase(ADVANCE)) {
 				clearAdanceSearch();
 			}

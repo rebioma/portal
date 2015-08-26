@@ -2264,7 +2264,9 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 			Occurrence o = OccurrenceMapping.asOccurrence(hit.getSource());
 			results.add(o);
 		}
-		return new PaginationOccurrences(from, size, (int)total, results);
+		PaginationOccurrences result = new PaginationOccurrences(from, size, (int)total, results);
+		result.setTookInMillis(searchResponse.getTookInMillis());
+		return result;
 	}
 	
 
