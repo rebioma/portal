@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
+import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
@@ -107,27 +108,36 @@ public class APIInterfaceServlet extends HttpServlet {
 		return filters;
 	}
 	
-	protected List<StatisticModel> findStatisticByType(HttpServletRequest request) throws Exception{
-		String statistic = request.getParameter("statistic");
-		int statType;
-		switch (statistic) {
-		case StatisticsService.TYPE_COLLECTION_CODE:
-			statType = 3;
-			break;
-		case StatisticsService.TYPE_DATA_MANAGER:
-			statType = 1;
-			break;
-		case StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION:
-			statType = 2;
-			break;
-		case StatisticsService.TYPE_YEAR_COLLECTED:
-			statType = 4;
-			break;
-		default:
-			throw new IllegalArgumentException("Le type de statistique [" + statistic + "] n'est pas géré par l'application.");
+	protected ListStatisticAPIModel findStatisticByType(HttpServletRequest request) {
+
+		ListStatisticAPIModel listStatisticApiModels;
+		try{
+			String statistic = request.getParameter("statistic");
+			int statType;
+			switch (statistic) {
+			case StatisticsService.TYPE_COLLECTION_CODE:
+				statType = 3;
+				break;
+			case StatisticsService.TYPE_DATA_MANAGER:
+				statType = 1;
+				break;
+			case StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION:
+				statType = 2;
+				break;
+			case StatisticsService.TYPE_YEAR_COLLECTED:
+				statType = 4;
+				break;
+			default:
+				throw new IllegalArgumentException("Le type de statistique [" + statistic + "] n'est pas géré par l'application.");
+			}
+			listStatisticApiModels = occurrenceDb.getStatisticsByType(statistic);
+//			statisticsService.getStatisticsByType(statType);
+		}catch(Exception e){
+			listStatisticApiModels = new ListStatisticAPIModel();
+			listStatisticApiModels.setSuccess(false);
+			listStatisticApiModels.setMessage(e.getClass().getName() +": " + e.getMessage());
 		}
-		List<StatisticModel> statisticModels = statisticsService.getStatisticsByType(statType);
-		return statisticModels;
+		return listStatisticApiModels;
 	}
 	
 	protected ListOccurrenceAPIModel findOccurrences(HttpServletRequest request) throws Exception{

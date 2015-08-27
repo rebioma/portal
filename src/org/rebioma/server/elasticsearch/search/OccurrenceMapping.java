@@ -9,6 +9,7 @@ import java.util.Map;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.rebioma.client.bean.Occurrence;
+import org.rebioma.client.bean.User;
 import org.rebioma.server.elasticsearch.json.JsonFileUtility;
 import org.rebioma.server.elasticsearch.utils.ReflectUtils;
 
@@ -51,7 +52,7 @@ public class OccurrenceMapping {
 		return o;
 	}
 	
-	public static XContentBuilder asXcontentBuilder(Occurrence o) throws IOException{
+	public static XContentBuilder asXcontentBuilder(Occurrence o, User ownerUser) throws IOException{
 		XContentBuilder source = XContentFactory.jsonBuilder();
 		source.startObject();
 		Field[] fields = o.getClass().getDeclaredFields();
@@ -83,6 +84,12 @@ public class OccurrenceMapping {
 				e.printStackTrace();
 			}
 		}
+		String dataManager = ownerUser.getFirstName() + " " + ownerUser.getLastName().toUpperCase() + " - " + ownerUser.getInstitution() + " " + ownerUser.getEmail();
+		source.field("data_manager", dataManager);
+		source.field("owner_firstname", ownerUser.getFirstName());
+		source.field("owner_lastname", ownerUser.getLastName());
+		source.field("owner_institution", ownerUser.getInstitution());
+		source.field("owner_email", ownerUser.getEmail());
 		source.endObject();
 		return source;
 	}

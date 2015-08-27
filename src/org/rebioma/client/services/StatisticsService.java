@@ -3,6 +3,7 @@ package org.rebioma.client.services;
 import java.util.List;
 
 import org.rebioma.client.bean.StatisticModel;
+import org.rebioma.server.bean.StatisticYearRange;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -31,5 +32,4 @@ public interface StatisticsService extends RemoteService{
 	List<StatisticModel> getStatisticDetails(int statisticsType,String libelle);
 	PagingLoadResult<StatisticModel> getStatisticsByType(int statisticsType, PagingLoadConfig config);
 	PagingLoadResult<StatisticModel> getStatisticDetails(StatisticModel statisticModel, PagingLoadConfig config);
-
 }

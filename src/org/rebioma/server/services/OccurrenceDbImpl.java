@@ -46,6 +46,12 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
+import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
@@ -58,12 +64,15 @@ import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.OrderKey;
+import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.PaginationResponse;
 import org.rebioma.client.bean.RecordReview;
+import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
+import org.rebioma.client.services.StatisticsService;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 import org.rebioma.server.elasticsearch.search.OccurrenceMapping;
 import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
@@ -2882,5 +2891,66 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 
 	public void refresh() {
 		taxonomiKRB = taxonomicReviewerDb.findAll();
+	}
+	
+	public ListStatisticAPIModel getStatisticsByType(String type) {
+		List<StatisticModel> statisticsModels = new ArrayList<StatisticModel>();
+		SearchResponse searchResponse = OccurrenceSearch.getInstance().doOccurrenceStatistic(type);
+//		SearchHits searchHits = searchResponse.getHits();
+		Aggregations aggregations = searchResponse.getAggregations();
+		if(StatisticsService.TYPE_YEAR_COLLECTED.equalsIgnoreCase(type)){
+			InternalRange<InternalRange.Bucket> rangeAgg = aggregations.get(type);
+			Collection<InternalRange.Bucket> buckets = rangeAgg.getBuckets();
+			for(InternalRange.Bucket bucket: buckets){
+				StatisticModel model = new StatisticModel();
+				Double from = (Double)bucket.getFrom();
+				Double to = (Double)bucket.getTo();
+				String key = from.intValue()  + " ~ " + to.intValue();
+				model.setTitle(key);
+				Aggregations aggs = bucket.getAggregations();
+				List<Aggregation> aggList = aggs.asList();
+				for(Aggregation iAgg: aggList){
+					InternalFilter filter = (InternalFilter)iAgg;
+					Long docCount = filter.getDocCount();
+					String name2 = filter.getName();
+					if("private".equalsIgnoreCase(name2)) model.setNbPrivateData(docCount.intValue());
+					if("reliable".equalsIgnoreCase(name2)) model.setNbReliable(docCount.intValue());
+					if("public".equalsIgnoreCase(name2)) model.setNbPublicData(docCount.intValue());
+					if("questionable".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
+					if("awaitingreview".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
+					if("invalidated".equalsIgnoreCase(name2)) model.setNbInvalidated(docCount.intValue());
+				}
+				statisticsModels.add(model);
+			}
+		}else{
+			StringTerms aggregation = aggregations.get(type);
+//			String name1 = aggregation.getName();
+			List<Terms.Bucket> buckets = aggregation.getBuckets();
+			for(Terms.Bucket bucket: buckets){
+				String key = bucket.getKey();
+				StatisticModel model = new StatisticModel();
+				model.setTitle(key);
+				Aggregations aggs = bucket.getAggregations();
+				List<Aggregation> aggList = aggs.asList();
+				for(Aggregation iAgg: aggList){
+					InternalFilter filter = (InternalFilter)iAgg;
+					Long docCount = filter.getDocCount();
+					String name2 = filter.getName();
+					if("private".equalsIgnoreCase(name2)) model.setNbPrivateData(docCount.intValue());
+					if("reliable".equalsIgnoreCase(name2)) model.setNbReliable(docCount.intValue());
+					if("public".equalsIgnoreCase(name2)) model.setNbPublicData(docCount.intValue());
+					if("questionable".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
+					if("awaitingreview".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
+					if("invalidated".equalsIgnoreCase(name2)) model.setNbInvalidated(docCount.intValue());
+				}
+				statisticsModels.add(model);
+			}
+		}
+		ListStatisticAPIModel response = new ListStatisticAPIModel();
+		response.setSuccess(true);
+		response.setStatistics(statisticsModels);
+		long took = searchResponse.getTookInMillis();
+		response.setTookInMillis(took);
+		return response;
 	}
 }

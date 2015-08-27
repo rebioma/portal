@@ -6,11 +6,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
+import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.hibernate.Session;
+import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.services.StatisticsService;
+import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
 import org.rebioma.server.util.HibernateUtil;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -22,8 +33,8 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	
 	
 	public StatisticsServiceImpl() {
+		
 	}
-
 	@Override
 	public List<StatisticModel> getStatisticsByType(int statisticsType) {
 		List<StatisticModel> ret = new ArrayList<StatisticModel>();

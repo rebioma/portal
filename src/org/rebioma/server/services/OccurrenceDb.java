@@ -24,6 +24,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
+import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
@@ -318,5 +319,7 @@ public interface OccurrenceDb {
    * refreshing the all the variable (list of trb)
    */
   public void refresh();
+  
+  public ListStatisticAPIModel getStatisticsByType(String type);
 
 }

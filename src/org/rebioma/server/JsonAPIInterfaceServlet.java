@@ -71,21 +71,8 @@ public class JsonAPIInterfaceServlet extends APIInterfaceServlet {
 			json = gson.toJson(paginationResponse);
 			break;
 		case RES_STATISTICS:
-			ListStatisticAPIModel listStatisticAPIModel = new ListStatisticAPIModel();
-			long startTime = System.currentTimeMillis();
-			try {
-				List<StatisticModel> statisticModel = this.findStatisticByType(request);
-				listStatisticAPIModel.setStatistics(statisticModel);
-			} catch (IllegalArgumentException e) {
-				listStatisticAPIModel.setSuccess(false);
-				listStatisticAPIModel.setMessage(e.getClass().getName() + ":" + e.getMessage());
-			} catch (Exception e) {
-				listStatisticAPIModel.setSuccess(false);
-				listStatisticAPIModel.setMessage(e.getClass().getName() + ":" + e.getMessage());
-			}
-			long endTime = System.currentTimeMillis();
-			listStatisticAPIModel.setTookInMillis(endTime - startTime);
-			json = gson.toJson(listStatisticAPIModel);
+			 ListStatisticAPIModel listStatisticAPIModel = this.findStatisticByType(request);
+			 json = gson.toJson(listStatisticAPIModel);
 			break;
 		case RES_TAXONOMY:
 				APITaxonomyResponse txonomyResponse = getTaxonomies(request);

@@ -1,6 +1,27 @@
 {
 	"occurrence": {
 		"properties": {
+			"data_manager": {
+				"type": "string", 
+				"index": "not_analyzed",
+				"copy_to": ["biologic_autre_nom"]
+			},
+			"owner_firstname": {
+				"type": "string", 
+				"index": "not_analyzed"
+			},
+			"owner_lastname": {
+				"type": "string", 
+				"index": "not_analyzed"
+			},
+			"owner_institution": {
+				"type": "string", 
+				"index": "not_analyzed"
+			},
+			"owner_email": {
+				"type": "string", 
+				"index": "not_analyzed"
+			},
 			"id":{"type": "integer"},
 			"owner":{"type": "integer"},
 			"public_":{"type": "boolean"},
@@ -36,9 +57,12 @@
 			"datelastmodified":{"type": "string"},
 			"institutioncode":{
 				"type": "string",
+				"index": "not_analyzed",
 				"copy_to": ["localisation"]
 			},
-			"collectioncode":{"type": "string"},
+			"collectioncode":{
+				"type": "string", 
+				"index": "not_analyzed"},
 			"catalognumber":{"type": "string"},
 			"scientificname":{
 				"type": "string",

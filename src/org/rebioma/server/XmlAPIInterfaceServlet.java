@@ -62,17 +62,7 @@ public class XmlAPIInterfaceServlet extends APIInterfaceServlet {
 				}
 				break;
 			case RES_STATISTICS:
-				ListStatisticAPIModel listStatisticAPIModel = new ListStatisticAPIModel();
-				try {
-					List<StatisticModel> statisticModels = findStatisticByType(req);
-					listStatisticAPIModel.setStatistics(statisticModels);
-				} catch (IllegalArgumentException e) {
-					listStatisticAPIModel.setSuccess(false);
-					listStatisticAPIModel.setMessage(e.getClass().getName() + ":" + e.getMessage());
-				} catch (Exception e) {
-					listStatisticAPIModel.setSuccess(false);
-					listStatisticAPIModel.setMessage(e.getClass().getName() + ":" + e.getMessage());
-				} 
+				ListStatisticAPIModel listStatisticAPIModel = findStatisticByType(req);
 				try{
 					JAXBContext jaxbContext = JAXBContext.newInstance(ListStatisticAPIModel.class);
 					Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
