@@ -3,6 +3,10 @@ package org.rebioma.client.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.google.gwt.editor.client.Editor.Path;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -13,6 +17,8 @@ import com.sencha.gxt.data.shared.PropertyAccess;
  * @author Mikajy
  * 
  */
+@XmlRootElement(name="taxonomy")
+@XmlAccessorType (XmlAccessType.FIELD)
 public class SpeciesTreeModel implements Serializable{
 
 	public interface SpeciesTreeModelProperties extends

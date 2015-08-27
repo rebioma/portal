@@ -14,11 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
+import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
+import org.rebioma.client.bean.api.APITaxonomyResponse;
+import org.rebioma.client.services.SpeciesExplorerService;
 import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.services.DBFactory;
 import org.rebioma.server.services.OccurrenceDb;
+import org.rebioma.server.services.SpeciesExplorerServiceImpl;
 import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
 import org.rebioma.server.services.QueryFilter;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
@@ -31,6 +35,7 @@ public class APIInterfaceServlet extends HttpServlet {
 	
 	protected static final String RES_OCCURRENCES = "occ";
 	protected static final String RES_STATISTICS = "stats";
+	protected static final String RES_TAXONOMY = "ta";
 	
 	private static final int DEFAULT_PAGE_SIZE = 50;
 	//type possible values
@@ -52,6 +57,7 @@ public class APIInterfaceServlet extends HttpServlet {
 	
 	OccurrenceDb occurrenceDb = DBFactory.getOccurrenceDb();
 	StatisticsService statisticsService = DBFactory.getStatisticsService();
+	private SpeciesExplorerService speciesExplorerService = new SpeciesExplorerServiceImpl();
 	
 	/**
 	 * 
@@ -157,5 +163,36 @@ public class APIInterfaceServlet extends HttpServlet {
 		}
 		
 		return paginationResponse;
+	}
+	
+	public APITaxonomyResponse getTaxonomies(HttpServletRequest request){
+		APITaxonomyResponse response = new APITaxonomyResponse();
+//		List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();
+		String kingdom = getParameter(request, "kingdom");
+		String phylum = getParameter(request, "phylum");
+		String classe = getParameter(request, "class");
+		String order = getParameter(request, "order");
+		String family = getParameter(request, "family");
+		String genus = getParameter(request, "genus");
+		String species = getParameter(request, "species");
+		SpeciesTreeModel treeModel = new SpeciesTreeModel();
+		treeModel.setKingdom(kingdom);
+		treeModel.setPhylum(phylum);
+		treeModel.setClass_(classe);
+		treeModel.setOrder(order);
+		treeModel.setFamily(family);
+		treeModel.setGenus(genus);
+		treeModel.setAcceptedspecies(species);
+		List<SpeciesTreeModel> trees = speciesExplorerService.getChildren(treeModel);
+		response.setSuccess(true);
+		response.setTaxonomies(trees);
+		return response;
+	}
+	private String getParameter(HttpServletRequest request, String key){
+		String value = request.getParameter(key);
+		if(StringUtils.isBlank(value)){
+			value = null;
+		}
+		return value;
 	}
 }

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.StatisticModel;
+import org.rebioma.client.bean.api.APITaxonomyResponse;
 import org.rebioma.client.bean.api.GsonXmlTransientExlusionStrategy;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
 
@@ -85,6 +86,10 @@ public class JsonAPIInterfaceServlet extends APIInterfaceServlet {
 			long endTime = System.currentTimeMillis();
 			listStatisticAPIModel.setTookInMillis(endTime - startTime);
 			json = gson.toJson(listStatisticAPIModel);
+			break;
+		case RES_TAXONOMY:
+				APITaxonomyResponse txonomyResponse = getTaxonomies(request);
+				json = gson.toJson(txonomyResponse);
 			break;
 		default:
 			Map<String, String> map = new HashMap<String, String>();

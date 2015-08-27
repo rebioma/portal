@@ -16,6 +16,7 @@ import javax.xml.bind.Marshaller;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.StatisticModel;
+import org.rebioma.client.bean.api.APITaxonomyResponse;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
 
 /**
@@ -78,6 +79,19 @@ public class XmlAPIInterfaceServlet extends APIInterfaceServlet {
 					jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 					resp.setContentType("application/xml");
 					jaxbMarshaller.marshal(listStatisticAPIModel, resp.getWriter());
+				} catch (JAXBException e) {
+					throw new RuntimeException(e);
+				}
+				break;
+			case RES_TAXONOMY:
+				APITaxonomyResponse txonomyResponse = getTaxonomies(req);
+				try {
+					JAXBContext jaxbContext = JAXBContext.newInstance(APITaxonomyResponse.class);
+					Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+					// output pretty printed
+					jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+					resp.setContentType("application/xml");
+					jaxbMarshaller.marshal(txonomyResponse, resp.getWriter());
 				} catch (JAXBException e) {
 					throw new RuntimeException(e);
 				}
