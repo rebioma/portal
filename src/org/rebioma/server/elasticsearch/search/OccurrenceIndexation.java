@@ -18,6 +18,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.StatelessSession;
@@ -88,9 +89,8 @@ public class OccurrenceIndexation {
 		createIndex();
 		
 		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
-//		Query countQuery = statelessSession.createQuery("select count(id) from Occurrence");
-//		long rowCount = (Long)countQuery.uniqueResult();
-		long rowCount = 10000;
+		Query countQuery = statelessSession.createQuery("select count(id) from Occurrence");
+		long rowCount = (Long)countQuery.uniqueResult();
 		System.out.println(rowCount + " occurrences à indexer ...");
 		int maxResult = 5000;
 		Map<Integer, User> userMap = new HashMap<Integer, User>();
