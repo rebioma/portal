@@ -2893,6 +2893,28 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 		taxonomiKRB = taxonomicReviewerDb.findAll();
 	}
 	
+	public ListStatisticAPIModel getStatisticsByType(int type) {
+		String typeStr;
+		switch (type) {
+		case 1:
+			typeStr = StatisticsService.TYPE_DATA_MANAGER;
+			break;
+		case 2:
+			typeStr = StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION;
+			break;
+		case 3:
+			typeStr = StatisticsService.TYPE_COLLECTION_CODE;
+			break;
+		case 4:
+			typeStr = StatisticsService.TYPE_YEAR_COLLECTED;
+			break;
+		default:
+			typeStr = StatisticsService.TYPE_DATA_MANAGER;
+			break;
+		}
+		return getStatisticsByType(typeStr) ;
+	}
+	
 	public ListStatisticAPIModel getStatisticsByType(String type) {
 		List<StatisticModel> statisticsModels = new ArrayList<StatisticModel>();
 		SearchResponse searchResponse = OccurrenceSearch.getInstance().doOccurrenceStatistic(type);

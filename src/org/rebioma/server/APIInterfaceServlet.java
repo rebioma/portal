@@ -70,39 +70,45 @@ public class APIInterfaceServlet extends HttpServlet {
 	private Set<OccurrenceFilter> getOccurrenceViewFilters(HttpServletRequest request) throws InvalidFilter{
 		String type = request.getParameter("type");
 		String quicksearch = request.getParameter("quicksearch");
+		String text = request.getParameter("text");
+		Set<String> baseFilters = new HashSet<String>();
+		if(StringUtils.isNotBlank(text)){
+			baseFilters.add("globalsearchtext = " + text);
+		}else{
+			if(StringUtils.isNotBlank(quicksearch)){
+				baseFilters.add("quickSearch = " + quicksearch);
+			}
+			switch (type) {
+				case ALL_OCC:
+					//filtre vide
+					break;
+				case ALL_AWAIT_REVIEW:
+					baseFilters.add("validated = true");
+					baseFilters.add("reviewed empty");
+					break;
+				case ALL_INVALID:
+					baseFilters.add("validated = true");
+					baseFilters.add("reviewed empty");
+					//error_type
+					String error_type = request.getParameter("error_type");
+					if(StringUtils.isBlank(error_type)) error_type = ALL_ERROR;
+					if(!ALL_ERROR.equalsIgnoreCase(error_type)) baseFilters.add("ValidationError like " + error_type);
+					break;
+				case ALL_NEG_REVIEWED:
+					baseFilters.add("validated = true");
+					baseFilters.add("reviewed = false");
+					break;
+				case ALL_POS_REVIEWED:
+					baseFilters.add("validated = true");
+					baseFilters.add("reviewed = true");
+					break;
+				default:
+					throw new IllegalArgumentException("Le type [" + type + "] est inconnu");
+			}
+		}
+
 		if(StringUtils.isBlank(type)){
 			type = ALL_OCC;
-		}
-		Set<String> baseFilters = new HashSet<String>();
-		if(StringUtils.isNotBlank(quicksearch)){
-			baseFilters.add("quickSearch = " + quicksearch);
-		}
-		switch (type) {
-			case ALL_OCC:
-				//filtre vide
-				break;
-			case ALL_AWAIT_REVIEW:
-				baseFilters.add("validated = true");
-				baseFilters.add("reviewed empty");
-				break;
-			case ALL_INVALID:
-				baseFilters.add("validated = true");
-				baseFilters.add("reviewed empty");
-				//error_type
-				String error_type = request.getParameter("error_type");
-				if(StringUtils.isBlank(error_type)) error_type = ALL_ERROR;
-				if(!ALL_ERROR.equalsIgnoreCase(error_type)) baseFilters.add("ValidationError like " + error_type);
-				break;
-			case ALL_NEG_REVIEWED:
-				baseFilters.add("validated = true");
-				baseFilters.add("reviewed = false");
-				break;
-			case ALL_POS_REVIEWED:
-				baseFilters.add("validated = true");
-				baseFilters.add("reviewed = true");
-				break;
-			default:
-				throw new IllegalArgumentException("Le type [" + type + "] est inconnu");
 		}
 		Set<OccurrenceFilter> filters = QueryFilter.getFilters(baseFilters, OccurrenceFilter.class);
 		return filters;

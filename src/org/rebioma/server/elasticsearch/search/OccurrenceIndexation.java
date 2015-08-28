@@ -1,7 +1,9 @@
 package org.rebioma.server.elasticsearch.search;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
@@ -16,11 +18,12 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.StatelessSession;
+import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.bean.Occurrence;
+import org.rebioma.client.bean.User;
 import org.rebioma.server.util.HibernateUtil;
 
 /**
@@ -85,10 +88,12 @@ public class OccurrenceIndexation {
 		createIndex();
 		
 		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
-		Query countQuery = statelessSession.createQuery("select count(id) from Occurrence");
-		long rowCount = (Long)countQuery.uniqueResult();
+//		Query countQuery = statelessSession.createQuery("select count(id) from Occurrence");
+//		long rowCount = (Long)countQuery.uniqueResult();
+		long rowCount = 10000;
 		System.out.println(rowCount + " occurrences à indexer ...");
 		int maxResult = 5000;
+		Map<Integer, User> userMap = new HashMap<Integer, User>();
 		try{
 			Occurrence o;
 			for(int i=0; i< rowCount; i+= maxResult){
@@ -98,14 +103,18 @@ public class OccurrenceIndexation {
 				System.out.println("from " + i + " to " + maxResult);
 				System.out.println("********************************");
 				System.out.println("********************************");
-				ScrollableResults scrollableResults = HibernateUtil.getSessionFactory().openStatelessSession().createQuery("from Occurrence order by id desc")
+				ScrollableResults scrollableResults = statelessSession.createQuery("from Occurrence order by id desc")
 						.setFirstResult(i)
 						.setMaxResults(maxResult)
 						.setCacheable(false)
 						.scroll(ScrollMode.FORWARD_ONLY);
 					while(scrollableResults.next()){
 						o = (Occurrence)scrollableResults.get(0);
-						XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o);
+						if(!userMap.containsKey(o.getOwner())){
+							User ownerUser = (User)statelessSession.createCriteria(User.class).add(Restrictions.eq("id", o.getOwner())).uniqueResult();
+							userMap.put(o.getOwner(), ownerUser);
+						}
+						XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o, userMap.get(o.getOwner()));
 						bulkProcessor.add(new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId())).source(source));
 						o = null;
 					}
@@ -127,8 +136,10 @@ public class OccurrenceIndexation {
 	 */
 	public void indexer(List<Occurrence> occurrences) throws IOException {
 		try{
+			StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
 			for(Occurrence o: occurrences){
-				XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o);
+				User ownerUser = (User)statelessSession.createCriteria(User.class).add(Restrictions.eq("id", o.getOwner())).uniqueResult();
+				XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o, ownerUser);
 				bulkProcessor.add(new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId())).source(source));
 			}
 		}finally{
@@ -147,8 +158,10 @@ public class OccurrenceIndexation {
 	 * @throws ExecutionException
 	 */
 	public void indexer(Occurrence o) throws IOException, InterruptedException, ExecutionException{
-		XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o);
-		XContentBuilder occurrenceSource = OccurrenceMapping.asXcontentBuilder(o);
+		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
+		User ownerUser = (User)statelessSession.createCriteria(User.class).add(Restrictions.eq("id", o.getOwner())).uniqueResult();
+		XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o, ownerUser);
+		XContentBuilder occurrenceSource = OccurrenceMapping.asXcontentBuilder(o, ownerUser);
 		IndexRequest indexRequest = new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId()))
 			.source(occurrenceSource);
 		UpdateRequest updateRequest = new UpdateRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId()))

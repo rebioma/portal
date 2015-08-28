@@ -321,5 +321,6 @@ public interface OccurrenceDb {
   public void refresh();
   
   public ListStatisticAPIModel getStatisticsByType(String type);
+  public ListStatisticAPIModel getStatisticsByType(int type);
 
 }
