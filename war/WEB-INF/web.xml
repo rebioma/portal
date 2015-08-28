@@ -230,7 +230,7 @@
   </servlet>
   <servlet-mapping>
       <servlet-name>JsonAPIRegisterServlet</servlet-name>
-      <url-pattern>/json-sing_up</url-pattern>
+      <url-pattern>/json-sign_up</url-pattern>
   </servlet-mapping>
   
    <servlet>
@@ -239,7 +239,7 @@
   </servlet>
   <servlet-mapping>
       <servlet-name>XmlAPIRegisterServlet</servlet-name>
-      <url-pattern>/xml-sing_up</url-pattern>
+      <url-pattern>/xml-sign_up</url-pattern>
   </servlet-mapping>
   
    <servlet>
@@ -248,7 +248,7 @@
   </servlet>
   <servlet-mapping>
       <servlet-name>JsonAPISigninServlet</servlet-name>
-      <url-pattern>/json-sing_in</url-pattern>
+      <url-pattern>/json-sign_in</url-pattern>
   </servlet-mapping>
   
    <servlet>
@@ -257,7 +257,7 @@
   </servlet>
   <servlet-mapping>
       <servlet-name>XmlAPISigninServlet</servlet-name>
-      <url-pattern>/xml-sing_in</url-pattern>
+      <url-pattern>/xml-sign_in</url-pattern>
   </servlet-mapping>
   
    <servlet>

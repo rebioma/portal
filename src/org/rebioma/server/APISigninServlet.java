@@ -29,7 +29,7 @@ public class APISigninServlet extends HttpServlet {
 		String password = req.getParameter("password");
 		User user = userService.signIn(email, password);
 		APISigninResponse signinResponse = new APISigninResponse();
-		if(user != null){
+		if(user != null && user.getId() != null){
 			signinResponse.setSuccess(true);
 			signinResponse.setSessionId(user.getSessionId());
 		}else{
