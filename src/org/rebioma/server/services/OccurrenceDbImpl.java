@@ -50,6 +50,7 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
 import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
+import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.hibernate.Criteria;
@@ -2945,7 +2946,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 				statisticsModels.add(model);
 			}
 		}else{
-			StringTerms aggregation = aggregations.get(type);
+			InternalTerms aggregation = aggregations.get(type);
 //			String name1 = aggregation.getName();
 			List<Terms.Bucket> buckets = aggregation.getBuckets();
 			for(Terms.Bucket bucket: buckets){

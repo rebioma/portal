@@ -135,7 +135,7 @@ public class OccurrenceSearch {
 			requestBuilder.addAggregation(termsBuilder);
 		break;
 		case StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION:
-			field = "institution";
+			field = "institutioncode";
 			termsBuilder = AggregationBuilders.terms(statisticType).field(field);
 			termsBuilder.subAggregation(publicAggs);
 			termsBuilder.subAggregation(privateAggs);
