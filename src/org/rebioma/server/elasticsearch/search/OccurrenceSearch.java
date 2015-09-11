@@ -109,7 +109,7 @@ public class OccurrenceSearch {
 		switch (statisticType) {
 		case StatisticsService.TYPE_DATA_MANAGER:
 			field = "data_manager";
-			termsBuilder = AggregationBuilders.terms(statisticType).field(field);
+			termsBuilder = AggregationBuilders.terms(statisticType).field(field).size(0);
 			termsBuilder.subAggregation(publicAggs);
 			termsBuilder.subAggregation(privateAggs);
 			termsBuilder.subAggregation(reliableAggs);
@@ -123,7 +123,7 @@ public class OccurrenceSearch {
 		break;
 		case StatisticsService.TYPE_COLLECTION_CODE:
 			field = "collectioncode";
-			termsBuilder = AggregationBuilders.terms(statisticType).field(field);
+			termsBuilder = AggregationBuilders.terms(statisticType).field(field).size(0);
 			termsBuilder.subAggregation(publicAggs);
 			termsBuilder.subAggregation(privateAggs);
 			termsBuilder.subAggregation(reliableAggs);
@@ -136,7 +136,7 @@ public class OccurrenceSearch {
 		break;
 		case StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION:
 			field = "institutioncode";
-			termsBuilder = AggregationBuilders.terms(statisticType).field(field);
+			termsBuilder = AggregationBuilders.terms(statisticType).field(field).size(0);
 			termsBuilder.subAggregation(publicAggs);
 			termsBuilder.subAggregation(privateAggs);
 			termsBuilder.subAggregation(reliableAggs);
