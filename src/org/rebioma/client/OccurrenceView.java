@@ -686,8 +686,8 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			else searchTypeBox.setSelectedIndex(allOccurrenceIndex);
 
 			String activeView = activeViewInfo.getName();
-			if (!activeView.equals(MAP) && !activeView.equals(LIST)) {
-				switchView(DEFAULT_VIEW, false);
+			if (/*!activeView.equals(MAP) && */!activeView.equals(LIST)) {
+				switchView(LIST, false);
 			}
 			/*
 			 * 2- init  searchBox
