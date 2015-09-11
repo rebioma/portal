@@ -713,14 +713,14 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 		}
 		
 		public void searchText(String text){
+			resetToDefaultState();
+			resetForTextSearch();
 			query.clearSearchFilter();
 			query.addSearchFilter(GLOBAL_SEARCH_TEXT + " = " + text);
-			resetForTextSearch();
 			ResultFilter resultFilter = getResultFilter();
 			String searchType = getSearchType();
 			query.setBaseFilters(query.getFiltersFromProperty(searchType,
 					ApplicationView.getAuthenticatedUser(), resultFilter));
-			resetToDefaultState();
 			addHistoryItem(false);
 			query.requestData(1);
 		}

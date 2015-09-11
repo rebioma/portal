@@ -1542,7 +1542,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
 					boolQueryBuilder.must(query1).should(
 							QueryBuilders.boolQuery().should(query2)
-									.should(query3));
+									.should(query3)).minimumShouldMatch("80%");
 				}
 			} else if (filter.column.equalsIgnoreCase(filter
 					.getPropertyName("quickSearch"))) {
