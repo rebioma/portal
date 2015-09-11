@@ -42,7 +42,21 @@
 				"copy_to": ["localisation"]
 			},
 			"vettingerror":{"type": "string"},
-			"validationerror":{"type": "string"},
+			"validationerror":{
+				"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
+			},
 			"basisofrecord":{"type": "string"},
 			"year":{
 				"type": "integer",
