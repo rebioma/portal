@@ -3,6 +3,10 @@
 	"number_of_shards": "1",
 	"analysis": {
 	   "analyzer": {
+	   		"string_lowercase": {
+		      "tokenizer": "keyword",
+		      "filter": ["lowercase"]
+		    },
 		   	"edge_ngram_analyzer": {
 		        "type":      "custom",
 		        "tokenizer" : "edge_ngram_tokenizer",

@@ -674,6 +674,7 @@ public class ApplicationView extends View implements ClickHandler {
     } else if (sender == homeLink) {
       switchView(OCCURRENCES);
     } else if(sender == globalSearchPanel.getSearchButton()) {
+    	switchView(OCCURRENCES);
     	String text = globalSearchPanel.getText();
     	GWT.log("Recherche des occurrences contenant le terme >" + text + "< ...");
     	getOccurrenceView().getSearchForm().searchText(text);

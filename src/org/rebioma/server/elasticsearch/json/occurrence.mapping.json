@@ -450,6 +450,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}
 			},
@@ -479,6 +483,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedphylum":{
@@ -494,6 +502,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedclass":{
@@ -509,6 +521,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedorder":{
@@ -524,6 +540,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedsuborder":{
@@ -539,6 +559,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedfamily":{
@@ -554,6 +578,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedsubfamily":{
@@ -569,6 +597,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedgenus":{
@@ -584,6 +616,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedsubgenus":{
@@ -599,6 +635,10 @@
 						"type": "string",
 						"index_analyzer": "ngram_analyzer",
 						"search_analyzer": "standard_no_doublon"
+					},
+					"lower": {
+						"type": "string",
+						"analyzer": "string_lowercase"
 					}
 				}},
 			"acceptedspecificepithet":{

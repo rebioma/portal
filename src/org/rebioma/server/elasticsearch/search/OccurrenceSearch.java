@@ -77,14 +77,14 @@ public class OccurrenceSearch {
 	 */
 	public List<SpeciesTreeModel> getSpeciesTreeModels(SpeciesTreeModel parent) {
 		List<SpeciesTreeModel> listToReturn = new ArrayList<SpeciesTreeModel>();
-		String taxonomyFieldConcerne="kingdom", occurrenceFieldConcerne="acceptedkingdom", level = SpeciesExplorerService.LEVELS.get("KINGDOM");
+		String taxonomyFieldConcerne="kingdom", occurrenceFieldConcerne="acceptedkingdom.lower", level = SpeciesExplorerService.LEVELS.get("KINGDOM");
 		FilterAggregationBuilder publicAggs = AggregationBuilders.filter("public").filter(FilterBuilders.termFilter("public_", true));
 		FilterAggregationBuilder privateAggs = AggregationBuilders.filter("private").filter(FilterBuilders.orFilter(
 				FilterBuilders.termFilter("public_", false),
 				FilterBuilders.missingFilter("public_").existence(true).nullValue(true)));
 		if(parent==null || parent.getKingdom()==null || parent.getKingdom().toString().isEmpty()) {
 			taxonomyFieldConcerne="kingdom";
-			occurrenceFieldConcerne ="acceptedkingdom";
+			occurrenceFieldConcerne ="acceptedkingdom.lower";
 			level=SpeciesExplorerService.LEVELS.get("KINGDOM");
 		}
 		Set<FilterBuilder> occFilterBuilders = new HashSet<FilterBuilder>();
@@ -92,7 +92,7 @@ public class OccurrenceSearch {
 		Set<TermsBuilder> parentAggs = new HashSet<TermsBuilder>();
 		if(parent!=null && StringUtils.isNotBlank(parent.getKingdom())) {
 			taxonomyFieldConcerne="phylum";
-			occurrenceFieldConcerne ="acceptedphylum";
+			occurrenceFieldConcerne ="acceptedphylum.lower";
 			level=SpeciesExplorerService.LEVELS.get("PHYLUM");
 			occFilterBuilders.add(FilterBuilders.termFilter("acceptedkingdom", parent.getKingdom()));
 			taFilterBuilders.add(FilterBuilders.termFilter("kingdom", parent.getKingdom()));
@@ -100,7 +100,7 @@ public class OccurrenceSearch {
 		}
 		if(parent!=null && StringUtils.isNotBlank(parent.getPhylum())) {
 			taxonomyFieldConcerne="class_";
-			occurrenceFieldConcerne ="acceptedclass";
+			occurrenceFieldConcerne ="acceptedclass.lower";
 			level=SpeciesExplorerService.LEVELS.get("CLASS");
 			occFilterBuilders.add(FilterBuilders.termFilter("acceptedphylum", parent.getPhylum()));
 			taFilterBuilders.add(FilterBuilders.termFilter("phylum", parent.getPhylum()));
@@ -111,7 +111,7 @@ public class OccurrenceSearch {
 		}
 		if(parent!=null && StringUtils.isNotBlank(parent.getClass_())) {
 			taxonomyFieldConcerne="order";
-			occurrenceFieldConcerne ="acceptedorder";
+			occurrenceFieldConcerne ="acceptedorder.lower";
 			level=SpeciesExplorerService.LEVELS.get("ORDER");
 			occFilterBuilders.add(FilterBuilders.termFilter("acceptedclass", parent.getClass_()));
 			taFilterBuilders.add(FilterBuilders.termFilter("class_", parent.getClass_()));
@@ -122,7 +122,7 @@ public class OccurrenceSearch {
 		}
 		if(parent!=null && StringUtils.isNotBlank(parent.getOrder())) {
 			taxonomyFieldConcerne="family";
-			occurrenceFieldConcerne ="acceptedfamily";
+			occurrenceFieldConcerne ="acceptedfamily.lower";
 			level=SpeciesExplorerService.LEVELS.get("FAMILY");
 			occFilterBuilders.add(FilterBuilders.termFilter("acceptedorder", parent.getOrder()));
 			taFilterBuilders.add(FilterBuilders.termFilter("order", parent.getOrder()));
@@ -134,7 +134,7 @@ public class OccurrenceSearch {
 		}
 		if(parent!=null && StringUtils.isNotBlank(parent.getFamily())) {
 			taxonomyFieldConcerne="genus";
-			occurrenceFieldConcerne ="acceptedgenus";
+			occurrenceFieldConcerne ="acceptedgenus.lower";
 			level=SpeciesExplorerService.LEVELS.get("GENUS");
 			occFilterBuilders.add(FilterBuilders.termFilter("acceptedfamily", parent.getFamily()));
 			taFilterBuilders.add(FilterBuilders.termFilter("family", parent.getFamily()));
@@ -147,7 +147,7 @@ public class OccurrenceSearch {
 		}
 		if(parent!=null && StringUtils.isNotBlank(parent.getGenus())) {
 			taxonomyFieldConcerne="acceptedspecies";
-			occurrenceFieldConcerne ="acceptedspecies";
+			occurrenceFieldConcerne ="acceptedspecies.lower";
 			level=SpeciesExplorerService.LEVELS.get("ACCEPTEDSPECIES");
 			occFilterBuilders.add(FilterBuilders.termFilter("acceptedgenus", parent.getGenus()));
 			taFilterBuilders.add(FilterBuilders.termFilter("genus", parent.getGenus()));

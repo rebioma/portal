@@ -6,77 +6,77 @@
 			"nomenclaturalcode":{"type": "string"},
 			"kingdom":{
 				"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"kingdomsource":{"type": "string"},
 			"phylum":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"phylumsource":{"type": "string"},
 			"subphylum":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"subphylumsource":{"type": "string"},
 			"class_":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"classsource":{"type": "string"},
 			"subclass":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"subclasssource":{"type": "string"},
 			"superorder":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"superordersource":{"type": "string"},
 			"order":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"ordersource":{"type": "string"},
 			"suborder":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"subordersource":{"type": "string"},
 			"infraorder":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"infraordersource":{"type": "string"},
 			"superfamily":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"superfamilysource":{"type": "string"},
 			"family":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"familysource":{"type": "string"},
 			"subfamily":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"subfamilysource":{"type": "string"},
 			"genus":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"genussource":{"type": "string"},
 			"subgenus":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"subgenussource":{"type": "string"},
 			"specificepithet":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"specificepithetsource":{"type": "string"},
 			"infraspecificrank":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"infraspecificepithet":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"infraspecificepithetsource":{"type": "string"},
 			"acceptedspecies":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"verbatimspecies":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"verbatimspeciessource":{"type": "string"},
 			"ismarine":{"type": "double"},
@@ -94,13 +94,13 @@
 			"stability":{"type": "double"},
 			"acceptednameusageid":{"type": "double"},
 			"acceptednameusage":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"basisofrecord":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			},
 			"higherclassification":{"type": "string",
-				"analyzer": "standard"
+				"analyzer": "string_lowercase"
 			}
 		}
 	}
