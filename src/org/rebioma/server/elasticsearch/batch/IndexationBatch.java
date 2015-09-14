@@ -6,7 +6,7 @@ package org.rebioma.server.elasticsearch.batch;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.rebioma.server.elasticsearch.search.OccurrenceIndexation;
+import org.rebioma.server.elasticsearch.search.Indexation;
 
 /**
  * @author Mika
@@ -15,11 +15,11 @@ import org.rebioma.server.elasticsearch.search.OccurrenceIndexation;
 public class IndexationBatch {
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException{
-		OccurrenceIndexation indexation = null;
+		Indexation indexation = null;
 		boolean ok = false;
 		try{
-			indexation = new OccurrenceIndexation();
-			indexation.indexAllOccurrence();
+			indexation = new Indexation();
+			indexation.indexAll();
 			ok = true;
 		}catch(Exception e){
 			ok = false;

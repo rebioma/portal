@@ -21,6 +21,55 @@ import com.sencha.gxt.data.shared.PropertyAccess;
 @XmlAccessorType (XmlAccessType.FIELD)
 public class SpeciesTreeModel implements Serializable{
 
+	public SpeciesTreeModel() {
+		super();
+	}
+	
+	public SpeciesTreeModel(Taxonomy ta, String level) {
+		setAcceptedspecies(ta.getAcceptedSpecies());
+//		setAuthorityName(ta.get);
+		setClass_(ta.getClass_());
+		setFamily(ta.getFamily());
+		setGenus(ta.getGenus());
+//		setInfos(infos);
+		setKingdom(ta.getKingdom());
+//		setLabel(taxonomyFieldConcerne);
+		setLevel(level);
+//		setOccurrence(occurrence);
+		setOrder(ta.getOrder());
+		setPhylum(ta.getPhylum());
+		setReviewerName(ta.getReviewedBy());
+		if(level.equals(SpeciesTreeModel.KINGDOM)){
+			setSource(ta.getKingdomSource());
+			setId(level + "_" + ta.getKingdom());
+		}
+		if(level.equals(SpeciesTreeModel.PHYLUM)){
+			setSource(ta.getPhylumSource());
+			setId(level + "_" + ta.getPhylum());
+		}
+		if(level.equals(SpeciesTreeModel.CLASS_)){
+			setSource(ta.getClassSource());
+			setId(level + "_" + ta.getClass_());
+		}
+		if(level.equals(SpeciesTreeModel.ORDER)){
+			setSource(ta.getOrderSource());
+			setId(level + "_" + ta.getOrder());
+		}
+		if(level.equals(SpeciesTreeModel.GENUS)){
+			setSource(ta.getGenusSource());
+			setId(level + "_" + ta.getGenus());
+		}
+		if(level.equals(SpeciesTreeModel.ACCEPTEDSPECIES)){
+			setSource("");
+			setId(level + "_" + ta.getAcceptedSpecies());
+		}
+//		setStatus(status);
+		setSubclass(ta.getSubclass());
+		setSuperfamily(ta.getSuperFamily());
+//		setSynonymisedTaxa(ta.getS);
+//		setVernecularName(ta.get);
+	}
+
 	public interface SpeciesTreeModelProperties extends
 			PropertyAccess<SpeciesTreeModel> {
 
@@ -78,6 +127,7 @@ public class SpeciesTreeModel implements Serializable{
 	private String level;
 	private int nbPrivateOccurence;
 	private int nbPublicOccurence;
+	private int nbTaxon;
 	private String authorityName;
 	private String status;
 	private String synonymisedTaxa;
@@ -288,5 +338,13 @@ public class SpeciesTreeModel implements Serializable{
 		} else {
 			return level;
 		}
+	}
+
+	public int getNbTaxon() {
+		return nbTaxon;
+	}
+
+	public void setNbTaxon(int nbTaxon) {
+		this.nbTaxon = nbTaxon;
 	}
 }

@@ -24,6 +24,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.StatelessSession;
 import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.bean.Occurrence;
+import org.rebioma.client.bean.Taxonomy;
 import org.rebioma.client.bean.User;
 import org.rebioma.server.util.HibernateUtil;
 
@@ -32,17 +33,18 @@ import org.rebioma.server.util.HibernateUtil;
  * @author Mikajy
  *
  */
-public class OccurrenceIndexation {
+public class Indexation {
 	
 	public static final String REBIOMA_ES_CLUSTER_NAME = "elasticsearch_rebioma-dev";
 	public static final String REBIOMA_ES_INDEX_NAME = "rebioma-dev";
 	public static final String REBIOMA_ES_OCCURRENCE_TYPE_NAME = "occurrence";
+	public static final String REBIOMA_ES_TAXONOMY_TYPE_NAME = "taxonomy";
 	
 	private Node esNode;
 	
 	BulkProcessor bulkProcessor;
 	
-	public OccurrenceIndexation() {
+	public Indexation() {
 		super();
 		esNode = NodeBuilder.nodeBuilder().clusterName(REBIOMA_ES_CLUSTER_NAME).node();
 	}
@@ -56,6 +58,7 @@ public class OccurrenceIndexation {
 		esNode.client().admin().indices().prepareCreate(REBIOMA_ES_INDEX_NAME)
 			.setSettings(IndexSetting.getSettingsAsString())
 			.addMapping(REBIOMA_ES_OCCURRENCE_TYPE_NAME, OccurrenceMapping.getMappingString())
+			.addMapping(REBIOMA_ES_TAXONOMY_TYPE_NAME, TaxonomyMapping.getMappingString())
 			.execute().actionGet();
 		bulkProcessor = BulkProcessor.builder(esNode.client(), new BulkProcessor.Listener() {
 			@Override
@@ -79,48 +82,82 @@ public class OccurrenceIndexation {
         .setConcurrentRequests(2) 
         .build();
 	}
+	public void indexTaxonomies() throws IOException{
+		System.out.println("*************************");
+		System.out.println("*************************");
+		System.out.println("TAXONOMY: DEBUT INDEXATION");
+		System.out.println("*************************");
+		System.out.println("*************************");
+		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
+		Query query = statelessSession.createQuery("from Taxonomy ");
+		ScrollableResults scrollableResults = query.setCacheable(false).scroll(ScrollMode.FORWARD_ONLY);
+		Taxonomy taxonomy;
+		while(scrollableResults.next()){
+			taxonomy = (Taxonomy)scrollableResults.get(0);
+			XContentBuilder source = TaxonomyMapping.asXcontentBuilder(taxonomy);
+			bulkProcessor.add(new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_TAXONOMY_TYPE_NAME, Integer.toString(taxonomy.getId())).source(source));
+		}
+		System.out.println("*************************");
+		System.out.println("*************************");
+		System.out.println("TAXONOMY: FIN INDEXATION");
+		System.out.println("*************************");
+		System.out.println("*************************");
+	}
 	
-	/**
-	 * https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/bulk.html
-	 * 
-	 * @throws IOException
-	 */
-	public void indexAllOccurrence() throws IOException{
-		createIndex();
-		
+	public void indexOccurrences() throws IOException{
+		System.out.println("*************************");
+		System.out.println("*************************");
+		System.out.println("OCCURRENCE: DEBUT INDEXATION ");
+		System.out.println("*************************");
+		System.out.println("*************************");
 		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
 		Query countQuery = statelessSession.createQuery("select count(id) from Occurrence");
 		long rowCount = (Long)countQuery.uniqueResult();
 		System.out.println(rowCount + " occurrences à indexer ...");
 		int maxResult = 5000;
 		Map<Integer, User> userMap = new HashMap<Integer, User>();
-		try{
-			Occurrence o;
-			for(int i=0; i< rowCount; i+= maxResult){
-	//			Transaction tx = statelessSession.beginTransaction();
-				System.out.println("********************************");
-				System.out.println("********************************");
-				System.out.println("from " + i + " to " + maxResult);
-				System.out.println("********************************");
-				System.out.println("********************************");
-				ScrollableResults scrollableResults = statelessSession.createQuery("from Occurrence order by id desc")
-						.setFirstResult(i)
-						.setMaxResults(maxResult)
-						.setCacheable(false)
-						.scroll(ScrollMode.FORWARD_ONLY);
-					while(scrollableResults.next()){
-						o = (Occurrence)scrollableResults.get(0);
-						if(!userMap.containsKey(o.getOwner())){
-							User ownerUser = (User)statelessSession.createCriteria(User.class).add(Restrictions.eq("id", o.getOwner())).uniqueResult();
-							userMap.put(o.getOwner(), ownerUser);
-						}
-						XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o, userMap.get(o.getOwner()));
-						bulkProcessor.add(new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId())).source(source));
-						o = null;
+		Occurrence o;
+		for(int i=0; i< rowCount; i+= maxResult){
+//			Transaction tx = statelessSession.beginTransaction();
+			System.out.println("********************************");
+			System.out.println("********************************");
+			System.out.println("from " + i + " to " + maxResult);
+			System.out.println("********************************");
+			System.out.println("********************************");
+			ScrollableResults scrollableResults = statelessSession.createQuery("from Occurrence order by id desc")
+					.setFirstResult(i)
+					.setMaxResults(maxResult)
+					.setCacheable(false)
+					.scroll(ScrollMode.FORWARD_ONLY);
+				while(scrollableResults.next()){
+					o = (Occurrence)scrollableResults.get(0);
+					if(!userMap.containsKey(o.getOwner())){
+						User ownerUser = (User)statelessSession.createCriteria(User.class).add(Restrictions.eq("id", o.getOwner())).uniqueResult();
+						userMap.put(o.getOwner(), ownerUser);
 					}
-					bulkProcessor.flush();
-				
-			}
+					XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o, userMap.get(o.getOwner()));
+					bulkProcessor.add(new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId())).source(source));
+					o = null;
+				}
+				bulkProcessor.flush();
+		}
+		System.out.println("*************************");
+		System.out.println("*************************");
+		System.out.println("OCCURRENCE: DEBUT INDEXATION");
+		System.out.println("*************************");
+		System.out.println("*************************");
+	}
+	
+	/**
+	 * https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/bulk.html
+	 * 
+	 * @throws IOException
+	 */
+	public void indexAll() throws IOException{
+		createIndex();
+		try{
+			indexTaxonomies();
+			indexOccurrences();
 		}finally{
 			bulkProcessor.flush();
 //			bulkProcessor.awaitClose(10, TimeUnit.MINUTES);
@@ -157,17 +194,17 @@ public class OccurrenceIndexation {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public void indexer(Occurrence o) throws IOException, InterruptedException, ExecutionException{
-		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
-		User ownerUser = (User)statelessSession.createCriteria(User.class).add(Restrictions.eq("id", o.getOwner())).uniqueResult();
-		XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o, ownerUser);
-		XContentBuilder occurrenceSource = OccurrenceMapping.asXcontentBuilder(o, ownerUser);
-		IndexRequest indexRequest = new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId()))
-			.source(occurrenceSource);
-		UpdateRequest updateRequest = new UpdateRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId()))
-        	.doc(source).upsert(indexRequest);//upsert
-		esNode.client().update(updateRequest).get();
-	}
+//	public void indexer(Occurrence o) throws IOException, InterruptedException, ExecutionException{
+//		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
+//		User ownerUser = (User)statelessSession.createCriteria(User.class).add(Restrictions.eq("id", o.getOwner())).uniqueResult();
+//		XContentBuilder source = OccurrenceMapping.asXcontentBuilder(o, ownerUser);
+//		XContentBuilder occurrenceSource = OccurrenceMapping.asXcontentBuilder(o, ownerUser);
+//		IndexRequest indexRequest = new IndexRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId()))
+//			.source(occurrenceSource);
+//		UpdateRequest updateRequest = new UpdateRequest(REBIOMA_ES_INDEX_NAME, REBIOMA_ES_OCCURRENCE_TYPE_NAME, Integer.toString(o.getId()))
+//        	.doc(source).upsert(indexRequest);//upsert
+//		esNode.client().update(updateRequest).get();
+//	}
 	
 	public void end(){
 		if(esNode != null){

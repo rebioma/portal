@@ -20,7 +20,7 @@
 			},
 			"owner_email": {
 				"type": "string", 
-				"index": "not_analyzed"
+				"analyzer": "email"
 			},
 			"id":{"type": "integer"},
 			"owner":{"type": "integer"},
@@ -31,7 +31,7 @@
 			"tapiraccessible":{"type": "boolean"},
 			"owneremail": {
 				"type": "string",
-				"analyzer": "standard"
+				"analyzer": "email"
 			},
 			"shareduserscsv": {
 				"type": "string",
@@ -39,6 +39,7 @@
 			},
 			"email":{
 				"type": "string",
+				"analyzer":"email",
 				"copy_to": ["localisation"]
 			},
 			"vettingerror":{"type": "string"},
@@ -62,49 +63,206 @@
 				"type": "integer",
 				"copy_to": ["biologic_classification"]
 			},
-			"genus":{"type": "string"},
-			"specificepithet":{"type": "string"},
+			"genus":{"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
+			"specificepithet":{"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"decimallatitude":{"type": "string"},
 			"decimallongitude":{"type": "string"},
-			"geodeticdatum":{"type": "string"},
+			"geodeticdatum":{"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"coordinateuncertaintyinmeters":{"type": "string"},
 			"datelastmodified":{"type": "string"},
 			"institutioncode":{
 				"type": "string",
 				"index": "not_analyzed",
-				"copy_to": ["localisation"]
+				"copy_to": ["localisation"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"collectioncode":{
 				"type": "string", 
-				"index": "not_analyzed"},
+				"index": "not_analyzed",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"catalognumber":{"type": "string"},
 			"scientificname":{
 				"type": "string",
 				"analyzer": "standard_no_doublon",
-				"copy_to": ["identity", "biologic_identity"]
+				"copy_to": ["identity", "biologic_identity"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"globaluniqueidentifier":{"type": "string"},
 			"informationwithheld":{"type": "string"},
 			"remarks":{"type": "string"},
-			"highertaxon":{"type": "string"},
+			"highertaxon":{"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"kingdom":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
+			},
 			"phylum":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"class":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"order":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"family":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"taxonrank":{
 				"type": "string", 
-				"copy_to": ["biologic_identity"]
+				"copy_to": ["biologic_identity"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"infraspecificepithet":{
 				"type": "string", 
@@ -112,7 +270,19 @@
 			"authoryearofscientificname":{"type": "string"},
 			"nomenclaturalcode":{
 				"type": "string",
-				"copy_to": "biologic_autre_nom"
+				"copy_to": "biologic_autre_nom",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"identificationqualifier":{"type": "string"},
 			"highergeography":{"type": "string"},
@@ -122,18 +292,66 @@
 			"island":{"type": "string"},
 			"country":{
 				"type": "string",
-				"copy_to": ["localisation"]
+				"copy_to": ["localisation"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"stateprovince":{
 				"type": "string",
-				"copy_to": ["localisation"]
+				"copy_to": ["localisation"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"county":{"type": "string",
-				"copy_to": ["localisation"]
+				"copy_to": ["localisation"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"locality":{
 				"type": "string",
-				"copy_to": ["localisation"]
+				"copy_to": ["localisation"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"minimumelevationinmeters":{
 				"type": "string",
@@ -169,7 +387,20 @@
 				"type": "string",
 				"copy_to": ["localisation"]
 			},
-			"verbatimdepth":{"type": "string"},
+			"verbatimdepth":{
+				"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"preparations":{"type": "string"},
 			"typestatus":{"type": "string"},
 			"genbanknumber":{"type": "string"},
@@ -191,44 +422,200 @@
 			"verbatimspecies":{
 				"type": "string",
 				"analyzer": "standard_no_doublon", 
-				"copy_to": ["identity", "biologic_identity"]
+				"copy_to": ["identity", "biologic_identity"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"acceptedspecies":{
 				"type": "string",
 				"analyzer": "standard_no_doublon", 
-				"copy_to":["identity", "biologic_identity"]
+				"copy_to":["identity", "biologic_identity"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
-			"acceptednomenclaturalcode":{"type": "string"},
+			"acceptednomenclaturalcode":{"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedkingdom":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedphylum":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedclass":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedorder":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedsuborder":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedfamily":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedsubfamily":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedgenus":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedsubgenus":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"acceptedspecificepithet":{
 				"type": "string", 
-				"copy_to" : "biologic_classification"},
+				"copy_to" : "biologic_classification",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"declatinwgs84":{"type": "string"},
 			"declonginwgs84":{"type": "string"},
 			"adjustedcoordinateuncertaintyinmeters":{"type": "string"},
@@ -274,14 +661,38 @@
 			"stability":{"type": "boolean"},
 			"bibliographiccitation":{"type": "string"},
 			"preparator":{"type": "string"},
-			"verbatimlocality":{"type": "string"},
+			"verbatimlocality":{"type": "string",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}},
 			"habitat":{
 				"type": "string",
 				"copy_to": "localisation"
 			},
 			"vernacularname":{
 				"type": "string", 
-				"copy_to": ["biologic_identity"]
+				"copy_to": ["biologic_identity"],
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"associatedreferences":{"type": "string"},
 			"localitydescription":{"type": "string"},
@@ -300,7 +711,19 @@
 			},
 			"acceptednameusage":{
 				"type": "string", 
-				"copy_to":"biologic_identity"
+				"copy_to":"biologic_identity",
+				"fields": {
+					"edge_ngram": {
+						"type": "string",
+						"index_analyzer": "edge_ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					},
+					"ngram": {
+						"type": "string",
+						"index_analyzer": "ngram_analyzer",
+						"search_analyzer": "standard_no_doublon"
+					}
+				}
 			},
 			"acceptednameusageid":{
 				"type": "string",

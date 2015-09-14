@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,6 +21,7 @@ import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.SpeciesTreeModelInfoItem;
 import org.rebioma.client.bean.Taxonomy;
 import org.rebioma.client.services.SpeciesExplorerService;
+import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
 import org.rebioma.server.util.HibernateUtil;
 import org.rebioma.server.util.ManagedSession;
 
@@ -38,18 +38,6 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final HashMap<String, String> LEVELS=new HashMap<String, String>(){
-        {
-            put("KINGDOM", SpeciesTreeModel.KINGDOM);
-            put("PHYLUM", SpeciesTreeModel.PHYLUM);
-            put("CLASS", SpeciesTreeModel.CLASS_);
-            put("GENUS", SpeciesTreeModel.GENUS);
-            put("ORDER", SpeciesTreeModel.ORDER);
-            put("FAMILY", SpeciesTreeModel.FAMILY);
-            put("ACCEPTEDSPECIES", "Species");
-        }
-	};
-
 	public String[] buildSql(SpeciesTreeModel obj) {
 		String[] tabs=new String[2];
 		String ret="";
@@ -154,132 +142,137 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 		tabs[1]=level;
 		return tabs;
 	}
-	@SuppressWarnings("deprecation")
+	
 	@Override
 	public List<SpeciesTreeModel> getChildren(SpeciesTreeModel parent) {
 		List<SpeciesTreeModel> listToReturn = new ArrayList<SpeciesTreeModel>();
-		String temp[] = buildSql(parent);
-		String sql=temp[0];
-		System.out.println(sql);
+		try{
+			listToReturn = OccurrenceSearch.getInstance().getSpeciesTreeModels(parent);
+			return listToReturn;
+		}catch(Exception ex){
+			String temp[] = buildSql(parent);
+			String sql=temp[0];
+			System.out.println(sql);
+			Session sess = null;
+			Connection conn =null;
+			Statement st=null;
+			ResultSet rst=null;
+			try {
+				sess = ManagedSession.createNewSessionAndTransaction(); 
+				conn=sess.connection();
+				
+				st = conn.createStatement();
+				rst = st.executeQuery(sql);
+				while(rst.next()) {
+					String concerne = rst.getString("concerne");
+					if(concerne == null){
+						continue;
+					}
+					SpeciesTreeModel child1 = new SpeciesTreeModel();
+					child1.setLabel(concerne);
+					child1.setLevel(temp[1]);
+					child1.setKingdom(rst.getString("concerne"));
+					child1.setNbPrivateOccurence(rst.getInt("privates"));
+					child1.setNbPublicOccurence(rst.getInt("publics"));
+					child1.setSource(rst.getString("source"));
+					if(child1.getSource()!=null && !child1.getSource().isEmpty())
+						if(!child1.getSource().isEmpty() && child1.getSource().length()>2) child1.setSource(child1.getSource().substring(2));
+					if(SpeciesTreeModel.KINGDOM.equals(temp[1])){
+						child1.setKingdom(concerne);
+					} else if(SpeciesTreeModel.PHYLUM.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(concerne);
+					} else if(SpeciesTreeModel.CLASS_.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(parent.getPhylum());
+						child1.setClass_(concerne);
+					} else if(SpeciesTreeModel.SUBCLASS.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(parent.getPhylum());
+						child1.setClass_(parent.getClass_());
+						child1.setSubclass(concerne);
+					} else if(SpeciesTreeModel.ORDER.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(parent.getPhylum());
+						child1.setClass_(parent.getClass_());
+						child1.setSubclass(parent.getSubclass());
+						child1.setOrder(concerne);
+					} else if(SpeciesTreeModel.SUPERFAMILY.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(parent.getPhylum());
+						child1.setClass_(parent.getClass_());
+						child1.setSubclass(parent.getSubclass());
+						child1.setOrder(parent.getOrder());
+						child1.setSuperfamily(concerne);
+					} else if(SpeciesTreeModel.FAMILY.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(parent.getPhylum());
+						child1.setClass_(parent.getClass_());
+						child1.setSubclass(parent.getSubclass());
+						child1.setOrder(parent.getOrder());
+						child1.setSuperfamily(parent.getSuperfamily());
+						child1.setFamily(concerne);
+					}  else if(SpeciesTreeModel.GENUS.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(parent.getPhylum());
+						child1.setClass_(parent.getClass_());
+						child1.setSubclass(parent.getSubclass());
+						child1.setOrder(parent.getOrder());
+						child1.setSuperfamily(parent.getSuperfamily());
+						child1.setFamily(parent.getFamily());
+						child1.setGenus(concerne);
+						
+					}  else if(SpeciesTreeModel.ACCEPTEDSPECIES.equals(temp[1]) || SpeciesTreeModel.SPECIES.equals(temp[1])){
+						child1.setKingdom(parent.getKingdom());
+						child1.setPhylum(parent.getPhylum());
+						child1.setClass_(parent.getClass_());
+						child1.setSubclass(parent.getSubclass());
+						child1.setOrder(parent.getOrder());
+						child1.setSuperfamily(parent.getSuperfamily());
+						child1.setFamily(parent.getFamily());
+						child1.setGenus(parent.getGenus());
+						child1.setAcceptedspecies(concerne);
+					} 
+					//child1.setAuthorityName(child1.getLabel() + "Authority");
+					//child1.setSource(child1.getLabel() + "Source");
+					//child1.setReviewerName(child1.getLabel() + "Reviewer");
+					//child1.setStatus(child1.getLabel() + "Status");
+					//child1.setVernecularName(child1.getLabel() + "vernecularName");
+					//child1.setSynonymisedTaxa(child1.getLabel() + "Synonymised Taxa");
+					child1.setId(child1.getLevel() + "_" + child1.getLabel());
+					listToReturn.add(child1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally {
+				if(rst!=null) {
+					try {
+						rst.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+				if(st!=null) {
+					try {
+						st.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+				if(conn!=null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {					
+						e.printStackTrace();
+					}
+				}
+				if(sess!=null)
+					sess.close();
+			}	
+			return listToReturn;
+		}
 		
-		Session sess = null;
 		
-		Connection conn =null;
-		Statement st=null;
-		ResultSet rst=null;
-		try {
-			sess = ManagedSession.createNewSessionAndTransaction(); 
-			conn=sess.connection();
-			
-			st = conn.createStatement();
-			rst = st.executeQuery(sql);
-			while(rst.next()) {
-				String concerne = rst.getString("concerne");
-				if(concerne == null){
-					continue;
-				}
-				SpeciesTreeModel child1 = new SpeciesTreeModel();
-				child1.setLabel(concerne);
-				child1.setLevel(temp[1]);
-				child1.setKingdom(rst.getString("concerne"));
-				child1.setNbPrivateOccurence(rst.getInt("privates"));
-				child1.setNbPublicOccurence(rst.getInt("publics"));
-				child1.setSource(rst.getString("source"));
-				if(child1.getSource()!=null && !child1.getSource().isEmpty())
-					if(!child1.getSource().isEmpty() && child1.getSource().length()>2) child1.setSource(child1.getSource().substring(2));
-				if(SpeciesTreeModel.KINGDOM.equals(temp[1])){
-					child1.setKingdom(concerne);
-				} else if(SpeciesTreeModel.PHYLUM.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(concerne);
-				} else if(SpeciesTreeModel.CLASS_.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(parent.getPhylum());
-					child1.setClass_(concerne);
-				} else if(SpeciesTreeModel.SUBCLASS.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(parent.getPhylum());
-					child1.setClass_(parent.getClass_());
-					child1.setSubclass(concerne);
-				} else if(SpeciesTreeModel.ORDER.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(parent.getPhylum());
-					child1.setClass_(parent.getClass_());
-					child1.setSubclass(parent.getSubclass());
-					child1.setOrder(concerne);
-				} else if(SpeciesTreeModel.SUPERFAMILY.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(parent.getPhylum());
-					child1.setClass_(parent.getClass_());
-					child1.setSubclass(parent.getSubclass());
-					child1.setOrder(parent.getOrder());
-					child1.setSuperfamily(concerne);
-				} else if(SpeciesTreeModel.FAMILY.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(parent.getPhylum());
-					child1.setClass_(parent.getClass_());
-					child1.setSubclass(parent.getSubclass());
-					child1.setOrder(parent.getOrder());
-					child1.setSuperfamily(parent.getSuperfamily());
-					child1.setFamily(concerne);
-				}  else if(SpeciesTreeModel.GENUS.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(parent.getPhylum());
-					child1.setClass_(parent.getClass_());
-					child1.setSubclass(parent.getSubclass());
-					child1.setOrder(parent.getOrder());
-					child1.setSuperfamily(parent.getSuperfamily());
-					child1.setFamily(parent.getFamily());
-					child1.setGenus(concerne);
-					
-				}  else if(SpeciesTreeModel.ACCEPTEDSPECIES.equals(temp[1]) || SpeciesTreeModel.SPECIES.equals(temp[1])){
-					child1.setKingdom(parent.getKingdom());
-					child1.setPhylum(parent.getPhylum());
-					child1.setClass_(parent.getClass_());
-					child1.setSubclass(parent.getSubclass());
-					child1.setOrder(parent.getOrder());
-					child1.setSuperfamily(parent.getSuperfamily());
-					child1.setFamily(parent.getFamily());
-					child1.setGenus(parent.getGenus());
-					child1.setAcceptedspecies(concerne);
-				} 
-				//child1.setAuthorityName(child1.getLabel() + "Authority");
-				//child1.setSource(child1.getLabel() + "Source");
-				//child1.setReviewerName(child1.getLabel() + "Reviewer");
-				//child1.setStatus(child1.getLabel() + "Status");
-				//child1.setVernecularName(child1.getLabel() + "vernecularName");
-				//child1.setSynonymisedTaxa(child1.getLabel() + "Synonymised Taxa");
-				child1.setId(child1.getLevel() + "_" + child1.getLabel());
-				listToReturn.add(child1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-			if(rst!=null) {
-				try {
-					rst.close();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			}
-			if(st!=null) {
-				try {
-					st.close();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			}
-			if(conn!=null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {					
-					e.printStackTrace();
-				}
-			}
-			if(sess!=null)
-				sess.close();
-		}	
-		return listToReturn;
 		/*
 		if (parent == null) {
 			 

@@ -35,6 +35,7 @@ public class ReflectUtils {
 				String getterName = "is" + upperCaseFirstLetter(field.getName());
 				getter = clazz.getMethod(getterName);
 			}else{
+				System.err.println("No getter for field " + field.getName());
 				throw e;
 			}
 		}

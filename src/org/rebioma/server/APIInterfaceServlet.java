@@ -3,7 +3,6 @@
  */
 package org.rebioma.server;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,17 +15,16 @@ import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.SpeciesTreeModel;
-import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.bean.api.APITaxonomyResponse;
 import org.rebioma.client.services.SpeciesExplorerService;
 import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.services.DBFactory;
 import org.rebioma.server.services.OccurrenceDb;
-import org.rebioma.server.services.SpeciesExplorerServiceImpl;
 import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
 import org.rebioma.server.services.QueryFilter;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
+import org.rebioma.server.services.SpeciesExplorerServiceImpl;
 
 /**
  * @author Mika
@@ -165,12 +163,8 @@ public class APIInterfaceServlet extends HttpServlet {
 				pageSize = DEFAULT_PAGE_SIZE;
 				e.printStackTrace();
 			}
-			if(pageSize <= 0) pageSize = DEFAULT_PAGE_SIZE;
-			if(numPage <= 0) numPage = 1;
-			
-			int from = (numPage - 1) * pageSize;
 			User user = null;//TODO Mikajy - check in session
-			paginationResponse = occurrenceDb.findByOccurrenceFilters(filters, user, ResultFilter.PUBLIC, from, pageSize);
+			paginationResponse = occurrenceDb.findByOccurrenceFilters(filters, user, ResultFilter.PUBLIC, numPage, pageSize);
 			paginationResponse.setSuccess(true);
 		}catch(IllegalArgumentException e){
 			paginationResponse = new ListOccurrenceAPIModel();

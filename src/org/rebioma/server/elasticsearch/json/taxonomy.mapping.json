@@ -1,0 +1,107 @@
+{"taxonomy":{
+		"properties":{
+			"id":{"type": "integer"},
+			"taid":{"type": "double"},
+			"idaccepted":{"type": "double"},
+			"nomenclaturalcode":{"type": "string"},
+			"kingdom":{
+				"type": "string",
+				"analyzer": "standard"
+			},
+			"kingdomsource":{"type": "string"},
+			"phylum":{"type": "string",
+				"analyzer": "standard"
+			},
+			"phylumsource":{"type": "string"},
+			"subphylum":{"type": "string",
+				"analyzer": "standard"
+			},
+			"subphylumsource":{"type": "string"},
+			"class_":{"type": "string",
+				"analyzer": "standard"
+			},
+			"classsource":{"type": "string"},
+			"subclass":{"type": "string",
+				"analyzer": "standard"
+			},
+			"subclasssource":{"type": "string"},
+			"superorder":{"type": "string",
+				"analyzer": "standard"
+			},
+			"superordersource":{"type": "string"},
+			"order":{"type": "string",
+				"analyzer": "standard"
+			},
+			"ordersource":{"type": "string"},
+			"suborder":{"type": "string",
+				"analyzer": "standard"
+			},
+			"subordersource":{"type": "string"},
+			"infraorder":{"type": "string",
+				"analyzer": "standard"
+			},
+			"infraordersource":{"type": "string"},
+			"superfamily":{"type": "string",
+				"analyzer": "standard"
+			},
+			"superfamilysource":{"type": "string"},
+			"family":{"type": "string",
+				"analyzer": "standard"
+			},
+			"familysource":{"type": "string"},
+			"subfamily":{"type": "string",
+				"analyzer": "standard"
+			},
+			"subfamilysource":{"type": "string"},
+			"genus":{"type": "string",
+				"analyzer": "standard"
+			},
+			"genussource":{"type": "string"},
+			"subgenus":{"type": "string",
+				"analyzer": "standard"
+			},
+			"subgenussource":{"type": "string"},
+			"specificepithet":{"type": "string",
+				"analyzer": "standard"
+			},
+			"specificepithetsource":{"type": "string"},
+			"infraspecificrank":{"type": "string",
+				"analyzer": "standard"
+			},
+			"infraspecificepithet":{"type": "string",
+				"analyzer": "standard"
+			},
+			"infraspecificepithetsource":{"type": "string"},
+			"acceptedspecies":{"type": "string",
+				"analyzer": "standard"
+			},
+			"verbatimspecies":{"type": "string",
+				"analyzer": "standard"
+			},
+			"verbatimspeciessource":{"type": "string"},
+			"ismarine":{"type": "double"},
+			"isterrestrial":{"type": "double"},
+			"comments":{"type": "string"},
+			"reviewedby":{"type": "string"},
+			"reviewdate":{"type": "string"},
+			"notes":{"type": "string"},
+			"status":{"type": "string"},
+			"changedby":{"type": "string"},
+			"changedate":{"type": "date"},
+			"validation":{"type": "string"},
+			"validatedby":{"type": "string"},
+			"validationdate":{"type": "date"},
+			"stability":{"type": "double"},
+			"acceptednameusageid":{"type": "double"},
+			"acceptednameusage":{"type": "string",
+				"analyzer": "standard"
+			},
+			"basisofrecord":{"type": "string",
+				"analyzer": "standard"
+			},
+			"higherclassification":{"type": "string",
+				"analyzer": "standard"
+			}
+		}
+	}
+}

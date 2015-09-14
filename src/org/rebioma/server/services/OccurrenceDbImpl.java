@@ -1524,21 +1524,21 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 							.field("biologic_identity.ngram", 10)
 							.field("biologic_classification.ngram", 5)
 							.field("biologic_autre_nom.ngram", 3)
-							.field("localisation.ngram")
+							.field("localisation.ngram").field("owneremail", 5)
 							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
 					MultiMatchQueryBuilder query2 = QueryBuilders
 							.multiMatchQuery(globalSearchText)
 							.field("biologic_identity.edge_ngram", 10)
 							.field("biologic_classification.edge_ngram", 5)
 							.field("biologic_autre_nom.edge_ngram", 3)
-							.field("localisation.edge_ngram")
+							.field("localisation.edge_ngram").field("owneremail", 5)
 							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
 					MultiMatchQueryBuilder query3 = QueryBuilders
 							.multiMatchQuery(globalSearchText)
 							.field("biologic_identity", 10)
 							.field("biologic_classification", 5)
 							.field("biologic_autre_nom", 3)
-							.field("localisation")
+							.field("localisation").field("owneremail", 5)
 							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
 					boolQueryBuilder.must(query1).should(
 							QueryBuilders.boolQuery().should(query2)
@@ -2265,8 +2265,11 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	
 	@Override
 	public ListOccurrenceAPIModel findByOccurrenceFilters(Set<OccurrenceFilter> filters, User user,
-			ResultFilter resultFilter, int from, int size) throws Exception {
-		SearchResponse searchResponse = _findByOccurrenceFilters(filters, user, resultFilter, from, size);
+			ResultFilter resultFilter, int pageNum, int pageSize) throws Exception {
+		if(pageSize <= 0) pageSize = 50;
+		if(pageNum <= 0) pageNum = 1;
+		int from = (pageNum - 1) * pageSize;
+		SearchResponse searchResponse = _findByOccurrenceFilters(filters, user, resultFilter, from, pageSize);
 		SearchHits searchHits = searchResponse.getHits();
 		long total = searchHits.getTotalHits();
 		List<Occurrence> results = new ArrayList<Occurrence>();
@@ -2274,7 +2277,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 			Occurrence o = OccurrenceMapping.asOccurrence(hit.getSource());
 			results.add(o);
 		}
-		ListOccurrenceAPIModel result = new ListOccurrenceAPIModel(from, size, (int)total, results);
+		ListOccurrenceAPIModel result = new ListOccurrenceAPIModel(pageNum, pageSize, (int)total, results);
 		result.setTookInMillis(searchResponse.getTookInMillis());
 		return result;
 	}

@@ -258,7 +258,7 @@ public interface OccurrenceDb {
    * @throws Exception
    */
   public ListOccurrenceAPIModel findByOccurrenceFilters(Set<OccurrenceFilter> filters, User user,
-			ResultFilter resultFilter, int from, int size) throws Exception;
+			ResultFilter resultFilter, int pageNum, int pageSize) throws Exception;
 
   /**
    * Merges changes in a detached instance of {@link Occurrence}.
