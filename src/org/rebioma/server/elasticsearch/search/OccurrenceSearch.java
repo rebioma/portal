@@ -31,6 +31,7 @@ import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.aggregations.metrics.cardinality.InternalCardinality;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
@@ -181,6 +182,7 @@ public class OccurrenceSearch {
 				.setSearchType(SearchType.COUNT)
 				.addAggregation(
 						AggregationBuilders.terms("children").field(taxonomyFieldConcerne).size(0)
+							.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies"))
 						);
 		for(TermsBuilder t: parentAggs){
 			taxonomyRequestBuilder.addAggregation(t);
@@ -264,8 +266,13 @@ public class OccurrenceSearch {
 			if(StringUtils.isNotBlank(modelParent.getGenus())){
 				model.setGenus(modelParent.getGenus());
 			}
+			Aggregations internalAggs = bucket.getAggregations();
+			InternalCardinality internalCardinality = (InternalCardinality)internalAggs.iterator().next();
+			Long speciesCount = internalCardinality.getValue();
+			model.setNbSpeciesTaxon(speciesCount.intValue());
 			listToReturn.add(model);
 			mapTemps.put(key.trim().toLowerCase(), listToReturn.size() - 1);
+			
 		}
 		
 //		List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();
@@ -305,6 +312,8 @@ public class OccurrenceSearch {
 				.setSearchType(SearchType.COUNT)
 				.addAggregation(
 						AggregationBuilders.terms("children").field(occurrenceFieldConcerne).size(0)
+						//https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
+						.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies"))
 						.subAggregation(publicAggs)
 						.subAggregation(privateAggs)
 				);
@@ -320,15 +329,22 @@ public class OccurrenceSearch {
 			if(mapTemps.containsKey(key.trim().toLowerCase())){
 				index = mapTemps.get(key.trim().toLowerCase());
 				for(Aggregation iAgg: aggs){
-					InternalFilter filter = (InternalFilter)iAgg;
-					Long docCount = filter.getDocCount();
-					String name2 = filter.getName();
-					if("private".equalsIgnoreCase(name2)){
-						listToReturn.get(index).setNbPrivateOccurence(docCount.intValue());
+					if("species_count".equalsIgnoreCase(iAgg.getName())){
+						InternalCardinality internalCardinality = (InternalCardinality)iAgg;
+						Long speciesCount = internalCardinality.getValue();
+						listToReturn.get(index).setNbSpeciesOccurrence(speciesCount);
+					}else{
+						InternalFilter filter = (InternalFilter)iAgg;
+						Long docCount = filter.getDocCount();
+						String name2 = filter.getName();
+						if("private".equalsIgnoreCase(name2)){
+							listToReturn.get(index).setNbPrivateOccurence(docCount.intValue());
+						}
+						if("public".equalsIgnoreCase(name2)){
+							listToReturn.get(index).setNbPublicOccurence(docCount.intValue());
+						}
 					}
-					if("public".equalsIgnoreCase(name2)){
-						listToReturn.get(index).setNbPublicOccurence(docCount.intValue());
-					}
+					
 				}
 			}
 		}

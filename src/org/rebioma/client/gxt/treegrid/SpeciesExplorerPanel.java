@@ -102,6 +102,30 @@ public class SpeciesExplorerPanel {
 
 		});
 		ccs.add(pubO);
+		ColumnConfig<SpeciesTreeModel, Long> nbSpeciesOcc = new ColumnConfig<SpeciesTreeModel, Long>(
+				speciesTreeModelProperties.nbSpeciesOccurrence(), 200,
+				"Occurrence species");
+		nbSpeciesOcc.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		nbSpeciesOcc.setCell(new AbstractCell<Long>() {
+	        @Override
+	        public void render(com.google.gwt.cell.client.Cell.Context context, Long value, SafeHtmlBuilder sb) {
+	        	String v = format.format(value);// + space;
+	        	sb.appendHtmlConstant("<span " + style + ">" + v + "</span>");
+	        }
+		});
+		ccs.add(nbSpeciesOcc);
+		ColumnConfig<SpeciesTreeModel, Long> nbSpeciesTaxon = new ColumnConfig<SpeciesTreeModel, Long>(
+				speciesTreeModelProperties.nbSpeciesTaxon(), 200,
+				"Taxonomy species");
+		nbSpeciesTaxon.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		nbSpeciesTaxon.setCell(new AbstractCell<Long>() {
+	        @Override
+	        public void render(com.google.gwt.cell.client.Cell.Context context, Long value, SafeHtmlBuilder sb) {
+	        	String v = format.format(value);// + space;
+	        	sb.appendHtmlConstant("<span " + style + ">" + v + "</span>");
+	        }
+		});
+		ccs.add(nbSpeciesTaxon);
 		ColumnModel<SpeciesTreeModel> cm = new ColumnModel<SpeciesTreeModel>(
 				ccs);
 

@@ -81,6 +81,10 @@ public class SpeciesTreeModel implements Serializable{
 		ValueProvider<SpeciesTreeModel, Integer> nbPrivateOccurence();
 
 		ValueProvider<SpeciesTreeModel, Integer> nbPublicOccurence();
+		
+		ValueProvider<SpeciesTreeModel, Long> nbSpeciesOccurrence();
+		
+		ValueProvider<SpeciesTreeModel, Long> nbSpeciesTaxon();
 
 		ValueProvider<SpeciesTreeModel, String> level();
 	}
@@ -128,6 +132,8 @@ public class SpeciesTreeModel implements Serializable{
 	private int nbPrivateOccurence;
 	private int nbPublicOccurence;
 	private int nbTaxon;
+	private long nbSpeciesTaxon;
+	private long nbSpeciesOccurrence;
 	private String authorityName;
 	private String status;
 	private String synonymisedTaxa;
@@ -346,5 +352,21 @@ public class SpeciesTreeModel implements Serializable{
 
 	public void setNbTaxon(int nbTaxon) {
 		this.nbTaxon = nbTaxon;
+	}
+
+	public long getNbSpeciesTaxon() {
+		return nbSpeciesTaxon;
+	}
+
+	public void setNbSpeciesTaxon(long nbSpeciesTaxon) {
+		this.nbSpeciesTaxon = nbSpeciesTaxon;
+	}
+
+	public long getNbSpeciesOccurrence() {
+		return nbSpeciesOccurrence;
+	}
+
+	public void setNbSpeciesOccurrence(long nbSpeciesOccurrence) {
+		this.nbSpeciesOccurrence = nbSpeciesOccurrence;
 	}
 }
