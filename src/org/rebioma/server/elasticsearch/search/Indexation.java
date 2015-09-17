@@ -46,7 +46,7 @@ public class Indexation {
 	
 	public Indexation() {
 		super();
-		esNode = NodeBuilder.nodeBuilder().clusterName(REBIOMA_ES_CLUSTER_NAME).node();
+		esNode = NodeBuilder.nodeBuilder().data(false).clusterName(REBIOMA_ES_CLUSTER_NAME).node();
 	}
 	
 	public void createIndex() throws IOException {
@@ -77,7 +77,7 @@ public class Indexation {
 			}
 		})
 		.setBulkActions(1000) 
-        .setBulkSize(new ByteSizeValue(2, ByteSizeUnit.MB)) 
+        .setBulkSize(new ByteSizeValue(10, ByteSizeUnit.MB)) 
         .setFlushInterval(TimeValue.timeValueSeconds(1)) 
         .setConcurrentRequests(2) 
         .build();
@@ -113,6 +113,7 @@ public class Indexation {
 		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
 		Query countQuery = statelessSession.createQuery("select count(id) from Occurrence");
 		long rowCount = (Long)countQuery.uniqueResult();
+//		long rowCount = 10000;
 		System.out.println(rowCount + " occurrences à indexer ...");
 		int maxResult = 5000;
 		Map<Integer, User> userMap = new HashMap<Integer, User>();
