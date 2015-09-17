@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
@@ -56,7 +57,8 @@ public class OccurrenceSearch {
 	private static OccurrenceSearch instance;
 	
 	private OccurrenceSearch(){
-		esNode = NodeBuilder.nodeBuilder().clusterName(Indexation.REBIOMA_ES_CLUSTER_NAME).node();
+		esNode = NodeBuilder.nodeBuilder().client(true)
+				.settings(ImmutableSettings.settingsBuilder().put("http.enabled", false)).clusterName(Indexation.REBIOMA_ES_CLUSTER_NAME).node();
 	}
 	
 	public void end(){
@@ -313,7 +315,7 @@ public class OccurrenceSearch {
 				.addAggregation(
 						AggregationBuilders.terms("children").field(occurrenceFieldConcerne).size(0)
 						//https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
-						.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies"))
+						.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies.lower"))
 						.subAggregation(publicAggs)
 						.subAggregation(privateAggs)
 				);
