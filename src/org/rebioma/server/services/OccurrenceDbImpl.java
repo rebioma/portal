@@ -2626,7 +2626,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 						FilterBuilders.termFilter(ownerCol, user == null ? null
 								: user.getEmail()));
 
-				if (!isMyOccurrence) {
+				if (isMyOccurrence) {
 					filterBuilder = FilterBuilders.orFilter(
 							privateFilter,
 							FilterBuilders.termFilter("shareduserscsv",
