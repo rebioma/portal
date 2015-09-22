@@ -454,6 +454,10 @@
 					"lower": {
 						"type": "string",
 						"analyzer": "string_lowercase"
+					},
+					"hash": {
+						"type": "murmur3",
+						"analyzer": "string_lowercase"
 					}
 				}
 			},

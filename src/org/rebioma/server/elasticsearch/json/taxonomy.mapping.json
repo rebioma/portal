@@ -73,7 +73,13 @@
 			},
 			"infraspecificepithetsource":{"type": "string"},
 			"acceptedspecies":{"type": "string",
-				"analyzer": "string_lowercase"
+				"analyzer": "string_lowercase",
+				"fields": {
+					"hash": {
+						"type": "murmur3",
+						"analyzer": "string_lowercase"
+					}
+				}
 			},
 			"verbatimspecies":{"type": "string",
 				"analyzer": "string_lowercase"

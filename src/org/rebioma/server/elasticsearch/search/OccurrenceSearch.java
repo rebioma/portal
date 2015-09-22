@@ -184,7 +184,7 @@ public class OccurrenceSearch {
 				.setSearchType(SearchType.COUNT)
 				.addAggregation(
 						AggregationBuilders.terms("children").field(taxonomyFieldConcerne).size(0)
-							.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies").precisionThreshold(40000))
+							.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies.hash").precisionThreshold(40000))
 						);
 		for(TermsBuilder t: parentAggs){
 			taxonomyRequestBuilder.addAggregation(t);
@@ -315,7 +315,7 @@ public class OccurrenceSearch {
 				.addAggregation(
 						AggregationBuilders.terms("children").field(occurrenceFieldConcerne).size(0)
 						//https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html
-						.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies.lower").precisionThreshold(40000))
+						.subAggregation(AggregationBuilders.cardinality("species_count").field("acceptedspecies.hash").precisionThreshold(40000))
 						.subAggregation(publicAggs)
 						.subAggregation(privateAggs)
 				);
