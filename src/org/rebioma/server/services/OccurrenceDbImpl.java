@@ -1652,8 +1652,10 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 							: FilterBuilders.notFilter(inFilter);
 					break;
 				case IS_EMPTY:
+					filterBuilder = FilterBuilders.missingFilter(filter.column).nullValue(true).existence(true);
+					break;
 				case IS_NOT_EMPTY:
-					// TODO Mikajy
+					filterBuilder = FilterBuilders.notFilter(FilterBuilders.missingFilter(filter.column).nullValue(true).existence(true));
 					break;
 				}
 				if (filterBuilder != null) {
@@ -2628,6 +2630,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 
 				if (isMyOccurrence) {
 					filterBuilder = FilterBuilders.orFilter(
+							publicFilter,
 							privateFilter,
 							FilterBuilders.termFilter("shareduserscsv",
 									user.getEmail()));
