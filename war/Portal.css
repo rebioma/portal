@@ -1891,9 +1891,12 @@ div#content {
 }
 
 .coordinate_label {
-	width: 115px;
-	height: 14px;
-	margin: 2px 2px;
+/* 	width: 115px; */
+	color: #444;
+	font-size: 11px;
+	height: 12px;
+	margin: 0px 11px 10px 2px;
+	text-align: right;
   	font-family: Trebuchet MS, Verdana,Helvetica,Arial,sans-serif;
   	/*background-color: #D9D9D9;*/
 }
