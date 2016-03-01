@@ -357,7 +357,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	 */
 	private static final Logger log = Logger.getLogger(OccurrenceDbImpl.class);
 
-	private static final String VALID_BASIS_OF_RECORDS[] = new String[] {
+	protected static final String VALID_BASIS_OF_RECORDS[] = new String[] {
 			"FossilSpecimen", "HumanObservation", "LivingSpecimen",
 			"MachineObservation", "MovingImage", "PreservedSpecimen",
 			"SoundRecording", "StillImage", "OtherSpecimen" };
@@ -1711,7 +1711,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	 *            TODO
 	 * @return {@link Set} of string filters was added to criteria.
 	 */
-	private Set<String> addCreterionByFilters(Criteria criteria, User user,
+	protected static Set<String> addCreterionByFilters(Criteria criteria, User user,
 			Set<OccurrenceFilter> searchFilters, ResultFilter resultFilter,
 			int tryCount) {
 		Set<String> queryFilters = new HashSet<String>();
@@ -2563,7 +2563,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 		return ids;
 	}
 
-	private Object[] getComplexCriterion(String values[], String fieldName,
+	private static Object[] getComplexCriterion(String values[], String fieldName,
 			String operator) {
 		Criterion criterion = null;
 		String queryFilter = null;
@@ -2674,7 +2674,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	 * 
 	 * @return {@link Criterion} for Hibernate {@link Criteria}
 	 */
-	private Criterion getPublicCriterion(User user, ResultFilter resultFilter,
+	private static Criterion getPublicCriterion(User user, ResultFilter resultFilter,
 			boolean isMyOccurrence, Set<String> queryFilters) {
 		// removeOwnerFilter(filters);
 		if (resultFilter == null) {
