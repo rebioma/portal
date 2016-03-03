@@ -36,7 +36,9 @@ import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
@@ -51,7 +53,6 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
 import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -65,16 +66,15 @@ import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.OrderKey;
+import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
-import org.rebioma.client.bean.ListOccurrenceAPIModel;
-import org.rebioma.client.bean.PaginationResponse;
 import org.rebioma.client.bean.RecordReview;
 import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
-import org.rebioma.client.services.StatisticsService;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
+import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.elasticsearch.search.OccurrenceMapping;
 import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
 import org.rebioma.server.services.QueryFilter.InvalidFilter;
@@ -2354,72 +2354,21 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	private List<Occurrence> find(OccurrenceQuery query,
 			Set<OccurrenceFilter> filters, User user, int tryCount)
 			throws Exception {
-		log.debug("finding Occurrence instances by query.");
-		// filtre sur les identifiants d'occurrence
-		if (query.getOccurrenceIdsFilter() != null
-				&& !query.getOccurrenceIdsFilter().isEmpty()) {
-			OccurrenceFilter occIdsFilter = new OccurrenceFilter("id",
-					Operator.IN, query.getOccurrenceIdsFilter());
-			filters.add(occIdsFilter);
+		List<Occurrence> occurrences;
+		IOccurrenceSearchDb occurrenceSearchDb;
+		try{
+			occurrenceSearchDb = new OccurrenceSearchDbES();
+			occurrences = occurrenceSearchDb.find(query, filters, user, tryCount);
+		}catch(Exception e){
+			String packageName = e.getClass().getPackage().getName();
+			if(packageName.startsWith("org.elasticsearch")){
+				occurrenceSearchDb = new OccurrenceSearchDbPg();
+				occurrences = occurrenceSearchDb.find(query, filters, user, tryCount);
+			}else{
+				throw e;
+			}
 		}
-
-		int from = query.getStart() < 0 ? 0 : query.getStart();
-		int size = 10;
-		if (query.getLimit() > 0) {
-			size = query.getLimit();
-		}
-		ResultFilter resultFilter = query.getResultFilter();
-		SearchResponse searchResponse = _findByOccurrenceFilters(filters, user,
-				resultFilter, from, size);
-		SearchHits searchHits = searchResponse.getHits();
-		query.setCount((int) searchHits.getTotalHits());
-		List<Occurrence> results = new ArrayList<Occurrence>();
-		for (SearchHit hit : searchHits.getHits()) {
-			Occurrence o = OccurrenceMapping.asOccurrence(hit.getSource());
-			results.add(o);
-		}
-		// if (userReviewFilter != null) {
-		// filters.remove(idsFilter);
-		// filters.add(userReviewFilter);
-		// }
-		// if (myreviewPublicFilter != null) {
-		// filters.remove(myreviewPublicFilter);
-		// }
-		// List<OrderKey> orderingMap = query.getOrderingMap();
-		// log.info("order map = " + orderingMap);
-		// if (query.isCountTotalResults()) {
-		// criteria.setFirstResult(0);
-		// criteria.setProjection(Projections.count("id"));
-		// Integer count = (Integer) criteria.uniqueResult();
-		// if (count != null) {
-		// query.setCount(count);
-		// }
-		// } else {
-		// query.setCount(-1);
-		// }
-		// Sets the start, limit, and order by accepted species:
-		// criteria.setFirstResult(query.getStart());
-		// if (query.getLimit() != OccurrenceQuery.UNLIMITED) {
-		// criteria.setMaxResults(query.getLimit());
-		// }
-		// criteria.setProjection(null);
-		/*
-		 * for (OrderKey orderKey : orderingMap) { String property =
-		 * orderKey.getAttributeName(); String occAttribute =
-		 * getOccurrencePropertyName(property); if (orderKey.isAsc()) {
-		 * log.info("order by property " + occAttribute +
-		 * " in ascending order"); criteria.addOrder(Order.asc(occAttribute)); }
-		 * else { log.info("order by property " + occAttribute +
-		 * " in descending order"); criteria.addOrder(Order.desc(occAttribute));
-		 * } }
-		 */
-		// criteria.addOrder(Order.asc("id"));
-		// results = criteria.list();
-
-		// filters.addAll(removedFilters);
-		log.debug("find by example successful, result size: " + results.size());
-		// ManagedSession.commitTransaction(session);
-		return results;
+		return occurrences;
 	}
 
 	private List<Integer> findIds(OccurrenceQuery query,

@@ -3,36 +3,28 @@
  */
 package org.rebioma.server.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.rebioma.client.OccurrenceQuery;
-import org.rebioma.client.OrderKey;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
+import org.rebioma.client.OrderKey;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.User;
 import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
 import org.rebioma.server.services.QueryFilter.Operator;
 import org.rebioma.server.util.ManagedSession;
-import org.rebioma.server.util.StringUtil;
 
 /**
  * @author Mikajy
  *
  */
-public class OccurrenceSearchDbPg implements IOccurrenceSearchDb{
+public class OccurrenceSearchDbPg implements IOccurrenceSearchDb, IDbServerStatus{
 	
 	private static final Logger log = Logger.getLogger(OccurrenceSearchDbPg.class);
 	
@@ -140,6 +132,12 @@ public class OccurrenceSearchDbPg implements IOccurrenceSearchDb{
 	      e.printStackTrace();
 	      throw e;
 	    }
+	}
+
+	@Override
+	public ServerStatus getDbServerStatus() {
+		// La base de données Postgresql est toujours présente
+		return ServerStatus.OK;
 	}
 
 }
