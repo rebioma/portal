@@ -11,7 +11,6 @@ import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.unit.ByteSizeUnit;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
@@ -47,6 +46,10 @@ public class Indexation {
 	public Indexation() {
 		super();
 		esNode = NodeBuilder.nodeBuilder().data(false).clusterName(REBIOMA_ES_CLUSTER_NAME).node();
+	}
+	
+	public Node getNode(){
+		return esNode;
 	}
 	
 	public void createIndex() throws IOException {

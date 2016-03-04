@@ -89,6 +89,7 @@ import com.google.gwt.maps.client.events.maptypeid.MapTypeIdChangeMapHandler;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapEvent;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapHandler;
 import com.google.gwt.maps.client.layers.KmlLayer;
+import com.google.gwt.maps.client.overlays.Circle;
 import com.google.gwt.maps.client.overlays.InfoWindow;
 import com.google.gwt.maps.client.overlays.InfoWindowOptions;
 import com.google.gwt.maps.client.overlays.Marker;
@@ -1782,6 +1783,30 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			 */
 			Mask.mask((XElement)map.getElement(), "Loading");
 			mapGisService.findOccurrenceIdByGeom(kml,
+					new AsyncCallback<List<Integer>>() {
+				@Override
+				public void onSuccess(List<Integer> result) {
+					reloadPageWithOccurrenceIds(result);
+					Mask.unmask((XElement)map.getElement());
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Mask.unmask((XElement)map.getElement());
+					Window.alert("Failure =>" + caught.getMessage());
+				}
+			});
+		}
+	}
+
+	@Override
+	public void circleDrawingCompleteHandler(Circle circle) {
+		if (circle != null) {
+			GWT.log("Circle completed : center = " + circle.getCenter() + " and radius = " + circle.getRadius() + ")");
+			Mask.mask((XElement)map.getElement(), "Loading");
+			LatLng center = circle.getCenter();
+			double radiusMeter = circle.getRadius();
+			mapGisService.findOccurrenceIdByCircle(circle.getCenter().getLatitude(), circle.getCenter().getLongitude(), radiusMeter, 
 					new AsyncCallback<List<Integer>>() {
 				@Override
 				public void onSuccess(List<Integer> result) {

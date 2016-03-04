@@ -3,12 +3,16 @@ package org.rebioma.client.maps;
 import java.util.List;
 
 import com.google.gwt.maps.client.base.LatLng;
-import com.google.gwt.maps.client.drawinglib.OverlayType;
 import com.google.gwt.maps.client.mvc.MVCArray;
 import com.google.gwt.maps.client.mvc.MVCArrayCallback;
+import com.google.gwt.maps.client.overlays.Circle;
 import com.google.gwt.maps.client.overlays.Polygon;
 
 public abstract class KmlGenerator {
+	
+	public static String circle2Kml(Circle circle){
+		return null;
+	}
 	
 	/**
 	 * generation d'une representation en kml d'un polygon

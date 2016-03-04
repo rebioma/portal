@@ -19,7 +19,6 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -29,6 +28,7 @@ import org.rebioma.client.services.MapGisService;
 import org.rebioma.server.util.HibernateUtil;
 import org.rebioma.server.util.ManagedSession;
 
+import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class MapGisServiceImpl extends RemoteServiceServlet implements
@@ -40,6 +40,22 @@ MapGisService {
 	private static final long serialVersionUID = 1166479109921202488L;
 
 	private ShapeFileService shapeFileService = ShapeFileServiceImpl.getInstance();
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Integer> findOccurrenceIdByCircle(double lat, double lon, double radius) {
+		List<Integer> occurrenceIds = new ArrayList<Integer>();
+		Session sess = HibernateUtil.getSessionFactory().openSession();
+//		ST_SetSRID(ST_MakePoint(cast(decimalLongitude as float), cast(decimalLatitude as float)),4326)
+//		String postgisPoint = "ST_SetSRID(ST_MakePoint(:lat as float, :lon as float), 4326)";
+		SQLQuery sqlQuery = sess.createSQLQuery("SELECT id FROM occurrence WHERE ST_DWithin(CAST(geom as geography), CAST(ST_SetSRID(ST_POINT(:lon, :lat), 4326) as geography), :radius)='t'");// ORDER BY ST_Distance(geom, ST_SetSRID(ST_MakePoint(:lat, :lon), 4326))");
+		sqlQuery.setParameter("lat", new Float(lat));
+		sqlQuery.setParameter("lon", new Float(lon));
+		sqlQuery.setParameter("radius", radius);
+		occurrenceIds = sqlQuery.list();
+		return occurrenceIds;
+	}
 
 	@Override
 	public List<Integer> findOccurrenceIdByGeom(String kml) {

@@ -23,6 +23,8 @@ public interface MapGisService  extends RemoteService {
 	 * @return
 	 */
 	//	List<Integer> findOccurrenceIdByGeom(/*OverlayType overlayType, */List<LatLng> geomCoordonnees);
+	
+	List<Integer> findOccurrenceIdByCircle(double lat, double lon, double radius);
 
 	List<Integer> findOccurrenceIdByGeom(String kml);
 

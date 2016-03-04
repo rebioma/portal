@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.rebioma.client.bean.ShapeFileInfo;
 
+import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface MapGisServiceAsync {
@@ -24,5 +25,8 @@ public interface MapGisServiceAsync {
 	void listAreaAdmin(AsyncCallback<List<String>> callback);
 
 	void getMUpdate(String url, AsyncCallback<String> callback);
+
+	void findOccurrenceIdByCircle(double lat, double lon, double radius,
+			AsyncCallback<List<Integer>> callback);
 
 }

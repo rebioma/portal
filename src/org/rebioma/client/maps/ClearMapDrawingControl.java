@@ -4,6 +4,7 @@ import org.rebioma.client.ApplicationView;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.maps.client.overlays.Circle;
 import com.google.gwt.maps.client.overlays.Polygon;
 import com.google.gwt.user.client.ui.HTML;
 
@@ -39,5 +40,10 @@ public class ClearMapDrawingControl extends HTML implements MapDrawingControlLis
 	@Override
 	public void polygonDeletedHandler() {
 		this.setVisible(false);//cacher le controle
+	}
+
+	@Override
+	public void circleDrawingCompleteHandler(Circle circle) {
+		this.setVisible(true);//afficher le controle
 	}
 }
