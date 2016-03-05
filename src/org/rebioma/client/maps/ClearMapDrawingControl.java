@@ -35,6 +35,7 @@ public class ClearMapDrawingControl extends HTML implements MapDrawingControlLis
 	@Override
 	public void onClick(ClickEvent event) {
 		mapDrawingcontrol.clearPolygon();
+		mapDrawingcontrol.clearCircle();
 	}
 
 	@Override
@@ -45,5 +46,17 @@ public class ClearMapDrawingControl extends HTML implements MapDrawingControlLis
 	@Override
 	public void circleDrawingCompleteHandler(Circle circle) {
 		this.setVisible(true);//afficher le controle
+	}
+
+	@Override
+	public void circleDeleteHandler() {
+		// TODO Auto-generated method stub
+		this.setVisible(false);//cacher le controle
+	}
+	
+	@Override
+	public void markerDeleteHandler() {
+		// TODO Auto-generated method stub
+		this.setVisible(false);//cacher le controle
 	}
 }

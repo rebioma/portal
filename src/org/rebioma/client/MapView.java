@@ -1746,6 +1746,10 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 	}
 
 	private void reloadPageWithOccurrenceIds(List<Integer> occurrenceIds){
+		if(occurrenceIds == null || occurrenceIds.isEmpty()){
+			occurrenceIds = new ArrayList<Integer>();
+			occurrenceIds.add(Integer.MIN_VALUE);
+		}
 		// on prepare le query
 		pager.getQuery().setOccurrenceIdsFilter(
 				new HashSet<Integer>());
@@ -1804,7 +1808,6 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 		if (circle != null) {
 			GWT.log("Circle completed : center = " + circle.getCenter() + " and radius = " + circle.getRadius() + ")");
 			Mask.mask((XElement)map.getElement(), "Loading");
-			LatLng center = circle.getCenter();
 			double radiusMeter = circle.getRadius();
 			mapGisService.findOccurrenceIdByCircle(circle.getCenter().getLatitude(), circle.getCenter().getLongitude(), radiusMeter, 
 					new AsyncCallback<List<Integer>>() {
@@ -1897,6 +1900,18 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			}
 		});
 
+	}
+
+	@Override
+	public void circleDeleteHandler() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void markerDeleteHandler() {
+		/*pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
+		OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
+		occView.getSearchForm().search();*/
 	}
 
 }

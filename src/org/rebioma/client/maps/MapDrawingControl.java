@@ -12,17 +12,14 @@ import com.google.gwt.maps.client.drawinglib.DrawingManagerOptions;
 import com.google.gwt.maps.client.drawinglib.OverlayType;
 import com.google.gwt.maps.client.events.overlaycomplete.OverlayCompleteMapEvent;
 import com.google.gwt.maps.client.events.overlaycomplete.OverlayCompleteMapHandler;
-import com.google.gwt.maps.client.events.overlaycomplete.circle.CircleCompleteMapEvent;
-import com.google.gwt.maps.client.events.overlaycomplete.circle.CircleCompleteMapHandler;
 import com.google.gwt.maps.client.events.overlaycomplete.polygon.PolygonCompleteMapEvent;
 import com.google.gwt.maps.client.events.overlaycomplete.polygon.PolygonCompleteMapHandler;
 import com.google.gwt.maps.client.overlays.Circle;
 import com.google.gwt.maps.client.overlays.CircleOptions;
 import com.google.gwt.maps.client.overlays.Marker;
+import com.google.gwt.maps.client.overlays.MarkerOptions;
 import com.google.gwt.maps.client.overlays.Polygon;
 import com.google.gwt.maps.client.overlays.PolygonOptions;
-import com.google.gwt.maps.client.overlays.Polyline;
-import com.google.gwt.maps.client.overlays.Rectangle;
 import com.google.gwt.user.client.ui.Composite;
 
 public class MapDrawingControl extends Composite{
@@ -30,6 +27,12 @@ public class MapDrawingControl extends Composite{
 	private Polygon polygon;
 	
 	private Circle circle;
+	
+	private Marker marker;
+	
+	private static final double CIRCLE_RADIUS = 10000d;//10kms
+	
+	private CircleOptions circleOptions = CircleOptions.newInstance();
 	
 	List<MapDrawingControlListener> mapDrawingControlListeners = new ArrayList<MapDrawingControlListener>();
 	
@@ -49,8 +52,13 @@ public class MapDrawingControl extends Composite{
 		DrawingControlOptions drawingControlOptions = DrawingControlOptions.newInstance();
 	    drawingControlOptions.setPosition(position);
 //	    drawingControlOptions.setDrawingModes(OverlayType.values());
-	    OverlayType[] overlayTypes = {OverlayType.POLYGON, OverlayType.CIRCLE};
+	    OverlayType[] overlayTypes = {OverlayType.POLYGON, OverlayType.MARKER};
 	    drawingControlOptions.setDrawingModes(overlayTypes);
+	    
+	    MarkerOptions markerOptions = MarkerOptions.newInstance();
+	    /*MarkerImage markerImage = MarkerImage.newInstance("");
+	    markerOptions.setIcon(arg0);*/
+	    markerOptions.setTitle("Marker title");
 	    
 	    PolygonOptions polygonOptions = PolygonOptions.newInstance();
 	    polygonOptions.setStrokeColor("#ff0000");//couleur du contour
@@ -58,22 +66,28 @@ public class MapDrawingControl extends Composite{
 	    polygonOptions.setFillColor("#ffff00");//couleur de l'interieur du polygone
 	    polygonOptions.setFillOpacity(0.5);//opacité de l'interieur du polygone
 	    polygonOptions.setClickable(false);
-	    CircleOptions circleOptions = CircleOptions.newInstance();
-	    circleOptions.setFillColor("#ff6633");
-	    circleOptions.setFillOpacity(0.5);//opacité de l'interieur du polygone
-//	    circleOptions.setRadius(10d);
-	    circleOptions.setStrokeColor("#ff0000");
+	    
+	    circleOptions = CircleOptions.newInstance();
+
+	    circleOptions.setFillColor("#F7FF3C");
+	    circleOptions.setStrokeColor("#FF0000");
+	    circleOptions.setStrokeWeight(1);
+	    circleOptions.setFillOpacity(0.4d);
+	    circleOptions.setStrokeOpacity(0.8d);
+	    circleOptions.setRadius(CIRCLE_RADIUS);
 	    DrawingManagerOptions options = DrawingManagerOptions.newInstance();
 	    options.setMap(map);
 	    options.setPolygonOptions(polygonOptions);
-	    options.setCircleOptions(circleOptions);
+//	    options.setCircleOptions(circleOptions);
+	    options.setMarkerOptions(markerOptions);
 	    /*options.setDrawingMode(OverlayType.CIRCLE);
 	    options.setCircleOptions(circleOptions);*/
 	    options.setDrawingControlOptions(drawingControlOptions);
 
 	    DrawingManager o = DrawingManager.newInstance(options);
 	    
-
+	    
+//	    o.setDrawingMode(drawingMode);
 //	    o.addCircleCompleteHandler(new CircleCompleteMapHandler() {
 //	      public void onEvent(CircleCompleteMapEvent event) {
 //	        Circle circle = event.getCircle();
@@ -93,14 +107,28 @@ public class MapDrawingControl extends Composite{
 	        OverlayType ot = event.getOverlayType();
 	        GWT.log("marker completed OverlayType=" + ot.toString());
 
-	        if (ot == OverlayType.CIRCLE) {
-	          Circle circle = event.getCircle();
-	          GWT.log("radius=" + circle.getRadius());
-	        }
+//	        if (ot == OverlayType.CIRCLE) {
+//	          Circle circle = event.getCircle();
+//	          GWT.log("radius=" + circle.getRadius());
+//	        }
 
 	        if (ot == OverlayType.MARKER) {
-	          Marker marker = event.getMarker();
+	        	if(marker != null){
+	        		marker.setMap((MapWidget)null);
+	        	}
+	          if(circle != null){
+	        	  circle.setMap(null);
+	          }
+	          marker = event.getMarker();
+	          circleOptions.setCenter(marker.getPosition());
+	          circleOptions.setMap(marker.getMap());
+	          circle = Circle.newInstance(circleOptions);
+	          circle.setMap(marker.getMap());
 	          GWT.log("position=" + marker.getPosition());
+	          for(MapDrawingControlListener listener: mapDrawingControlListeners){
+//		        	//normalement il n'y a que le mapView
+	        	  listener.circleDrawingCompleteHandler(circle);
+		       }
 	        }
 
 	        if (ot == OverlayType.POLYGON) {
@@ -108,35 +136,34 @@ public class MapDrawingControl extends Composite{
 	          GWT.log("paths=" + polygon.getPaths().toString());
 	        }
 
-	        if (ot == OverlayType.POLYLINE) {
-	          Polyline polyline = event.getPolyline();
-	          GWT.log("paths=" + polyline.getPath().toString());
-	        }
-
-	        if (ot == OverlayType.RECTANGLE) {
-	          Rectangle rectangle = event.getRectangle();
-	          GWT.log("bounds=" + rectangle.getBounds());
-	        }
+//	        if (ot == OverlayType.POLYLINE) {
+//	          Polyline polyline = event.getPolyline();
+//	          GWT.log("paths=" + polyline.getPath().toString());
+//	        }
+//
+//	        if (ot == OverlayType.RECTANGLE) {
+//	          Rectangle rectangle = event.getRectangle();
+//	          GWT.log("bounds=" + rectangle.getBounds());
+//	        }
 	        GWT.log("marker completed OverlayType=" + ot.toString());
 	      }
 	    });
 	    
-	    o.addCircleCompleteHandler(new CircleCompleteMapHandler() {
-			
-			@Override
-			public void onEvent(CircleCompleteMapEvent event) {
-				if(circle != null){
-					circle.setMap(null);
-		    	  }
-				circle = event.getCircle();
-		        GWT.log("Circle with radius" + circle.getRadius());
-		        //mapDrawingControlListeners
-		        for(MapDrawingControlListener listener: mapDrawingControlListeners){
-		        	//normalement il n'y a que le mapView
-		        	listener.circleDrawingCompleteHandler(circle);
-		        }
-			}
-		});
+//	    o.addCircleCompleteHandler(new CircleCompleteMapHandler() {
+//			@Override
+//			public void onEvent(CircleCompleteMapEvent event) {
+//				if(circle != null){
+//					circle.setMap(null);
+//		    	  }
+//				circle = event.getCircle();
+//		        GWT.log("Circle with radius" + circle.getRadius());
+//		        //mapDrawingControlListeners
+//		        for(MapDrawingControlListener listener: mapDrawingControlListeners){
+//		        	//normalement il n'y a que le mapView
+//		        	listener.circleDrawingCompleteHandler(circle);
+//		        }
+//			}
+//		});
 
 	    o.addPolygonCompleteHandler(new PolygonCompleteMapHandler() {
 	      public void onEvent(PolygonCompleteMapEvent event) {
@@ -168,6 +195,26 @@ public class MapDrawingControl extends Composite{
 //	    });
 
 
+	}
+	
+	public void clearMarker(){
+		if(marker != null){
+			marker.setMap((MapWidget)null);
+			for(MapDrawingControlListener listener: mapDrawingControlListeners){
+	        	//normalement il n'y a que le mapView
+	        	listener.circleDeleteHandler();
+	        }
+		}
+	}
+	
+	public void clearCircle(){
+		if(circle != null){
+			circle.setMap(null);
+			for(MapDrawingControlListener listener: mapDrawingControlListeners){
+	        	//normalement il n'y a que le mapView
+	        	listener.circleDeleteHandler();
+	        }
+		}
 	}
 	
 	public void clearPolygon(){

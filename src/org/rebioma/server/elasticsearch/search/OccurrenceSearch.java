@@ -353,6 +353,10 @@ public class OccurrenceSearch {
 		return listToReturn;
 	}
 	
+	public void checkStatus(){
+//		esNode.client().admin().indices();
+	}
+	
 	public SearchResponse doSearch(QueryBuilder queryBuilder, int from, int size){
 		SearchRequestBuilder requestBuilder = esNode.client().prepareSearch(Indexation.REBIOMA_ES_INDEX_NAME)
 				.setTypes(Indexation.REBIOMA_ES_OCCURRENCE_TYPE_NAME);//.setFrom(offset).setSize(pageSize);
