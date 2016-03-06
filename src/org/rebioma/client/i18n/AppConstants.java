@@ -985,9 +985,9 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
    * 
    * @return translated "Delete polygon"
    */
-  @DefaultStringValue("Delete polygon")
-  @Key("DeleteDrawedPolygon")
-  String DeleteDrawedPolygon();
+  @DefaultStringValue("Delete overlay")
+  @Key("DeleteDrawedOverlays")
+  String DeleteDrawedOverlays();
 
   /**
    * Translated "You can only hide your Email in your own records.".

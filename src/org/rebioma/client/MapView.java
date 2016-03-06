@@ -1827,7 +1827,8 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 	}
 
 	@Override
-	public void polygonDeletedHandler() {
+	public void shapeDeleteHandler() {
+		//relancer la recherche pour supprimer le critères du forme du overlays (circle, polygon)
 		pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
 		OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
 		occView.getSearchForm().search();
@@ -1900,18 +1901,6 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			}
 		});
 
-	}
-
-	@Override
-	public void circleDeleteHandler() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void markerDeleteHandler() {
-		/*pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
-		OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
-		occView.getSearchForm().search();*/
 	}
 
 }

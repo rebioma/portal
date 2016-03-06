@@ -17,14 +17,5 @@ public interface MapDrawingControlListener {
 	/**
 	 * Quand on a supprimer le polygon tracé
 	 */
-	public void polygonDeletedHandler();
-	
-	/**
-	 * Quand on a supprimer un cercle de la carte
-	 */
-	public void circleDeleteHandler();
-	/**
-	 * 
-	 */
-	public void markerDeleteHandler();
+	public void shapeDeleteHandler();
 }

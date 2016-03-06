@@ -18,7 +18,7 @@ public class ClearMapDrawingControl extends HTML implements MapDrawingControlLis
 	 
 	 public ClearMapDrawingControl(MapDrawingControl control) {
 		    super(ApplicationView.getConstants()
-		            .DeleteDrawedPolygon());
+		            .DeleteDrawedOverlays());
 		    mapDrawingcontrol = control;
 		    mapDrawingcontrol.addListener(this);
 		  //au debut, quand il n'y a pas encore de polygon tracé, ce control doit rester invisible
@@ -34,29 +34,16 @@ public class ClearMapDrawingControl extends HTML implements MapDrawingControlLis
 
 	@Override
 	public void onClick(ClickEvent event) {
-		mapDrawingcontrol.clearPolygon();
-		mapDrawingcontrol.clearCircle();
+		mapDrawingcontrol.clearOverlays();
 	}
 
 	@Override
-	public void polygonDeletedHandler() {
+	public void shapeDeleteHandler() {
 		this.setVisible(false);//cacher le controle
 	}
 
 	@Override
 	public void circleDrawingCompleteHandler(Circle circle) {
 		this.setVisible(true);//afficher le controle
-	}
-
-	@Override
-	public void circleDeleteHandler() {
-		// TODO Auto-generated method stub
-		this.setVisible(false);//cacher le controle
-	}
-	
-	@Override
-	public void markerDeleteHandler() {
-		// TODO Auto-generated method stub
-		this.setVisible(false);//cacher le controle
 	}
 }

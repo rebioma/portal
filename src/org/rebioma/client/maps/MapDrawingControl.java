@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.controls.ControlPosition;
 import com.google.gwt.maps.client.drawinglib.DrawingControlOptions;
@@ -20,15 +22,18 @@ import com.google.gwt.maps.client.overlays.Marker;
 import com.google.gwt.maps.client.overlays.MarkerOptions;
 import com.google.gwt.maps.client.overlays.Polygon;
 import com.google.gwt.maps.client.overlays.PolygonOptions;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 
-public class MapDrawingControl extends Composite{
+public class MapDrawingControl extends Composite implements ClickHandler{
 	
 	private Polygon polygon;
 	
 	private Circle circle;
 	
 	private Marker marker;
+	
+	private DrawingManager drawingManager;
 	
 	private static final double CIRCLE_RADIUS = 10000d;//10kms
 	
@@ -58,7 +63,7 @@ public class MapDrawingControl extends Composite{
 	    MarkerOptions markerOptions = MarkerOptions.newInstance();
 	    /*MarkerImage markerImage = MarkerImage.newInstance("");
 	    markerOptions.setIcon(arg0);*/
-	    markerOptions.setTitle("Marker title");
+	    markerOptions.setTitle("Search");
 	    
 	    PolygonOptions polygonOptions = PolygonOptions.newInstance();
 	    polygonOptions.setStrokeColor("#ff0000");//couleur du contour
@@ -84,8 +89,7 @@ public class MapDrawingControl extends Composite{
 	    options.setCircleOptions(circleOptions);*/
 	    options.setDrawingControlOptions(drawingControlOptions);
 
-	    DrawingManager o = DrawingManager.newInstance(options);
-	    
+	    drawingManager = DrawingManager.newInstance(options);
 	    
 //	    o.setDrawingMode(drawingMode);
 //	    o.addCircleCompleteHandler(new CircleCompleteMapHandler() {
@@ -102,7 +106,7 @@ public class MapDrawingControl extends Composite{
 //	      }
 //	    });
 //
-	    o.addOverlayCompleteHandler(new OverlayCompleteMapHandler() {
+	    drawingManager.addOverlayCompleteHandler(new OverlayCompleteMapHandler() {
 	      public void onEvent(OverlayCompleteMapEvent event) {
 	        OverlayType ot = event.getOverlayType();
 	        GWT.log("marker completed OverlayType=" + ot.toString());
@@ -113,6 +117,9 @@ public class MapDrawingControl extends Composite{
 //	        }
 
 	        if (ot == OverlayType.MARKER) {
+	        	if(polygon != null){
+	        		polygon.setMap(null);
+	        	}
 	        	if(marker != null){
 	        		marker.setMap((MapWidget)null);
 	        	}
@@ -165,8 +172,14 @@ public class MapDrawingControl extends Composite{
 //			}
 //		});
 
-	    o.addPolygonCompleteHandler(new PolygonCompleteMapHandler() {
+	    drawingManager.addPolygonCompleteHandler(new PolygonCompleteMapHandler() {
 	      public void onEvent(PolygonCompleteMapEvent event) {
+	    	  if(marker != null){
+	        		marker.setMap((MapWidget)null);
+	        	}
+	          if(circle != null){
+	        	  circle.setMap(null);
+	          }
 	    	  if(polygon != null){
 	    		  polygon.setMap(null);
 	    	  }
@@ -197,34 +210,31 @@ public class MapDrawingControl extends Composite{
 
 	}
 	
-	public void clearMarker(){
+	public void clearOverlays(){
+		boolean overlayDeleted = false;
 		if(marker != null){
 			marker.setMap((MapWidget)null);
-			for(MapDrawingControlListener listener: mapDrawingControlListeners){
-	        	//normalement il n'y a que le mapView
-	        	listener.circleDeleteHandler();
-	        }
+			overlayDeleted = true;
 		}
-	}
-	
-	public void clearCircle(){
 		if(circle != null){
 			circle.setMap(null);
-			for(MapDrawingControlListener listener: mapDrawingControlListeners){
-	        	//normalement il n'y a que le mapView
-	        	listener.circleDeleteHandler();
-	        }
+			overlayDeleted = true;
 		}
-	}
-	
-	public void clearPolygon(){
 		 if(polygon != null){
 	      	  polygon.setMap(null);//effacer le polygon du map
-		      	for(MapDrawingControlListener listener: mapDrawingControlListeners){
+	      	overlayDeleted = true;
+		 }
+		 if(overlayDeleted){
+			 for(MapDrawingControlListener listener: mapDrawingControlListeners){
 		        	//normalement il n'y a que le mapView
-		        	listener.polygonDeletedHandler();
+		        	listener.shapeDeleteHandler();
 		        }
-	     }
+		 }
+	}
+
+	@Override
+	public void onClick(ClickEvent evt) {
+		Window.alert("Changed to " + drawingManager.getDrawingMode());
 	}
 
 }
