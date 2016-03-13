@@ -24,7 +24,7 @@ import org.rebioma.server.util.ManagedSession;
  * @author Mikajy
  *
  */
-public class OccurrenceSearchDbPg implements IOccurrenceSearchDb, IDbServerStatus{
+public class OccurrenceSearchDbPg implements IOccurrenceSearchDb{
 	
 	private static final Logger log = Logger.getLogger(OccurrenceSearchDbPg.class);
 	
@@ -132,12 +132,6 @@ public class OccurrenceSearchDbPg implements IOccurrenceSearchDb, IDbServerStatu
 	      e.printStackTrace();
 	      throw e;
 	    }
-	}
-
-	@Override
-	public ServerStatus getDbServerStatus() {
-		// La base de données Postgresql est toujours présente
-		return ServerStatus.OK;
 	}
 
 }

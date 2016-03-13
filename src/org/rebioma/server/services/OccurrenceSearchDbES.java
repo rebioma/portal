@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -20,12 +19,10 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.hibernate.Criteria;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.User;
-import org.rebioma.server.elasticsearch.search.Indexation;
 import org.rebioma.server.elasticsearch.search.OccurrenceMapping;
 import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
 import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
@@ -36,7 +33,7 @@ import org.rebioma.server.util.StringUtil;
  * @author Mikajy
  *
  */
-public class OccurrenceSearchDbES implements IOccurrenceSearchDb, IDbServerStatus{
+public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 	
 	private static final Logger log = Logger.getLogger(OccurrenceSearchDbES.class);
 	private RecordReviewDb recordReviewDb = DBFactory.getRecordReviewDb();
@@ -439,12 +436,6 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb, IDbServerStatu
 		log.debug("find by example successful, result size: " + results.size());
 		// ManagedSession.commitTransaction(session);
 		return results;
-	}
-
-	@Override
-	public ServerStatus getDbServerStatus() {
-		
-		return null;
 	}
 
 }
