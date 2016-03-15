@@ -56,6 +56,7 @@ body {
 	margin-top: 18px;
 	margin-right: 16px;
     height: 28px;
+    width: 250px;
     border: 1px solid #DCEDA7;
 }
 .search-panel-btn {
@@ -71,7 +72,24 @@ body {
 }
 .search-panel-textbox {
     padding: 5px;	
-	width: 200px;
+	width: 100%;
+    font-family:Trebuchet MS, Verdana,Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    cursor: inherit;
+    border: none;
+}
+.search-panel-textbox input{
+	border: medium none;
+	background: none;
+    font-family:Trebuchet MS, Verdana,Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    cursor: inherit;
+    border: none;
+}
+
+.search-panel-textbox input.GMMGAQ0CG-C {
+	border: medium none !important;
+	background: none !important;
     font-family:Trebuchet MS, Verdana,Helvetica,Arial,sans-serif;
     font-size: 16px;
     cursor: inherit;

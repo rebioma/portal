@@ -3,7 +3,8 @@
  */
 package org.rebioma.client;
 
-import com.google.gwt.event.dom.client.ClickEvent;
+import org.rebioma.client.gxt.forms.AdvancedComboBoxExample;
+
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -20,6 +21,7 @@ public class SearchPanel extends HorizontalPanel implements /*ClickHandler, */Ke
 	private WatermarkedTextBox searchTextBox;
 	private Button searchButton;
 	private ClickHandler clickHander;
+	private AdvancedComboBoxExample advancedComboBoxExample;
 
 	public SearchPanel(ClickHandler clickHandler) {
 		super();
@@ -28,10 +30,13 @@ public class SearchPanel extends HorizontalPanel implements /*ClickHandler, */Ke
 		searchButton = new Button();
 		searchButton.setStylePrimaryName("rebioma-search");
 //		searchButton.setText("Search");
-		this.add(searchTextBox);
+//		this.add(searchTextBox);
+		advancedComboBoxExample = new AdvancedComboBoxExample();
+		this.add(advancedComboBoxExample.asWidget());
 		this.add(searchButton);
 		searchButton.addClickHandler(clickHandler);
 		searchTextBox.addKeyUpHandler(this);
+		
 	}
 	
 	public void reset(){

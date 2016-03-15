@@ -277,5 +277,13 @@
       <servlet-name>XmlAPIChangePasswordServlet</servlet-name>
       <url-pattern>/xml-change_cp</url-pattern>
   </servlet-mapping>
+  <servlet>
+      <servlet-name>GlobalSearchServlet</servlet-name>
+      <servlet-class>org.rebioma.server.GlobalSearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>GlobalSearchServlet</servlet-name>
+      <url-pattern>/rebioma/globalsearch</url-pattern>
+  </servlet-mapping>
   
 </web-app>
