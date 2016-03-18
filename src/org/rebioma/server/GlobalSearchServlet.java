@@ -6,6 +6,8 @@ package org.rebioma.server;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.rebioma.client.bean.GlobalSearchResult;
 import org.rebioma.client.bean.GlobalSearchResultModel;
 import org.rebioma.client.bean.api.GsonXmlTransientExlusionStrategy;
+import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,6 +41,8 @@ public class GlobalSearchServlet  extends HttpServlet {
 		.setExclusionStrategies(new GsonXmlTransientExlusionStrategy())//on exclu les champs marqué par l'annotation @XmlTransient
 //		.setPrettyPrinting()
 		.create();
+	
+	private OccurrenceSearch occurrenceSearch = OccurrenceSearch.getInstance();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -50,14 +55,20 @@ public class GlobalSearchServlet  extends HttpServlet {
 			throws ServletException, IOException {
 		String callBackJavaScripMethodName = req.getParameter("callback");
 		String query = req.getParameter("query");
-		GlobalSearchResult result = new GlobalSearchResult("100", new ArrayList<GlobalSearchResultModel>());
-		for(int i=0; i< 5; i++){
-			GlobalSearchResultModel res = new GlobalSearchResultModel();
-			res.setEs_value(" blablabla <em>" + query +"</em> "+ i);
-			res.setOcc_id("" + i);
-			res.setEs_field("field " + i);
-			result.getTopics().add(res);
+		Map<String, Set<String>> fieldValues = occurrenceSearch.getFieldValues(query);
+		ArrayList<GlobalSearchResultModel> models= new ArrayList<GlobalSearchResultModel>();
+		int i = 0;
+		for(String key: fieldValues.keySet()){
+			for(String value: fieldValues.get(key)){
+				i++;
+				GlobalSearchResultModel res = new GlobalSearchResultModel();
+				res.setEs_value(value);
+				res.setOcc_id("" + i);
+				res.setEs_field(key);
+				models.add(res);
+			}
 		}
+		GlobalSearchResult result = new GlobalSearchResult(""+i, models);
 		String json = gson.toJson(result);
 		resp.setContentType("application/json");
         PrintWriter out = resp.getWriter();

@@ -29,6 +29,7 @@ import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.ListOccurrenceAPIModel;
 import org.rebioma.client.bean.RecordReview;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
@@ -322,5 +323,12 @@ public interface OccurrenceDb {
   
   public ListStatisticAPIModel getStatisticsByType(String type);
   public ListStatisticAPIModel getStatisticsByType(int type);
+  /**
+   * 
+   * @param query
+   * @param user
+   * @return
+   */
+  public List<SearchFieldNameValuePair> getFieldValuePair(OccurrenceQuery query, User user);
 
 }

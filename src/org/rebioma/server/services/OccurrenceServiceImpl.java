@@ -15,8 +15,6 @@
  */
 package org.rebioma.server.services;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,17 +26,16 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.rebioma.client.EmailException;
 import org.rebioma.client.OccurrenceCommentQuery;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceComments;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.RecordReview;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService;
 import org.rebioma.server.MySqlPing;
-import org.rebioma.server.util.EmailUtil;
 import org.rebioma.server.util.ManagedSession;
 import org.rebioma.server.util.OccurrenceUtil;
 

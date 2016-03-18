@@ -71,6 +71,7 @@ import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.RecordReview;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
@@ -2930,5 +2931,18 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 		long took = searchResponse.getTookInMillis();
 		response.setTookInMillis(took);
 		return response;
+	}
+
+	@Override
+	public List<SearchFieldNameValuePair> getFieldValuePair(OccurrenceQuery query,
+			User user) {
+		List<SearchFieldNameValuePair> listNvp = new ArrayList<SearchFieldNameValuePair>();
+		for(int i=0;i< 10; i++){
+			SearchFieldNameValuePair nvp = new SearchFieldNameValuePair(); 
+			nvp.setFieldName("key " + i);
+			nvp.setFieldValue("value " + i);
+			listNvp.add(nvp);
+		}
+		return listNvp;
 	}
 }

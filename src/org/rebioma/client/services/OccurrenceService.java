@@ -25,6 +25,7 @@ import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceComments;
 import org.rebioma.client.bean.OccurrenceReview;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;

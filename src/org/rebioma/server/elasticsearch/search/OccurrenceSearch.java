@@ -474,6 +474,19 @@ public class OccurrenceSearch {
 		return searchResponse;
 	}
 	
+	public Map<String, Set<String>> getFieldValues(String query){
+		Map<String, Set<String>> fieldValues = new HashMap<String, Set<String>>();
+		for(int i=0; i< 40; i++){
+			String key = "key " + i;
+			Set<String> values = new HashSet<String>();
+			for(int v=0; v< 10; v++){
+				values.add("value " + v);
+			}
+			fieldValues.put(key, values);
+		}
+		return fieldValues;
+	}
+	
 	 public Set<String> addCreterionByFilters(Criteria criteria, User user,
 		      Set<OccurrenceDbImpl.OccurrenceFilter> searchFilters, ResultFilter resultFilter, int tryCount) {
 		    Set<String> queryFilters = new HashSet<String>();

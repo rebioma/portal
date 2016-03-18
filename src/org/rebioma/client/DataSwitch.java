@@ -27,6 +27,7 @@ import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceComments;
 import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.Role;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.AscDataService;
 import org.rebioma.client.services.AscDataServiceAsync;
@@ -805,4 +806,5 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
 		AsyncCallback<Boolean> callback) {
 	  occurrenceService.editUpdate(occurrences, sessionId, callback);
   }
+
 }

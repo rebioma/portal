@@ -118,6 +118,16 @@
 		<servlet-name>UserService</servlet-name>
 		<url-pattern>/rebioma/userService</url-pattern>
 	</servlet-mapping>
+	
+  <servlet>
+    <servlet-name>OccurrenceSearchService</servlet-name>
+    <servlet-class>org.rebioma.server.services.OccurrenceSearchServiceImpl
+    </servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>OccurrenceSearchService</servlet-name>
+    <url-pattern>/rebioma/occurrenceSearchService</url-pattern>
+  </servlet-mapping>
 
 	<servlet>
 		<servlet-name>OccurrenceService</servlet-name>

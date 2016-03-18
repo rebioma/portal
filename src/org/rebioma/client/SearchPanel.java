@@ -29,10 +29,9 @@ public class SearchPanel extends HorizontalPanel implements /*ClickHandler, */Ke
 		searchTextBox.setWatermark("Search");
 		searchButton = new Button();
 		searchButton.setStylePrimaryName("rebioma-search");
-//		searchButton.setText("Search");
-//		this.add(searchTextBox);
-		advancedComboBoxExample = new AdvancedComboBoxExample();
-		this.add(advancedComboBoxExample.asWidget());
+		this.add(searchTextBox);
+//		advancedComboBoxExample = new AdvancedComboBoxExample();
+//		this.add(advancedComboBoxExample.asWidget());
 		this.add(searchButton);
 		searchButton.addClickHandler(clickHandler);
 		searchTextBox.addKeyUpHandler(this);

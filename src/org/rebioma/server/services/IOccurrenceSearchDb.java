@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.bean.Occurrence;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.User;
 import org.rebioma.server.services.OccurrenceDbImpl.OccurrenceFilter;
 

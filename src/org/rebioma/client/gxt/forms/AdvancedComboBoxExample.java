@@ -150,7 +150,7 @@ public class AdvancedComboBoxExample{
           return res;
         }
       };
-
+      
       PagingLoader<ForumLoadConfig, ForumListLoadResult> loader = new PagingLoader<ForumLoadConfig, ForumListLoadResult>(
           proxy, reader);
       loader.useLoadConfig(TestAutoBeanFactory.instance.loadConfig().as());

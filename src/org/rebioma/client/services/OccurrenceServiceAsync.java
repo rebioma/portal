@@ -24,6 +24,7 @@ import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceComments;
 import org.rebioma.client.bean.OccurrenceReview;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 
 import com.google.gwt.http.client.Request;

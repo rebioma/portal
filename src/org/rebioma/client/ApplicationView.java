@@ -23,17 +23,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.rebioma.client.View.ViewInfo;
 import org.rebioma.client.bean.Role;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.forms.ChangePasswordForm;
 import org.rebioma.client.forms.ForgotPasswordForm;
 import org.rebioma.client.forms.Form;
+import org.rebioma.client.forms.Form.FormListener;
 import org.rebioma.client.forms.RegisterForm;
 import org.rebioma.client.forms.SignInForm;
-import org.rebioma.client.forms.Form.FormListener;
+import org.rebioma.client.gxt.forms.GlobalSearchListViewWidget;
 import org.rebioma.client.i18n.AppConstants;
 import org.rebioma.client.i18n.LocaleListBox;
+import org.rebioma.client.services.OccurrenceSearchService;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -43,7 +44,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.maps.client.events.resize.ResizeEventFormatter;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
@@ -52,16 +52,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 public class ApplicationView extends View implements ClickHandler {
 
@@ -438,6 +437,8 @@ public class ApplicationView extends View implements ClickHandler {
   private static String sessionId;
   
   private SearchPanel globalSearchPanel;
+  
+  private com.sencha.gxt.widget.core.client.Window globalSearchWindow; 
 
   public static AppConstants getConstants() {
     return constants;
@@ -674,10 +675,29 @@ public class ApplicationView extends View implements ClickHandler {
     } else if (sender == homeLink) {
       switchView(OCCURRENCES);
     } else if(sender == globalSearchPanel.getSearchButton()) {
-    	switchView(OCCURRENCES);
+    	/*switchView(OCCURRENCES);
     	String text = globalSearchPanel.getText();
     	GWT.log("Recherche des occurrences contenant le terme >" + text + "< ...");
-    	getOccurrenceView().getSearchForm().searchText(text);
+    	getOccurrenceView().getSearchForm().searchText(text);*/
+    	
+//    	OccurrenceSearchService.Proxy.get().getSearchFieldNameValuePair(sessionId, query, callback);
+    	if(globalSearchWindow == null){
+    		globalSearchWindow = new com.sencha.gxt.widget.core.client.Window();
+    	}
+    	globalSearchWindow.setPixelSize(500, 300);
+    	globalSearchWindow.setModal(true);
+    	globalSearchWindow.setBlinkModal(true);
+    	globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
+    	globalSearchWindow.setHeadingText("Search Result");
+    	globalSearchWindow.add(new GlobalSearchListViewWidget().asWidget());
+    	globalSearchWindow.show();
+        /*window.addHideHandler(new HideHandler() {
+          @Override
+          public void onHide(HideEvent event) {
+            TextButton open = ((Window) event.getSource()).getData("open");
+            open.focus();
+          }
+        });*/
     }
     /*
        * else if (sender == changePassLink) { switchView(CHANGE_PASS); } else if
@@ -688,7 +708,9 @@ public class ApplicationView extends View implements ClickHandler {
 
   public void onResize(ResizeEvent event) {
     // do nothing when window is resize
-
+//	  if(globalSearchPanel != null && globalSearchWindow != null){
+//		  globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
+//	  }
   }
 
   /**
