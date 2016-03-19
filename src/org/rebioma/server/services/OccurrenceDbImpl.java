@@ -2939,8 +2939,8 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 		List<SearchFieldNameValuePair> listNvp = new ArrayList<SearchFieldNameValuePair>();
 		for(int i=0;i< 10; i++){
 			SearchFieldNameValuePair nvp = new SearchFieldNameValuePair(); 
-			nvp.setFieldName("key " + i);
-			nvp.setFieldValue("value " + i);
+//			nvp.setFieldName("key " + i);
+//			nvp.setFieldValue("value " + i);
 			listNvp.add(nvp);
 		}
 		return listNvp;

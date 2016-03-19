@@ -4,6 +4,7 @@
 package org.rebioma.client.bean;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author Mikajy
@@ -18,7 +19,7 @@ public class SearchFieldNameValuePair implements Serializable {
 	
 	private String fieldName;
 	
-	private String fieldValue;
+	private Set<String> fieldValues;
 
 	public String getFieldName() {
 		return fieldName;
@@ -28,12 +29,14 @@ public class SearchFieldNameValuePair implements Serializable {
 		this.fieldName = fieldName;
 	}
 
-	public String getFieldValue() {
-		return fieldValue;
+	public Set<String> getFieldValues() {
+		return fieldValues;
 	}
 
-	public void setFieldValue(String fieldValue) {
-		this.fieldValue = fieldValue;
+	public void setFieldValues(Set<String> fieldValues) {
+		this.fieldValues = fieldValues;
 	}
+
+
 	
 }

@@ -31,10 +31,9 @@ import org.rebioma.client.forms.Form;
 import org.rebioma.client.forms.Form.FormListener;
 import org.rebioma.client.forms.RegisterForm;
 import org.rebioma.client.forms.SignInForm;
-import org.rebioma.client.gxt.forms.GlobalSearchListViewWidget;
+import org.rebioma.client.gxt.forms.GlobalSearchListViewWindow;
 import org.rebioma.client.i18n.AppConstants;
 import org.rebioma.client.i18n.LocaleListBox;
-import org.rebioma.client.services.OccurrenceSearchService;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -438,7 +437,7 @@ public class ApplicationView extends View implements ClickHandler {
   
   private SearchPanel globalSearchPanel;
   
-  private com.sencha.gxt.widget.core.client.Window globalSearchWindow; 
+  private GlobalSearchListViewWindow globalSearchWindow; 
 
   public static AppConstants getConstants() {
     return constants;
@@ -675,22 +674,27 @@ public class ApplicationView extends View implements ClickHandler {
     } else if (sender == homeLink) {
       switchView(OCCURRENCES);
     } else if(sender == globalSearchPanel.getSearchButton()) {
-    	/*switchView(OCCURRENCES);
+//    	switchView(OCCURRENCES);
     	String text = globalSearchPanel.getText();
     	GWT.log("Recherche des occurrences contenant le terme >" + text + "< ...");
-    	getOccurrenceView().getSearchForm().searchText(text);*/
-    	
+//    	getOccurrenceView().getSearchForm().searchText(text);
+    	OccurrenceQuery occurrenceQuery = getOccurrenceView().getSearchForm().getSearchTextOccurrenceQuery(text);
+    	String sessionid = "";
+    	if(ApplicationView.getAuthenticatedUser() != null){
+    		sessionid = ApplicationView.getAuthenticatedUser().getSessionId();
+    	}
 //    	OccurrenceSearchService.Proxy.get().getSearchFieldNameValuePair(sessionId, query, callback);
     	if(globalSearchWindow == null){
-    		globalSearchWindow = new com.sencha.gxt.widget.core.client.Window();
+    		globalSearchWindow = new GlobalSearchListViewWindow();
+    		globalSearchWindow.setMaximizable(true);
+        	globalSearchWindow.setModal(true);
+        	globalSearchWindow.setBlinkModal(true);
+        	globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
+        	globalSearchWindow.setHeadingText("Search Result");
     	}
-    	globalSearchWindow.setPixelSize(500, 300);
-    	globalSearchWindow.setModal(true);
-    	globalSearchWindow.setBlinkModal(true);
-    	globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
-    	globalSearchWindow.setHeadingText("Search Result");
-    	globalSearchWindow.add(new GlobalSearchListViewWidget().asWidget());
-    	globalSearchWindow.show();
+		globalSearchWindow.setPixelSize(500, 300);
+    	globalSearchWindow.showAndLoad(sessionid, occurrenceQuery);
+    	
         /*window.addHideHandler(new HideHandler() {
           @Override
           public void onHide(HideEvent event) {
@@ -708,9 +712,9 @@ public class ApplicationView extends View implements ClickHandler {
 
   public void onResize(ResizeEvent event) {
     // do nothing when window is resize
-//	  if(globalSearchPanel != null && globalSearchWindow != null){
-//		  globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
-//	  }
+	  if(globalSearchPanel != null && globalSearchWindow != null){
+		  globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
+	  }
   }
 
   /**

@@ -19,7 +19,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public interface OccurrenceSearchServiceAsync extends IsSerializable {
 
-	void getSearchFieldNameValuePair(String query,
-			AsyncCallback<List<SearchFieldNameValuePair>> callback);
+	void getSearchFieldNameValuePair(String sessionId, OccurrenceQuery query,
+			AsyncCallback<List<SearchFieldNameValuePair>> callback) throws Exception;
 
 }

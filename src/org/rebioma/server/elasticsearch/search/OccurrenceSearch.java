@@ -358,11 +358,19 @@ public class OccurrenceSearch {
 	}
 	
 	public SearchResponse doSearch(QueryBuilder queryBuilder, int from, int size){
+		return doSearch(queryBuilder, from, size, false);
+	}
+	
+	public SearchResponse doSearch(QueryBuilder queryBuilder, int from, int size, boolean highlight){
 		SearchRequestBuilder requestBuilder = esNode.client().prepareSearch(Indexation.REBIOMA_ES_INDEX_NAME)
 				.setTypes(Indexation.REBIOMA_ES_OCCURRENCE_TYPE_NAME);//.setFrom(offset).setSize(pageSize);
 		requestBuilder.setFrom(from).setSize(size);
-		SearchResponse searchResponse = requestBuilder.setQuery(queryBuilder)
-				.execute().actionGet();
+		SearchRequestBuilder searchRequestBuilder = requestBuilder.setQuery(queryBuilder);
+		if(highlight){
+			searchRequestBuilder.setSource("id");
+			searchRequestBuilder.addHighlightedField("*").setHighlighterPreTags("<em><i>").setHighlighterPostTags("</i></em>");
+		}
+		SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
 		return searchResponse;
 	}
 	

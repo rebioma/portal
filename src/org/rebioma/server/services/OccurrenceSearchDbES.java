@@ -5,10 +5,15 @@ package org.rebioma.server.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -19,9 +24,11 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.highlight.HighlightField;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.Occurrence;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.User;
 import org.rebioma.server.elasticsearch.search.OccurrenceMapping;
 import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
@@ -50,6 +57,7 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 			// Criteria criteria = session.createCriteria(Occurrence.class);
 			OccurrenceFilter userReviewFilter = null;
 			OccurrenceFilter myreviewPublicFilter = null;
+			boolean isGlobalSearchText = false;
 			for (OccurrenceFilter filter : filters) {
 				if (filter.column
 						.equals(filter.getPropertyName("userReviewed"))) {
@@ -64,6 +72,10 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 						}
 						resultFilter = null;
 					}
+				}
+				if (filter.column.equalsIgnoreCase(filter
+						.getPropertyName("globalsearchtext"))) {
+					isGlobalSearchText = true;
 				}
 			}
 			if (myreviewPublicFilter != null) {
@@ -92,7 +104,7 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 			QueryBuilder queryBuilder = getEsQueriesAndFilters(user, filters,
 					resultFilter);
 			SearchResponse searchResponse = OccurrenceSearch.getInstance()
-					.doSearch(queryBuilder, from, size);
+					.doSearch(queryBuilder, from, size, isGlobalSearchText);
 			return searchResponse;
 		} catch (RuntimeException re) {
 			log.error("find by example failed", re);
@@ -114,6 +126,7 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 		List<FilterBuilder> andFilters = new ArrayList<FilterBuilder>();
 		List<FilterBuilder> orFilters = new ArrayList<FilterBuilder>();
 		FilterBuilder filterBuilder = null;
+		boolean isGlobalSearchText = false;
 		for (OccurrenceFilter filter : searchFilters) {
 			if ((filter.getOperator() != Operator.IS_EMPTY && filter
 					.getOperator() != Operator.IS_NOT_EMPTY)
@@ -153,6 +166,7 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 					boolQueryBuilder.must(query1).should(
 							QueryBuilders.boolQuery().should(query2)
 									.should(query3)).minimumShouldMatch("80%");
+					isGlobalSearchText = true;
 				}
 			} else if (filter.column.equalsIgnoreCase(filter
 					.getPropertyName("quickSearch"))) {
@@ -301,6 +315,10 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 		} else {
 			queryBuilder = boolQueryBuilder;
 		}
+		
+		if(isGlobalSearchText){
+			//add highlight
+		}
 		return queryBuilder;
 	}
 	
@@ -364,6 +382,59 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 		return filterBuilder;
 	}
 	
+	/**
+	 * 
+	 * @param query
+	 * @param filters
+	 * @param user
+	 * @return
+	 */
+	public List<SearchFieldNameValuePair> findFieldNameValuePair(OccurrenceQuery query,
+			Set<OccurrenceFilter> filters, User user) throws Exception {
+		log.debug("finding Occurrence instances by query.");
+		// filtre sur les identifiants d'occurrence
+		if (query.getOccurrenceIdsFilter() != null
+				&& !query.getOccurrenceIdsFilter().isEmpty()) {
+			OccurrenceFilter occIdsFilter = new OccurrenceFilter("id",
+					Operator.IN, query.getOccurrenceIdsFilter());
+			filters.add(occIdsFilter);
+		}
+
+		int from = 0;
+		int size = 200;//les cents premier resultats
+		ResultFilter resultFilter = query.getResultFilter();
+		SearchResponse searchResponse = _findByOccurrenceFilters(filters, user,
+				resultFilter, from, size);
+		SearchHits searchHits = searchResponse.getHits();
+		query.setCount((int) searchHits.getTotalHits());
+		List<Occurrence> results = new ArrayList<Occurrence>();
+//		Set<String> highlightFieldNames = new HashSet<String>();
+		List<SearchFieldNameValuePair> listNvp = new ArrayList<SearchFieldNameValuePair>();
+		Map<String, Integer> nameIndexMap = new HashMap<String, Integer>();
+		for (SearchHit hit : searchHits.getHits()) {
+			Map<String, HighlightField> highlightFieldMap = hit.getHighlightFields();
+			for(Entry<String, HighlightField> entry: highlightFieldMap.entrySet()){
+				HighlightField highlightField = entry.getValue();
+				String name = highlightField.getName();
+				name = name.replace(".ngram", "").replace(".lower", "").replace(".edge_ngram", "");
+				int index = -1;
+				if(!nameIndexMap.containsKey(name)){
+					SearchFieldNameValuePair nvp = new SearchFieldNameValuePair();
+					nvp.setFieldName(name);
+					nvp.setFieldValues(new HashSet<String>());
+					listNvp.add(nvp);
+					index = listNvp.size() - 1;
+					nameIndexMap.put(name, index);
+				}else{
+					index = nameIndexMap.get(name);
+				}
+				listNvp.get(index).getFieldValues().add(highlightField.getFragments()[0].string());
+			}
+		}
+		log.debug("find by example successful, result size: " + results.size());
+		return listNvp;
+	}
+	
 	
 
 	@Override
@@ -394,45 +465,6 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 			Occurrence o = OccurrenceMapping.asOccurrence(hit.getSource());
 			results.add(o);
 		}
-		// if (userReviewFilter != null) {
-		// filters.remove(idsFilter);
-		// filters.add(userReviewFilter);
-		// }
-		// if (myreviewPublicFilter != null) {
-		// filters.remove(myreviewPublicFilter);
-		// }
-		// List<OrderKey> orderingMap = query.getOrderingMap();
-		// log.info("order map = " + orderingMap);
-		// if (query.isCountTotalResults()) {
-		// criteria.setFirstResult(0);
-		// criteria.setProjection(Projections.count("id"));
-		// Integer count = (Integer) criteria.uniqueResult();
-		// if (count != null) {
-		// query.setCount(count);
-		// }
-		// } else {
-		// query.setCount(-1);
-		// }
-		// Sets the start, limit, and order by accepted species:
-		// criteria.setFirstResult(query.getStart());
-		// if (query.getLimit() != OccurrenceQuery.UNLIMITED) {
-		// criteria.setMaxResults(query.getLimit());
-		// }
-		// criteria.setProjection(null);
-		/*
-		 * for (OrderKey orderKey : orderingMap) { String property =
-		 * orderKey.getAttributeName(); String occAttribute =
-		 * getOccurrencePropertyName(property); if (orderKey.isAsc()) {
-		 * log.info("order by property " + occAttribute +
-		 * " in ascending order"); criteria.addOrder(Order.asc(occAttribute)); }
-		 * else { log.info("order by property " + occAttribute +
-		 * " in descending order"); criteria.addOrder(Order.desc(occAttribute));
-		 * } }
-		 */
-		// criteria.addOrder(Order.asc("id"));
-		// results = criteria.list();
-
-		// filters.addAll(removedFilters);
 		log.debug("find by example successful, result size: " + results.size());
 		// ManagedSession.commitTransaction(session);
 		return results;

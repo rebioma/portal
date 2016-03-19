@@ -104,7 +104,7 @@ public class OccurrenceQuery extends Query<Occurrence> {
     baseFilters = new HashSet<String>();
     baseFilters.addAll(other.baseFilters);
     results = new ArrayList<Occurrence>();
-    results.addAll(other.results);
+    results.addAll(other.results == null ? new ArrayList<Occurrence>(): other.results);
     count = new Integer(other.count).intValue();
     countTotalResults = new Boolean(other.countTotalResults).booleanValue();
     orderingMap = other.orderingMap == null ? null : new ArrayList<OrderKey>(other.orderingMap);

@@ -48,6 +48,6 @@ public interface OccurrenceSearchService extends RemoteService{
 	   * @param query
 	   * @return
 	   */
-	  List<SearchFieldNameValuePair> getSearchFieldNameValuePair(String query);
+	  List<SearchFieldNameValuePair> getSearchFieldNameValuePair(String sessionId, OccurrenceQuery query) throws Exception;
 
 }

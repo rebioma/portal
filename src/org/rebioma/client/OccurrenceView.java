@@ -686,9 +686,9 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			else searchTypeBox.setSelectedIndex(allOccurrenceIndex);
 
 			String activeView = activeViewInfo.getName();
-			if (/*!activeView.equals(MAP) && */!activeView.equals(LIST)) {
-				switchView(LIST, false);
-			}
+//			if (/*!activeView.equals(MAP) && */!activeView.equals(LIST)) {
+//				switchView(LIST, false);
+//			}
 			/*
 			 * 2- init  searchBox
 			 */
@@ -712,6 +712,7 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			}
 		}
 		
+		
 		public void searchText(String text){
 			resetToDefaultState();
 			resetForTextSearch();
@@ -723,6 +724,20 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 					ApplicationView.getAuthenticatedUser(), resultFilter));
 			addHistoryItem(false);
 			query.requestData(1);
+		}
+		
+		public OccurrenceQuery getSearchTextOccurrenceQuery(String text){
+			resetToDefaultState();
+			resetForTextSearch();
+			query.clearSearchFilter();
+			ResultFilter resultFilter = getResultFilter();
+			String searchType = getSearchType();
+			query.setBaseFilters(query.getFiltersFromProperty(searchType,
+					ApplicationView.getAuthenticatedUser(), resultFilter));
+			addHistoryItem(false);
+			OccurrenceQuery occQuery = new OccurrenceQuery(query);
+			occQuery.addSearchFilter(GLOBAL_SEARCH_TEXT + " = " + text);
+			return occQuery;
 		}
 		
 		public void search() {
