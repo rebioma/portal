@@ -702,9 +702,9 @@ public class ApplicationView extends View implements ClickHandler, SelectionChan
         	globalSearchWindow.setResizable(true);
     	}
 		globalSearchWindow.setPixelSize(500, 300);
-    	globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
-		int[] offsets = {-250, 0};
-    	globalSearchWindow.alignTo(globalSearchPanel.getElement(), new Style.AnchorAlignment(Style.Anchor.BOTTOM_RIGHT), offsets);
+		resize(null);
+//		int[] offsets = {-250, 0};
+//    	globalSearchWindow.alignTo(globalSearchPanel.getElement(), new Style.AnchorAlignment(Style.Anchor.BOTTOM_RIGHT), offsets);
     	globalSearchWindow.showAndLoad(sessionid, occurrenceQuery);
     	
         /*window.addHideHandler(new HideHandler() {
