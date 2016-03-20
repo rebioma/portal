@@ -229,6 +229,8 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 		protected static final int ALL_TYPES_END_INDEX = 4;
 
 		protected static final String GLOBAL_SEARCH_TEXT = "GlobalSearchText";
+		protected static final String GLOBAL_SEARCH_TEXT_FIELD = "GlobalSearchTextField";
+		protected static final String GLOBAL_SEARCH_FIELD_TEXT = "GlobalSearchFieldText";
 		protected static final String QUICK_SEARCH = "QuickSearch";
 		protected static final String VALIDATION_ERROR = "ValidationError";
 		protected static final String ALL_SHARED_UNSHARED = "all";
@@ -712,6 +714,19 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			}
 		}
 		
+		public void searchText(String field, String text){
+			resetToDefaultState();
+			resetForTextSearch();
+			query.clearSearchFilter();
+			query.addSearchFilter(GLOBAL_SEARCH_TEXT + " = " + text);
+			query.addSearchFilter(GLOBAL_SEARCH_TEXT_FIELD + " = " + field);
+			ResultFilter resultFilter = getResultFilter();
+			String searchType = getSearchType();
+			query.setBaseFilters(query.getFiltersFromProperty(searchType,
+					ApplicationView.getAuthenticatedUser(), resultFilter));
+			addHistoryItem(false);
+			query.requestData(1);
+		}
 		
 		public void searchText(String text){
 			resetToDefaultState();
@@ -736,7 +751,7 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 					ApplicationView.getAuthenticatedUser(), resultFilter));
 			addHistoryItem(false);
 			OccurrenceQuery occQuery = new OccurrenceQuery(query);
-			occQuery.addSearchFilter(GLOBAL_SEARCH_TEXT + " = " + text);
+			occQuery.addSearchFilter(GLOBAL_SEARCH_FIELD_TEXT + " = " + text);
 			return occQuery;
 		}
 		

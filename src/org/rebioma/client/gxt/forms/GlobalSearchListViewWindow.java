@@ -5,6 +5,7 @@ package org.rebioma.client.gxt.forms;
 
 import java.util.List;
 
+import org.rebioma.client.ApplicationView;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.services.OccurrenceSearchServiceAsync;
@@ -39,10 +40,11 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
  * @author Mikajy
  * 
  */
-public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.client.Window {
+public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.client.Window{
 	private OccurrenceSearchServiceAsync occurrenceSearchService = org.rebioma.client.services.OccurrenceSearchService.Proxy
 			.get();
 
+	private SelectionChangedHandler<SearchFieldNameValuePair> selectionChangedHandler = null;
 //	interface Renderer extends XTemplates {
 //		@XTemplate("<div><h3>{data.fieldName}</h3><p>{data.fieldValue}</p><hr/></div>")
 //		public SafeHtml render(SearchFieldNameValuePair data);
@@ -63,6 +65,13 @@ public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.clien
 			sessionid = sid;
 			query = occQuery;
 		}
+	}
+	
+
+	public GlobalSearchListViewWindow(SelectionChangedHandler<SearchFieldNameValuePair> selectionChangedHandler) {
+		super();
+		// TODO Auto-generated constructor stub
+		this.selectionChangedHandler = selectionChangedHandler;
 	}
 	
 	public GlobalSearchListViewWindow() {
@@ -121,6 +130,7 @@ public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.clien
 				}
 			};
 			final XElement elt = this.getElement();
+			final com.sencha.gxt.widget.core.client.Window that = this;
 			ListStore<SearchFieldNameValuePair> store = new ListStore<SearchFieldNameValuePair>(
 					kp);
 			loader.addLoadHandler(new ListStoreBinding<LoadConfig, SearchFieldNameValuePair, List<SearchFieldNameValuePair>>(
@@ -144,7 +154,8 @@ public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.clien
 				@Override
 				public void onLoadException(LoadExceptionEvent<LoadConfig> event) {
 					Mask.unmask(elt);
-					Window.alert("On a rencontré une erreur pendant la recherche. Merci de contacter l'administrateur");
+					Window.alert("Le serveur est momentanement indisponible. Merci de réesayer plus tard.");
+					that.removeFromParent();
 				}
 			});
 			loader.load();
@@ -169,14 +180,7 @@ public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.clien
 					
 				}
 			}));
-			listView.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<SearchFieldNameValuePair>() {
-
-				@Override
-				public void onSelectionChanged(
-						SelectionChangedEvent<SearchFieldNameValuePair> event) {
-					Window.alert(event.getSource().getSelectedItem().getFieldName());
-				}
-			});
+			if(selectionChangedHandler != null) listView.getSelectionModel().addSelectionChangedHandler(selectionChangedHandler);
 			SimpleContainer simpleContainer = new SimpleContainer();
 		    final VerticalLayoutContainer rowLayoutContainer = new VerticalLayoutContainer();
 		    simpleContainer.add(rowLayoutContainer);
@@ -184,4 +188,5 @@ public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.clien
 		    this.add(simpleContainer);
 		}
 	}
+
 }

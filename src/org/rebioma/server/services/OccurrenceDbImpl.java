@@ -114,8 +114,12 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 				property = "validated";
 			} else if (property.equalsIgnoreCase("quickSearch")) {
 				property = "quickSearch";
+			} else if(property.equalsIgnoreCase("globalsearchfieldtext")){
+				property = "globalsearchfieldtext";
 			} else if (property.equalsIgnoreCase("globalsearchtext")) {
 				property = "globalsearchtext";
+			} else if(property.equalsIgnoreCase("globalsearchtextfield")){
+				property = "globalsearchtextfield";
 			}
 			// A private column doesn't exist, so we map it to public here:
 			else if (property.equalsIgnoreCase("private")

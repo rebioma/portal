@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -57,7 +58,7 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 			// Criteria criteria = session.createCriteria(Occurrence.class);
 			OccurrenceFilter userReviewFilter = null;
 			OccurrenceFilter myreviewPublicFilter = null;
-			boolean isGlobalSearchText = false;
+			boolean isGlobalSearchField = false;
 			for (OccurrenceFilter filter : filters) {
 				if (filter.column
 						.equals(filter.getPropertyName("userReviewed"))) {
@@ -74,9 +75,10 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 					}
 				}
 				if (filter.column.equalsIgnoreCase(filter
-						.getPropertyName("globalsearchtext"))) {
-					isGlobalSearchText = true;
+						.getPropertyName("globalsearchfieldtext"))) {
+					isGlobalSearchField = true;
 				}
+				
 			}
 			if (myreviewPublicFilter != null) {
 				filters.add(myreviewPublicFilter);
@@ -104,7 +106,7 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 			QueryBuilder queryBuilder = getEsQueriesAndFilters(user, filters,
 					resultFilter);
 			SearchResponse searchResponse = OccurrenceSearch.getInstance()
-					.doSearch(queryBuilder, from, size, isGlobalSearchText);
+					.doSearch(queryBuilder, from, size, isGlobalSearchField);
 			return searchResponse;
 		} catch (RuntimeException re) {
 			log.error("find by example failed", re);
@@ -126,7 +128,8 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 		List<FilterBuilder> andFilters = new ArrayList<FilterBuilder>();
 		List<FilterBuilder> orFilters = new ArrayList<FilterBuilder>();
 		FilterBuilder filterBuilder = null;
-		boolean isGlobalSearchText = false;
+		String globalSearchText = null;
+		String globalSearchTextField = null;
 		for (OccurrenceFilter filter : searchFilters) {
 			if ((filter.getOperator() != Operator.IS_EMPTY && filter
 					.getOperator() != Operator.IS_NOT_EMPTY)
@@ -137,37 +140,11 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 			if (filter.column.equalsIgnoreCase(ownerField)) {
 				isMyOccurrence = true;
 			}
-			if (filter.column.equalsIgnoreCase(filter
-					.getPropertyName("globalsearchtext"))) {
-				String globalSearchText = filter.getValue().toString();
-				if (globalSearchText != null
-						&& globalSearchText.trim().length() > 0) {
-					MultiMatchQueryBuilder query1 = QueryBuilders
-							.multiMatchQuery(globalSearchText)
-							.field("biologic_identity.ngram", 10)
-							.field("biologic_classification.ngram", 5)
-							.field("biologic_autre_nom.ngram", 3)
-							.field("localisation.ngram").field("owneremail", 5)
-							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
-					MultiMatchQueryBuilder query2 = QueryBuilders
-							.multiMatchQuery(globalSearchText)
-							.field("biologic_identity.edge_ngram", 10)
-							.field("biologic_classification.edge_ngram", 5)
-							.field("biologic_autre_nom.edge_ngram", 3)
-							.field("localisation.edge_ngram").field("owneremail", 5)
-							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
-					MultiMatchQueryBuilder query3 = QueryBuilders
-							.multiMatchQuery(globalSearchText)
-							.field("biologic_identity", 10)
-							.field("biologic_classification", 5)
-							.field("biologic_autre_nom", 3)
-							.field("localisation").field("owneremail", 5)
-							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
-					boolQueryBuilder.must(query1).should(
-							QueryBuilders.boolQuery().should(query2)
-									.should(query3)).minimumShouldMatch("80%");
-					isGlobalSearchText = true;
-				}
+			if (filter.column.equalsIgnoreCase(filter.getPropertyName("globalsearchtext")) 
+					|| filter.column.equalsIgnoreCase(filter.getPropertyName("globalsearchfieldtext"))) {
+					globalSearchText = filter.getValue().toString();
+			} else if(filter.column.equalsIgnoreCase(filter.getPropertyName("globalsearchtextfield"))){
+					globalSearchTextField = filter.getValue().toString(); 	
 			} else if (filter.column.equalsIgnoreCase(filter
 					.getPropertyName("quickSearch"))) {
 				String quickSearchValue = filter.getValue().toString();
@@ -291,6 +268,42 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 				}
 			}
 		}
+		if(StringUtils.isNotEmpty(globalSearchText)){
+			if(StringUtils.isNotEmpty(globalSearchTextField)){
+				MultiMatchQueryBuilder query = QueryBuilders.multiMatchQuery(globalSearchText)
+							.field(globalSearchTextField, 10)
+							.field(globalSearchTextField + ".ngram")
+							.field(globalSearchTextField + ".edge_ngram")
+							.field(globalSearchTextField + ".lower")
+							.type(MultiMatchQueryBuilder.Type.BEST_FIELDS).minimumShouldMatch("80%");
+				boolQueryBuilder.must(query);
+			}else{
+				MultiMatchQueryBuilder query1 = QueryBuilders
+						.multiMatchQuery(globalSearchText)
+						.field("biologic_identity.ngram", 10)
+						.field("biologic_classification.ngram", 5)
+						.field("biologic_autre_nom.ngram", 3)
+						.field("localisation.ngram").field("owneremail", 5)
+						.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+				MultiMatchQueryBuilder query2 = QueryBuilders
+						.multiMatchQuery(globalSearchText)
+						.field("biologic_identity.edge_ngram", 10)
+						.field("biologic_classification.edge_ngram", 5)
+						.field("biologic_autre_nom.edge_ngram", 3)
+						.field("localisation.edge_ngram").field("owneremail", 5)
+						.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+				MultiMatchQueryBuilder query3 = QueryBuilders
+						.multiMatchQuery(globalSearchText)
+						.field("biologic_identity", 10)
+						.field("biologic_classification", 5)
+						.field("biologic_autre_nom", 3)
+						.field("localisation").field("owneremail", 5)
+						.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+				boolQueryBuilder.must(query1).should(
+						QueryBuilders.boolQuery().should(query2)
+								.should(query3)).minimumShouldMatch("80%");
+			}
+		}
 		QueryBuilder queryBuilder;
 
 		FilterBuilder publicFilter = getPublicFilter(user, resultFilter,
@@ -316,9 +329,6 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 			queryBuilder = boolQueryBuilder;
 		}
 		
-		if(isGlobalSearchText){
-			//add highlight
-		}
 		return queryBuilder;
 	}
 	

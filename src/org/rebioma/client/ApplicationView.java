@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rebioma.client.bean.Role;
+import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.forms.ChangePasswordForm;
 import org.rebioma.client.forms.ForgotPasswordForm;
@@ -60,8 +61,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
-public class ApplicationView extends View implements ClickHandler {
+public class ApplicationView extends View implements ClickHandler, SelectionChangedHandler<SearchFieldNameValuePair> {
 
   public enum LinksGroup {
     HOME(constants.Home()), SIGN_IN(constants.SignIn()), CHANGE_PASS(constants
@@ -674,7 +677,6 @@ public class ApplicationView extends View implements ClickHandler {
     } else if (sender == homeLink) {
       switchView(OCCURRENCES);
     } else if(sender == globalSearchPanel.getSearchButton()) {
-//    	switchView(OCCURRENCES);
     	String text = globalSearchPanel.getText();
     	GWT.log("Recherche des occurrences contenant le terme >" + text + "< ...");
 //    	getOccurrenceView().getSearchForm().searchText(text);
@@ -685,14 +687,16 @@ public class ApplicationView extends View implements ClickHandler {
     	}
 //    	OccurrenceSearchService.Proxy.get().getSearchFieldNameValuePair(sessionId, query, callback);
     	if(globalSearchWindow == null){
-    		globalSearchWindow = new GlobalSearchListViewWindow();
+    		globalSearchWindow = new GlobalSearchListViewWindow(this);
     		globalSearchWindow.setMaximizable(true);
         	globalSearchWindow.setModal(true);
         	globalSearchWindow.setBlinkModal(true);
-        	globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
         	globalSearchWindow.setHeadingText("Search Result");
+        	globalSearchWindow.setDraggable(false);
+        	globalSearchWindow.setResizable(true);
     	}
 		globalSearchWindow.setPixelSize(500, 300);
+    	globalSearchWindow.setPosition(globalSearchPanel.getAbsoluteLeft() - 250, globalSearchPanel.getAbsoluteTop() + 35);
     	globalSearchWindow.showAndLoad(sessionid, occurrenceQuery);
     	
         /*window.addHideHandler(new HideHandler() {
@@ -709,6 +713,18 @@ public class ApplicationView extends View implements ClickHandler {
        */
 
   }
+
+	@Override
+	public void onSelectionChanged(
+			SelectionChangedEvent<SearchFieldNameValuePair> event) {
+		String fieldName = event.getSource().getSelectedItem().getFieldName();
+		switchView(OCCURRENCES);
+		String text = globalSearchPanel.getText();
+		GWT.log("GlobalSearch: " + fieldName + " => " + text);
+		getOccurrenceView().getSearchForm().searchText(fieldName, text);
+		globalSearchWindow.setVisible(false);
+	}
+
 
   public void onResize(ResizeEvent event) {
     // do nothing when window is resize
