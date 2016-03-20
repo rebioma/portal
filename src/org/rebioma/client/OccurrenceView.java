@@ -1390,7 +1390,7 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 	public void onResize(ResizeEvent event) {
 		//		Window.alert("oresize OccurrenceView");
 		resize(event.getWidth(), event.getHeight());
-
+		ApplicationView.getApplication().resize(event);
 	}
 
 	@Override

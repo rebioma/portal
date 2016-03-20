@@ -5,7 +5,6 @@ package org.rebioma.client.gxt.forms;
 
 import java.util.List;
 
-import org.rebioma.client.ApplicationView;
 import org.rebioma.client.OccurrenceQuery;
 import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.services.OccurrenceSearchServiceAsync;
@@ -33,7 +32,6 @@ import com.sencha.gxt.data.shared.loader.Loader;
 import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
 /**
@@ -155,7 +153,7 @@ public class GlobalSearchListViewWindow extends com.sencha.gxt.widget.core.clien
 				public void onLoadException(LoadExceptionEvent<LoadConfig> event) {
 					Mask.unmask(elt);
 					Window.alert("Le serveur est momentanement indisponible. Merci de réesayer plus tard.");
-					that.removeFromParent();
+					that.setVisible(false);
 				}
 			});
 			loader.load();
