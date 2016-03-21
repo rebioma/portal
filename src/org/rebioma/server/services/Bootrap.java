@@ -41,8 +41,9 @@ public class Bootrap {
     if (!file.exists()) {
       System.err.println(" can't find file " + csvFileLocation);
     } else {
+    	CSVReader csvReader = null;
       try {
-        CSVReader csvReader = new CSVReader(new FileReader(file));
+        csvReader = new CSVReader(new FileReader(file));
         Map<String, Integer> headerColMap = CsvUtil
             .getHeaderColIndexes(csvReader.readNext());
         String line[];
@@ -83,6 +84,15 @@ public class Bootrap {
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
+      } finally{
+    	  if(csvReader != null){
+    		  try {
+				csvReader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	  }
       }
     }
   }

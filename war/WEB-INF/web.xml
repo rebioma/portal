@@ -90,15 +90,16 @@
     <servlet-name>SpeciesExplorerService</servlet-name>
     <url-pattern>/rebioma/speciesExplorerService</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-		<servlet-name>MapGisService</servlet-name>
-		<url-pattern>/rebioma/mapGisService</url-pattern>
-</servlet-mapping>
+  
 <servlet>
 		<servlet-name>MapGisService</servlet-name>
 		<servlet-class>org.rebioma.server.services.MapGisServiceImpl
 		</servlet-class>
 	</servlet>
+  <servlet-mapping>
+		<servlet-name>MapGisService</servlet-name>
+		<url-pattern>/rebioma/mapGisService</url-pattern>
+</servlet-mapping>
   <servlet>	
     <servlet-name>StatisticsService</servlet-name>
     <servlet-class>org.rebioma.server.services.StatisticsServiceImpl</servlet-class>

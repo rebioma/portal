@@ -1529,77 +1529,77 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 			switchView2(view, isLoadRecord);
 			return;
 		}
-		view = view.toLowerCase();
-		ViewInfo switchViewInfo = viewInfos.get(view);
-		if (switchViewInfo == null) {
-			switchViewInfo = viewInfos.get(DEFAULT_VIEW);
-		}
-		View previousView = activeViewInfo == null ? null : activeViewInfo
-				.getView();
-		if (previousView != null) {
-			try {
-				if (previousView instanceof MapView) {
-					((MapView) previousView).temperalySwitchMapType();
-				}
-			} catch (Exception e) {
-				Window.confirm("switching map type process");
-			}
-		}
-		if (activeViewInfo != null) {
-
-			mainVp.remove(activeViewInfo.getView());
-		}
-		switchViewPanel.clear();
-
-		activeViewInfo = switchViewInfo;
-		View switchView = null;
-
-		try {
-			switchView = switchViewInfo.getView();
-		} catch (Exception e) {
-			Window.confirm("Error switch view:" + e.getMessage());
-		}
-		try {
-			try {
-				mainVp.add(switchView);
-			} catch (Exception e) {
-				GWT.log(e.getMessage(), e);
-				Window.confirm("add view process");
-			}
-			try {
-				if (switchView instanceof MapView) {
-					((MapView) switchView).switchBack();
-				}
-			} catch (Exception e) {
-				GWT.log(e.getMessage(), e);
-				GWT.log(e.getMessage(), e);
-				Window.confirm("switching back process");
-			}
-		} catch (Exception e) {
-			Window.confirm("Error adding map process: " + e.getMessage());
-		}
-		if (view.equals(DETAIL.toLowerCase())) {
-			switchViewPanel.add(mapLink);
-			switchViewPanel.add(listLink);
-		} else if (view.equals(LIST.toLowerCase())) {
-			switchViewPanel.add(mapLink);
-			// if (isLoadRecord) {
-			// searchForm.restoreStatesFromHistory(History.getToken());
-			// }
-		} else if (view.equals(MAP.toLowerCase())) {
-			switchViewPanel.add(listLink);
-			// if (isLoadRecord) {
-			// searchForm.restoreStatesFromHistory(History.getToken());
-			// }
-		} else {
-			switchViewPanel.add(mapLink);
-			switchViewPanel.add(listLink);
-		}
-		activeViewInfo = switchViewInfo;
-		if (isLoadRecord) {
-			searchForm.restoreStatesFromHistory(History.getToken());
-		}
-		switchView.onShow();
+//		view = view.toLowerCase();
+//		ViewInfo switchViewInfo = viewInfos.get(view);
+//		if (switchViewInfo == null) {
+//			switchViewInfo = viewInfos.get(DEFAULT_VIEW);
+//		}
+//		View previousView = activeViewInfo == null ? null : activeViewInfo
+//				.getView();
+//		if (previousView != null) {
+//			try {
+//				if (previousView instanceof MapView) {
+//					((MapView) previousView).temperalySwitchMapType();
+//				}
+//			} catch (Exception e) {
+//				Window.confirm("switching map type process");
+//			}
+//		}
+//		if (activeViewInfo != null) {
+//
+//			mainVp.remove(activeViewInfo.getView());
+//		}
+//		switchViewPanel.clear();
+//
+//		activeViewInfo = switchViewInfo;
+//		View switchView = null;
+//
+//		try {
+//			switchView = switchViewInfo.getView();
+//		} catch (Exception e) {
+//			Window.confirm("Error switch view:" + e.getMessage());
+//		}
+//		try {
+//			try {
+//				mainVp.add(switchView);
+//			} catch (Exception e) {
+//				GWT.log(e.getMessage(), e);
+//				Window.confirm("add view process");
+//			}
+//			try {
+//				if (switchView instanceof MapView) {
+//					((MapView) switchView).switchBack();
+//				}
+//			} catch (Exception e) {
+//				GWT.log(e.getMessage(), e);
+//				GWT.log(e.getMessage(), e);
+//				Window.confirm("switching back process");
+//			}
+//		} catch (Exception e) {
+//			Window.confirm("Error adding map process: " + e.getMessage());
+//		}
+//		if (view.equals(DETAIL.toLowerCase())) {
+//			switchViewPanel.add(mapLink);
+//			switchViewPanel.add(listLink);
+//		} else if (view.equals(LIST.toLowerCase())) {
+//			switchViewPanel.add(mapLink);
+//			// if (isLoadRecord) {
+//			// searchForm.restoreStatesFromHistory(History.getToken());
+//			// }
+//		} else if (view.equals(MAP.toLowerCase())) {
+//			switchViewPanel.add(listLink);
+//			// if (isLoadRecord) {
+//			// searchForm.restoreStatesFromHistory(History.getToken());
+//			// }
+//		} else {
+//			switchViewPanel.add(mapLink);
+//			switchViewPanel.add(listLink);
+//		}
+//		activeViewInfo = switchViewInfo;
+//		if (isLoadRecord) {
+//			searchForm.restoreStatesFromHistory(History.getToken());
+//		}
+//		switchView.onShow();
 	}
 
 	/**

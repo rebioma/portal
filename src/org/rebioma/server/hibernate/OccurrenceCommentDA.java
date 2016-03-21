@@ -243,8 +243,9 @@ public class OccurrenceCommentDA {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			return lists;
+			
 		}
+		return lists;
 	}
 	
 	public static String creatCommentMail(OccurrenceCommentModel oc, String url, Date date1, Date date2){
@@ -326,8 +327,9 @@ public class OccurrenceCommentDA {
 			log.info(e.getMessage());
 			e.printStackTrace();
 		}finally {
-			return mail;
+			
 		}
+		return mail;
 	}
 	
 	
@@ -365,8 +367,9 @@ public class OccurrenceCommentDA {
 			log.info(e.getMessage());
 			e.printStackTrace();
 		}finally {
-			return validated;
+			
 		}
+		return validated;
 	}
 	
 	public static HashMap<String, RecapTable> occurrenceTRBState(int userId){
@@ -427,8 +430,9 @@ public class OccurrenceCommentDA {
 			log.info(e.getMessage());
 			e.printStackTrace();
 		}finally {
-			return hRecap;
+			
 		}
+		return hRecap;
 	}
 	public static void main(String[] args) {
 		OccurrenceCommentDA hbm = new OccurrenceCommentDA();

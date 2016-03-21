@@ -321,4 +321,9 @@ public class SpeciesTreeAppearance implements TreeAppearance {
 		return AbstractImagePrototype.create(ir).createElement();
 	}
 
+	@Override
+	public ImageResource loadingIcon() {
+		return resources.loadingIcon();
+	}
+
 }

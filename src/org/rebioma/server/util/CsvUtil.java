@@ -212,9 +212,16 @@ public class CsvUtil {
   }
 
   private static String[] getHeader(File csvFile) throws IOException {
-    CSVReader reader;
-    reader = new CSVReader(new FileReader(csvFile));
-    return reader.readNext();
+    CSVReader reader = null;
+    try{
+    	reader = new CSVReader(new FileReader(csvFile));
+    	return reader.readNext();
+    }finally{
+    	if(reader != null){
+    		reader.close();
+    	}
+    }
+    
   }
 
   /**
@@ -226,9 +233,15 @@ public class CsvUtil {
    */
   private static String[] getHeader(File csvFile, char delimiter)
       throws IOException {
-    CSVReader reader;
-    reader = new CSVReader(new FileReader(csvFile), delimiter);
-    return reader.readNext();
+    CSVReader reader = null;
+    	try{
+    	reader = new CSVReader(new FileReader(csvFile), delimiter);
+    	return reader.readNext();
+      }finally{
+      	if(reader != null){
+      		reader.close();
+      	}
+      }
   }
 
   /**

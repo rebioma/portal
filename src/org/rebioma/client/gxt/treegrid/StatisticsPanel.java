@@ -121,37 +121,38 @@ public class StatisticsPanel  extends Widget{
 		
 		ColumnConfig cNbPrivateData = new ColumnConfig<StatisticModel, Integer>(
 				statisticsModelProperties.nbPrivateData(), 80, "Private data");
-		cNbPrivateData.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbPrivateData.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cNbPrivateData.setCell(formatNbr);
 		
 		ColumnConfig cNbPublicData = new ColumnConfig<StatisticModel, Integer>(
 				statisticsModelProperties.nbPublicData(), 80,"Public data");
-		cNbPublicData.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbPublicData.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cNbPublicData.setCell(formatNbr);
 		
 		ColumnConfig cNbReliable = new ColumnConfig<StatisticModel, Integer>(
 				statisticsModelProperties.nbReliable(), 80, "Reliable");
-		cNbReliable.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbReliable.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cNbReliable.setCell(formatNbr);
 		
 		ColumnConfig cNbAwaiting = new ColumnConfig<StatisticModel, Integer>(
 			statisticsModelProperties.nbAwaiting(), 100, "Awaiting review");
-		cNbAwaiting.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbAwaiting.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbAwaiting.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cNbAwaiting.setCell(formatNbr);
 		
 		ColumnConfig cNbQuestionable = new ColumnConfig<StatisticModel, Integer>(
 				statisticsModelProperties.nbQuestionable(), 80, "Questionable");
-		cNbQuestionable.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbQuestionable.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cNbQuestionable.setCell(formatNbr);
 		
 		ColumnConfig cNbInvalidated = new ColumnConfig<StatisticModel, Integer>(
 			statisticsModelProperties.nbInvalidated(), 80, "Invalidated");
-		cNbInvalidated.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbInvalidated.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cNbInvalidated.setCell(formatNbr);
 	
 		ColumnConfig cNbTotal = new ColumnConfig<StatisticModel, Integer>(
 				statisticsModelProperties.nbTotal(), 80, "All");
-		cNbTotal.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cNbTotal.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cNbTotal.setCell(formatNbr);
 
 		ccs.add(cTitle);

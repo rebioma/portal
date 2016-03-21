@@ -19,6 +19,8 @@ public class SearchFieldNameValuePair implements Serializable {
 	
 	private String fieldName;
 	
+	private String queryText;
+
 	private Set<String> fieldValues;
 
 	public String getFieldName() {
@@ -37,6 +39,12 @@ public class SearchFieldNameValuePair implements Serializable {
 		this.fieldValues = fieldValues;
 	}
 
+	public String getQueryText() {
+		return queryText;
+	}
 
+	public void setQueryText(String queryText) {
+		this.queryText = queryText;
+	}
 	
 }

@@ -97,6 +97,7 @@ import com.google.gwt.maps.client.overlays.Polygon;
 import com.google.gwt.maps.client.overlays.PolygonOptions;
 import com.google.gwt.maps.client.services.GeocoderRequestHandler;
 import com.google.gwt.maps.client.services.GeocoderStatus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -481,7 +482,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 					for (AscModel ascModel : result.getResults()) {
 						ModelItem item = new ModelItem(ascModel.getAcceptedSpecies(),
 								ascModel, false, new DownloadAllClimatesCommand(ascModel));
-						item.addItem(constants.Loading());
+						item.addItem(SafeHtmlUtils.fromString(constants.Loading()));
 						resultTree.addItem(item);
 					}
 				} else {

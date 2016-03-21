@@ -79,7 +79,7 @@ public class SpeciesExplorerPanel {
 		ColumnConfig<SpeciesTreeModel, Integer> priO = new ColumnConfig<SpeciesTreeModel, Integer>(
 				speciesTreeModelProperties.nbPrivateOccurence(), 200,
 				"Private Occurrences");
-		priO.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		priO.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		priO.setCell(new AbstractCell<Integer>() {
 	        @Override
 	        public void render(com.google.gwt.cell.client.Cell.Context context, Integer value, SafeHtmlBuilder sb) {
@@ -92,7 +92,7 @@ public class SpeciesExplorerPanel {
 		ColumnConfig<SpeciesTreeModel, Integer> pubO = new ColumnConfig<SpeciesTreeModel, Integer>(
 				speciesTreeModelProperties.nbPublicOccurence(), 200,
 				"Public Occurrences");
-		pubO.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		pubO.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		pubO.setCell(new AbstractCell<Integer>() {
 	        @Override
 	        public void render(com.google.gwt.cell.client.Cell.Context context, Integer value, SafeHtmlBuilder sb) {
@@ -105,7 +105,7 @@ public class SpeciesExplorerPanel {
 		ColumnConfig<SpeciesTreeModel, Long> nbSpeciesOcc = new ColumnConfig<SpeciesTreeModel, Long>(
 				speciesTreeModelProperties.nbSpeciesOccurrence(), 200,
 				"Occurrence species");
-		nbSpeciesOcc.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		nbSpeciesOcc.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		nbSpeciesOcc.setCell(new AbstractCell<Long>() {
 	        @Override
 	        public void render(com.google.gwt.cell.client.Cell.Context context, Long value, SafeHtmlBuilder sb) {
@@ -117,7 +117,7 @@ public class SpeciesExplorerPanel {
 		ColumnConfig<SpeciesTreeModel, Long> nbSpeciesTaxon = new ColumnConfig<SpeciesTreeModel, Long>(
 				speciesTreeModelProperties.nbSpeciesTaxon(), 200,
 				"Taxonomy species");
-		nbSpeciesTaxon.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		nbSpeciesTaxon.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		nbSpeciesTaxon.setCell(new AbstractCell<Long>() {
 	        @Override
 	        public void render(com.google.gwt.cell.client.Cell.Context context, Long value, SafeHtmlBuilder sb) {

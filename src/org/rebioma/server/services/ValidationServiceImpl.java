@@ -209,8 +209,9 @@ public class ValidationServiceImpl implements ValidationService {
 	private Polygon polygonMarine;
 
 	private Polygon loadPolygon(String file) {
+		Scanner sc = null;
 		try {
-			Scanner sc = new Scanner(new File(ValidationServiceImpl.class.getResource(file).getFile()));
+			 sc = new Scanner(new File(ValidationServiceImpl.class.getResource(file).getFile()));
 			List<Integer> dX = new ArrayList<Integer>();
 			List<Integer> dY = new ArrayList<Integer>();
 			while(sc.hasNext()) {
@@ -231,6 +232,10 @@ public class ValidationServiceImpl implements ValidationService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}finally{
+			if(sc != null){
+				sc.close();
+			}
 		}
 	}
 	

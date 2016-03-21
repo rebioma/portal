@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.core.client.Style.HorizontalAlignment;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -155,11 +156,11 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	 
 	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.validated(), 80, constants.Validated());
 	  cc3.setCell(imageCell);
-	  cc3.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc3.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, Boolean> cc4 = new ColumnConfig<Occurrence, Boolean>(properties.reviewed(), 80, constants.Reviewed());
 	  cc4.setCell(reviewedCell);
-	  cc4.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc4.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  	
 	  ColumnConfig<Occurrence, String> cc5 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
 	  cc5.setCell(cell);
@@ -201,15 +202,15 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  
 	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.public_(), 80, constants.Public());
 	  cc3.setCell(imageCell);
-	  cc3.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc3.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, Boolean> cc4 = new ColumnConfig<Occurrence, Boolean>(properties.validated(), 80, constants.Validated());
 	  cc4.setCell(imageCell);
-	  cc4.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc4.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  	 
 	  ColumnConfig<Occurrence, Boolean> cc5 = new ColumnConfig<Occurrence, Boolean>(properties.reviewed(), 80, constants.Reviewed());
 	  cc5.setCell(reviewedCell);
-	  cc5.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc5.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
 //	  cc6.setCell(cell);
@@ -257,15 +258,15 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  
 	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.public_(), 60, constants.Public());
 	  cc3.setCell(imageCell);
-	  cc3.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc3.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, Boolean> cc4 = new ColumnConfig<Occurrence, Boolean>(properties.validated(), 60, constants.Validated());
 	  cc4.setCell(imageCell);
-	  cc4.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc4.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, Boolean> cc5 = new ColumnConfig<Occurrence, Boolean>(properties.reviewed(), 60, constants.Reviewed());
 	  cc5.setCell(reviewedCell);
-	  cc5.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc5.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
 	  cc6.setCell(cell);
@@ -302,7 +303,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  
 	  ColumnConfig<Occurrence, String> cc17 = new ColumnConfig<Occurrence, String>(properties.yearCollected(), 80, constants.YearCollected().replace(":", ""));
 	  cc17.setCell(cell);
-	  cc17.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc17.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, String> cc18 = new ColumnConfig<Occurrence, String>(properties.relatedInformation(), 120, "Related information");
 	  cc18.setCell(cell);
@@ -345,26 +346,28 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  
 	  ColumnConfig<Occurrence, Boolean> cc3 = new ColumnConfig<Occurrence, Boolean>(properties.public_(), 60, constants.Public());
 	  cc3.setCell(imageCell);
-	  cc3.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc3.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 //	  editing.addEditor(cc3, new TextField());
 	  
 	  ColumnConfig<Occurrence, Boolean> cc4 = new ColumnConfig<Occurrence, Boolean>(properties.validated(), 60, constants.Validated());
 	  cc4.setCell(imageCell);
-	  cc4.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc4.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, Boolean> cc5 = new ColumnConfig<Occurrence, Boolean>(properties.reviewed(), 60, constants.Reviewed());
 	  cc5.setCell(reviewedCell);
-	  cc5.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc5.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, String> cc6 = new ColumnConfig<Occurrence, String>(properties.emailField(), 160, constants.Owner());
 	  cc6.setCell(cell);
-	  editing.addEditor(cc6, new TextField());
-	  editing.getEditor(cc6).setDeferHeight(true);
+	  TextField txt6 = new TextField();
+	  editing.addEditor(cc6, txt6);
+	  txt6.setDeferHeight(true);
 	  
 	  ColumnConfig<Occurrence, String> cc7 = new ColumnConfig<Occurrence, String>(properties.basisOfRecord(), 160, "Basis of record");
 	  cc7.setCell(cell);
-	  editing.addEditor(cc7, new TextField());
-	  editing.getEditor(cc7).setDeferHeight(true);
+	  TextField txt7 = new TextField();
+	  editing.addEditor(cc7, txt7);
+	  txt7.setDeferHeight(true);
 	  
 	  ColumnConfig<Occurrence, String> cc8 = new ColumnConfig<Occurrence, String>(properties.institutionCode(), 160, "Institution code");
 	  cc8.setCell(cell);
@@ -374,13 +377,15 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  
 	  ColumnConfig<Occurrence, String> cc9 = new ColumnConfig<Occurrence, String>(properties.stateProvince(), 100, "StateProvince");
 	  cc9.setCell(cell);
-	  editing.addEditor(cc9, new TextField());
-	  editing.getEditor(cc9).setDeferHeight(true);
+	  TextField txt9 = new TextField();
+	  editing.addEditor(cc9, txt9);
+	  txt9.setDeferHeight(true);
 	  
 	  ColumnConfig<Occurrence, String> cc10 = new ColumnConfig<Occurrence, String>(properties.county(), 100, "County");
 	  cc10.setCell(cell);
-	  editing.addEditor(cc10, new TextField());
-	  editing.getEditor(cc6).setDeferHeight(true);
+	  TextField txt10 = new TextField();
+	  txt10.setDeferHeight(true);
+	  editing.addEditor(cc10, txt10);
 	  
 	  ColumnConfig<Occurrence, String> cc11 = new ColumnConfig<Occurrence, String>(properties.locality(), 100, "Locality");
 	  cc11.setCell(cell);
@@ -408,7 +413,7 @@ public class OccurrenceSummary implements Comparable<OccurrenceSummary> {
 	  
 	  ColumnConfig<Occurrence, String> cc17 = new ColumnConfig<Occurrence, String>(properties.yearCollected(), 80, constants.YearCollected().replace(":", ""));
 	  cc17.setCell(cell);
-	  cc17.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  cc17.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  ColumnConfig<Occurrence, String> cc18 = new ColumnConfig<Occurrence, String>(properties.relatedInformation(), 120, "Related information");
 	  cc18.setCell(cell);

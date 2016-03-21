@@ -43,16 +43,17 @@ class ReviewerCommentPopup extends MultiLinePromptMessageBox {
 //	    	getTextArea().setAllowBlank(false);
 	    	getTextArea().setEmptyText(placeHolder);
 	    	getTextArea().setHeight(70);
-	    	getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
-	    	getButtonById(PredefinedButton.OK.name()).disable();
-	    	getButtonById(PredefinedButton.OK.name()).addSelectHandler(selectHandler);
+	    	getButton(PredefinedButton.OK).setText(constants.Submit());
+	    	getButton(PredefinedButton.OK).setText(constants.Submit());
+	    	getButton(PredefinedButton.OK).disable();
+	    	getButton(PredefinedButton.OK).addSelectHandler(selectHandler);
 	    	checkBox.setBoxLabel("Do you want to send an email right now?");
 	    	contentAppearance.getContentElement(getElement()).appendChild(checkBox.getElement());
 	    	getTextArea().addKeyUpHandler(new KeyUpHandler() {
 				
 				@Override
 				public void onKeyUp(KeyUpEvent event) {
-					getButtonById(PredefinedButton.OK.name()).setEnabled(!getTextArea().getText().trim().equals(""));
+					getButton(PredefinedButton.OK).setEnabled(!getTextArea().getText().trim().equals(""));
 				}
 			});
 	    	setPixelSize(300, 170);
@@ -60,7 +61,7 @@ class ReviewerCommentPopup extends MultiLinePromptMessageBox {
 	    
 	  public void display(boolean isAll, boolean reviewed, boolean review,
 		        Set<Integer> occurrenceIds, String header) {
-		  getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
+		  getButton(PredefinedButton.OK).setText(constants.Submit());
 		  setHeadingText(header);
 		  checkBox.setValue(false);
 		  setEnable(true);
@@ -108,11 +109,11 @@ class ReviewerCommentPopup extends MultiLinePromptMessageBox {
 	  };
 	  
 	  public void setEnable(boolean enabled) {
-		  getButtonById(PredefinedButton.OK.name()).setEnabled(enabled);
+		  getButton(PredefinedButton.OK).setEnabled(enabled);
 	      if (enabled) {
-	    	  getButtonById(PredefinedButton.OK.name()).setText(constants.Submit());
+	    	  getButton(PredefinedButton.OK).setText(constants.Submit());
 	      } else {
-	    	  getButtonById(PredefinedButton.OK.name()).setText(constants.Submitting());
+	    	  getButton(PredefinedButton.OK).setText(constants.Submitting());
 	      }
 	    }
 }

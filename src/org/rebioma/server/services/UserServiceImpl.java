@@ -88,9 +88,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements
   public User addRoles(String sessionId, User user, List<Role> roles)
       throws UserServiceException {
     try {
-      Session session = ManagedSession.createNewSessionAndTransaction();User sessionUser = sessionService.getUserBySessionId(sessionId);
-      Set<Role> sessionUserRole = roleDb.getRoles(sessionUser.getId());
+      Session session = ManagedSession.createNewSessionAndTransaction();
+      User sessionUser = sessionService.getUserBySessionId(sessionId);
       if (sessionUser != null) {
+    	Set<Role> sessionUserRole = roleDb.getRoles(sessionUser.getId());
         Role adminRole = roleDb.getRole(UserRole.ADMIN);
         if (sessionUserRole.contains(adminRole)) {
           for (Role role : roles) {
@@ -279,9 +280,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       throws UserServiceException {
     try {
       Session session = ManagedSession.createNewSessionAndTransaction();User sessionUser = sessionService.getUserBySessionId(sessionId);
-      Set<Role> sessionUserRoles = roleDb.getRoles(sessionUser.getId());
       if (sessionUser != null) {
         Role adminRole = roleDb.getRole(UserRole.ADMIN);
+        Set<Role> sessionUserRoles = roleDb.getRoles(sessionUser.getId());
         if (sessionUserRoles.contains(adminRole)) {
           for (Role role : roles) {
             if (user.getRoles().size() > 1) {
@@ -487,12 +488,12 @@ public class UserServiceImpl extends RemoteServiceServlet implements
       Session session = ManagedSession.createNewSessionAndTransaction();User loginUser = sessionService.getUserBySessionId(userSessionId);
       User dbUser = userDb.findById(user.getId());
       Role adminRole = roleDb.getRole(UserRole.ADMIN);
-      Set<Role> loginUserRoles = roleDb.getRoles(loginUser.getId());
       if (loginUser == null) {
         ManagedSession.commitTransaction(session);
         throw new UserServiceException(
             "Bad session. Session is expired or corrupted");
       }
+      Set<Role> loginUserRoles = roleDb.getRoles(loginUser.getId());
       if (!loginUser.getId().equals(user.getId())
           && !loginUserRoles.contains(adminRole)) {
         ManagedSession.commitTransaction(session);

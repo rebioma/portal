@@ -2043,7 +2043,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 						+ " or t.isTerrestrial = " + isT + ")");
 		List<Integer> ids = query.list();
 		ManagedSession.commitTransaction(session);
-		return (ids != null || ids.size() > 0);
+		return (ids != null && ids.size() > 0);
 
 	}
 

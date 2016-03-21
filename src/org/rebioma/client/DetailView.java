@@ -56,6 +56,7 @@ import com.google.gwt.maps.client.events.dragend.DragEndMapHandler;
 import com.google.gwt.maps.client.overlays.Marker;
 import com.google.gwt.maps.client.overlays.MarkerImage;
 import com.google.gwt.maps.client.overlays.MarkerOptions;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -88,6 +89,7 @@ import com.sencha.gxt.widget.core.client.button.SplitButton;
 import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.info.Info;
@@ -1067,8 +1069,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		 *            the name of this tree node.
 		 */
 		DetailItem(String rootName) {
-			super(rootName);
-			addItem("loading");
+			super(SafeHtmlUtils.fromSafeConstant("rootName"));
+			addItem(SafeHtmlUtils.fromSafeConstant("loading"));
 		}
 
 		/**
@@ -4037,38 +4039,38 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	        box.setWidth("415px");
 	        box.setIcon(MessageBox.ICONS.question());
 	        box.setMessage("Would you like to reset the occurrence's state?");
-	        box.addHideHandler(new HideHandler() {
-	 
-	          @Override
-	          public void onHide(HideEvent event) {
-	            Dialog btn = (Dialog) event.getSource();
-	            if(btn.getHideButton().getText().equalsIgnoreCase("yes")) {
-	            	MessageBox boxWarning = new MessageBox("Reset review state?", "");
-	            	boxWarning.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.CANCEL);
-	            	boxWarning.setIcon(MessageBox.ICONS.warning());
-	            	boxWarning.setWidth("415px");
-	            	boxWarning.setMessage("You are resetting all the TRB's review of this occurrence. Would you like to continue?");
-	            	boxWarning.addHideHandler(new HideHandler() {
+	        box.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+				
+				@Override
+				public void onDialogHide(DialogHideEvent event) {
+					if(event.getHideButton().equals(PredefinedButton.YES)){
+						MessageBox boxWarning = new MessageBox("Reset review state?", "");
+		            	boxWarning.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.CANCEL);
+		            	boxWarning.setIcon(MessageBox.ICONS.warning());
+		            	boxWarning.setWidth("415px");
+		            	boxWarning.setMessage("You are resetting all the TRB's review of this occurrence. Would you like to continue?");
+		            	boxWarning.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
 
-						@Override
-						public void onHide(HideEvent eventW) {
-							Dialog btnW = (Dialog) eventW.getSource();
-							if(btnW.getHideButton().getText().equalsIgnoreCase("yes")) {
-								update(sessionId, occurrences, updatedView, true);
-							} else {
-				            	Info.display("Message", "No action was performed");
-				            }
-						}});
-	            	
-	            	boxWarning.show();
-	            } else if(btn.getHideButton().getText().equalsIgnoreCase("no")) {
-	            	update(sessionId, occurrences, updatedView, false);
-	            } else {
-	            	Info.display("Message", "No action was performed");
-	            }
-	            
-	          }
-	        });
+							@Override
+							public void onDialogHide(DialogHideEvent event) {
+								if(event.getHideButton().equals(PredefinedButton.YES)){
+									update(sessionId, occurrences, updatedView, true);
+								}else{
+									Info.display("Message", "No action was performed");
+								}
+								
+							}
+		            		
+		            	});
+		            	boxWarning.show();
+					}else if(event.getHideButton().equals(PredefinedButton.NO)){
+						update(sessionId, occurrences, updatedView, false);
+					}else{
+						Info.display("Message", "No action was performed");
+					}
+					
+				}
+			});
 	        box.show();
 		} else {
 			update(sessionId, occurrences, updatedView);

@@ -82,9 +82,14 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 
 	public static class TreeGridNode<M> extends TreeNode<M> {
 
-		protected TreeGridNode(String id, M m) {
-			super(id, m);
+		public TreeGridNode(String modelId, M m, String domId) {
+			super(modelId, m, domId);
+			// TODO Auto-generated constructor stub
 		}
+
+//		protected TreeGridNode(String id, M m) {
+//			super(id, m);
+//		}
 
 		@Override
 		public void clearElements() {
@@ -808,6 +813,10 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 			return null;
 		return nodes.get(generateModelId(m));
 	}
+	
+	protected String generateDomId(M m){
+		return getId() + "_" + (treeStore.getKeyProvider().getKey(m)) + "_dom";
+	}
 
 	protected String generateModelId(M m) {
 		return getId() + "_" + (treeStore.getKeyProvider().getKey(m));
@@ -1025,7 +1034,8 @@ public class CheckboxTreeGrid<M> extends Grid<M> implements
 	protected String register(M m) {
 		String id = generateModelId(m);
 		if (!nodes.containsKey(id)) {
-			nodes.put(id, new TreeGridNode<M>(id, m));
+			String domId = generateDomId(m);
+			nodes.put(id, new TreeGridNode<M>(id, m, domId));
 		}
 		return id;
 	}

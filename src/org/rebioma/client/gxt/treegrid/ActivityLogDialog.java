@@ -47,6 +47,8 @@ import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -187,16 +189,16 @@ public class ActivityLogDialog extends Dialog implements ClickHandler, MouseOver
 		ColumnConfig<Activity, Date> dateC = new ColumnConfig<Activity, Date>(
 				props.date(), 90, "Date");
 		dateC.setCell(dateCFormat);
-		dateC.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		dateC.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		ColumnConfig<Activity, Boolean> actionC = new ColumnConfig<Activity, Boolean>(
 				props.action(), 70, "Action");
 		actionC.setCell(reviewedCell);
-		actionC.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		actionC.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		ColumnConfig<Activity, String> commentC = new ColumnConfig<Activity, String>(
 				props.comment(), 200, "Comment");
 		ColumnConfig<Activity, Long> occCountC = new ColumnConfig<Activity, Long>(
 				props.occurrenceCount(), 100, "Occurrences");
-		occCountC.setAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		occCountC.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		occCountC.setCell(nbrFormat);
 		List<ColumnConfig<Activity, ?>> l = new ArrayList<ColumnConfig<Activity, ?>>();
 		l.add(commentC);
@@ -393,7 +395,8 @@ public class ActivityLogDialog extends Dialog implements ClickHandler, MouseOver
 			setStyles(reviewLink, "active");
 		} else if(source == cancelLink) {
 			WarningMessageBox box = new WarningMessageBox("Confirm", "Are you sure you want to do that?");
-	        box.addHideHandler(hideHandler);
+			box.addDialogHideHandler(dialogHideHandler);
+//	        box.addHideHandler(hideHandler);
 	        box.show();
 		} else if(source == searchLink) {
 		}
@@ -485,14 +488,13 @@ public class ActivityLogDialog extends Dialog implements ClickHandler, MouseOver
 		
 	}
 	
-	final HideHandler hideHandler = new HideHandler() {
+	final DialogHideHandler dialogHideHandler = new DialogHideHandler() {
+		
 		@Override
-		public void onHide(HideEvent event) {
-			Dialog btn = (Dialog) event.getSource();
-			if(btn.getHideButton().getText().trim().equalsIgnoreCase("yes")){
+		public void onDialogHide(DialogHideEvent event) {
+			if(event.getHideButton().equals(PredefinedButton.YES)){
 				Mask.mask((XElement) panel.getElement(), "Loading...");
 				activityService.removeActivity(sId, selectedAcivity, new AsyncCallback<Boolean>() {
-					
 					@Override
 					public void onSuccess(Boolean result) {
 						if(result==null) {
@@ -505,7 +507,6 @@ public class ActivityLogDialog extends Dialog implements ClickHandler, MouseOver
 						}
 						Mask.unmask((XElement) panel.getElement());
 					}
-					
 					@Override
 					public void onFailure(Throwable caught) {
 						new AlertMessageBox("Error", caught.getMessage()).show();
@@ -515,6 +516,38 @@ public class ActivityLogDialog extends Dialog implements ClickHandler, MouseOver
 			}
 		}
 	};
+	
+//	final HideHandler hideHandler = new HideHandler() {
+//		@Override
+//		public void onHide(HideEvent event) {
+//			Dialog btn = (Dialog) event.getSource();
+//			btn.getButton(PredefinedButton.valueOf(name));
+//			if(btn.getHideButton().getText().trim().equalsIgnoreCase("yes")){
+//				Mask.mask((XElement) panel.getElement(), "Loading...");
+//				activityService.removeActivity(sId, selectedAcivity, new AsyncCallback<Boolean>() {
+//					
+//					@Override
+//					public void onSuccess(Boolean result) {
+//						if(result==null) {
+//							new AlertMessageBox("Error", "Session error").show();
+//						} else if (result) {
+//							Info.display("", "Success");
+//							load();
+//						} else {
+//							new AlertMessageBox("Error", "Please try agian.").show();
+//						}
+//						Mask.unmask((XElement) panel.getElement());
+//					}
+//					
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						new AlertMessageBox("Error", caught.getMessage()).show();
+//						Mask.unmask((XElement) panel.getElement());
+//					}
+//				});
+//			}
+//		}
+//	};
 
 	public class WarningMessageBox extends MessageBox {
 

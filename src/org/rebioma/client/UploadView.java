@@ -45,6 +45,7 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
@@ -76,6 +77,7 @@ import com.google.gwt.xml.client.XMLParser;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.info.Info;
@@ -180,7 +182,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
         improperIdRoot.removeItems();
         JSONArray improperIdArray = badIdObj.get("improperIds").isArray();
         for (int i = 0; i < improperIdArray.size(); i++) {
-          improperIdRoot.addItem(improperIdArray.get(i).toString());
+          improperIdRoot.addItem(SafeHtmlUtils.fromString(improperIdArray.get(i).toString()));
         }
         improperIdRoot.setHTML(constants.UploadFailedBadIds2() + " ("
             + improperIdArray.size() + "):");
@@ -189,7 +191,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
         idNotInDbRoot.removeItems();
         JSONArray idNotInDbArray = badIdObj.get("idNotInDb").isArray();
         for (int i = 0; i < idNotInDbArray.size(); i++) {
-          idNotInDbRoot.addItem(idNotInDbArray.get(i).toString());
+          idNotInDbRoot.addItem(SafeHtmlUtils.fromString(idNotInDbArray.get(i).toString()));
         }
         idNotInDbRoot.setHTML(constants.UploadFailedBadIds3() + " ("
             + idNotInDbArray.size() + "):");
@@ -198,7 +200,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
         multipleIdRoot.removeItems();
         JSONArray multipleIdArray = badIdObj.get("multipleId").isArray();
         for (int i = 0; i < multipleIdArray.size(); i++) {
-          multipleIdRoot.addItem(multipleIdArray.get(i).toString());
+          multipleIdRoot.addItem(SafeHtmlUtils.fromString(multipleIdArray.get(i).toString()));
         }
         multipleIdRoot.setHTML(constants.UploadFailedBadIds4() + " ("
             + multipleIdArray.size() + "):");
@@ -206,7 +208,7 @@ public class UploadView extends ComponentView implements CheckedClickListener {
 
         JSONArray notYourRecordsArry = badIdObj.get("notYourRecords").isArray();
         for (int i = 0; i < notYourRecordsArry.size(); i++) {
-          notYourRecordRoot.addItem(notYourRecordsArry.get(i).toString());
+          notYourRecordRoot.addItem(SafeHtmlUtils.fromString(notYourRecordsArry.get(i).toString()));
         }
         notYourRecordRoot.setHTML(constants.UploadFailedBadIds5() + " ("
             + notYourRecordsArry.size() + "):");
@@ -332,16 +334,16 @@ public class UploadView extends ComponentView implements CheckedClickListener {
 	            	boxWarning.setIcon(MessageBox.ICONS.warning());
 	            	boxWarning.setWidth("415px");
 	            	boxWarning.setMessage("You are resetting all the TRB's review on all occurrences. Would you like to continue?");
-	            	boxWarning.addHideHandler(new HideHandler() {
-
+	            	boxWarning.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+						
 						@Override
-						public void onHide(HideEvent eventW) {
-							Dialog btnW = (Dialog) eventW.getSource();
-							if(!btnW.getHideButton().getText().equalsIgnoreCase("yes")) {
-								clearReviewCheckBox.setChecked(false);
-							} 
-						}});
-	            	
+						public void onDialogHide(DialogHideEvent event) {
+							if(event.getHideButton().equals(PredefinedButton.YES)){
+//								clearReviewCheckBox.setChecked(false);
+								clearReviewCheckBox.setValue(false);
+							}
+						}
+					});
 	            	boxWarning.show();
 				} 
 			}

@@ -286,7 +286,7 @@ public class CheckboxTreeGridView<M> extends GridView<M> {
 		SafeHtml s = super.getRenderedValue(rowIndex, colIndex, m, record);
 		TreeNode<M> node = findNode(m);
 		if (node != null && cc == tree.getTreeColumn()) {
-			return getTemplate(m, node.getId(), s, tree.calculateIconStyle(m),
+			return getTemplate(m, node.getModelId(), s, tree.calculateIconStyle(m),
 					checkable, tree.calculateJoint(m), treeStore.getDepth(m));
 		}
 		return s;
@@ -297,7 +297,7 @@ public class CheckboxTreeGridView<M> extends GridView<M> {
 	}
 
 	@Override
-	protected StoreSortInfo<M> getSortState() {
+	public StoreSortInfo<M> getSortState() {
 		if (treeStore.getSortInfo().size() > 0) {
 			return treeStore.getSortInfo().get(0);
 		}
