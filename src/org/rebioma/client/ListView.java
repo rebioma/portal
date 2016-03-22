@@ -473,6 +473,7 @@ public class ListView extends ComponentView implements
     toolHp.add(new FillToolItem());
 //    pagerWidget.setWidth("450px");
     HorizontalPanel pWHp = new HorizontalPanel();
+    pWHp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
     pWHp.add(pagerWidget);
     pWHp.setCellHorizontalAlignment(pagerWidget,
           HasHorizontalAlignment.ALIGN_RIGHT);

@@ -889,9 +889,16 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 
 		con.setWestWidget(leftTabPanel, westData);
 		con.setCenterWidget(mapPanel, centerData);
+		
+		mainVp.setBorders(false);
+
+		initWidget(mainVp);
 
 		//    HorizontalPanel toolHp = new HorizontalPanel();
 		toolHp = new ToolBar();
+
+		mainVp.add(toolHp);
+		mainVp.add(con, new VerticalLayoutData(1, 1));
 		//{WD force toolbar layout view
 		pager.setToolBar(toolHp);
 		//}
@@ -928,11 +935,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 		//    mainVp.setCellVerticalAlignment(con, HasVerticalAlignment.ALIGN_TOP);
 		//    mainVp.setStyleName(DEFAULT_STYLE);
 
-		mainVp.setBorders(false);
-		mainVp.add(toolHp);
-		mainVp.add(con, new VerticalLayoutData(1, 1));
 
-		initWidget(mainVp);
 		// mainVp.setPixelSize(Window.getClientWidth(), Window.getClientHeight());
 		// mainVp.setSize("100%", "100%");
 		//    hsp.setSplitPosition("30%");
