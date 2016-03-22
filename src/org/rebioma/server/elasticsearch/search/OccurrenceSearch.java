@@ -41,6 +41,7 @@ import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.SpeciesExplorerService;
+import org.rebioma.client.services.StatisticType;
 import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.bean.StatisticYearRange;
 import org.rebioma.server.services.OccurrenceDbImpl;
@@ -385,7 +386,7 @@ public class OccurrenceSearch {
 		return doSearch(disMaxQuery, from, size);
 	}
 	
-	public SearchResponse doOccurrenceStatistic(String statisticType){
+	public SearchResponse doOccurrenceStatistic(StatisticType statisticType){
 		
 		FilterAggregationBuilder publicAggs = AggregationBuilders.filter("public").filter(FilterBuilders.termFilter("public_", true));
 		FilterAggregationBuilder privateAggs = AggregationBuilders.filter("private").filter(FilterBuilders.orFilter(
@@ -412,9 +413,9 @@ public class OccurrenceSearch {
 				.setQuery(QueryBuilders.matchAllQuery()).setSearchType(SearchType.COUNT);
 		TermsBuilder termsBuilder;
 		switch (statisticType) {
-		case StatisticsService.TYPE_DATA_MANAGER:
+		case TYPE_DATA_MANAGER:
 			field = "data_manager";
-			termsBuilder = AggregationBuilders.terms(statisticType).field(field).size(0);
+			termsBuilder = AggregationBuilders.terms(statisticType.asString()).field(field).size(0);
 			termsBuilder.subAggregation(publicAggs);
 			termsBuilder.subAggregation(privateAggs);
 			termsBuilder.subAggregation(reliableAggs);
@@ -426,9 +427,9 @@ public class OccurrenceSearch {
 			requestBuilder.addAggregation(termsBuilder);
 			
 		break;
-		case StatisticsService.TYPE_COLLECTION_CODE:
+		case TYPE_COLLECTION_CODE:
 			field = "collectioncode";
-			termsBuilder = AggregationBuilders.terms(statisticType).field(field).size(0);
+			termsBuilder = AggregationBuilders.terms(statisticType.asString()).field(field).size(0);
 			termsBuilder.subAggregation(publicAggs);
 			termsBuilder.subAggregation(privateAggs);
 			termsBuilder.subAggregation(reliableAggs);
@@ -439,9 +440,9 @@ public class OccurrenceSearch {
 			termsBuilder.subAggregation(awaitingreviewAggs);
 			requestBuilder.addAggregation(termsBuilder);
 		break;
-		case StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION:
+		case TYPE_DATA_PROVIDER_INSTITUTION:
 			field = "institutioncode";
-			termsBuilder = AggregationBuilders.terms(statisticType).field(field).size(0);
+			termsBuilder = AggregationBuilders.terms(statisticType.asString()).field(field).size(0);
 			termsBuilder.subAggregation(publicAggs);
 			termsBuilder.subAggregation(privateAggs);
 			termsBuilder.subAggregation(reliableAggs);
@@ -452,10 +453,10 @@ public class OccurrenceSearch {
 			termsBuilder.subAggregation(awaitingreviewAggs);
 			requestBuilder.addAggregation(termsBuilder);
 		break;
-		case StatisticsService.TYPE_YEAR_COLLECTED:
+		case TYPE_YEAR_COLLECTED:
 			field = "year";
 			List<StatisticYearRange> statisticYearRange = getStatisticYearRanges();
-			RangeBuilder rangeBuilder = AggregationBuilders.range(statisticType).field(field);
+			RangeBuilder rangeBuilder = AggregationBuilders.range(statisticType.asString()).field(field);
 			for(StatisticYearRange range: statisticYearRange){
 				if(range.getInf() != null && range.getSup() != null){
 					rangeBuilder.addRange(range.getInf(), range.getSup());

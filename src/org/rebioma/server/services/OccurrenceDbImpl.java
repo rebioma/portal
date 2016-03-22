@@ -75,6 +75,7 @@ import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
+import org.rebioma.client.services.StatisticType;
 import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.elasticsearch.search.OccurrenceMapping;
 import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
@@ -2855,37 +2856,36 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	}
 	
 	public ListStatisticAPIModel getStatisticsByType(int type) {
-		String typeStr;
-		switch (type) {
-		case 1:
-			typeStr = StatisticsService.TYPE_DATA_MANAGER;
-			break;
-		case 2:
-			typeStr = StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION;
-			break;
-		case 3:
-			typeStr = StatisticsService.TYPE_COLLECTION_CODE;
-			break;
-		case 4:
-			typeStr = StatisticsService.TYPE_YEAR_COLLECTED;
-			break;
-		default:
-			typeStr = StatisticsService.TYPE_DATA_MANAGER;
-			break;
+		StatisticType statisticType = StatisticType.asEnum(type);
+		if(statisticType == null){
+			throw new IllegalArgumentException("Le type de statistique [" + type + "] n'est pas géré par l'application.");
 		}
-		return getStatisticsByType(typeStr) ;
+		return getStatisticsByType(statisticType) ;
 	}
 	
 	public ListStatisticAPIModel getStatisticsByType(String type) {
+		StatisticType statisticType = StatisticType.asEnum(type);
+		if(statisticType == null){
+			throw new IllegalArgumentException("Le type de statistique [" + type + "] n'est pas géré par l'application.");
+		}
+		return getStatisticsByType(statisticType) ;
+	}
+	
+	public ListStatisticAPIModel getStatisticsByType(StatisticType statisticType) {
+		if(statisticType == null){
+			throw new IllegalArgumentException("Le type de statistique [null] n'est pas géré par l'application.");
+		}
 		List<StatisticModel> statisticsModels = new ArrayList<StatisticModel>();
-		SearchResponse searchResponse = OccurrenceSearch.getInstance().doOccurrenceStatistic(type);
+		SearchResponse searchResponse = OccurrenceSearch.getInstance().doOccurrenceStatistic(statisticType);
 //		SearchHits searchHits = searchResponse.getHits();
 		Aggregations aggregations = searchResponse.getAggregations();
-		if(StatisticsService.TYPE_YEAR_COLLECTED.equalsIgnoreCase(type)){
+		String type = statisticType.asString();
+		if(StatisticType.TYPE_YEAR_COLLECTED.equals(statisticType)){
 			InternalRange<InternalRange.Bucket> rangeAgg = aggregations.get(type);
 			Collection<InternalRange.Bucket> buckets = rangeAgg.getBuckets();
 			for(InternalRange.Bucket bucket: buckets){
 				StatisticModel model = new StatisticModel();
+				model.setStatisticType(statisticType.asInt());
 				Double from = (Double)bucket.getFrom();
 				Double to = (Double)bucket.getTo();
 				String key = from.intValue()  + " ~ " + to.intValue();
@@ -2912,6 +2912,7 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 			for(Terms.Bucket bucket: buckets){
 				String key = bucket.getKey();
 				StatisticModel model = new StatisticModel();
+				model.setStatisticType(statisticType.asInt());
 				model.setTitle(key);
 				Aggregations aggs = bucket.getAggregations();
 				List<Aggregation> aggList = aggs.asList();

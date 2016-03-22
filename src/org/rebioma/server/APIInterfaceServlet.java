@@ -18,6 +18,7 @@ import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.bean.api.APITaxonomyResponse;
 import org.rebioma.client.services.SpeciesExplorerService;
+import org.rebioma.client.services.StatisticType;
 import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.services.DBFactory;
 import org.rebioma.server.services.OccurrenceDb;
@@ -117,23 +118,11 @@ public class APIInterfaceServlet extends HttpServlet {
 		ListStatisticAPIModel listStatisticApiModels;
 		try{
 			String statistic = request.getParameter("statistic");
-			int statType;
-			switch (statistic) {
-			case StatisticsService.TYPE_COLLECTION_CODE:
-				statType = 3;
-				break;
-			case StatisticsService.TYPE_DATA_MANAGER:
-				statType = 1;
-				break;
-			case StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION:
-				statType = 2;
-				break;
-			case StatisticsService.TYPE_YEAR_COLLECTED:
-				statType = 4;
-				break;
-			default:
+			StatisticType statisticType = StatisticType.asEnum(statistic);
+			if(statisticType == null){
 				throw new IllegalArgumentException("Le type de statistique [" + statistic + "] n'est pas géré par l'application.");
 			}
+//			int statType = statisticType.asInt();
 			listStatisticApiModels = occurrenceDb.getStatisticsByType(statistic);
 //			statisticsService.getStatisticsByType(statType);
 		}catch(Exception e){

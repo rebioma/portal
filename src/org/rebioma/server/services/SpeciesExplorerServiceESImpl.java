@@ -172,16 +172,16 @@ public class SpeciesExplorerServiceESImpl implements SpeciesExplorerService {
 //			statisticsModels.add(model);
 //		}
 
-		SearchRequestBuilder occurrenceRequestBuilder = esNode.client().prepareSearch(Indexation.REBIOMA_ES_INDEX_NAME)
-				.setTypes(Indexation.REBIOMA_ES_OCCURRENCE_TYPE_NAME)
-				.setQuery(occurrenceQueryBuilder)
-				.setSearchType(SearchType.COUNT)
-				.addAggregation(
-						AggregationBuilders.terms("children").field(occurrenceFieldConcerne).size(0)
-						.subAggregation(publicAggs)
-						.subAggregation(privateAggs)
-				);
-		SearchResponse occurrenceSearchResponse = occurrenceRequestBuilder.execute().actionGet();
+//		SearchRequestBuilder occurrenceRequestBuilder = esNode.client().prepareSearch(Indexation.REBIOMA_ES_INDEX_NAME)
+//				.setTypes(Indexation.REBIOMA_ES_OCCURRENCE_TYPE_NAME)
+//				.setQuery(occurrenceQueryBuilder)
+//				.setSearchType(SearchType.COUNT)
+//				.addAggregation(
+//						AggregationBuilders.terms("children").field(occurrenceFieldConcerne).size(0)
+//						.subAggregation(publicAggs)
+//						.subAggregation(privateAggs)
+//				);
+//		SearchResponse occurrenceSearchResponse = occurrenceRequestBuilder.execute().actionGet();
 		
 		return listToReturn;
 	}
