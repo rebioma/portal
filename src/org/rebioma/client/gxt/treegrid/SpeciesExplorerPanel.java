@@ -73,7 +73,7 @@ public class SpeciesExplorerPanel {
 		// Create the configurations for each column in the tree grid
 		List<ColumnConfig<SpeciesTreeModel, ?>> ccs = new LinkedList<ColumnConfig<SpeciesTreeModel, ?>>();
 		ccs.add(new ColumnConfig<SpeciesTreeModel, String>(
-				speciesTreeModelProperties.label(), 200, "Explorer"));
+				speciesTreeModelProperties.upperLabel(), 200, "Explorer"));
 		ccs.add(new ColumnConfig<SpeciesTreeModel, String>(
 				speciesTreeModelProperties.level(), 200, "Level"));
 		ColumnConfig<SpeciesTreeModel, Integer> priO = new ColumnConfig<SpeciesTreeModel, Integer>(

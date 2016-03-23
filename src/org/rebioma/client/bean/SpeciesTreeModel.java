@@ -76,7 +76,7 @@ public class SpeciesTreeModel implements Serializable{
 		@Path("id")
 		ModelKeyProvider<SpeciesTreeModel> key();
 
-		ValueProvider<SpeciesTreeModel, String> label();
+		ValueProvider<SpeciesTreeModel, String> upperLabel();
 
 		ValueProvider<SpeciesTreeModel, Integer> nbPrivateOccurence();
 
@@ -128,6 +128,7 @@ public class SpeciesTreeModel implements Serializable{
 	private String kingdom;
 	private String phylum;
 	private String label;
+	private String upperLabel;
 	private String level;
 	private int nbPrivateOccurence;
 	private int nbPublicOccurence;
@@ -235,9 +236,16 @@ public class SpeciesTreeModel implements Serializable{
 	public String getLabel() {
 		return label;
 	}
+	
+	public String getUpperLabel(){
+		return upperLabel;
+	}
 
 	public void setLabel(String label) {
 		this.label = label;
+		if(label != null){
+			upperLabel = label.toUpperCase();
+		}
 	}
 
 	public String getLevel() {
