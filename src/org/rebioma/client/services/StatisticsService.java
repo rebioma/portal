@@ -2,6 +2,7 @@ package org.rebioma.client.services;
 
 import java.util.List;
 
+import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.StatisticModel;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -21,6 +22,8 @@ public interface StatisticsService extends RemoteService{
 	//statisticsType=0 ==>Nombres d’occurrences par institutions fournisseurs de données
 	//statisticsType=0 ==>Nombres d’occurrences par collection de données
 	//statisticsType=0 ==>Nombres d’occurrences par année de collection
+
+	public ListStatisticAPIModel getStatisticsByTypeEnum(StatisticType type);
 	List<StatisticModel> getStatisticsByType(int statisticsType);
 	List<StatisticModel> getStatisticDetails(StatisticModel statisticModel);
 	List<StatisticModel> getStatisticDetails(int statisticsType,String libelle);

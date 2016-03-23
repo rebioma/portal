@@ -2,6 +2,7 @@ package org.rebioma.client.services;
 
 import java.util.List;
 
+import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.StatisticModel;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,5 +28,8 @@ public interface StatisticsServiceAsync {
 
 	void getStatisticDetails(int statisticsType, String libelle,
 			AsyncCallback<List<StatisticModel>> callback);
+
+	void getStatisticsByTypeEnum(StatisticType type,
+			AsyncCallback<ListStatisticAPIModel> callback);
 
 }
