@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -22,6 +23,7 @@ import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.highlight.HighlightField;
@@ -298,9 +300,9 @@ public class OccurrenceSearchDbES implements IOccurrenceSearchDb{
 						.field("biologic_autre_nom", 3)
 						.field("localisation").field("owneremail", 5)
 						.type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
-				boolQueryBuilder.must(query1).should(
+				boolQueryBuilder.must(QueryBuilders.disMaxQuery().add(query1).add(QueryBuilders.queryStringQuery(globalSearchText))).should(
 						QueryBuilders.boolQuery().should(query2)
-								.should(query3)).minimumShouldMatch("80%");
+								.should(query3)).minimumShouldMatch("60%");
 			}
 		}
 		QueryBuilder queryBuilder;
