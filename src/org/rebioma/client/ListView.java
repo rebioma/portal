@@ -832,6 +832,7 @@ public class ListView extends ComponentView implements
     }
     int w = width -22;
     mainSp.setPixelSize(w, height - 10);
+    toolHp.setWidth(w);
 //    table.getParent().setHeight((height)- 42 + "px");
 //    scrollPanel.setHeight((height)- 42 + "px");
     Scheduler.get().scheduleDeferred(new ScheduledCommand(){

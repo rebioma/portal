@@ -2417,11 +2417,13 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		}
 		final int h = height - 10;
 	    final int w = width - 22;
+	    
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
 			public void execute() {
 //				mainSp.setPixelSize(w, h);
 				mainPanel.setPixelSize(w, h);
+				toolPanel.setWidth(w);
 				mainPanel.forceLayout();
 				int wi = w - 890;
 				wi = wi<150?150:Math.min(648, wi);

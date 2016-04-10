@@ -896,7 +896,6 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 
 		//    HorizontalPanel toolHp = new HorizontalPanel();
 		toolHp = new ToolBar();
-
 		mainVp.add(toolHp);
 		mainVp.add(con, new VerticalLayoutData(1, 1));
 		//{WD force toolbar layout view
@@ -1321,6 +1320,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 		leftTab.setHeight(h - 183);
 		//    hsp.setSplitPosition("30%");
 		mainVp.setPixelSize(w, height - 10);
+		toolHp.setWidth(w);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand(){
 			public void execute() {
 				forceLayout();
