@@ -5,12 +5,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
+import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
+import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.hibernate.Session;
 import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.StatisticModel;
+import org.rebioma.client.services.StatisticType;
 import org.rebioma.client.services.StatisticsService;
+import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
 import org.rebioma.server.util.HibernateUtil;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -20,144 +30,50 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 public class StatisticsServiceImpl extends RemoteServiceServlet implements StatisticsService {
 	
+	private StatisticsDbProxy statisticsDbProxyEs = new StatisticsDbProxyESImpl();
+	private StatisticsDbProxy statisticsDbProxyPg = new StatisticsDbProxyPgImpl();
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1110165293224724280L;
 	public StatisticsServiceImpl() {
 		
 	}
+	
+
+	@Override
+	public ListStatisticAPIModel getStatisticsByTypeEnum(StatisticType statisticType) {
+		ListStatisticAPIModel result = new ListStatisticAPIModel();
+		try{
+			result = statisticsDbProxyEs.getStatisticsByTypeEnum(statisticType);
+		}catch(Exception e){
+			String packageName = e.getClass().getPackage().getName();
+			if(packageName.startsWith("org.elasticsearch")){
+				//si c'est une erreur ES, on bascule à Postgres
+				result = statisticsDbProxyPg.getStatisticsByTypeEnum(statisticType);
+			}else{
+				throw e;
+			}
+		}
+		return result;
+	}
+	
 	@Override
 	public List<StatisticModel> getStatisticsByType(int statisticsType) {
-		List<StatisticModel> ret = new ArrayList<StatisticModel>();
-		ListStatisticAPIModel listStatisticApiModel = DBFactory.getOccurrenceDb().getStatisticsByType(statisticsType);
-		ret = listStatisticApiModel.getStatistics();
-//		String colonne="";
-//		String groupColonne="";
-//		switch (statisticsType) {
-//		case 1:
-//			colonne=" u.first_name || ' ' || upper(u.last_name) || ' - ' || u.institution || ' ' || u.email ";
-//			groupColonne=colonne;
-//			break;
-//		case 2:
-//			colonne=" institutioncode ";
-//			groupColonne=colonne;
-//			break;
-//		case 3:
-//			colonne=" collectioncode ";
-//			groupColonne=colonne;
-//			break;
-//		case 4:
-//			colonne=" cast(year as int)/10 * 10 || ' ~ ' || " +
-//					"case " +
-//					"	when cast(max(year)as int)/10 = cast(extract(year from current_date)as int)/10 " +
-//					"	then date_part('year', current_date) || '' " +
-//					"	else cast(year as int)/10 * 10 + 9 || '' " +
-//					"end  ";
-//			groupColonne=" cast(year as int)/10 ";
-//			break;
-//		default:
-//			break;
-//		}
-//		
-//		String sql = "SELECT libelle,sum(\"private\") as nbprivate,sum(\"public\") as nbpublic,sum(reliable) as reliable, sum(awaiting) as awaiting,sum(questionnable) as questionnable,sum(invalidated) as invalidated,\n" +
-//						"0 as \"all\"\n" +
-//						"FROM \n" +
-//						"( \n" +
-//						"SELECT "+colonne+" as libelle , \n" +
-//						" count(*) as \"private\",0 as \"public\",0 as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
-//						"FROM occurrence LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
-//						" WHERE 1=1 AND \n" +
-//						"occurrence.\"public\" = FALSE \n" +
-//						"GROUP BY " + groupColonne +
-//						"UNION\n" +
-//						"SELECT  "+colonne+"  as libelle, \n" +
-//						" 0 as \"private\",count(*) as \"public\",0 as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
-//						"FROM occurrence LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
-//						" WHERE 1=1 AND \n" +
-//						"occurrence.\"public\" = TRUE \n" +
-//						"GROUP BY  " + groupColonne +
-//						"UNION\n" +
-//						"SELECT  "+colonne+"  as libelle, \n" +
-//						" 0 as \"private\",0 as \"public\",count(*)  as reliable,0 as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
-//						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
-//						" WHERE 1=1 AND \n" +
-//						"occurrence.reviewed = true\n" +
-//						"GROUP BY  " + groupColonne +
-//						"UNION\n" +
-//						"SELECT "+colonne+"  as libelle, \n" +
-//						" 0 as \"private\",0 as \"public\", 0 as reliable,count(*) as awaiting,0 as questionnable,0 as invalidated,0 as \"all\"\n" +
-//						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
-//						" WHERE 1=1 AND \n" +
-//						"occurrence.reviewed IS NULL AND occurrence.validated=TRUE\n" +
-//						"GROUP BY  " + groupColonne +
-//						"UNION\n" +
-//						"SELECT  "+colonne+"  as libelle, \n" +
-//						" 0 as \"private\",0 as \"public\", 0 as reliable,0 as awaiting,count(*)  as questionnable,0 as invalidated,0 as \"all\"\n" +
-//						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
-//						" WHERE 1=1 AND \n" +
-//						"occurrence.reviewed = FALSE\n" +
-//						"GROUP BY  " + groupColonne +
-//						"UNION\n" +
-//						"SELECT  "+colonne+"  as libelle, \n" +
-//						" 0 as \"private\",0 as \"public\", 0 as reliable,0 as awaiting,0 as questionnable,count(*) as invalidated, 0 as \"all\"\n" +
-//						"FROM occurrence  LEFT JOIN \"user\" u ON u.email=occurrence.email\n" +
-//						" WHERE 1=1 AND \n" +
-//						"occurrence.validated = FALSE\n" +
-//						"GROUP BY  " + groupColonne +
-//						")as tbl\n" +
-//						"GROUP BY libelle ORDER BY libelle";
-//		System.out.println(sql);
-//		Session sess = null;		
-//		Connection conn =null;
-//		Statement st=null;
-//		ResultSet rst=null;
-//		try {
-//			sess=HibernateUtil.getSessionFactory().openSession(); 
-//			conn=sess.connection();		
-//			st = conn.createStatement();
-//			rst = st.executeQuery(sql);
-//			while(rst.next()) {
-//				if(rst.getString("libelle")!=null && !rst.getString("libelle").trim().isEmpty()){
-//					StatisticModel obj = new StatisticModel();				
-//					obj.setNbInvalidated(rst.getInt("invalidated"));
-//					obj.setNbAwaiting(rst.getInt("awaiting"));
-//					obj.setNbPrivateData(rst.getInt("nbprivate"));
-//					obj.setNbPublicData(rst.getInt("nbpublic"));
-//					obj.setNbQuestionable(rst.getInt("questionnable"));
-//					obj.setNbReliable(rst.getInt("reliable"));				
-//					obj.setStatisticType(statisticsType);
-//					obj.setTitle(rst.getString("libelle"));
-//					ret.add(obj);
-//				}				
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			
-//		}finally {		
-//			if(rst!=null) {
-//				try {
-//					rst.close();
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
-//			if(st!=null) {
-//				try {
-//					st.close();
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
-//			if(conn!=null) {
-//				try {
-//					conn.close();
-//				} catch (SQLException e) {					
-//					e.printStackTrace();
-//				}
-//			}
-//			if(sess!=null)
-//				sess.close();
-//		}	
-								
-		return ret;
+		List<StatisticModel> result = new ArrayList<StatisticModel>();
+		try{
+			result = statisticsDbProxyEs.getStatisticsByType(statisticsType);
+		}catch(Exception e){
+			String packageName = e.getClass().getPackage().getName();
+			if(packageName.startsWith("org.elasticsearch")){
+				//si c'est une erreur ES, on bascule à Postgres
+				result = statisticsDbProxyPg.getStatisticsByType(statisticsType);
+			}else{
+				throw e;
+			}
+		}
+		return result;
 	}
 
 	@Override

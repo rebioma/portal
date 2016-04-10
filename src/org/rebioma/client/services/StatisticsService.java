@@ -2,8 +2,8 @@ package org.rebioma.client.services;
 
 import java.util.List;
 
+import org.rebioma.client.bean.ListStatisticAPIModel;
 import org.rebioma.client.bean.StatisticModel;
-import org.rebioma.server.bean.StatisticYearRange;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -12,11 +12,6 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 
 @RemoteServiceRelativePath("statisticsService")
 public interface StatisticsService extends RemoteService{
-	
-	public static final String TYPE_DATA_MANAGER = "data_manager";
-	public static final String TYPE_DATA_PROVIDER_INSTITUTION = "institution";
-	public static final String TYPE_COLLECTION_CODE = "collection_code";
-	public static final String TYPE_YEAR_COLLECTED = "year_collected";
 	
 	/**
 	 * 1=...
@@ -27,6 +22,8 @@ public interface StatisticsService extends RemoteService{
 	//statisticsType=0 ==>Nombres d’occurrences par institutions fournisseurs de données
 	//statisticsType=0 ==>Nombres d’occurrences par collection de données
 	//statisticsType=0 ==>Nombres d’occurrences par année de collection
+
+	public ListStatisticAPIModel getStatisticsByTypeEnum(StatisticType type);
 	List<StatisticModel> getStatisticsByType(int statisticsType);
 	List<StatisticModel> getStatisticDetails(StatisticModel statisticModel);
 	List<StatisticModel> getStatisticDetails(int statisticsType,String libelle);

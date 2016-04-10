@@ -10,13 +10,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * @author Mika
  *
  */
 @XmlRootElement(name="response")
 @XmlAccessorType (XmlAccessType.FIELD)
-public class ListStatisticAPIModel {
+public class ListStatisticAPIModel implements IsSerializable {
 	
 	@XmlElement
 	private boolean success = true;

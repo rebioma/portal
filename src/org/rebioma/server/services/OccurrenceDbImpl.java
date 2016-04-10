@@ -75,6 +75,7 @@ import org.rebioma.client.bean.SearchFieldNameValuePair;
 import org.rebioma.client.bean.StatisticModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
+import org.rebioma.client.services.StatisticType;
 import org.rebioma.client.services.StatisticsService;
 import org.rebioma.server.elasticsearch.search.OccurrenceMapping;
 import org.rebioma.server.elasticsearch.search.OccurrenceSearch;
@@ -2855,88 +2856,21 @@ public class OccurrenceDbImpl implements OccurrenceDb {
 	}
 	
 	public ListStatisticAPIModel getStatisticsByType(int type) {
-		String typeStr;
-		switch (type) {
-		case 1:
-			typeStr = StatisticsService.TYPE_DATA_MANAGER;
-			break;
-		case 2:
-			typeStr = StatisticsService.TYPE_DATA_PROVIDER_INSTITUTION;
-			break;
-		case 3:
-			typeStr = StatisticsService.TYPE_COLLECTION_CODE;
-			break;
-		case 4:
-			typeStr = StatisticsService.TYPE_YEAR_COLLECTED;
-			break;
-		default:
-			typeStr = StatisticsService.TYPE_DATA_MANAGER;
-			break;
+		StatisticType statisticType = StatisticType.asEnum(type);
+		if(statisticType == null){
+			throw new IllegalArgumentException("Le type de statistique [" + type + "] n'est pas géré par l'application.");
 		}
-		return getStatisticsByType(typeStr) ;
+		return new StatisticsServiceImpl().getStatisticsByTypeEnum(statisticType) ;
 	}
 	
 	public ListStatisticAPIModel getStatisticsByType(String type) {
-		List<StatisticModel> statisticsModels = new ArrayList<StatisticModel>();
-		SearchResponse searchResponse = OccurrenceSearch.getInstance().doOccurrenceStatistic(type);
-//		SearchHits searchHits = searchResponse.getHits();
-		Aggregations aggregations = searchResponse.getAggregations();
-		if(StatisticsService.TYPE_YEAR_COLLECTED.equalsIgnoreCase(type)){
-			InternalRange<InternalRange.Bucket> rangeAgg = aggregations.get(type);
-			Collection<InternalRange.Bucket> buckets = rangeAgg.getBuckets();
-			for(InternalRange.Bucket bucket: buckets){
-				StatisticModel model = new StatisticModel();
-				Double from = (Double)bucket.getFrom();
-				Double to = (Double)bucket.getTo();
-				String key = from.intValue()  + " ~ " + to.intValue();
-				model.setTitle(key);
-				Aggregations aggs = bucket.getAggregations();
-				List<Aggregation> aggList = aggs.asList();
-				for(Aggregation iAgg: aggList){
-					InternalFilter filter = (InternalFilter)iAgg;
-					Long docCount = filter.getDocCount();
-					String name2 = filter.getName();
-					if("private".equalsIgnoreCase(name2)) model.setNbPrivateData(docCount.intValue());
-					if("reliable".equalsIgnoreCase(name2)) model.setNbReliable(docCount.intValue());
-					if("public".equalsIgnoreCase(name2)) model.setNbPublicData(docCount.intValue());
-					if("questionable".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
-					if("awaitingreview".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
-					if("invalidated".equalsIgnoreCase(name2)) model.setNbInvalidated(docCount.intValue());
-				}
-				statisticsModels.add(model);
-			}
-		}else{
-			InternalTerms aggregation = aggregations.get(type);
-//			String name1 = aggregation.getName();
-			List<Terms.Bucket> buckets = aggregation.getBuckets();
-			for(Terms.Bucket bucket: buckets){
-				String key = bucket.getKey();
-				StatisticModel model = new StatisticModel();
-				model.setTitle(key);
-				Aggregations aggs = bucket.getAggregations();
-				List<Aggregation> aggList = aggs.asList();
-				for(Aggregation iAgg: aggList){
-					InternalFilter filter = (InternalFilter)iAgg;
-					Long docCount = filter.getDocCount();
-					String name2 = filter.getName();
-					if("private".equalsIgnoreCase(name2)) model.setNbPrivateData(docCount.intValue());
-					if("reliable".equalsIgnoreCase(name2)) model.setNbReliable(docCount.intValue());
-					if("public".equalsIgnoreCase(name2)) model.setNbPublicData(docCount.intValue());
-					if("questionable".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
-					if("awaitingreview".equalsIgnoreCase(name2)) model.setNbQuestionable(docCount.intValue());
-					if("invalidated".equalsIgnoreCase(name2)) model.setNbInvalidated(docCount.intValue());
-				}
-				statisticsModels.add(model);
-			}
+		StatisticType statisticType = StatisticType.asEnum(type);
+		if(statisticType == null){
+			throw new IllegalArgumentException("Le type de statistique [" + type + "] n'est pas géré par l'application.");
 		}
-		ListStatisticAPIModel response = new ListStatisticAPIModel();
-		response.setSuccess(true);
-		response.setStatistics(statisticsModels);
-		long took = searchResponse.getTookInMillis();
-		response.setTookInMillis(took);
-		return response;
+		return new StatisticsServiceImpl().getStatisticsByTypeEnum(statisticType) ;
 	}
-
+	
 	@Override
 	public List<SearchFieldNameValuePair> getFieldValuePair(OccurrenceQuery query,
 			User user) {
