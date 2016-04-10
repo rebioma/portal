@@ -41,12 +41,14 @@ public class StatisticsDbProxyESImpl implements StatisticsDbProxy {
 		if(StatisticType.TYPE_YEAR_COLLECTED.equals(statisticType)){
 			InternalRange<InternalRange.Bucket> rangeAgg = aggregations.get(type);
 			Collection<InternalRange.Bucket> buckets = rangeAgg.getBuckets();
+			int counter = 0;
 			for(InternalRange.Bucket bucket: buckets){
 				StatisticModel model = new StatisticModel();
 				model.setStatisticType(statisticType.asInt());
 				Double from = (Double)bucket.getFrom();
 				Double to = (Double)bucket.getTo();
 				String key = from.intValue()  + " ~ " + to.intValue();
+				model.setIdKey(counter++);
 				model.setTitle(key);
 				Aggregations aggs = bucket.getAggregations();
 				List<Aggregation> aggList = aggs.asList();
@@ -67,9 +69,11 @@ public class StatisticsDbProxyESImpl implements StatisticsDbProxy {
 			InternalTerms aggregation = aggregations.get(type);
 //			String name1 = aggregation.getName();
 			List<Terms.Bucket> buckets = aggregation.getBuckets();
+			int counter = 0;
 			for(Terms.Bucket bucket: buckets){
 				String key = bucket.getKey();
 				StatisticModel model = new StatisticModel();
+				model.setIdKey(counter++);
 				model.setStatisticType(statisticType.asInt());
 				model.setTitle(key);
 				Aggregations aggs = bucket.getAggregations();

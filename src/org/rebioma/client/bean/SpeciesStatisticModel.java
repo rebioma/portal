@@ -23,12 +23,23 @@ public class SpeciesStatisticModel implements Serializable {
 	}
 
 	private static final long serialVersionUID = 3998904104630596963L;
+	
+	private String label;
 
 	private String kindOfData;
 
 	private int nbRecords;
 
 	private String observations;
+	
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 
 	public String getKindOfData() {
