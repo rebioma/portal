@@ -120,9 +120,11 @@ public class StatisticsDbProxyPgImpl implements StatisticsDbProxy {
 			conn=sess.connection();		
 			st = conn.createStatement();
 			rst = st.executeQuery(sql);
+			int counter = 0;
 			while(rst.next()) {
 				if(rst.getString("libelle")!=null && !rst.getString("libelle").trim().isEmpty()){
-					StatisticModel obj = new StatisticModel();				
+					StatisticModel obj = new StatisticModel();		
+					obj.setIdKey(counter++);
 					obj.setNbInvalidated(rst.getInt("invalidated"));
 					obj.setNbAwaiting(rst.getInt("awaiting"));
 					obj.setNbPrivateData(rst.getInt("nbprivate"));
