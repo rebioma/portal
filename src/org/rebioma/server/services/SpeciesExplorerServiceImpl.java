@@ -482,21 +482,21 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			
 			SpeciesStatisticModel m2 = new SpeciesStatisticModel();
 			m2.setKindOfData("Awaiting review(" + obj.getLabel() + ")");
-			m1.setLabel("Awaiting review(" + obj.getLabel() + ")");
+			m2.setLabel("Awaiting review(" + obj.getLabel() + ")");
 			m2.setNbRecords(getSpeciesStatisticModel(conn,sql + " AND reviewed IS NULL AND validated = true ").getNbRecords());
 			m2.setObservations("Occurrence.reviewed = NULL AND Occurrence.validated = 1");
 			stats.add(m2);
 			
 			SpeciesStatisticModel m3 = new SpeciesStatisticModel();
 			m3.setKindOfData("Questionable(" + obj.getLabel() + ")");
-			m1.setLabel("Questionable(" + obj.getLabel() + ")");
+			m3.setLabel("Questionable(" + obj.getLabel() + ")");
 			m3.setNbRecords(getSpeciesStatisticModel(conn,sql + " AND reviewed = false ").getNbRecords());
 			m3.setObservations("Occurrence.reviewed = 0");
 			stats.add(m3);
 			
 			SpeciesStatisticModel m4 = new SpeciesStatisticModel();
 			m4.setKindOfData("Invalidated(" + obj.getLabel() + ") ");
-			m1.setLabel("Invalidated(" + obj.getLabel() + ") ");
+			m4.setLabel("Invalidated(" + obj.getLabel() + ") ");
 			m4.setNbRecords(getSpeciesStatisticModel(conn,sql + " AND validated = false ").getNbRecords());
 			m4.setObservations("Occurrence.validated = 0");
 			stats.add(m4);
