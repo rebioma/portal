@@ -179,6 +179,8 @@ public class SpeciesTreeAppearance implements TreeAppearance {
 		e.addClassName(style.joint());
 		if(node != null){
 			e = (Element) node.getFirstChild().insertBefore(e, jointElement);
+		}else if(jointElement.getParentElement() != null){
+			jointElement.getParentElement().insertBefore(e, jointElement);
 		}
 		jointElement.removeFromParent();
 		return e.cast();
