@@ -3,6 +3,7 @@
  */
 package org.rebioma.client.gxt.treegrid;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.event.TriggerClickEvent;
 import com.sencha.gxt.widget.core.client.form.StoreFilterField;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -149,7 +151,7 @@ public class SpeciesExplorerPanel {
 		};
 		// Create the store that the contains the data to display in the tree
 		// grid
-		TreeStore<SpeciesTreeModel> s = new TreeStore<SpeciesTreeModel>(
+		final TreeStore<SpeciesTreeModel> s = new TreeStore<SpeciesTreeModel>(
 				speciesTreeModelProperties.key());
 
 		loader.addLoadHandler(new ChildTreeStoreBinding<SpeciesTreeModel>(s));
@@ -183,6 +185,23 @@ public class SpeciesExplorerPanel {
 			}
 			
 		};
+		criteria.addTriggerClickHandler(new TriggerClickEvent.TriggerClickHandler() {
+			@Override
+			public void onTriggerClick(TriggerClickEvent event) {
+				//s.clear();
+				//loader.load(null);
+				List<SpeciesTreeModel> species = s.getAll();
+				s.clear();
+				s.commitChanges();
+				List<SpeciesTreeModel> kingdomSpecies = new ArrayList<SpeciesTreeModel>();
+				for(SpeciesTreeModel model: species){
+					if("Kingdom".equalsIgnoreCase(model.getLevel())){
+						kingdomSpecies.add(model);
+					}
+				}
+				s.add(kingdomSpecies);
+			}
+		});
 		criteria.bind(s);
 		toolBarHaut = new ToolBar();
 		findButton = new TextButton("Find");
