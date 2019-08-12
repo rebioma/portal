@@ -1,0 +1,169 @@
+@CHARSET "ISO-8859-1";
+
+.gwt-DecorateTabPanel {
+	padding-top: 2px;
+	border-bottom: 5px solid #336633;
+	background-color: #F7F7F7;
+}
+
+.style-listbox {
+	width: 100%;
+	margin: 5px 0px;
+}
+
+select {
+	height: 25px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+input[type=password] {
+	height: 20px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	padding: 2px;
+}
+
+input[type=text] {
+	height: 20px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	padding: 2px;
+}
+
+Button {
+	-moz-box-shadow: 3px 4px 0px 0px #899599;
+	-webkit-box-shadow: 3px 4px 0px 0px #899599;
+	box-shadow: 3px 4px 0px 0px #899599;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed
+		), color-stop(1, #bab1ba) );
+	background: -moz-linear-gradient(top, #ededed 5%, #bab1ba 100%);
+	background: -webkit-linear-gradient(top, #ededed 5%, #bab1ba 100%);
+	background: -o-linear-gradient(top, #ededed 5%, #bab1ba 100%);
+	background: -ms-linear-gradient(top, #ededed 5%, #bab1ba 100%);
+	background: linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed',
+		endColorstr='#bab1ba', GradientType=0 );
+	background-color: #dbe6c4;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
+	border: 1px solid #d6bcd6;
+	display: inline-block;
+	cursor: pointer;
+	color: black;
+	font-family: Arial;
+	font-size: 12px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #e1e2ed;
+}
+
+Button:hover {
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bab1ba
+		), color-stop(1, #ededed) );
+	background: -moz-linear-gradient(top, #bab1ba 5%, #ededed 100%);
+	background: -webkit-linear-gradient(top, #bab1ba 5%, #ededed 100%);
+	background: -o-linear-gradient(top, #bab1ba 5%, #ededed 100%);
+	background: -ms-linear-gradient(top, #bab1ba 5%, #ededed 100%);
+	background: linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bab1ba',
+		endColorstr='#ededed', GradientType=0 );
+	background-color: #bab1ba;
+}
+
+Button:active {
+	position: relative;
+	top: 1px;
+}
+
+.btstyle {
+	background: #ededed;
+	padding: 10px 50px;
+	border-radius: 5px;
+	border: none;
+	box-shadow: 1px 1px 8px 1px rgba(0, 0, 0, 0.32);
+	color: black;
+	width:100%;
+	height:70px;
+	margin: 10px 0px;
+}
+
+.box1-content,.box1-side,.box2-content,.box2-side {
+	transition: all .3s ease-out; " + "
+	color: darkslategray;
+	overflow: hidden;
+}
+
+.box1-side,.box2-side {
+	display: flex;
+	justify-content: center;
+}
+
+.box1-side {
+	background: whitesmoke;
+	flex: 2;
+}
+
+.contenu {
+	
+}
+
+.contentPanel {
+	background: #E1F5A9;
+}
+
+.box1-content {
+	background: whitesmoke;
+	flex: 4;
+	padding: 20px 30px;
+	justify-content: center;
+}
+
+.box1 {
+	background: white;
+	flex: 2;
+	padding: 5px 5px;
+	justify-content: center;
+}
+
+.progressbar-text {
+	font-weight: bold;
+}
+
+.progressbar-remaining {
+	font-size: 12px;
+	font-style: italic;
+}
+
+.progressbar-outer {
+	border: 1px solid black;
+}
+
+.progressbar-inner {
+	border: 1px solid black;
+	margin: 1px;
+}
+
+.progressbar-bar {
+	width: 5px;
+	height: 15px;
+	margin: 1px;
+}
+
+.progressbar-fullbar {
+	background: blue;
+}
+
+.progressbar-blankbar {
+	background: #eee;
+}
+
+.styleLabel {
+	text-align: center;
+	Font-weight: BOLD;
+	Font-size: 20px;
+	color: grey;
+}
