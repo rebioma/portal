@@ -15,6 +15,7 @@
  */
 package org.rebioma.client.forms;
 
+import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -95,8 +96,7 @@ public abstract class FormInput extends Composite implements
    * 
    */
   public FormInput(String inputTitle, FocusWidget inputWidget, boolean validate) {
-    validateInput = validate;
-
+	    validateInput = validate;
     if (inputTitle != null) {
       title = new Label();
       title.setText(inputTitle + ":");
@@ -106,10 +106,10 @@ public abstract class FormInput extends Composite implements
 
     widget = inputWidget;
     widget.setStyleName("rebioma-FormInput-widget");
-
-    mainPanel.setSpacing(5);
+    mainPanel.setSpacing(10);
     mainPanel.add(inputWidget);
     initWidget(mainPanel);
+    mainPanel.add(inputWidget);
 
     // Notifies change listeners when a character has been generated:
     inputWidget.addKeyUpHandler(new KeyUpHandler() {

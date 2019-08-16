@@ -104,7 +104,9 @@ Button:active {
 .contentPanel {
 	background: #E1F5A9;
 }
-
+.contentFooter{
+	background:#0B3B0B;
+}
 .box1-content {
 	background: whitesmoke;
 	flex: 4;

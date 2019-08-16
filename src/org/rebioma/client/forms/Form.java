@@ -26,6 +26,7 @@ import org.rebioma.client.ApplicationView;
 import org.rebioma.client.SourcesClickHandlers;
 import org.rebioma.client.i18n.AppConstants;
 
+import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -172,7 +173,7 @@ public abstract class Form extends Composite implements SourcesClickHandlers,
       mainPanel.add(title);
       mainPanel.setCellHeight(title, "1px");
     }
-
+    mainPanel.setStyleName("box1-content");
     mainPanel.setSpacing(5);
     mainPanel.add(inputs);
     mainPanel.setCellHeight(inputs, "70px");
