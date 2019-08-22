@@ -1,6 +1,5 @@
 package org.rebioma.client.i18n;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * Interface to represent the constants contained in resource bundle:
@@ -3059,7 +3058,6 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @DefaultStringValue("Data dashboard")
   @Key("statistics")
   String Statistics();
-
   
   @DefaultStringValue("Show Statistic")
   @Key("ShowStatistic")
@@ -3158,4 +3156,107 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @Key("shapefileList")
   String shapefileList();
   
+	String lblNewLabel_text();
+	String lblNewLabel_1_text();
+	String lblRequired_text();
+	String lblNewLabel_text_1();
+	String lblNewLabel_1_text_1();
+	String lblNewLabel_2_text();
+	String lblNewLabel_3_text();
+	String lblGeospatialExtension_text();
+	
+
+	  @DefaultStringValue("Welcome to the REBIOMA data portal. " +
+	  		"The REBIOMA portal was created to facilitate the communication and " +
+	  		"exchange of information related to Madagascar's biodiversity. " +
+	  		"It allows the sharing of species observation data as well as ecological niche " +
+	  		"models developed for fauna and flora of the island, both marine and terrestrial.")
+	  @Key("welcome")
+	  String welcome();
+
+	  @DefaultStringValue("Copyright : 2019 REBIOMA Webportal - All Rights Reserved")
+	  @Key("copyright")
+	  String copyright();
+
+	  @DefaultStringValue("DONORS")
+	  @Key("donors")
+	  String donors();
+	  
+	  @DefaultStringValue("How To Upload")
+	  @Key("HowToUpload")
+	  String HowToUpload();
+	  
+	  @DefaultStringValue("Privacy Policy")
+	  @Key("PrivacyPolicy")
+	  String PrivacyPolicy();
+	  
+	  @DefaultStringValue("Data Sharing Agreement")
+	  @Key("DataSharingAgreement")
+	  String DataSharingAgreement();
+	  
+	  @DefaultStringValue("Terms & Conditions")
+	  @Key("TermsConditions")
+	  String TermsConditions();
+
+	  @DefaultStringValue("Contact Us")
+	  @Key("ContactUs")
+	  String ContactUs();
+	  
+	  @DefaultStringValue("Darwincore Format")
+	  @Key("FormatDarwincore")
+	  String FormatDarwincore();
+	  
+	  @DefaultStringValue("Recorded occurrences")
+	  @Key("lbl_observationsaved")
+	  String lbl_observationsaved();
+	  
+	  @DefaultStringValue("Registered species")
+	  @Key("lbl_speciessaved")
+	  String lbl_speciessaved();
+
+	  @DefaultStringValue("People have registered")
+	  @Key("lbl_usersaved")
+	  String lbl_usersaved();
+	  
+	  @DefaultStringValue("Occurrences")
+	  @Key("lbl_Observation")
+	  String lbl_Observation();
+	  
+	  @DefaultStringValue("Species")
+	  @Key("lbl_species")
+	  String lbl_species();
+	  
+	  @DefaultStringValue("User")
+	  @Key("lbl_user")
+	  String lbl_user();
+	  
+	  @DefaultStringValue("Add Observations")
+	  @Key("lbl_addObservation")
+	  String lbl_addObservation();
+	  
+	  @DefaultStringValue("More...")
+	  @Key("more")
+	  String more();
+	  
+	  @DefaultStringValue("REBIOMA Taxonomy Review Board")
+	  @Key("TRB")
+	  String TRB();
+	  
+	  @DefaultStringValue("Registered users only")
+	  @Key("lbl_registerUserOnly")
+	  String lbl_registerUserOnly();
+	  
+	  @DefaultStringValue("Please login or register first")
+	  @Key("lbl_PleaseLogin")
+	  String lbl_PleaseLogin();
+	  
+	  
+	  @DefaultStringValue("Search for Occurrences")
+	  @Key("searchForOccurrence")
+	  String searchForOccurrence();
+	  
+	  @DefaultStringValue("Verify or establish connection")
+	  @Key("verifyConnection")
+	  String verifyConnection();
+
 }

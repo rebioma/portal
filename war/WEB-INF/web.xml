@@ -199,5 +199,12 @@
     <servlet-name>ModelServlet</servlet-name>
     <url-pattern>/rebioma/model</url-pattern>
   </servlet-mapping>
-  
+     <servlet>
+    <servlet-name>HomestatService</servlet-name>
+    <servlet-class>org.rebioma.server.services.HomestatServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HomestatService</servlet-name>
+    <url-pattern>/rebioma/HomestatService</url-pattern>
+  </servlet-mapping>
 </web-app>
