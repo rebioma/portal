@@ -562,7 +562,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			colonne+=" AND  upper(Acceptedspecies)=upper('"+obj.getAcceptedspecies()+"') ";			
 		}
 		source+=") as source";
-		String sql="SELECT '' as authority,status,'' as taxa, "+source+" ,'' as vernecularname , reviewedby FROM taxonomy WHERE 1=1 "+colonne;
+		String sql="SELECT '' as authority,iucn,'' as taxa, "+source+" ,'' as vernecularname , reviewedby FROM taxonomy WHERE 1=1 "+colonne;
 		
 		System.out.println(sql);
 		
@@ -579,7 +579,7 @@ public class SpeciesExplorerServiceImpl extends RemoteServiceServlet implements
 			rst = st.executeQuery(sql);
 			rst.next();
 			if(!checkIfInfosExists(informations,"Authority ",checkRedundancy(rst.getString("authority")))) informations.add(new SpeciesTreeModelInfoItem("Authority " ,  checkRedundancy(rst.getString("authority"))  ));
-			if(!checkIfInfosExists(informations,"status ",checkRedundancy(rst.getString("status")))) informations.add(new SpeciesTreeModelInfoItem("Status " ,  checkRedundancy(rst.getString("status")  )));
+			if(!checkIfInfosExists(informations,"IUCN status ",checkRedundancy(rst.getString("iucn")))) informations.add(new SpeciesTreeModelInfoItem("IUCN status " ,  checkRedundancy(rst.getString("iucn")  )));
 			if(!checkIfInfosExists(informations,"Synonymised taxa ",checkRedundancy(rst.getString("taxa")))) informations.add(new SpeciesTreeModelInfoItem("Synonymised taxa " ,  checkRedundancy(rst.getString("taxa"))  ));
 			if(!checkIfInfosExists(informations,"source ",checkRedundancy(rst.getString("source")))) informations.add(new SpeciesTreeModelInfoItem("Source " ,  checkRedundancy(rst.getString("source") ) ));
 			if(!checkIfInfosExists(informations,"Vernecular name ",checkRedundancy(rst.getString("vernecularname")))) informations.add(new SpeciesTreeModelInfoItem("Vernecular name " ,  checkRedundancy(rst.getString("vernecularname") ) ));
