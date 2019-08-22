@@ -1868,6 +1868,11 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 						FieldConstants.ACCEPTED_SUBORDER,
 						"AcceptedSuborder", null,
 						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));
+						toxonomicFields
+				.add(new ASearchType(ValueType.TEXT,
+						FieldConstants.IUCN_STATUS,
+						"iucn_status", null,
+						"http://code.google.com/p/rebioma/wiki/TaxonomicAuthority"));//A revoir le lien
 				// Identification Elements
 				identificationFields
 				.add(new ASearchType(ValueType.TEXT,
