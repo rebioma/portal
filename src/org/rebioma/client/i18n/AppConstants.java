@@ -3258,5 +3258,13 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
 	  @DefaultStringValue("Verify or establish connection")
 	  @Key("verifyConnection")
 	  String verifyConnection();
+	 
+	  @DefaultStringValue("Update IUCN Status")
+	  @Key("update_IUCN")
+	  String update_IUCN();
+	  
+	  @DefaultStringValue("Successful updates with success")
+	  @Key("update_IUCN_successful")
+	  String update_IUCN_successful();
 
 }

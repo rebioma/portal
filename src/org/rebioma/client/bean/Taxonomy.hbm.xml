@@ -177,6 +177,8 @@
         <property name="basisOfRecord" type="string">
             <column name="basisofrecord" />
         </property>
-        
+         <property name="iucn" type="string">
+            <column name="iucn" />
+        </property>
     </class>
 </hibernate-mapping>

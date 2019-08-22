@@ -207,4 +207,12 @@
     <servlet-name>HomestatService</servlet-name>
     <url-pattern>/rebioma/HomestatService</url-pattern>
   </servlet-mapping>
+   <servlet>
+    <servlet-name>TaxonomyService</servlet-name>
+    <servlet-class>org.rebioma.server.services.TaxonomyServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TaxonomyService</servlet-name>
+    <url-pattern>/rebioma/TaxonomyService</url-pattern>
+  </servlet-mapping>
 </web-app>
