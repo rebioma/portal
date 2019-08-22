@@ -443,6 +443,20 @@ public class ApplicationView extends View implements ClickHandler {
 	private static final String WEB_PORTAL_URL = "<a target='_blank' href='http://www.rebioma.net'>"
 			+ "REBIOMA" + "</a>";
 
+	private static final String HowToUpload_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/francais#up' style='color:#D6D9DC;'>"
+			+ constants.HowToUpload() + "</a>";
+	private static final String PrivacyPolicy_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#privacy' style='color:#D6D9DC;'>"
+			+ constants.PrivacyPolicy() + "</a>";
+	private static final String DataSharingAgreement_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#datasharing' style='color:#D6D9DC;'>"
+			+ constants.DataSharingAgreement() + "</a>";
+	private static final String TermsConditions_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#datause' style='color:#D6D9DC;'>"
+			+ constants.TermsConditions() + "</a>";
+	private static final String ContactUs_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/francais#contact' style='color:#D6D9DC;'>"
+			+ constants.ContactUs() + "</a>";
+	private static final String TRB_URL = "<a target='_blank' href='http://rebioma.net/index.php/fr/biodiversite/experts' style='color:#D6D9DC;'>"
+			+ constants.TRB() + "</a>";
+
+
 	private static final String DEFAULT_STYLE_NAME = "Application";
 
 	private static ViewState currentState = ViewState.UNAUTHENTICATED;
@@ -559,17 +573,102 @@ public class ApplicationView extends View implements ClickHandler {
 	/**
 	 * Initializes the application view.
 	 */
-
 	private ApplicationView() {
-		FlowPanel layout = new FlowPanel();
-	    // layout.setWidth("100%");
-	    initWidget(layout);
-	    createTopPanel();
-	    layout.add(topPanel);
-	    tabPanel.setWidth("100%");
-	    tabPanel.add(new VerticalPanel(), " ");
-	    tabPanel.addStyleName("Application-bottom");
-	    layout.add(tabPanel);
+		VerticalLayoutContainer layout = new VerticalLayoutContainer();
+		HorizontalLayoutContainer layouttab = new HorizontalLayoutContainer();
+		layouttab.add(tabPanel, new HorizontalLayoutData(1, 550, new Margins(0,
+				0, 10, 0)));
+		FlowPanel container = new FlowPanel();
+		container.add(layout);
+		tabPanel.setStyleName("style");
+		container.setPixelSize(Window.getClientWidth(),
+				Window.getClientHeight());
+		layouttab.setScrollMode(ScrollMode.AUTO);
+		initWidget(container);
+		createTopPanel();
+		HorizontalPanel h = new HorizontalPanel();
+		h.setStyleName("contentFooter");
+		HorizontalLayoutContainer hlog = new HorizontalLayoutContainer();
+		//Les bailleurs
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='https://www.macfound.org/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE
+										.MacArth_primary_logo()) + "</a>"),
+				new HorizontalLayoutData(0.2, 1, new Margins(5, 0, 5, 5)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='http://jrsbiodiversity.org/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.jrs_logo())
+								+ "</a>"), new HorizontalLayoutData(0.2, 1,
+						new Margins(5, 0, 5, 0)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='https://www.start.org/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.start_logo())
+								+ "</a>"), new HorizontalLayoutData(0.2, 1,
+						new Margins(5, 0, 5, 0)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='http://www.cepf.net/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.cepf_logo())
+								+ "</a>"), new HorizontalLayoutData(0.2, 1,
+						new Margins(5, 5, 5, 0)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='https://www.ffem.fr/fr' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.ffem_logo())
+								+ "</a>"), new HorizontalLayoutData(0.1, 1,
+						new Margins(5, 0, 5, 0)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='http://www.fondationbiodiversite.fr/fr/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.frb_logo())
+								+ "</a>"), new HorizontalLayoutData(0.1, 1,
+						new Margins(5, 5, 5, 0)));
+		ContentPanel plogoDonate = new ContentPanel();
+		plogoDonate.setHeaderVisible(false);
+		plogoDonate.add(hlog);
+		HorizontalLayoutContainer hlc = new HorizontalLayoutContainer();
+		VerticalLayoutContainer vcontent = new VerticalLayoutContainer();
+		VerticalLayoutContainer vh = new VerticalLayoutContainer();
+		VerticalLayoutContainer vhlink = new VerticalLayoutContainer();
+		VerticalLayoutContainer vhplogoDonate = new VerticalLayoutContainer();
+		VerticalLayoutContainer footer = new VerticalLayoutContainer();
+		vh.add(new HTML(HowToUpload_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vh.add(new HTML(PrivacyPolicy_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vh.add(new HTML(DataSharingAgreement_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhlink.add(new HTML(TermsConditions_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhlink.add(new HTML(ContactUs_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhlink.add(new HTML(TRB_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhplogoDonate.add(new HTML("<center><h1 style='color:#D6D9DC;'>"+ constants.donors() + "</h1></center>"),
+				new VerticalLayoutData(1, 20, new Margins(5, 150, 5, 150)));
+		vhplogoDonate.add(plogoDonate, new VerticalLayoutData(1, 70,new Margins(10, 0, 5, 0)));
+		hlc.add(vh,new HorizontalLayoutData(0.2, 1, new Margins(40,0,10,10)));
+		hlc.add(vhlink, new HorizontalLayoutData(0.2, 1, new Margins(40,5,10,5)));
+		hlc.add(vhplogoDonate, new HorizontalLayoutData(0.4, 1, new Margins(10,10,10,0)));
+		footer.add(hlc, new VerticalLayoutData(1, 95, new Margins(0, 0, 10, 0)));
+		footer.add(new HTML("<center><h1 style='color:#D6D9DC;'>"+ constants.copyright() + "</h1></center>"),
+				new VerticalLayoutData(1, 40, new Margins(20,0,0,0)));
+		h.add(footer);
+		vcontent.setScrollMode(ScrollMode.AUTOY);
+		vcontent.add(layouttab, new VerticalLayoutData(1,
+				550, new Margins(0, 0, 0, 0)));
+		vcontent.add(h, new VerticalLayoutData(1, 150,
+				new Margins(0, 0, 0, 0)));
+		layout.add(topPanel, new VerticalLayoutData(1, 1,
+				new Margins(0, 0, 0, 0)));
+		layout.add(vcontent, new VerticalLayoutData(1,
+				Window.getClientHeight(), new Margins(0, 0, 0, 0)));
+		tabPanel.setWidth("100%");
+		tabPanel.add(new VerticalPanel(), " ");
+		tabPanel.addStyleName("Application-bottom");
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 			public void onSelection(SelectionEvent<Integer> event) {
 				int selectedIndex = tabPanel.getTabBar().getSelectedTab();
