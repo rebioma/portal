@@ -193,6 +193,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		public static final String INSTITUTION_CODE = "Institution Code";
 		public static final String ISLAND = "Island";
 		public static final String ISLAND_GROUP = "Island Group";
+		public static final String IUCN_STATUS = "IUCN Status";
 		public static final String KINGDOM = "Kingdom";
 		public static final String LAST_UPDATED = "Last Updated";
 		public static final String LATEST_DATE_COLLECTED = "Latest Date Collected";
@@ -296,6 +297,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			NON_EDITABLE_FIELDS.add(ACCEPTED_SUBGENUS);
 			NON_EDITABLE_FIELDS.add(ACCEPTED_SUBORDER);
 			NON_EDITABLE_FIELDS.add(VERBATIM_SPECIES); /* Added by Jenjy */
+			NON_EDITABLE_FIELDS.add(IUCN_STATUS);
 		}
 
 		static {
@@ -3923,6 +3925,15 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			public void onOccurrenceUpdated() {
 				String value = input.getText();
 				currentOccurrence.setAcceptedSpecies(value);
+			}
+		});
+		taxoItems.addFieldEditorItem(new FieldEditor(
+				FieldConstants.IUCN_STATUS, toNoNullString(currentOccurrence
+						.getIucn_status())) {
+
+			public void onOccurrenceUpdated() {
+				String value = input.getText();
+				currentOccurrence.setIucn_status(value);
 			}
 		});
 		if (firstLoad) {
