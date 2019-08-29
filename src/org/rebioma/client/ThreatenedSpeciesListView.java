@@ -2,12 +2,8 @@ package org.rebioma.client;
 
 import java.util.List;
 
-import org.moxieapps.gwt.highcharts.client.Point;
-import org.rebioma.client.bean.GraphicModel;
 import org.rebioma.client.bean.Taxonomy;
 import org.rebioma.client.i18n.AppConstants;
-import org.rebioma.client.services.GraphicService;
-import org.rebioma.client.services.GraphicServiceAsync;
 import org.rebioma.client.services.TaxonomyService;
 import org.rebioma.client.services.TaxonomyServiceAsync;
 
@@ -67,7 +63,7 @@ public class ThreatenedSpeciesListView extends ComponentView implements
 						+ constants.ThreatenedSpeciesList() + "</h1>"));
 		HorizontalLayoutContainer hlc = new HorizontalLayoutContainer();
 		final VerticalPanel vpiucnstatus = new VerticalPanel();
-		VerticalLayoutContainer vcontentchart = new VerticalLayoutContainer();
+		VerticalLayoutContainer vcontenttable = new VerticalLayoutContainer();
 		// Create a CellTable.
 		final CellTable<Taxonomy> table = new CellTable<Taxonomy>();
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
@@ -163,12 +159,12 @@ public class ThreatenedSpeciesListView extends ComponentView implements
 
 				});
 		vpiucnstatus.add(table);
-		vcontentchart.add(scrollPanel, new VerticalLayoutData(1, 400,
+		vcontenttable.add(scrollPanel, new VerticalLayoutData(1, 400,
 				new Margins(0)));
-		vcontentchart.setScrollMode(ScrollMode.AUTO);
+		vcontenttable.setScrollMode(ScrollMode.AUTO);
 		hlc.add(vpiucnstatus, new HorizontalLayoutData(0.1, 450, new Margins(
 				10, 10, 10, 10)));
-		hlc.add(vcontentchart, new HorizontalLayoutData(0.9, 450, new Margins(
+		hlc.add(vcontenttable, new HorizontalLayoutData(0.9, 450, new Margins(
 				10, 10, 10, 10)));
 		vcontent.add(hlc, new VerticalLayoutData(1, 500, new Margins(0, 0, 50,
 				0)));
