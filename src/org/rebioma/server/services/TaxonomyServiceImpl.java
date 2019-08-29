@@ -26,7 +26,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class TaxonomyServiceImpl extends RemoteServiceServlet implements
 		TaxonomyService {
 	PreparedStatement pstm;
-	
+	Statement st;
 	@Override
 	
 	public void maj(String category,String scientific_name){
@@ -45,4 +45,120 @@ public class TaxonomyServiceImpl extends RemoteServiceServlet implements
 					e.printStackTrace();
 				}
 	}
+
+	@Override
+	public List<Taxonomy> threatenedSpecies(String status) {
+		List<Taxonomy> list = new ArrayList<Taxonomy>();
+		String sql = "Select Distinct acceptedspecies, kingdom, phylum, Taxonomy.class, Taxonomy.order,family, genus, specificepithet from Taxonomy where iucn='"+status.replaceAll("'", "").replace("\"", "")+"'";
+		System.out.println(sql);
+		Session sess = null;		
+		Connection conn =null;
+		Statement st=null;
+		ResultSet rst=null;
+		int count = 0;		
+		try {
+			sess=HibernateUtil.getSessionFactory().openSession();
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		    session.beginTransaction();
+			conn=sess.connection();		
+			st = conn.createStatement();
+			rst = st.executeQuery(sql);
+			while(rst.next()) {
+				
+				Taxonomy obj = new Taxonomy();
+					obj.setAcceptedSpecies(rst.getString("acceptedspecies"));
+					obj.setKingdom(rst.getString("kingdom"));
+					obj.setPhylum(rst.getString("phylum"));
+					obj.setClass_(rst.getString("class"));
+					obj.setOrder(rst.getString("order"));
+					obj.setFamily(rst.getString("family"));
+					obj.setGenus(rst.getString("genus"));
+					obj.setSpecificEpithet(rst.getString("specificepithet"));
+					list.add(obj);
+					System.out.println(list);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}finally {		
+			if(rst!=null) {
+				try {
+					rst.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(st!=null) {
+				try {
+					st.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {					
+					e.printStackTrace();
+				}
+			}
+			if(sess!=null)
+				sess.close();
+		}	
+	return list;
+	}
+
+	@Override
+	public List<Taxonomy> getiucn_status() {
+		List<Taxonomy> list = new ArrayList<Taxonomy>();
+		String sql = "Select iucn from Taxonomy where iucn is not null group by iucn";
+		System.out.println(sql);
+		Session sess = null;		
+		Connection conn =null;
+		Statement st=null;
+		ResultSet rst=null;
+		try {
+			sess=HibernateUtil.getSessionFactory().openSession();
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		    session.beginTransaction();
+			conn=sess.connection();		
+			st = conn.createStatement();
+			rst = st.executeQuery(sql);
+			while(rst.next()) {
+				
+				Taxonomy obj = new Taxonomy();
+					obj.setIucn(rst.getString("iucn"));
+					list.add(obj);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}finally {		
+			if(rst!=null) {
+				try {
+					rst.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(st!=null) {
+				try {
+					st.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {					
+					e.printStackTrace();
+				}
+			}
+			if(sess!=null)
+				sess.close();
+		}	
+	return list;
+	}
+
 }

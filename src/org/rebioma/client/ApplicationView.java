@@ -274,6 +274,7 @@ public class ApplicationView extends View implements ClickHandler {
 	protected static final String SPECIES_EXPLORER = "spec_expl";
 	protected static final String MAILING = "Mailing";
 	protected static final String HOME = "Home";
+	protected static final String THREATENED_SPECIES = "Threatened_species";
 	protected static final String STATS_TAB = "stats_tab";
 
 	// protected static final String MAIL_TAB = "mail_tab";
@@ -927,6 +928,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 				
 				if (isSignedIn) {
@@ -943,6 +945,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 
 				if (isSignedIn) {
@@ -960,6 +963,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));// RORO
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 				if (isSignedIn) {
 					currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
@@ -976,6 +980,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));// RORO
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 				if (isSignedIn) {
 					currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
@@ -992,6 +997,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));// RORO
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 				currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
 				if (isAdmin()) {
@@ -1005,6 +1011,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));// RORO
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 				currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
 				currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
@@ -1015,6 +1022,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));// RORO
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 				currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
 				currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
@@ -1039,6 +1047,7 @@ public class ApplicationView extends View implements ClickHandler {
 				currentTabs.add(viewInfos.get(HOME.toLowerCase()));// RORO
 				currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
 				currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+				currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
 				currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
 
 				if (isSignedIn) {
@@ -1314,6 +1323,8 @@ public class ApplicationView extends View implements ClickHandler {
 		ViewInfo statsViewInfo = StatisticsTabView.init(this,
 				constants.Statistics(), STATS_TAB);
 		ViewInfo homeViewInfo = HomeView.init(this, constants.Home(), HOME);
+		ViewInfo theatenedSpeciesListViewInfo = ThreatenedSpeciesListView.init(this,
+				constants.TreatenedSpecies(), THREATENED_SPECIES);
 		// ViewInfo mailViewInfo = MailTabView.init(this, constants
 		// .mailingSystem(), MAIL_TAB);
 		ViewInfo mailingViewInfo = MailingTabView.init(this,
@@ -1321,7 +1332,8 @@ public class ApplicationView extends View implements ClickHandler {
 		addViewInfo(occurrenveViewInfo);
 		addViewInfo(speciesExplorerViewInfo);
 		addViewInfo(statsViewInfo);
-		addViewInfo(homeViewInfo);// RORO
+		addViewInfo(homeViewInfo);
+		addViewInfo(theatenedSpeciesListViewInfo);
 		// addViewInfo(mailViewInfo);
 		addViewInfo(forgetPassViewInfo);
 		addViewInfo(signinViewInfo);

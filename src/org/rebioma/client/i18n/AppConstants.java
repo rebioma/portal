@@ -3266,5 +3266,19 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
 	  @DefaultStringValue("Successful updates with success")
 	  @Key("update_IUCN_successful")
 	  String update_IUCN_successful();
+	  
+	  @DefaultStringValue("IUCN status")
+	  @Key("IUCN_status")
+	  String IUCN_status();
+	  
+	  
+	  @DefaultStringValue("Threatened Species")
+	  @Key("TreatenedSpecies")
+	  String TreatenedSpecies();
+
+	  
+	  @DefaultStringValue("List of Threatened Species")
+	  @Key("ThreatenedSpeciesList")
+	  String ThreatenedSpeciesList();
 
 }
