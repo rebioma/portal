@@ -8,5 +8,8 @@ public interface TaxonomyServiceAsync {
 	 public void maj(String category,String scientific_name,AsyncCallback<Void> callback);
 	 public void threatenedSpecies(String status,AsyncCallback<List<Taxonomy>> callback);
 	 public void getiucn_status(AsyncCallback<List<Taxonomy>> callback);
+	 public void getKingdom(AsyncCallback<List<Taxonomy>> callback);
+	 public void getKingdomT(AsyncCallback<List<Taxonomy>> callback);
+	 public void getKingdomM(AsyncCallback<List<Taxonomy>> callback);
 }
 

@@ -14,6 +14,7 @@
 
 	<!-- Other module inherits                                      -->
 	<inherits name="com.google.gwt.maps.Maps" />
+	<inherits name="org.moxieapps.gwt.highcharts.Highcharts"/>
 <!--	<inherits name="org.form.FormWidget" />-->
   	<inherits name="com.sencha.gxt.ui.GXT" />
   	

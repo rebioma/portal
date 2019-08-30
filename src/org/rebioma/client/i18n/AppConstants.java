@@ -3280,5 +3280,59 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
 	  @DefaultStringValue("List of Threatened Species")
 	  @Key("ThreatenedSpeciesList")
 	  String ThreatenedSpeciesList();
-
+	  
+	  @DefaultStringValue("Graphics")
+	  @Key("Graphics")
+	  String Graphics();
+		
+	  @DefaultStringValue("All species")
+	  @Key("AllSpecies")
+	  String AllSpecies();
+	  
+	  @DefaultStringValue("Terrestrial species")
+	  @Key("TerrestrialSpecies")
+	  String TerrestrialSpecies();
+	  
+	  
+	  @DefaultStringValue("Marine species")
+	  @Key("MarineSpecies")
+	  String MarineSpecies();
+	  
+	  @DefaultStringValue("Statistics of all species")
+	  @Key("StatisticsOfAllSpecies")
+	  String StatisticsOfAllSpecies();
+	  
+	  @DefaultStringValue("Statistics of species according to IUCN status")
+	  @Key("SpeciesAccordingIUCNstatus")
+	  String SpeciesAccordingIUCNstatus();
+	  
+	  
+	  @DefaultStringValue("Terrestrial species statistics by IUCN status")
+	  @Key("TerrestrialSpeciesAccordingIUCNStatus")
+	  String TerrestrialSpeciesAccordingIUCNStatus();
+	  
+	  
+	  @DefaultStringValue("Marine species statistics by IUCN status")
+	  @Key("MarineSpeciesAccordingIUCNStatus")
+	  String MarineSpeciesAccordingIUCNStatus();
+	  
+	  @DefaultStringValue("Occurrence per year")
+	  @Key("OccurrencePerYear")
+	  String OccurrencePerYear();
+	  
+	  @DefaultStringValue("Occurrences by region")
+	  @Key("OccurrencesByRegion")
+	  String OccurrencesByRegion();
+	  
+	  @DefaultStringValue("Count")
+	  @Key("lbl_count")
+	  String lbl_count();
+	  
+	  @DefaultStringValue("All occurrences")
+	  @Key("alloccurrence")
+	  String alloccurrence();
+	  
+	  @DefaultStringValue("All reliable reviews")
+	  @Key("allreliable")
+	  String allreliable();
 }

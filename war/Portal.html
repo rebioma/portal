@@ -5,7 +5,6 @@
 <!-- "Quirks Mode". Replacing this declaration     -->
 <!-- with a "Standards Mode" doctype is supported, -->
 <!-- but may lead to some differences in layout.   -->
-
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -30,7 +29,11 @@
 <script type="text/javascript" language="javascript"
 	src="rebioma/rebioma.nocache.js"></script>
 <script language='javascript' src='resources/flash/swfobject.js'></script>
-
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">	
+</script>
+<script type="text/javascript" src="js/highcharts.js"></script>
+<script type="text/javascript" src="js/modules/exporting.js"></script>
 <script type="text/javascript">
 	var _gaq = _gaq || [];
 	_gaq.push([ '_setAccount', 'UA-5342207-3' ]);
@@ -47,12 +50,10 @@
 	})();
 </script>
 </head>
-
-<body>
-
+<body class="contenu">
 	<!-- OPTIONAL: include this if you want history support -->
 	<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1'
-		style="position: absolute; width: 0; height: 0; border: 0"></iframe>
-
+		style="position: absolute; width: 0; height: 0; border: 0">
+	</iframe>
 </body>
 </html>

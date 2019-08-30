@@ -9,4 +9,7 @@ public interface TaxonomyService extends RemoteService {
 	public void maj(String category,String scientific_name);
 	List<Taxonomy> threatenedSpecies(String status);
 	List<Taxonomy> getiucn_status();
+	List<Taxonomy> getKingdom();
+	List<Taxonomy> getKingdomT();
+	List<Taxonomy> getKingdomM();
 }

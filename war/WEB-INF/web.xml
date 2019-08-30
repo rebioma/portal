@@ -215,4 +215,12 @@
     <servlet-name>TaxonomyService</servlet-name>
     <url-pattern>/rebioma/TaxonomyService</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <servlet-name>GraphicService</servlet-name>
+    <servlet-class>org.rebioma.server.services.GraphicServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GraphicService</servlet-name>
+    <url-pattern>/rebioma/GraphicService</url-pattern>
+  </servlet-mapping>
 </web-app>

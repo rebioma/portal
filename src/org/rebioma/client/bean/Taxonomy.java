@@ -70,7 +70,7 @@ public class Taxonomy implements java.io.Serializable {
 	private String basisOfRecord;
 	private String higherClassification;
 	private String iucn;
-	
+	private int count;
 	public static List<String> COLONNE_DOUBLE = Arrays.asList("Stability", "IsTerrestrial", "IsMarine","TaId","IdAccepted", "AcceptedNameUsageID");
 	public static List<String> COLONNE_DATE = Arrays.asList("ValidationDate", "ChangeDate");
 
@@ -623,6 +623,14 @@ public class Taxonomy implements java.io.Serializable {
 
 	public void setIucn(String iucn) {
 		this.iucn = iucn;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 }
