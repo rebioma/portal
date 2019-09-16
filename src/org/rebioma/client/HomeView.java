@@ -169,6 +169,9 @@ public class HomeView extends ComponentView implements ClickHandler,
 			public void onSelect(SelectEvent event) {
 				if (ApplicationView.getCurrentState() != ViewState.UNAUTHENTICATED) {
 					ApplicationView.getApplication().switchView(ApplicationView.OCCURRENCES, true);
+					OccurrenceView occView = ApplicationView.getApplication()
+							.getOccurrenceView();
+					occView.switchView(UPLOAD, true);
 					} else {
 					MessageBox messageBox = new MessageBox("Message");
 					messageBox.add(new HTML("<center>"+constants.lbl_PleaseLogin()+"</center>"));
