@@ -973,8 +973,6 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		hpd.add(deforestationPan);
 		APPan.setSpacing(5);
 		deforestationPan.setSpacing(5);
-		// APPan.setStyleName("box1-content");
-		// deforestationPan.setStyleName("box1-content");
 		layerPan.add(hpAP);
 		layerPan.add(hpd);
 		currentTab = mrspanel;
@@ -2271,12 +2269,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 								MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
 							popup = new FramedCloud("id1", marker.getLonLat(),
 									null, "" + summaryContent, null, true);
-							popup.setPanMapIfOutOfView(true); // this set the
-																// popup in a
-																// strategic
-																// way, and pans
-																// the map if
-																// needed.
+							popup.setPanMapIfOutOfView(true);
 							popup.setAutoSize(true);
 							map.getMap().addPopup(popup);
 						}
@@ -2284,12 +2277,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 					});
 			popup = new FramedCloud("id1", marker.getLonLat(), null, ""
 					+ summaryContent, null, true);
-			popup.setPanMapIfOutOfView(true); // this set the
-												// popup in a
-												// strategic
-												// way, and pans
-												// the map if
-												// needed.
+			popup.setPanMapIfOutOfView(true); 
 			popup.setAutoSize(true);
 			map.getMap().addPopup(popup);
 
