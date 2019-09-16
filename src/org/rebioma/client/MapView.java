@@ -2222,8 +2222,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 									marker.getLonLat(),
 									null,
 									""
-											+ summaryContent
-											+ "<a href='' action=''>showLayersLink </a>",
+											+ summaryContent,
 									null, true);
 							popup.setPanMapIfOutOfView(true);
 							popup.setAutoSize(true);
@@ -2271,8 +2270,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 						public void onBrowserEvent(
 								MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
 							popup = new FramedCloud("id1", marker.getLonLat(),
-									null, "" + summaryContent
-											+ "<a>TSTSTSTST</a>", null, true);
+									null, "" + summaryContent, null, true);
 							popup.setPanMapIfOutOfView(true); // this set the
 																// popup in a
 																// strategic
@@ -2285,7 +2283,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
 					});
 			popup = new FramedCloud("id1", marker.getLonLat(), null, ""
-					+ summaryContent + "<a>TSTSTSTST</a>", null, true);
+					+ summaryContent, null, true);
 			popup.setPanMapIfOutOfView(true); // this set the
 												// popup in a
 												// strategic

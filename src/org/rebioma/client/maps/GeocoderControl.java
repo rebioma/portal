@@ -15,14 +15,14 @@
  */
 package org.rebioma.client.maps;
 
+import org.gwtopenmaps.openlayers.client.Icon;
+import org.gwtopenmaps.openlayers.client.LonLat;
+import org.gwtopenmaps.openlayers.client.Marker;
+import org.gwtopenmaps.openlayers.client.Size;
+import org.gwtopenmaps.openlayers.client.layer.Markers;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.maps.client.base.LatLng;
-import com.google.gwt.maps.client.base.Point;
-import com.google.gwt.maps.client.base.Size;
-import com.google.gwt.maps.client.overlays.Marker;
-import com.google.gwt.maps.client.overlays.MarkerImage;
-import com.google.gwt.maps.client.overlays.MarkerOptions;
 import com.google.gwt.maps.client.services.Geocoder;
 import com.google.gwt.maps.client.services.GeocoderRequest;
 import com.google.gwt.maps.client.services.GeocoderRequestHandler;
@@ -32,35 +32,31 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class GeocoderControl extends FlowPanel {
 
-	private static MarkerOptions getOptions(LatLng point, String address) {
-		MarkerImage icon = MarkerImage
-				.newInstance("http://www.google.com/mapfiles/arrow.png");
+	private static Markers getOptions(LonLat point, String address) {
+		Icon icon = new Icon("http://www.google.com/mapfiles/arrow.png",new Size(24,24));
 //		icon.setSize(Size.newInstance(39, 34));
 //		icon.setAnchor(Point.newInstance(9, 34));
 //		icon.setOrigin(Point.newInstance(9, 2));
-		MarkerImage shadow = MarkerImage
-				.newInstance("http://www.google.com/mapfiles/arrowshadow.png");
+		Icon shadow = new Icon("http://www.google.com/mapfiles/arrowshadow.png",new Size(24,24));
 //		shadow.setSize(Size.newInstance(39, 34));
-		MarkerOptions options = MarkerOptions.newInstance();
-		options.setClickable(true);
-		options.setDraggable(false);
-		options.setIcon(icon);
-		options.setShadow(shadow);
-		options.setTitle(address);
+		Markers options = new Markers(address);
+		Marker marker=new Marker(point,icon);
+		options.setZIndex(0);//RORO.setClickable(true);
+		options.addMarker(marker);
+		options.addMarker(new Marker(point,shadow));
 		return options;
 	}
 
-	public static Marker createMarker(LatLng point, String address) {
-		MarkerOptions options = getOptions(point, address);
-		Marker marker = Marker.newInstance(options);
-		marker.setPosition(point);
-		return marker;
+	public static Markers createMarker(LonLat point, String address) {
+		Markers options = getOptions(point, address);
+		Marker marker = new Marker(point,null);
+		options.addMarker(marker);
+		return options;
 	}
 
 	// private Map<String, LatLng> cache;

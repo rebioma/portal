@@ -1,9 +1,8 @@
 package org.rebioma.client.maps;
 
+import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.rebioma.client.maps.TileLayerSelector.TileLayerCallback;
 
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.controls.ControlPosition;
 import com.google.gwt.maps.client.services.GeocoderRequestHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -39,9 +38,8 @@ public class MapControlsGroup extends VerticalPanel {
 		return this.tileLayerSelector;
 	}
 	
-	public void setMap(MapWidget map, ControlPosition position){
+	public void setMap(MapWidget map){
 		getLayerSelector().setMap(map);
-		map.setControls(position, this);
 	}
 
 }

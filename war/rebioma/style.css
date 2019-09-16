@@ -70,16 +70,7 @@ Button:active {
 	position: relative;
 	top: 1px;
 }
-.tgbtstyle {
-	background: #ededed;
-	padding: 10px 50px;
-	border-radius: 5px;
-	border: none;
-	box-shadow: 1px 1px 8px 1px rgba(0, 0, 0, 0.32);
-	color: black;
-	height:30px;
-	margin: 10px 0px;
-}
+
 .btstyle {
 	background: #ededed;
 	padding: 10px 50px;
@@ -134,4 +125,14 @@ Button:active {
 }
 .contentFooter{
 	background:#0B3B0B;
+}
+.tgbtstyle {
+	background: #ededed;
+	padding: 10px 50px;
+	border-radius: 5px;
+	border: none;
+	box-shadow: 1px 1px 8px 1px rgba(0, 0, 0, 0.32);
+	color: black;
+	height:30px;
+	margin: 10px 0px;
 }

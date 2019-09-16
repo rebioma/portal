@@ -40,7 +40,6 @@ public class TaxonomyServiceImpl extends RemoteServiceServlet implements
 					pstm.setString(3, scientific_name.replaceAll("'", "").replace("\"", ""));
 					pstm.executeUpdate();
 					ManagedSession.commitTransaction(session);
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
