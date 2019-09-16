@@ -142,13 +142,18 @@ public class HomeView extends ComponentView implements ClickHandler,
 				}
 			}
 		});
+		Button btAdvanceS=new Button(constants.AdvanceSearch());
+		HorizontalPanel hpSearch=new HorizontalPanel();
+		hpSearch.setSpacing(10);
+		hpSearch.add(searchButton);
+		hpSearch.add(btAdvanceS);
 		mainHp = new VerticalPanel();
 		mainHp.add(new HTML(
 				"<center style='Font-weight:BOLD;Font-size:20px; color:grey;'><h1 style='fontSize:16px;fonWeight:bold;color:grey;'>Search for Occurrence</h1></center>"));
 		mainHp.add(searchTypeBox);
 		mainHp.add(forLabel);
 		mainHp.add(searchBox);
-		mainHp.add(searchButton);
+		mainHp.add(hpSearch);
 		mainHp.setStyleName("Search-Form");
 		vlc = new VerticalLayoutContainer();
 		vside = new VerticalLayoutContainer();
@@ -160,7 +165,16 @@ public class HomeView extends ComponentView implements ClickHandler,
 		HorizontalPanel hpan = new HorizontalPanel();
 		hpan.add(new HTML("<a target='_blank' href='http://rebioma.net/index.php/fr/2014-05-30-08-40-13/telechargement/doc_download/57-format-darwincore-2' style='margin: 10px 10px;'>"+constants.FormatDarwincore()+"</a>"));
 		hpan.add(new HTML("<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/francais#up' style='margin: 10px 10px;'>"+constants.HowToUpload()+"</a>"));
-		TextButton btn = new TextButton("upload");
+		btAdvanceS.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ApplicationView.getApplication().switchView(ApplicationView.OCCURRENCES, true);
+				OccurrenceView occView = ApplicationView.getApplication()
+						.getOccurrenceView();
+				occView.switchView(ADVANCE, true);
+				}
+			});
+		TextButton btn = new TextButton(constants.Upload());
 		btn.setIcon(Resources.INSTANCE.upload());
 		btn.addSelectHandler(new SelectHandler() {
 			@Override
