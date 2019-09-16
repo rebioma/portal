@@ -140,7 +140,6 @@ public class HomeView extends ComponentView implements ClickHandler,
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					searchButton.click();
 				}
-
 			}
 		});
 		mainHp = new VerticalPanel();
@@ -151,7 +150,6 @@ public class HomeView extends ComponentView implements ClickHandler,
 		mainHp.add(searchBox);
 		mainHp.add(searchButton);
 		mainHp.setStyleName("Search-Form");
-		// /////////////////
 		vlc = new VerticalLayoutContainer();
 		vside = new VerticalLayoutContainer();
 		lbO = new Label();
