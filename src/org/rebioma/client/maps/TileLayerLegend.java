@@ -15,7 +15,8 @@
  */
 package org.rebioma.client.maps;
 
-import com.google.gwt.maps.client.base.LatLng;
+import org.gwtopenmaps.openlayers.client.LonLat;
+
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class TileLayerLegend extends HTMLPanel {
 
   public interface LegendCallback {
-    public void onLookup(LatLng point, String value);
+    public void onLookup(LonLat point, String value);
   }
 
   protected DialogBox details;
@@ -37,9 +38,9 @@ public abstract class TileLayerLegend extends HTMLPanel {
 	  this.add(legendWidget);
   }
 
-  public abstract void lookupValue(LatLng point, LegendCallback callback);
+  public abstract void lookupValue(LonLat point, LegendCallback callback);
 
-  public abstract void setDisplay(LatLng point, String value);
+  public abstract void setDisplay(LonLat point, String value);
 
   public void showDetails() {
     if (details == null) {

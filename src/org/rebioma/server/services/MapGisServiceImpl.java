@@ -19,6 +19,8 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.gwtopenmaps.openlayers.client.geometry.Geometry;
+import org.gwtopenmaps.openlayers.client.geometry.MultiPolygon;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -42,25 +44,24 @@ MapGisService {
 	private ShapeFileService shapeFileService = ShapeFileServiceImpl.getInstance();
 
 	@Override
-	public List<Integer> findOccurrenceIdByGeom(String kml) {
+	public List<Integer> findOccurrenceIdByGeom(String geom) {
 		List<Integer> occurrenceIds = new ArrayList<Integer>();
 		Session sess = HibernateUtil.getSessionFactory().openSession();
 		SQLQuery sqlQuery = sess
-				.createSQLQuery("SELECT ST_IsValid(ST_GeomFromKML(:kml)) as isValid ");
-		sqlQuery.setParameter("kml", kml);
+				.createSQLQuery("SELECT ST_IsValid(ST_GeomFromText(:geom)) as isValid ");
+		sqlQuery.setParameter("geom", geom);
 		Boolean isValide = (Boolean) sqlQuery.uniqueResult();
 		if (isValide) {
 			sqlQuery = sess
-					.createSQLQuery("SELECT id FROM occurrence WHERE ST_Within(geom, ST_GeomFromKML(:kml))='t'");
-			sqlQuery.setParameter("kml", kml);
+					.createSQLQuery("SELECT id FROM occurrence WHERE st_within(geom,st_geomfromtext(:geom,4326))='t'");
+			sqlQuery.setParameter("geom", geom);
 			occurrenceIds = sqlQuery.list();
 		} else {
-			throw new RuntimeException("Le kml généré n'est pas valide \n ["
-					+ kml + "]");
+			throw new RuntimeException("Le geom généré n'est pas valide \n ["
+					+ geom + "]");
 		}
 		return occurrenceIds;
 	}
-
 	@Override
 	public List<ShapeFileInfo> getShapeFileItems(ShapeFileInfo shapeFile) {
 		List<ShapeFileInfo> infos = new ArrayList<ShapeFileInfo>();
@@ -159,6 +160,7 @@ MapGisService {
 		// }
 		occurrenceIds = sqlQuery.list();
 		return occurrenceIds;
+	
 	}
 
 	// @Override
@@ -298,4 +300,25 @@ MapGisService {
 		return null;
 	}
 
+/*	@Override
+	public List<Integer> findOccurrenceByGeom(Geometry geom) {
+		List<Integer> occurrenceIds = new ArrayList<Integer>();
+		Session sess = HibernateUtil.getSessionFactory().openSession();
+		SQLQuery sqlQuery = sess
+				.createSQLQuery("SELECT ST_IsValid(ST_GeomFromKML(:kml)) as isValid ");
+		sqlQuery.setParameter("kml", geom);
+		System.out.println(geom);
+		Boolean isValide = (Boolean) sqlQuery.uniqueResult();
+		if (isValide) {
+			sqlQuery = sess
+					.createSQLQuery("SELECT id FROM occurrence WHERE ST_Within(geom, ST_GeomFromKML(:kml))='t'");
+			sqlQuery.setParameter("kml", geom);
+			occurrenceIds = sqlQuery.list();
+		} else {
+			throw new RuntimeException("Le kml généré n'est pas valide \n ["
+					+ geom + "]");
+		}
+		return occurrenceIds;
+	}
+*/
 }

@@ -18,27 +18,23 @@ package org.rebioma.client.maps;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gwtopenmaps.openlayers.client.Icon;
+import org.gwtopenmaps.openlayers.client.LonLat;
+import org.gwtopenmaps.openlayers.client.Marker;
+import org.gwtopenmaps.openlayers.client.Size;
+import org.gwtopenmaps.openlayers.client.layer.Markers;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.client.bean.OccurrenceSummary;
 import org.rebioma.client.bean.OccurrenceSummary.OccurrenceFieldItem;
 
-import com.google.gwt.maps.client.base.LatLng;
-import com.google.gwt.maps.client.base.Point;
-import com.google.gwt.maps.client.base.Size;
-import com.google.gwt.maps.client.events.click.ClickMapEvent;
-import com.google.gwt.maps.client.events.click.ClickMapHandler;
-import com.google.gwt.maps.client.overlays.Marker;
-import com.google.gwt.maps.client.overlays.MarkerImage;
-import com.google.gwt.maps.client.overlays.MarkerOptions;
-import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
-
 public class OccurrenceMarkerManager{
-	private Marker marker;
-	private static class OptionsManager {
+	private static Marker marker;
+	private Markers markers;
+	public static class OptionsManager {
 		private static Map<String, String> speciesMarkerUrls = new HashMap<String, String>();
 		private static int index = 0;
 
-		OptionsManager() {
+		public OptionsManager() {
 			/*baseIcon = Icon.newInstance();
 			baseIcon
 					.setShadowURL("http://www.google.com/mapfiles/shadow50.png");
@@ -57,14 +53,13 @@ public class OccurrenceMarkerManager{
 			index = 0;
 		}
 
-		MarkerOptions getOptions(Occurrence occurrence) {
-			MarkerOptions options = getIcon(occurrence);
-			options.setTitle("ReBioMa ID: " + occurrence.getId());
+		public Markers getOptions(Occurrence occurrence) {
+			Markers options =new Markers("ReBioMa ID: " + occurrence.getId());
 			return options;
 		}
 
-		private MarkerOptions getIcon(Occurrence occurrence) {
-			MarkerOptions options = MarkerOptions.newInstance();
+		public Icon getIcon(Occurrence occurrence) {
+			Markers options = new Markers("");
 			OccurrenceFieldItem fieldItem = OccurrenceSummary
 					.getDisplayField(occurrence);
 			String species = fieldItem == null ? "----" : fieldItem.toString();
@@ -100,15 +95,19 @@ public class OccurrenceMarkerManager{
 //				url = "http://www.google.com/mapfiles/marker" + letter + ".png";
 				speciesMarkerUrls.put(species, url);
 			}
-			MarkerImage iconImage = MarkerImage.newInstance(url); 
+			//RORO MarkerImage iconImage = MarkerImage.newInstance(url); 
+
+			Icon icon = new Icon(url, new Size(20, 34));
+			//return icon;
 //			iconImage.setSize(Size.newInstance(20, 34));
 //			iconImage.setAnchor(Point.newInstance(9, 34));
 //			iconImage.setOrigin(Point.newInstance(9, 2));
-			options.setIcon(iconImage);
+			//RORO options.setIcon(iconImage);
 			//MarkerImage shadow = MarkerImage.newInstance("http://www.google.com/mapfiles/shadow50.png");
 			//shadow.setSize(Size.newInstance(37, 34));
 			//options.setShadow(shadow);
-			return options;
+			return icon;
+
 		}
 	}
 
@@ -132,11 +131,11 @@ public class OccurrenceMarkerManager{
 		optionsManager.resetIcons();
 	}
 
-	public static LatLng getPoint(Occurrence occurrence) {
+	public LonLat getPoint(Occurrence occurrence) {
 		if(occurrence.getDecimalLatitude() != null && occurrence.getDecimalLongitude() != null){
 			double latitude = Double.parseDouble(occurrence.getDecimalLatitude());
 			double longitude = Double.parseDouble(occurrence.getDecimalLongitude());
-			return LatLng.newInstance(latitude, longitude);
+			return new LonLat(longitude,latitude);
 		}else{
 			return null;
 		}
@@ -147,13 +146,14 @@ public class OccurrenceMarkerManager{
 
 	protected OccurrenceMarkerManager(Occurrence occurrence) {
 		this.occurrence = occurrence;
-		MarkerOptions options = optionsManager.getOptions(occurrence);
-		LatLng point = getPoint(occurrence);
+		Markers options = optionsManager.getOptions(occurrence);
+		LonLat point = getPoint(occurrence);
 		if(point == null){
-			point = LatLng.newInstance(0, 0);
+			point = new LonLat(0, 0);
 		}
-		options.setPosition(point);
-		marker = Marker.newInstance(options);
+		//options.setPosition(point);
+		marker = new Marker(point,optionsManager.getIcon(occurrence));
+		options.addMarker(marker);
 //		super.addMarkerInfoWindowOpenHandler(new MarkerInfoWindowOpenHandler() {
 //			public void onInfoWindowOpen(MarkerInfoWindowOpenEvent event) {
 //				// TODO Auto-generated method stub
@@ -175,7 +175,12 @@ public class OccurrenceMarkerManager{
 		return occurrence;
 	}
 	
+	public Markers getMarkers(){
+
+		return markers;
+	}
 	public Marker getMarker(){
+
 		return marker;
 	}
 

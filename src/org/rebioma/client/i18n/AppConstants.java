@@ -3335,4 +3335,25 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
 	  @DefaultStringValue("All reliable reviews")
 	  @Key("allreliable")
 	  String allreliable();
+	  
+	  @DefaultStringValue("Layers")
+	  @Key("Layers")
+	  String Layers();
+	  
+	  @DefaultStringValue("Draw")
+	  @Key("Draw")
+	  String Draw();
+	  
+	  @DefaultStringValue("Navigate")
+	  @Key("Navigate")
+	  String Navigate();
+	  
+	  @DefaultStringValue("Protected areas")
+	  @Key("AP")
+	  String AP();
+	  
+	  @DefaultStringValue("Forest cover")
+	  @Key("DeforestationMap")
+	  String DeforestationMap();
+	  
 }

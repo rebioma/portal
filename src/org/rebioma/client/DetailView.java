@@ -10,6 +10,21 @@ import java.util.Set;
 
 import org.form.client.api.DisplayPopup;
 import org.form.client.api.table.StaticTable;
+import org.gwtopenmaps.openlayers.client.Icon;
+import org.gwtopenmaps.openlayers.client.LonLat;
+import org.gwtopenmaps.openlayers.client.MapOptions;
+import org.gwtopenmaps.openlayers.client.MapWidget;
+import org.gwtopenmaps.openlayers.client.Marker;
+import org.gwtopenmaps.openlayers.client.Projection;
+import org.gwtopenmaps.openlayers.client.Size;
+import org.gwtopenmaps.openlayers.client.event.EventType;
+import org.gwtopenmaps.openlayers.client.event.MarkerBrowserEventListener;
+import org.gwtopenmaps.openlayers.client.layer.GoogleV3;
+import org.gwtopenmaps.openlayers.client.layer.GoogleV3MapType;
+import org.gwtopenmaps.openlayers.client.layer.GoogleV3Options;
+import org.gwtopenmaps.openlayers.client.layer.Layer;
+import org.gwtopenmaps.openlayers.client.layer.Markers;
+import org.gwtopenmaps.openlayers.client.layer.OSM;
 import org.rebioma.client.DataPager.PageListener;
 import org.rebioma.client.OccurrenceQuery.DataRequestListener;
 import org.rebioma.client.PagerWidget.PageClickListener;
@@ -19,6 +34,7 @@ import org.rebioma.client.bean.OccurrenceReview;
 import org.rebioma.client.bean.OccurrenceSummary;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.maps.OccurrenceMarkerManager;
+import org.rebioma.client.maps.OccurrenceMarkerManager.OptionsManager;
 import org.rebioma.client.services.OccurrenceService.OccurrenceServiceException;
 
 import com.google.gwt.core.client.GWT;
@@ -44,18 +60,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.maps.client.MapOptions;
-import com.google.gwt.maps.client.MapTypeId;
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.base.LatLng;
-import com.google.gwt.maps.client.controls.MapTypeControlOptions;
-import com.google.gwt.maps.client.events.drag.DragMapEvent;
-import com.google.gwt.maps.client.events.drag.DragMapHandler;
-import com.google.gwt.maps.client.events.dragend.DragEndMapEvent;
-import com.google.gwt.maps.client.events.dragend.DragEndMapHandler;
-import com.google.gwt.maps.client.overlays.Marker;
-import com.google.gwt.maps.client.overlays.MarkerImage;
-import com.google.gwt.maps.client.overlays.MarkerOptions;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -104,7 +108,8 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  */
 public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		SelectionHandler<TreeItem>, PageListener<Occurrence>,
-		PageClickListener, DataRequestListener, OccurrencePageSizeChangeHandler, ReviewHandler {
+		PageClickListener, DataRequestListener,
+		OccurrencePageSizeChangeHandler, ReviewHandler {
 
 	/**
 	 * A listener that get fire when there is a change in one of the occurrence
@@ -296,8 +301,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			NON_EDITABLE_FIELDS.add(ACCEPTED_SUBFAMILY);
 			NON_EDITABLE_FIELDS.add(ACCEPTED_SUBGENUS);
 			NON_EDITABLE_FIELDS.add(ACCEPTED_SUBORDER);
-			NON_EDITABLE_FIELDS.add(VERBATIM_SPECIES); /* Added by Jenjy */
-			NON_EDITABLE_FIELDS.add(IUCN_STATUS);
+			NON_EDITABLE_FIELDS.add(VERBATIM_SPECIES);
+			NON_EDITABLE_FIELDS.add(IUCN_STATUS); /* Added by Jenjy */
 		}
 
 		static {
@@ -966,8 +971,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 					comment.setDateCommented(new Date());
 					Set<OccurrenceComments> comments = new HashSet<OccurrenceComments>();
 					comments.add(comment);
-					DataSwitch.get().updateComments(sessionId, owner, comments, ck.getValue(),
-							new AsyncCallback<Integer>() {
+					DataSwitch.get().updateComments(sessionId, owner, comments,
+							ck.getValue(), new AsyncCallback<Integer>() {
 								public void onFailure(Throwable caught) {
 									GWT.log(caught.getLocalizedMessage(),
 											caught);
@@ -1420,6 +1425,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/y HH:mm");
 		DateTimeFormat currentYformat = DateTimeFormat.getFormat("d MMM HH:mm");
 		DateTimeFormat yFormat = DateTimeFormat.getFormat("y");
+
 		public ReviewersReviewed() {
 			VerticalPanel mainPanel = new VerticalPanel();
 			status = new Label();
@@ -1441,12 +1447,13 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 					: (reviewed ? THUMB_UP_URL : THUMB_DOWN_URL);
 			data[2] = new HTML("<img src='" + image + "'/>");
 			Date rDate = reviewer.getReviewedDate();
-			if(rDate!=null) {
-				if(yFormat.format(rDate).equals(yFormat.format(new Date())))
+			if (rDate != null) {
+				if (yFormat.format(rDate).equals(yFormat.format(new Date())))
 					data[3] = new Label(currentYformat.format(rDate));
-				else 
+				else
 					data[3] = new Label(dateFormat.format(rDate));
-			} else data[3] = new Label("--");
+			} else
+				data[3] = new Label("--");
 			data[3].addStyleName("text");
 			data[2].addStyleName("center");
 			reviewerTable.addDataRows(data);
@@ -1482,49 +1489,49 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	 */
 	private class SmallMap extends Composite {
 
-		private final MapWidget map;
-		private Marker marker = null;
+		MapOptions defaultMapOptions = new MapOptions();
+		private MapWidget map = new MapWidget("300px", "300px",
+				defaultMapOptions);
+		private Markers marker = null;
 
 		/**
 		 * Initializes smalll map and center it at Madagascar.
 		 */
 		public SmallMap() {
-			MapOptions options = MapOptions.newInstance();
-			options.setCenter(CENTER);
-			options.setZoom(6);
-			options.setMapTypeId(MapTypeId.TERRAIN);
-			options.setScaleControl(true);
-			// options.setDraggableCursor("crosshair");
-			// options.setDraggingCursor("move");
-			MapTypeControlOptions mapTypeControlOptions = MapTypeControlOptions
-					.newInstance();
-			mapTypeControlOptions.setMapTypeIds(MapTypeId.values());
-			options.setMapTypeControlOptions(mapTypeControlOptions);
-			options.setMapTypeControl(true);
-			map = new MapWidget(options);
-//			 MapTypeRegistry registry = MapTypeRegistry.newInstance();
-//			 registry.set(MapTypeId.HYBRID.toString(), MapTypeId.HYBRID);
-//			 registry.set(MapTypeId.ROADMAP.toString(), MapTypeId.ROADMAP);
-//			 registry.set(MapTypeId.TERRAIN.toString(), MapTypeId.TERRAIN);
-//			 registry.set(MapTypeId.SATELLITE.toString(),
-//			 MapTypeId.SATELLITE);
-//			 map.setMapTypesRegistry(registry);
-//			 map.setWidth("100%");
-//			 map.setHeight("100%");
-			// initMap();
-			map.setStyleName(SMALL_MAP_STYLE);
+			OSM osmMapnik = OSM.Mapnik("Mapnik");
+			osmMapnik.setIsBaseLayer(true);
+			map.getMap().addLayer(osmMapnik);
+			 LonLat lonLat = new LonLat(47, -19);
+		        lonLat.transform(new Projection(
+	                "EPSG:4326").getProjectionCode(), map.getMap().getProjection());
+			GoogleV3Options gHybridOptions = new GoogleV3Options();
+			gHybridOptions.setNumZoomLevels(20);
+			gHybridOptions.setType(GoogleV3MapType.G_HYBRID_MAP);
+			GoogleV3 gHybrid = new GoogleV3("Google Hybrid", gHybridOptions);
+
+			GoogleV3Options gSatelliteOptions = new GoogleV3Options();
+			gSatelliteOptions.setNumZoomLevels(20);
+			gSatelliteOptions.setType(GoogleV3MapType.G_SATELLITE_MAP);
+			GoogleV3 gSatellite = new GoogleV3("Google Satellite",
+					gSatelliteOptions);
+
+			map.getMap().addLayers(new Layer[] { gSatellite, gHybrid });
+
+			map.getMap().setCenter(lonLat, 6);
+			map.getElement().getFirstChildElement().getStyle().setZIndex(0);
 			initWidget(map);
-			Scheduler.get().scheduleDeferred(new ScheduledCommand(){
-			      public void execute() {
-			    	  /*
-			    	   * Forcer le rechargement de la carte.
-			    	   * Sans cette partie de code, il faut redimentionner manuellement le navigateur pour avoir un map complet
-			    	   */
-			    	  map.triggerResize();
-						map.setZoom(map.getZoom());
-				    	  map.triggerResize();
-						setCenter();
-			      }
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				public void execute() {
+					/*
+					 * Forcer le rechargement de la carte. Sans cette partie de
+					 * code, il faut redimentionner manuellement le navigateur
+					 * pour avoir un map complet
+					 */
+					// RORO map.triggerResize();
+					map.getMap().setMinMaxZoomLevel(0, map.getMap().getZoom());// setZoom(map.getZoom());
+					// RORO map.triggerResize();
+					setCenter();
+				}
 			});
 		}
 
@@ -1533,10 +1540,13 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		 */
 		public void setCenter() {
 			// map.setOverlayMapTypes(null);
-			if (map.getOverlayMapTypes() != null) {
-				map.getOverlayMapTypes().clear();
+			if (map.getMap().getAllOverlays() == true) {
+				map.getMap().removeOverlayLayers();// .clear();
 			}
-			setMarker(CENTER);
+			LonLat lonLat = new LonLat(47.3318, -19);
+			lonLat.transform(new Projection(
+	                "EPSG:4326").getProjectionCode(), map.getMap().getProjection());
+			setMarker(lonLat);
 		}
 
 		/**
@@ -1547,64 +1557,74 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		 * @param longitude
 		 *            double longitude of the marker
 		 */
-		public void setMarker(LatLng latLng) {
+		public void setMarker(LonLat lonLat) {
+	        lonLat.transform(new Projection(
+                "EPSG:4326").getProjectionCode(), map.getMap().getProjection());
+			OptionsManager op = new OptionsManager();
+			OccurrenceMarkerManager markerManager = OccurrenceMarkerManager
+					.newInstance(currentOccurrence);
+			
+			Icon icon = new Icon(DEFAULT_MARKER_ICON, new Size(32, 32));// (DEFAULT_MARKER_ICON);
+			final Marker markerOptions = new Marker(lonLat, icon);
 			if (marker == null) {
-				MarkerOptions markerOptions = MarkerOptions.newInstance();
-				MarkerImage icon = MarkerImage.newInstance(DEFAULT_MARKER_ICON);
-				markerOptions.setIcon(icon);
-				markerOptions.setDraggable(true);
-				markerOptions.setPosition(latLng);
-				marker = Marker.newInstance(markerOptions);
-				marker.setDraggable(false);
-				marker.addDragHandler(new DragMapHandler() {
-					@Override
-					public void onEvent(DragMapEvent event) {
-						FieldEditor latEditor = requiredItems
-								.getEditor(FieldConstants.DECIMAL_LATITUDE);
-						FieldEditor lngEditor = requiredItems
-								.getEditor(FieldConstants.DECIMAL_LONGITUDE);
-						LatLng latlng = marker.getPosition();
-						NumberFormat numberFormat = NumberFormat
-								.getFormat("#.0000000#");
-						latEditor.setValue(numberFormat.format(latlng.getLatitude()));
-						lngEditor.setValue(numberFormat.format(latlng
-								.getLongitude()));
-					}
-				});
-				marker.addDragEndHandler(new DragEndMapHandler() {
-					@Override
-					public void onEvent(DragEndMapEvent event) {
-						FieldEditor latEditor = requiredItems
-								.getEditor(FieldConstants.DECIMAL_LATITUDE);
-						FieldEditor lngEditor = requiredItems
-								.getEditor(FieldConstants.DECIMAL_LONGITUDE);
-						latEditor.setNewValue();
-						lngEditor.setNewValue();
+				markerOptions.addBrowserEventListener(EventType.MOUSE_OVER,
+						new MarkerBrowserEventListener() {
+							public void onBrowserEvent(
+									MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
+								FieldEditor latEditor = requiredItems
+										.getEditor(FieldConstants.DECIMAL_LATITUDE);
+								FieldEditor lngEditor = requiredItems
+										.getEditor(FieldConstants.DECIMAL_LONGITUDE);
+								LonLat latlng = markerOptions.getLonLat();
+								NumberFormat numberFormat = NumberFormat
+										.getFormat("#.0000000#");
+								latEditor.setValue(numberFormat.format(latlng
+										.lat()));
+								lngEditor.setValue(numberFormat.format(latlng
+										.lon()));
+							}
 
-					}
-				});
+						});
+				markerOptions.addBrowserEventListener(EventType.MOUSE_OVER,
+						new MarkerBrowserEventListener() {
+
+							public void onBrowserEvent(
+									MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
+								FieldEditor latEditor = requiredItems
+										.getEditor(FieldConstants.DECIMAL_LATITUDE);
+								FieldEditor lngEditor = requiredItems
+										.getEditor(FieldConstants.DECIMAL_LONGITUDE);
+								latEditor.setNewValue();
+								lngEditor.setNewValue();
+							}
+
+						});
 				// MarkerImage shadow =
 				// MarkerImage.newInstance(DEFAULT_MARKER_SHADOW_URL);
-				marker.setIcon(icon);
+				markerOptions.setIcon(icon);// (icon);
 			}
-			if(currentOccurrence != null){
-				marker.setMap((MapWidget)null);
-				OccurrenceMarkerManager markerManager = OccurrenceMarkerManager.newInstance(currentOccurrence);
-				marker = markerManager.getMarker();
+			if (currentOccurrence != null) {
+				// map.getMap().removeLayer(marker);
+				// marker.setMap((MapWidget)null);
+
+				marker = op.getOptions(markerManager.getOccurrence());
+
+				LonLat lonlat = markerManager.getPoint(markerManager
+						.getOccurrence());
+				lonlat.transform(new Projection(
+		                "EPSG:4326").getProjectionCode(), map.getMap().getProjection());
+				map.getMap().addLayer(marker);
+				final Marker markers = new Marker(lonlat,
+						op.getIcon(markerManager.getOccurrence()));
+				marker.addMarker(markers);
 			}
-			// marker.setShadow(shadow);
-			// marker.getIcon_MarkerImage().setUrl(DEFAULT_MARKER_ICON);
-			// marker.getShadow_MarkerImage().setUrl(DEFAULT_MARKER_SHADOW_URL);
-			// map.setOverlayMapTypes(null);
-			marker.setPosition(latLng);
-			marker.setMap(map);
-			map.setZoom(10);
-			map.setCenter(latLng);
+
+			map.getMap().setCenter(lonLat, 12);// .setCenter(latLng);
 		}
 
 		public void setMarkerDragEnabled(boolean enabled) {
 			if (marker != null) {
-				marker.setDraggable(enabled);
+				// RORO marker.setDraggable(enabled);
 			}
 		}
 
@@ -1619,7 +1639,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			// map.setScrollWheelZoomEnabled(true);
 			// map.setPixelSize(MAP_WIDTH, MAP_HEIGHT);
 		}
-		
+
 		public MapWidget getMap() {
 			return map;
 		}
@@ -1699,16 +1719,16 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		}
 	}
 
-  private static final String WAITING_IMG_URL = "images/waiting.png";
+	private static final String WAITING_IMG_URL = "images/waiting.png";
 
-  private static final String THUMB_UP_URL = "images/thumb_up.png";
+	private static final String THUMB_UP_URL = "images/thumb_up.png";
 
-  private static final String THUMB_DOWN_URL = "images/question_mark.png";
-  private static final String REVIEWER_TABLE_HEAER[] = new String[] {
-      constants.Name(), constants.Email(), constants.Reviewed(),
-      constants.ReviewDate() };
-  private static final String REVIEWER_TABLE_HEADER_CSS[] = new String[] {
-      "name", "email", "reviewed", "reviewed_date" };
+	private static final String THUMB_DOWN_URL = "images/question_mark.png";
+	private static final String REVIEWER_TABLE_HEAER[] = new String[] {
+			constants.Name(), constants.Email(), constants.Reviewed(),
+			constants.ReviewDate() };
+	private static final String REVIEWER_TABLE_HEADER_CSS[] = new String[] {
+			"name", "email", "reviewed", "reviewed_date" };
 
 	/**
 	 * Default style name for this widget.
@@ -1729,7 +1749,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	/**
 	 * Madagascar latitude and longitude {@link LatLng}.
 	 */
-	private static final LatLng CENTER = LatLng.newInstance(-19, 47);
+	private static final LonLat CENTER = new LonLat(47, -19);
 
 	private static final String COMMENT_EDITOR_STYLE = "Editor";
 
@@ -1847,7 +1867,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	/**
 	 * A main {@link VerticalPanel} for this tree.
 	 */
-	private final VerticalLayoutContainer mainPanel = new VerticalLayoutContainer();//VerticalPanel();
+	private final VerticalLayoutContainer mainPanel = new VerticalLayoutContainer();// VerticalPanel();
 	private final ScrollPanel mainSp = new ScrollPanel();
 
 	/**
@@ -1890,26 +1910,27 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 
 	// private final PrintView printView = new PrintView();
 
-	private final PlainTabPanel occLinks = new PlainTabPanel(){
+	private final PlainTabPanel occLinks = new PlainTabPanel() {
 		@Override
 		public void clear() {
 			onUnload();
 		}
-		@Override 
+
+		@Override
 		public boolean remove(Widget child) {
-	    int idx = getWidgetIndex(child);
-	    boolean removed = getContainer().remove(child);
+			int idx = getWidgetIndex(child);
+			boolean removed = getContainer().remove(child);
 
-	    if (removed) {
+			if (removed) {
 
-	      Element item = findItem(idx);
-	      item.removeFromParent();
+				Element item = findItem(idx);
+				item.removeFromParent();
 
-	      setActiveWidget(null); 
-	    }
+				setActiveWidget(null);
+			}
 
-	    return removed;
-	  }
+			return removed;
+		}
 	};
 	private SplitButton splitItem = new SplitButton("Select action");
 	private Menu actionMenu;
@@ -1918,7 +1939,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			switch (param) {
 			case VIEW:
 			case TYPE:
-		    case ID:
+			case ID:
 				return stringValue(param);
 			}
 			return "";
@@ -1947,9 +1968,9 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		}
 		pagerWidget = new OccurrencePagerWidget(pageSize, query, false);
 
-	    //{WD force toolbar layout view
+		// {WD force toolbar layout view
 		pagerWidget.setToolBar(toolPanel);
-	    //}
+		// }
 		pagerWidget.addPageClickListener(this);
 		pagerWidget.addPageListener(pageListener);
 		pagerWidget.addPageListener(this);
@@ -1989,17 +2010,18 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 				HasVerticalAlignment.ALIGN_TOP);
 		hp.setCellHorizontalAlignment(reviewersReviewed,
 				HasHorizontalAlignment.ALIGN_LEFT);
-//		ScrollPanel detailContainer = new ScrollPanel();
+		// ScrollPanel detailContainer = new ScrollPanel();
 		FlowLayoutContainer detailContainer = new FlowLayoutContainer();
 		// add your content
 		detailContainer.getScrollSupport().setScrollMode(ScrollMode.AUTO);
-		detailContainer.setScrollSupport(new DefaultScrollSupport(detailContainer.getElement()));
-//		detailContainer.setStyleName("margin5");
+		detailContainer.setScrollSupport(new DefaultScrollSupport(
+				detailContainer.getElement()));
+		// detailContainer.setStyleName("margin5");
 		detailContainer.add(hp);
 		pagerWidget.setXElement(detailContainer.getElement());
-//		SimplePanel toolContainer = new SimplePanel();
-//		toolContainer.setWidget(toolPanel);
-//		toolContainer.setStyleName(TOOL_STYLE);
+		// SimplePanel toolContainer = new SimplePanel();
+		// toolContainer.setWidget(toolPanel);
+		// toolContainer.setStyleName(TOOL_STYLE);
 		mainPanel.add(toolPanel);
 		SimplePanel sep1 = new SimplePanel();
 		sep1.setHeight("4px");
@@ -2009,12 +2031,13 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		sep2.setHeight("4px");
 		mainPanel.add(sep2);
 		mainPanel.setStyleName(DEFAULT_STYLE);
-//		toolPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-//		toolPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE); // CHANGED
+		// toolPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		// toolPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE); //
+		// CHANGED
 		initTool();
 		detailTree.setStyleName(DETAIL_STYLE);
-//		mainSp.setWidget(mainPanel);
-//		initWidget(mainSp);
+		// mainSp.setWidget(mainPanel);
+		// initWidget(mainSp);
 		mainPanel.setLayoutData(new VerticalLayoutData(1, 1));
 		initWidget(mainPanel);
 		setUpdateButtonsEnable(false);
@@ -2160,8 +2183,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	public void onOccurrenceSelected(Occurrence occurrence,
 			boolean isAddHistoryItem) {
 		if (currentOccurrence == null || currentOccurrence != occurrence) {
-//			mainSp.setPixelSize(Window.getClientWidth(),
-//					Window.getClientHeight() - mainSp.getAbsoluteTop());
+			// mainSp.setPixelSize(Window.getClientWidth(),
+			// Window.getClientHeight() - mainSp.getAbsoluteTop());
 			mainPanel.setPixelSize(Window.getClientWidth(),
 					Window.getClientHeight() - mainPanel.getAbsoluteTop());
 			mainPanel.forceLayout();
@@ -2179,11 +2202,10 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			User currentUser = ApplicationView.getAuthenticatedUser();
 			String userEmail = occurrence.getOwnerEmail();
 			boolean isEditable = (currentUser != null)
-					&& (
-						((currentUser.getEmail().equals(userEmail)) && signedIn) 
-						|| ApplicationView.getCurrentState() == ViewState.SUPERADMIN
-						|| ((occurrence.getSharedUsersCSV()+"").contains(currentUser.getEmail()) && occurrence.getNoAssignation())
-					);
+					&& (((currentUser.getEmail().equals(userEmail)) && signedIn)
+							|| ApplicationView.getCurrentState() == ViewState.SUPERADMIN || ((occurrence
+							.getSharedUsersCSV() + "").contains(currentUser
+							.getEmail()) && occurrence.getNoAssignation()));
 
 			setFieldsEditable(isEditable);
 			setCommentEnable(signedIn);
@@ -2247,54 +2269,54 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	}
 
 	public void onPageLoaded(List<Occurrence> data, int pageNumber) {
-//		occLinks.clear();
-//		String id = currentId + "";
+		// occLinks.clear();
+		// String id = currentId + "";
 		clearOccLinks();
 		historyState.setHistoryToken(History.getToken());
-//		Widget currentWidget = null;
+		// Widget currentWidget = null;
 		for (Occurrence o : data) {
 			OccurrenceLink occLink = new OccurrenceLink(o);
 			String id = historyState.getHistoryParameters(UrlParam.ID)
 					.toString();
 			// if (o == currentOccurrence || o.getId().toString().equals(id)) {
-//			occLink.select(o == currentOccurrence
-//					|| o.getId().toString().equals(id));
+			// occLink.select(o == currentOccurrence
+			// || o.getId().toString().equals(id));
 			// } else {
 			// occLink.select(false);
 			// }
-			occLinks.add(occLink, new TabItemConfig(o.getId()+""));
-			if(o == currentOccurrence || o.getId().toString().equals(id)){
-//				currentWidget = occLink;
+			occLinks.add(occLink, new TabItemConfig(o.getId() + ""));
+			if (o == currentOccurrence || o.getId().toString().equals(id)) {
+				// currentWidget = occLink;
 				occLinks.setActiveWidget(occLink);
 				occLinks.scrollToTab(occLinks.getActiveWidget(), true);
-//				Info.display("Load", "" + currentOccurrence.getId());
+				// Info.display("Load", "" + currentOccurrence.getId());
 			}
 		}
-		if(occLinks.getActiveWidget()==null)
+		if (occLinks.getActiveWidget() == null)
 			occLinks.setActiveWidget(occLinks.getWidget(0));
 		addHistoryItem(false);
-//		Window.alert("Load");
-//		if(currentWidget!=null) {
-//			occLinks.setActiveWidget(currentWidget);
-//			occLinks.scrollToTab(occLinks.getActiveWidget(), true);
-//			currentId = 0;
-////			Info.display("Scrolling", "" + currentOccurrence.getId());
-//		}
+		// Window.alert("Load");
+		// if(currentWidget!=null) {
+		// occLinks.setActiveWidget(currentWidget);
+		// occLinks.scrollToTab(occLinks.getActiveWidget(), true);
+		// currentId = 0;
+		// // Info.display("Scrolling", "" + currentOccurrence.getId());
+		// }
 		toolPanel.forceLayout();
 	}
 
 	private void clearOccLinks() {
-//		occLinks.clear();
-//		Iterator it = occLinks.iterator();
-//		while(it.hasNext()){
-//			occLinks.remove((Widget) it.next());
-//		}
-//		Window.alert("Clear " + widgetCount);
+		// occLinks.clear();
+		// Iterator it = occLinks.iterator();
+		// while(it.hasNext()){
+		// occLinks.remove((Widget) it.next());
+		// }
+		// Window.alert("Clear " + widgetCount);
 		int widgetCount = occLinks.getWidgetCount();
 		for (int i = 0; i <= widgetCount; i++) {
-			try{
+			try {
 				occLinks.remove(0);
-			}catch(Exception e){
+			} catch (Exception e) {
 			}
 		}
 		occLinks.clear();
@@ -2343,18 +2365,18 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		actionMenu.clear();
 		switch (state) {
 		case RESEARCHER:
-//			signedIn = true;
-//			break;
+			// signedIn = true;
+			// break;
 		case ADMIN:
-//			signedIn = true;
-//			break;
+			// signedIn = true;
+			// break;
 		case REVIEWER:
 			actionMenu.add(new MenuItem(DELETE_ACTION));
 			actionMenu.add(new MenuItem(MAKE_PRIVATE_ACTION));
 			actionMenu.add(new MenuItem(MAKE_PUBLIC_ACTION));
 			actionMenu.add(new MenuItem(SHOW_EMAIL_ACTION));
 			actionMenu.add(new MenuItem(HIDE_EMAIL_ACTION));
-//			actionMenu.add(new MenuItem(UPDATE_COLLABORATORS));
+			// actionMenu.add(new MenuItem(UPDATE_COLLABORATORS));
 			signedIn = true;
 			if (!isMyView(parent.historyToken())) {
 				pagerWidget.init(pagerWidget.getCurrentPageNumber());
@@ -2370,8 +2392,9 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			break;
 		}
 		// Reloads occurrences states when application state is changed.
-		
-		if (selectTab && currentOccurrence != null && isMyView(parent.historyToken())) {
+
+		if (selectTab && currentOccurrence != null
+				&& isMyView(parent.historyToken())) {
 			Occurrence temp = currentOccurrence;
 			currentOccurrence = null;
 			onOccurrenceSelected(temp, true);
@@ -2416,18 +2439,18 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			height = 1;
 		}
 		final int h = height - 10;
-	    final int w = width - 22;
+		final int w = width - 22;
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
 			public void execute() {
-//				mainSp.setPixelSize(w, h);
+				// mainSp.setPixelSize(w, h);
 				mainPanel.setPixelSize(w, h);
 				mainPanel.forceLayout();
 				int wi = w - 890;
-				wi = wi<150?150:Math.min(648, wi);
+				wi = wi < 150 ? 150 : Math.min(648, wi);
 				occLinks.setPixelSize(wi, 35);
 				toolPanel.forceLayout();
-				smallMap.getMap().triggerResize();
+				// RORO smallMap.getMap().triggerResize();
 			}
 		});
 
@@ -2519,9 +2542,9 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		occLinks.setBorders(false);
 		occLinks.setBodyBorder(false);
 		occLinks.setStyleName("text");
-//		occLinks.setShadow(true);
+		// occLinks.setShadow(true);
 		int w = Window.getClientWidth() - 890;
-		w = w<150?150:Math.min(648, w);
+		w = w < 150 ? 150 : Math.min(648, w);
 		occLinks.setPixelSize(w, 35);
 		occLinks.setAnimScroll(true);
 		occLinks.setTabScroll(true);
@@ -2539,17 +2562,17 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		actionMenu = new Menu();
 		actionMenu.addSelectionHandler(actionHandler);
 		actionMenu.setWidth("200px");
-//	    actionMenu.addSelectionHandler(handler);
-	 
-	    MenuItem item = new MenuItem();
-	    item.setHTML(NO_ACTION);
-	    actionMenu.add(item);
-	    splitItem.setMenu(actionMenu);
-	    splitItem.setStyleName("text");
-	    toolPanel.add(splitItem);
-	    toolPanel.add(new HTML("&nbsp;&nbsp;"));
-//		occLinks.setStyleName("OccurrenceLinks");
-		
+		// actionMenu.addSelectionHandler(handler);
+
+		MenuItem item = new MenuItem();
+		item.setHTML(NO_ACTION);
+		actionMenu.add(item);
+		splitItem.setMenu(actionMenu);
+		splitItem.setStyleName("text");
+		toolPanel.add(splitItem);
+		toolPanel.add(new HTML("&nbsp;&nbsp;"));
+		// occLinks.setStyleName("OccurrenceLinks");
+
 		HTML csvLink = new HTML("CSV");
 		// HTML printLink = new HTML("Print");
 		// printLink.setStyleName("link");
@@ -2582,10 +2605,10 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		csvPanel.add(csvLink);
 		csvPanel.add(new HTML("&nbsp;&nbsp;"));
 		toolPanel.add(csvPanel);
-//		toolPanel.setCellHorizontalAlignment(csvPanel,
-//				HorizontalPanel.ALIGN_RIGHT);
-//		toolPanel.setWidth("100%");
-//		toolPanel.setSpacing(5);
+		// toolPanel.setCellHorizontalAlignment(csvPanel,
+		// HorizontalPanel.ALIGN_RIGHT);
+		// toolPanel.setWidth("100%");
+		// toolPanel.setSpacing(5);
 		toolPanel.forceLayout();
 	}
 
@@ -2596,8 +2619,8 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	 * @return
 	 */
 	private boolean isInBound() {
-		return (newLat >= LOWER_BOUND && newLat <= UPPER_BOUND)
-				&& (newLng >= LOWER_BOUND && newLng <= UPPER_BOUND);
+		return (newLng >= LOWER_BOUND && newLng <= UPPER_BOUND)
+				&& (newLat >= LOWER_BOUND && newLat <= UPPER_BOUND);
 	}
 
 	/**
@@ -4037,50 +4060,60 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		curaItems.fireOnSaved();
 		geoItems.fireOnSaved();
 		taxoItems.fireOnSaved();
-		final String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
+		final String sessionId = Cookies
+				.getCookie(ApplicationView.SESSION_ID_NAME);
 		final Set<Occurrence> occurrences = new HashSet<Occurrence>();
 		occurrences.add(currentOccurrence);
 		setUpdateButtonsEnable(false);
-		if(ApplicationView.getCurrentState() == ViewState.SUPERADMIN) {
-			
-			MessageBox box = new MessageBox("Review state changes?", "");
-	        box.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
-	        box.setWidth("415px");
-	        box.setIcon(MessageBox.ICONS.question());
-	        box.setMessage("Would you like to reset the occurrence's state?");
-	        box.addHideHandler(new HideHandler() {
-	 
-	          @Override
-	          public void onHide(HideEvent event) {
-	            Dialog btn = (Dialog) event.getSource();
-	            if(btn.getHideButton().getText().equalsIgnoreCase("yes")) {
-	            	MessageBox boxWarning = new MessageBox("Reset review state?", "");
-	            	boxWarning.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.CANCEL);
-	            	boxWarning.setIcon(MessageBox.ICONS.warning());
-	            	boxWarning.setWidth("415px");
-	            	boxWarning.setMessage("You are resetting all the TRB's review of this occurrence. Would you like to continue?");
-	            	boxWarning.addHideHandler(new HideHandler() {
+		if (ApplicationView.getCurrentState() == ViewState.SUPERADMIN) {
 
-						@Override
-						public void onHide(HideEvent eventW) {
-							Dialog btnW = (Dialog) eventW.getSource();
-							if(btnW.getHideButton().getText().equalsIgnoreCase("yes")) {
-								update(sessionId, occurrences, updatedView, true);
-							} else {
-				            	Info.display("Message", "No action was performed");
-				            }
-						}});
-	            	
-	            	boxWarning.show();
-	            } else if(btn.getHideButton().getText().equalsIgnoreCase("no")) {
-	            	update(sessionId, occurrences, updatedView, false);
-	            } else {
-	            	Info.display("Message", "No action was performed");
-	            }
-	            
-	          }
-	        });
-	        box.show();
+			MessageBox box = new MessageBox("Review state changes?", "");
+			box.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO,
+					PredefinedButton.CANCEL);
+			box.setWidth("415px");
+			box.setIcon(MessageBox.ICONS.question());
+			box.setMessage("Would you like to reset the occurrence's state?");
+			box.addHideHandler(new HideHandler() {
+
+				@Override
+				public void onHide(HideEvent event) {
+					Dialog btn = (Dialog) event.getSource();
+					if (btn.getHideButton().getText().equalsIgnoreCase("yes")) {
+						MessageBox boxWarning = new MessageBox(
+								"Reset review state?", "");
+						boxWarning.setPredefinedButtons(PredefinedButton.YES,
+								PredefinedButton.CANCEL);
+						boxWarning.setIcon(MessageBox.ICONS.warning());
+						boxWarning.setWidth("415px");
+						boxWarning
+								.setMessage("You are resetting all the TRB's review of this occurrence. Would you like to continue?");
+						boxWarning.addHideHandler(new HideHandler() {
+
+							@Override
+							public void onHide(HideEvent eventW) {
+								Dialog btnW = (Dialog) eventW.getSource();
+								if (btnW.getHideButton().getText()
+										.equalsIgnoreCase("yes")) {
+									update(sessionId, occurrences, updatedView,
+											true);
+								} else {
+									Info.display("Message",
+											"No action was performed");
+								}
+							}
+						});
+
+						boxWarning.show();
+					} else if (btn.getHideButton().getText()
+							.equalsIgnoreCase("no")) {
+						update(sessionId, occurrences, updatedView, false);
+					} else {
+						Info.display("Message", "No action was performed");
+					}
+
+				}
+			});
+			box.show();
 		} else {
 			update(sessionId, occurrences, updatedView);
 		}
@@ -4097,63 +4130,67 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			commentMapVp.remove(commentEditor);
 		}
 	}
-	public void update(String sessionId, Set<Occurrence> occurrences, 
+
+	public void update(String sessionId, Set<Occurrence> occurrences,
 			final boolean updatedView, final boolean resetReview) {
 		DataSwitch.get().update(sessionId, occurrences, resetReview,
 				new AsyncCallback<String>() {
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-				GWT.log(caught.getMessage(), caught);
-				setUpdateButtonsEnable(true);
-			}
-			
-			/**
-			 * If result != null, update is a successful. Clears the
-			 * {@link DataSwitch} cache.
-			 * 
-			 * @param result
-			 */
-			public void onSuccess(String result) {
-				if (result != null) {
-					if (updatedView) {
-						updateDetailView(currentOccurrence.getId() + "");
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+						GWT.log(caught.getMessage(), caught);
+						setUpdateButtonsEnable(true);
 					}
-					isDataUnsaved = false;
-				} else {
-					Window.confirm(constants.UnexpectedError());
-				}
-			}
-			
-		});
+
+					/**
+					 * If result != null, update is a successful. Clears the
+					 * {@link DataSwitch} cache.
+					 * 
+					 * @param result
+					 */
+					public void onSuccess(String result) {
+						if (result != null) {
+							if (updatedView) {
+								updateDetailView(currentOccurrence.getId() + "");
+							}
+							isDataUnsaved = false;
+						} else {
+							Window.confirm(constants.UnexpectedError());
+						}
+					}
+
+				});
 	}
-	public void update(String sessionId, Set<Occurrence> occurrences, final boolean updatedView) {
+
+	public void update(String sessionId, Set<Occurrence> occurrences,
+			final boolean updatedView) {
 		DataSwitch.get().update(sessionId, occurrences,
 				new AsyncCallback<String>() {
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-				GWT.log(caught.getMessage(), caught);
-				setUpdateButtonsEnable(true);
-			}
-			
-			/**
-			 * If result != null, update is a successful. Clears the
-			 * {@link DataSwitch} cache.
-			 * 
-			 * @param result
-			 */
-			public void onSuccess(String result) {
-				if (result != null) {
-					if (updatedView) {
-						updateDetailView(currentOccurrence.getId() + "");
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+						GWT.log(caught.getMessage(), caught);
+						setUpdateButtonsEnable(true);
 					}
-					isDataUnsaved = false;
-				} else {
-					Window.confirm(constants.UnexpectedError());
-				}
-			}
-			
-		});
+
+					/**
+					 * If result != null, update is a successful. Clears the
+					 * {@link DataSwitch} cache.
+					 * 
+					 * @param result
+					 */
+					public void onSuccess(String result) {
+						if (result != null) {
+							if (updatedView) {
+								updateDetailView(currentOccurrence.getId() + "");
+							}
+							isDataUnsaved = false;
+						} else {
+							Window.confirm(constants.UnexpectedError());
+						}
+					}
+
+				});
 	}
+
 	/**
 	 * Sets whether a user allow to edit fields in {@link DetailView}.
 	 * 
@@ -4164,7 +4201,9 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		if (editable) {
 			instruction.setHTML(constants.DetailInstruction() + "&nbsp;&nbsp;");
 		} else {
-			instruction.setHTML("<img src='images/warn.png' style='float:left'>&nbsp;" + constants.NotAllowToEdit() + "&nbsp;&nbsp;");
+			instruction
+					.setHTML("<img src='images/warn.png' style='float:left'>&nbsp;"
+							+ constants.NotAllowToEdit() + "&nbsp;&nbsp;");
 		}
 		updateActionTool(editable);
 		requiredItems.setFieldsEditable(editable);
@@ -4259,7 +4298,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		if (!isInBound()) {
 			smallMap.setCenter();
 		} else {
-			LatLng point = LatLng.newInstance(newLat, newLng);
+			LonLat point = new LonLat(newLng, newLat);
 			smallMap.setMarker(point);
 		}
 	}
@@ -4268,7 +4307,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	public void onPageSizeChange(int newPageSize) {
 		ApplicationView.getApplication().getOccurrenceView()
 				.setPageSize(newPageSize);
-		// on recharge les donn�es
+		// on recharge les donnï¿½es
 		requestData(1);
 	}
 
@@ -4281,7 +4320,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 	public OccurrencePagerWidget getOccurrencePagerWidget() {
 		return pagerWidget;
 	}
-	
+
 	protected static final String DELETE_ACTION = constants.Delete();
 
 	protected static final String MAKE_PRIVATE_ACTION = constants.MakePrivate();
@@ -4293,51 +4332,53 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			.PositivelyReview();
 	protected static final String SHOW_EMAIL_ACTION = constants.ShowMyEmail();
 	protected static final String HIDE_EMAIL_ACTION = constants.HideMyEmail();
-//	protected static final String UPDATE_COLLABORATORS = constants
-//			.SharedUsersAction();
-	private final ReviewerCommentPopup reviewerCommentPopup = new ReviewerCommentPopup(this, constants);
-//	private CollaboratorsList collaboratorsList;
+	// protected static final String UPDATE_COLLABORATORS = constants
+	// .SharedUsersAction();
+	private final ReviewerCommentPopup reviewerCommentPopup = new ReviewerCommentPopup(
+			this, constants);
+	// private CollaboratorsList collaboratorsList;
 	private int currentId = 0;
-	
+
 	private void addingReviewToolIfAllow(String token) {
-	    historyState.setHistoryToken(token);
-	    String type = (String) historyState.getHistoryParameters(UrlParam.TYPE);
-//	    Info.display(UrlParam.TYPE.name(), type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW) + "");
-	    boolean allowReview = false;
-	    if(!splitItem.isEnabled())
-	    	actionMenu.clear();
-	    if (type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW)) {
-	      actionMenu.add(new MenuItem(POSTIVELY_REVIEWED_ACTION));
-	      actionMenu.add(new MenuItem(NEGATIVELY_REVIEWED_ACTION));
-	      allowReview = true;
-	    } else if (type.equalsIgnoreCase(OccurrenceView.MY_POS_REVIEWED)) {
-//	      actionMenu.removeAction(POSTIVELY_REVIEWED_ACTION);
-	      actionMenu.add(new MenuItem(NEGATIVELY_REVIEWED_ACTION));
-	      allowReview = true;
-	    } else if (type.equalsIgnoreCase(OccurrenceView.MY_NEG_REVIEWED)) {
-	      actionMenu.add(new MenuItem(POSTIVELY_REVIEWED_ACTION));
-	      allowReview = true;
-//	      actionMenu.removeAction(NEGATIVELY_REVIEWED_ACTION);
-//	    } else {
-//	      actionMenu.removeAction(COMMENT_RECORDS);
-//	      actionMenu.removeAction(POSTIVELY_REVIEWED_ACTION);
-//	      actionMenu.removeAction(NEGATIVELY_REVIEWED_ACTION);
-	    }
-	    splitItem.setEnabled(splitItem.isEnabled() || allowReview);
+		historyState.setHistoryToken(token);
+		String type = (String) historyState.getHistoryParameters(UrlParam.TYPE);
+		// Info.display(UrlParam.TYPE.name(),
+		// type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW) + "");
+		boolean allowReview = false;
+		if (!splitItem.isEnabled())
+			actionMenu.clear();
+		if (type.equalsIgnoreCase(OccurrenceView.OCCURRENCES_TO_REVIEW)) {
+			actionMenu.add(new MenuItem(POSTIVELY_REVIEWED_ACTION));
+			actionMenu.add(new MenuItem(NEGATIVELY_REVIEWED_ACTION));
+			allowReview = true;
+		} else if (type.equalsIgnoreCase(OccurrenceView.MY_POS_REVIEWED)) {
+			// actionMenu.removeAction(POSTIVELY_REVIEWED_ACTION);
+			actionMenu.add(new MenuItem(NEGATIVELY_REVIEWED_ACTION));
+			allowReview = true;
+		} else if (type.equalsIgnoreCase(OccurrenceView.MY_NEG_REVIEWED)) {
+			actionMenu.add(new MenuItem(POSTIVELY_REVIEWED_ACTION));
+			allowReview = true;
+			// actionMenu.removeAction(NEGATIVELY_REVIEWED_ACTION);
+			// } else {
+			// actionMenu.removeAction(COMMENT_RECORDS);
+			// actionMenu.removeAction(POSTIVELY_REVIEWED_ACTION);
+			// actionMenu.removeAction(NEGATIVELY_REVIEWED_ACTION);
+		}
+		splitItem.setEnabled(splitItem.isEnabled() || allowReview);
 	}
-	
+
 	public void updateActionTool(boolean editable) {
 		splitItem.setEnabled(editable);
 		this.onStateChanged(ApplicationView.getCurrentState(), false);
 	}
-	
+
 	private SelectionHandler<Item> actionHandler = new SelectionHandler<Item>() {
 
 		@Override
 		public void onSelection(SelectionEvent<Item> event) {
-			MenuItem item = (MenuItem)event.getSelectedItem();
-			if(item.getText().equals(POSTIVELY_REVIEWED_ACTION)) {
-				if(!isUpdated()) {
+			MenuItem item = (MenuItem) event.getSelectedItem();
+			if (item.getText().equals(POSTIVELY_REVIEWED_ACTION)) {
+				if (!isUpdated()) {
 					return;
 				}
 				Set<Integer> occurrenceIds = getCurrentOccurrenceId();
@@ -4345,8 +4386,9 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 					Window.alert("No valid record to review");
 					return;
 				}
-				reviewerCommentPopup.display(false, true, true, occurrenceIds, constants.ReviewComment());
-			} else if(item.getText().equals(NEGATIVELY_REVIEWED_ACTION)) { 
+				reviewerCommentPopup.display(false, true, true, occurrenceIds,
+						constants.ReviewComment());
+			} else if (item.getText().equals(NEGATIVELY_REVIEWED_ACTION)) {
 				if (isUpdated()) {
 					return;
 				}
@@ -4355,93 +4397,98 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 					Window.alert("No valid record to review");
 					return;
 				}
-				reviewerCommentPopup.display(false, false, true, occurrenceIds, constants.ReviewComment());
-			} else if(item.getText().equals(DELETE_ACTION)) {
+				reviewerCommentPopup.display(false, false, true, occurrenceIds,
+						constants.ReviewComment());
+			} else if (item.getText().equals(DELETE_ACTION)) {
 				deleteOccurrences(checkCurrentOccurrences(DELETE_ACTION));
-			} else if(item.getText().equals(MAKE_PRIVATE_ACTION)) {
+			} else if (item.getText().equals(MAKE_PRIVATE_ACTION)) {
 				if (!isUpdated()) {
 					return;
 				}
 				updateOccurrences(checkCurrentOccurrences(MAKE_PRIVATE_ACTION),
-			            constants.NoActionPublicPrivate());
-			} else if(item.getText().equals(MAKE_PUBLIC_ACTION)) {
+						constants.NoActionPublicPrivate());
+			} else if (item.getText().equals(MAKE_PUBLIC_ACTION)) {
 				if (!isUpdated()) {
 					return;
 				}
 				updateOccurrences(checkCurrentOccurrences(MAKE_PUBLIC_ACTION),
 						constants.NoActionPublicPrivate());
-			} else if(item.getText().equals(SHOW_EMAIL_ACTION)) {
+			} else if (item.getText().equals(SHOW_EMAIL_ACTION)) {
 				if (!isUpdated()) {
 					return;
 				}
 				updateOccurrences(checkCurrentOccurrences(SHOW_EMAIL_ACTION),
 						constants.NoActionEmail());
-			} else if(item.getText().equals(HIDE_EMAIL_ACTION)) {
+			} else if (item.getText().equals(HIDE_EMAIL_ACTION)) {
 				if (!isUpdated()) {
 					return;
 				}
 				updateOccurrences(checkCurrentOccurrences(HIDE_EMAIL_ACTION),
 						constants.NoActionEmail());
-//			} else if(item.getText().equals(UPDATE_COLLABORATORS)) {
-//				if (!isUpdated()) {
-//					return;
-//				}
-//				if (collaboratorsList == null) {
-//					collaboratorsList = new CollaboratorsList();
-//				}
-//				Set<Occurrence> occurrences = checkCurrentOccurrences(UPDATE_COLLABORATORS);
-//				if (occurrences.isEmpty()) {
-//					Window.alert(constants.UpdateSharedUserMsg());
-//					return;
-//				}
-//				collaboratorsList.showUsers(occurrences);
+				// } else if(item.getText().equals(UPDATE_COLLABORATORS)) {
+				// if (!isUpdated()) {
+				// return;
+				// }
+				// if (collaboratorsList == null) {
+				// collaboratorsList = new CollaboratorsList();
+				// }
+				// Set<Occurrence> occurrences =
+				// checkCurrentOccurrences(UPDATE_COLLABORATORS);
+				// if (occurrences.isEmpty()) {
+				// Window.alert(constants.UpdateSharedUserMsg());
+				// return;
+				// }
+				// collaboratorsList.showUsers(occurrences);
 			}
 		}
 	};
-	
+
 	/**
-	 * Gets current occurrence with associated action in the current
-	 * page.
+	 * Gets current occurrence with associated action in the current page.
 	 * 
 	 * @return set of current occurrences with associated action.
 	 */
 	private Set<Occurrence> checkCurrentOccurrences(String action) {
 		Set<Occurrence> occurrences = new HashSet<Occurrence>();
-	    User user = ApplicationView.getAuthenticatedUser();
-	    if (user == null || currentOccurrence == null) {
-	      return occurrences;
-	    }
-	    
-	    String email = currentOccurrence.getOwnerEmail();
-	    boolean myRecord = email.equals(user.getEmail());
-	    boolean myShared = (currentOccurrence.getSharedUsersCSV()+"").contains(user.getEmail()) && currentOccurrence.getNoAssignation();
-	    if (!(myRecord || myShared)) {
-	    	return occurrences;
-	    }
-	    if (action.equals(MAKE_PUBLIC_ACTION) && !currentOccurrence.isPublic_()) {
-	    	currentOccurrence.setPublic_(true);
-	    	occurrences.add(currentOccurrence);
-	    } else if (action.equals(MAKE_PRIVATE_ACTION) && currentOccurrence.isPublic_()) {
-	    	currentOccurrence.setPublic_(false);
-	    	occurrences.add(currentOccurrence);
-	    } else if (action.equals(DELETE_ACTION)
-//	    		|| action.equals(UPDATE_COLLABORATORS)
-	    		) {
-	    	occurrences.add(currentOccurrence);
-	    } else if (action.equals(SHOW_EMAIL_ACTION)) {
-	    	currentOccurrence.setEmailVisible(true);
-	    	occurrences.add(currentOccurrence);
-	    } else if (action.equals(HIDE_EMAIL_ACTION)) {
-	    	currentOccurrence.setEmailVisible(false);
-	    	occurrences.add(currentOccurrence);
-	    }
-	    return occurrences;
+		User user = ApplicationView.getAuthenticatedUser();
+		if (user == null || currentOccurrence == null) {
+			return occurrences;
+		}
+
+		String email = currentOccurrence.getOwnerEmail();
+		boolean myRecord = email.equals(user.getEmail());
+		boolean myShared = (currentOccurrence.getSharedUsersCSV() + "")
+				.contains(user.getEmail())
+				&& currentOccurrence.getNoAssignation();
+		if (!(myRecord || myShared)) {
+			return occurrences;
+		}
+		if (action.equals(MAKE_PUBLIC_ACTION) && !currentOccurrence.isPublic_()) {
+			currentOccurrence.setPublic_(true);
+			occurrences.add(currentOccurrence);
+		} else if (action.equals(MAKE_PRIVATE_ACTION)
+				&& currentOccurrence.isPublic_()) {
+			currentOccurrence.setPublic_(false);
+			occurrences.add(currentOccurrence);
+		} else if (action.equals(DELETE_ACTION)
+		// || action.equals(UPDATE_COLLABORATORS)
+		) {
+			occurrences.add(currentOccurrence);
+		} else if (action.equals(SHOW_EMAIL_ACTION)) {
+			currentOccurrence.setEmailVisible(true);
+			occurrences.add(currentOccurrence);
+		} else if (action.equals(HIDE_EMAIL_ACTION)) {
+			currentOccurrence.setEmailVisible(false);
+			occurrences.add(currentOccurrence);
+		}
+		return occurrences;
 	}
-	
+
 	/**
 	 * Deletes a set of {@link Occurrence} objects via {@link DataSwitch}.
 	 * 
-	 * @param toDelete occurrence set to delete
+	 * @param toDelete
+	 *            occurrence set to delete
 	 */
 	private void deleteOccurrences(final Set<Occurrence> occurrences) {
 		if (occurrences.isEmpty()) {
@@ -4455,27 +4502,27 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
 		DataSwitch.get().delete(sessionId, occurrences,
 				new AsyncCallback<String>() {
-			public void onFailure(Throwable caught) {
-				try {
-					throw caught;
-				} catch (OccurrenceServiceException e) {
-					Window.confirm(e.toString());
-				} catch (Throwable t) {
-					Window.confirm(t.toString());
-				}
-			}
-			
-			public void onSuccess(String result) {
-				pagerWidget.init(pagerWidget.getCurrentPageNumber());
-			}
-		});
+					public void onFailure(Throwable caught) {
+						try {
+							throw caught;
+						} catch (OccurrenceServiceException e) {
+							Window.confirm(e.toString());
+						} catch (Throwable t) {
+							Window.confirm(t.toString());
+						}
+					}
+
+					public void onSuccess(String result) {
+						pagerWidget.init(pagerWidget.getCurrentPageNumber());
+					}
+				});
 	}
-	
+
 	private boolean isUpdated() {
 		return Window.confirm(constants.Update() + " 1 "
 				+ constants.Occurrences() + "?");
 	}
-	
+
 	private Set<Integer> getCurrentOccurrenceId() {
 		Set<Integer> ids = new HashSet<Integer>();
 		User user = ApplicationView.getAuthenticatedUser();
@@ -4484,14 +4531,17 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		}
 		return ids;
 	}
-	
+
 	/**
 	 * Handles {@link Occurrence} updates by submitting a request to
 	 * {@link DataSwitch}.
 	 * 
-	 * @param warningMsg a warning message when is updated occurrences is empty.
-	 * @param ids list of occurrence ids to vet
-	 * @param vetted true to vet ids, false to unvet ids
+	 * @param warningMsg
+	 *            a warning message when is updated occurrences is empty.
+	 * @param ids
+	 *            list of occurrence ids to vet
+	 * @param vetted
+	 *            true to vet ids, false to unvet ids
 	 */
 	private void updateOccurrences(final Set<Occurrence> updatedOccurrences,
 			String warningMsg) {
@@ -4502,69 +4552,76 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
 		DataSwitch.get().update(sessionId, updatedOccurrences,
 				new AsyncCallback<String>() {
-			public void onFailure(Throwable caught) {
-				try {
-					throw caught;
-				} catch (OccurrenceServiceException e) {
-					Window.confirm(e.toString());
-	            } catch (Throwable t) {
-	            	Window.confirm(t.toString());
-	            }
-			}
+					public void onFailure(Throwable caught) {
+						try {
+							throw caught;
+						} catch (OccurrenceServiceException e) {
+							Window.confirm(e.toString());
+						} catch (Throwable t) {
+							Window.confirm(t.toString());
+						}
+					}
 
-			public void onSuccess(String result) {
-				currentId = updatedOccurrences.iterator().next().getId();
-				pagerWidget.init(pagerWidget.getCurrentPageNumber());
-			}
-		});
+					public void onSuccess(String result) {
+						currentId = updatedOccurrences.iterator().next()
+								.getId();
+						pagerWidget.init(pagerWidget.getCurrentPageNumber());
+					}
+				});
 	}
-	
+
 	@Override
-	public void reviewAllRecords(final Boolean reviewed, String comment, boolean notified) {
+	public void reviewAllRecords(final Boolean reviewed, String comment,
+			boolean notified) {
 		String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
-		DataSwitch.get().reviewRecords(sessionId, reviewed, pagerWidget.getQuery(),
-				comment, notified, new AsyncCallback<Integer>() {
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-				DisplayPopup.getDefaultDisplayPopup().hide();
-			}
-			
-			public void onSuccess(Integer result) {
-				pagerWidget.init(pagerWidget.getCurrentPageNumber());
-				showMsg(result + " records was "
-						+ (reviewed ? "positively" : "negatively") + " reviewed");
-				DisplayPopup.getDefaultDisplayPopup().hide();
-			}
-			
-		});
+		DataSwitch.get().reviewRecords(sessionId, reviewed,
+				pagerWidget.getQuery(), comment, notified,
+				new AsyncCallback<Integer>() {
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+						DisplayPopup.getDefaultDisplayPopup().hide();
+					}
+
+					public void onSuccess(Integer result) {
+						pagerWidget.init(pagerWidget.getCurrentPageNumber());
+						showMsg(result + " records was "
+								+ (reviewed ? "positively" : "negatively")
+								+ " reviewed");
+						DisplayPopup.getDefaultDisplayPopup().hide();
+					}
+
+				});
 	}
-	  
+
 	@Override
 	public void reviewRecords(Set<Integer> occurrenceIds,
 			final Boolean reviewed, String comment, boolean notified) {
 		String sessionId = Cookies.getCookie(ApplicationView.SESSION_ID_NAME);
-		DataSwitch.get().reviewRecords(sessionId, reviewed, occurrenceIds, comment, notified,
-				new AsyncCallback<Integer>() {
-			
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-				DisplayPopup.getDefaultDisplayPopup().hide();
-			}
-			
-			public void onSuccess(Integer result) {
-				pagerWidget.init(pagerWidget.getCurrentPageNumber());
-				showMsg(result + " records was "
-						+ (reviewed ? "positively" : "negatively") + " reviewed");
-				DisplayPopup.getDefaultDisplayPopup().hide();
-			}
-			
-		});
+		DataSwitch.get().reviewRecords(sessionId, reviewed, occurrenceIds,
+				comment, notified, new AsyncCallback<Integer>() {
+
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+						DisplayPopup.getDefaultDisplayPopup().hide();
+					}
+
+					public void onSuccess(Integer result) {
+						pagerWidget.init(pagerWidget.getCurrentPageNumber());
+						showMsg(result + " records was "
+								+ (reviewed ? "positively" : "negatively")
+								+ " reviewed");
+						DisplayPopup.getDefaultDisplayPopup().hide();
+					}
+
+				});
 	}
-	
+
 	@Override
-	public void commentRecords(Set<Integer> occurrenceIds, String comment, boolean notified) {}
-	
+	public void commentRecords(Set<Integer> occurrenceIds, String comment,
+			boolean notified) {
+	}
+
 	private void showMsg(String htmlMsg) {
-	    PopupMessage.getInstance().showMessage(htmlMsg);
+		PopupMessage.getInstance().showMessage(htmlMsg);
 	}
 }

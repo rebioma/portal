@@ -19,17 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.gwtopenmaps.openlayers.client.MapWidget;
+import org.gwtopenmaps.openlayers.client.layer.Image;
+import org.gwtopenmaps.openlayers.client.layer.XYZ;
+import org.rebioma.client.MapView;
 import org.rebioma.client.maps.AscTileLayer.LayerInfo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.base.LatLng;
-import com.google.gwt.maps.client.controls.ControlPosition;
-import com.google.gwt.maps.client.events.tiles.TilesLoadedMapEvent;
-import com.google.gwt.maps.client.events.tiles.TilesLoadedMapHandler;
-import com.google.gwt.maps.client.maptypes.ImageMapType;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ListBox;
@@ -78,7 +76,7 @@ public abstract class TileLayerSelector extends ListBox {
       return;
     }
     if (selectedLayer != null) {
-    	map.getOverlayMapTypes().removeAt(map.getOverlayMapTypes().getLength() - 1);
+    	//RORO map.getOverlayMapTypes().removeAt(map.getOverlayMapTypes().getLength() - 1);
     }
     if (layerLegend != null) {
     	layerLegend.removeFromParent();
@@ -151,7 +149,7 @@ public abstract class TileLayerSelector extends ListBox {
     }
     LayerInfo layerInfo = null;
     if (selectedLayer != null) {
-    	map.getOverlayMapTypes().removeAt(selectedLayer.getMapIndex());
+    	//RORO map.getOverlayMapTypes().removeAt(selectedLayer.getMapIndex());
     }
     if (layerLegend != null) {
     	layerLegend.removeFromParent();
@@ -165,12 +163,14 @@ public abstract class TileLayerSelector extends ListBox {
       setSelectedIndex(selectionNames.get(layerSelected));
       layerInfo = layerInfos.get(layerSelected);
       selectedLayer = layerInfo.getInstance();
-      ImageMapType overlay = selectedLayer.asOverlay();
-      map.getOverlayMapTypes().push(overlay);
-      selectedLayer.setMapIndex(map.getOverlayMapTypes().getLength() - 1);
+      Image overlay = selectedLayer.asOverlay();
+     //RORO
+      map.getMap().addLayer(overlay);//.getOverlayMapTypes().push(overlay);
+      //RORO selectedLayer.setMapIndex(map.getOverlayMapTypes().getLength() - 1);
       layerLegend = layerInfos.get(layerSelected).getInstance().getLegend();
       if (layerLegend != null) {
-    	  map.setControls(ControlPosition.RIGHT_BOTTOM, layerLegend);
+    	  //RORO map.setControls(ControlPosition.RIGHT_BOTTOM, layerLegend);
+    	MapView.vCOntrolMap.add(layerLegend);
       }
       callback.onLayerSelected(layerInfo);
     }

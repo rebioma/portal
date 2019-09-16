@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.gwtopenmaps.openlayers.client.LonLat;
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
 import org.rebioma.client.i18n.AppConstants;
 
@@ -29,7 +30,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -152,7 +152,7 @@ public abstract class View extends Composite implements
      */
     protected static final String ASEARCH_VALUE = "value";
 
-    protected static final LatLng DEFAULT_CENTER = LatLng.newInstance(-19, 47);
+    protected static final LonLat DEFAULT_CENTER =new LonLat(47,-19);
     /**
      * A maps from a {@link CheckBox} index in a view to its checked values
      * (checked/unchecked).
@@ -325,12 +325,12 @@ public abstract class View extends Composite implements
      * 
      * @param urlParam the {@link UrlParam} that contains coordinate information
      */
-    protected LatLng latLngValue(UrlParam urlParam) {
+    protected LonLat latLngValue(UrlParam urlParam) {
       try {
         String[] point = stringValue(urlParam).split(",");
-        double lat = Double.parseDouble(point[0]);
-        double lng = Double.parseDouble(point[1]);
-        return LatLng.newInstance(lat, lng);
+        double lat = Double.parseDouble(point[1]);
+        double lng = Double.parseDouble(point[0]);
+        return new LonLat(lng, lat);
       } catch (Exception e) {
         return DEFAULT_CENTER;
       }
@@ -501,9 +501,9 @@ public abstract class View extends Composite implements
   private static class GeocoderResult extends Composite {
     private final VerticalPanel vp = new VerticalPanel();
 
-    public GeocoderResult(LatLng point, String address) {
+    public GeocoderResult(LonLat point, String address) {
       vp.add(new Label(address));
-      vp.add(new Label(point.getToUrlValue(7)));
+      vp.add(new Label(point.lon()+","+point.lat()));//.getToUrlValue(7)));
       initWidget(vp);
     }
   }

@@ -225,9 +225,7 @@ public class MarkerList extends Composite {
         LayerInfoPopup layerInfoPopup = LayerInfoPopup.getInstance();
         layerInfoPopup.loadLayersInfo(occurrenceMarkerManager.getOccurrence());
       }
-
     }
-
     public void setChecked(boolean checked) {
       checkBox.setValue(checked);
       showOrHideMarker();
@@ -246,7 +244,7 @@ public class MarkerList extends Composite {
      * otherwise.
      */
     private void showOrHideMarker() {
-      occurrenceMarkerManager.getMarker().setVisible(checkBox.getValue());
+      occurrenceMarkerManager.getMarkers().setIsVisible(checkBox.getValue());
     }
 
   }

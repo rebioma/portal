@@ -1,9 +1,14 @@
 package org.rebioma.client.maps;
 
+import org.gwtopenmaps.openlayers.client.Bounds;
+import org.gwtopenmaps.openlayers.client.Projection;
+import org.gwtopenmaps.openlayers.client.Size;
+import org.gwtopenmaps.openlayers.client.geometry.Point;
+import org.gwtopenmaps.openlayers.client.layer.Image;
+import org.gwtopenmaps.openlayers.client.layer.XYZ;
+import org.gwtopenmaps.openlayers.client.layer.XYZOptions;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.maps.client.base.Point;
-import com.google.gwt.maps.client.base.Size;
-import com.google.gwt.maps.client.maptypes.TileUrlCallBack;
 
 public class ModelEnvLayer extends AscTileLayer {
 
@@ -17,10 +22,10 @@ public class ModelEnvLayer extends AscTileLayer {
 
   public ModelEnvLayer(String ascFilePath, double opacity) {
 	  super();
-	  this.imageMapTypeOptions.setTileSize(Size.newInstance(256, 256));
-    this.imageMapTypeOptions.setOpacity(opacity);
+	  this.imageOptions.setLayerOpacity(0.5);//RORO imageMapTypeOptions.setTileSize(Size.newInstance(256, 256));
+    //RORO this.imageMapTypeOptions.setOpacity(opacity);
     baseUrl = GWT.getModuleBaseURL() + "ascOverlay?f=" + ascFilePath;
-    this.imageMapTypeOptions.setTileUrl(new TileUrlCallBack() {
+    /*this.imageMapTypeOptions.setTileUrl(new TileUrlCallBack() {
 		
 		@Override
 		public String getTileUrl(Point point,
@@ -31,7 +36,7 @@ public class ModelEnvLayer extends AscTileLayer {
 		    tileUrl += "&z=" + zoomLevel;
 		    return tileUrl;
 		}
-	});
+	});*/
   }
 
   @Override

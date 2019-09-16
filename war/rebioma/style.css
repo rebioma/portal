@@ -1,5 +1,3 @@
-@CHARSET "ISO-8859-1";
-
 .style-listbox {
 	width: 100%;
 	margin: 5px 0px;
@@ -72,7 +70,16 @@ Button:active {
 	position: relative;
 	top: 1px;
 }
-
+.tgbtstyle {
+	background: #ededed;
+	padding: 10px 50px;
+	border-radius: 5px;
+	border: none;
+	box-shadow: 1px 1px 8px 1px rgba(0, 0, 0, 0.32);
+	color: black;
+	height:30px;
+	margin: 10px 0px;
+}
 .btstyle {
 	background: #ededed;
 	padding: 10px 50px;
@@ -104,9 +111,7 @@ Button:active {
 .contentPanel {
 	background: #E1F5A9;
 }
-.contentFooter{
-	background:#0B3B0B;
-}
+
 .box1-content {
 	background: whitesmoke;
 	flex: 4;
@@ -126,4 +131,7 @@ Button:active {
 	Font-weight: BOLD;
 	Font-size: 20px;
 	color: grey;
+}
+.contentFooter{
+	background:#0B3B0B;
 }

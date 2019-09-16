@@ -15,13 +15,13 @@
  */
 package org.rebioma.client.maps;
 
+import org.gwtopenmaps.openlayers.client.LonLat;
 import org.rebioma.client.DataSwitch;
 import org.rebioma.client.bean.AscData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -40,7 +40,7 @@ public class EnvLayerLegend extends TileLayerLegend {
   private final Label minLabel = new Label();
   private final Label maxLabel = new Label();
   private final HTML valueHtml = new HTML();
-  protected LatLng lookupPoint;
+  protected LonLat lookupPoint;
   protected Double lookupValue;
 
   public EnvLayerLegend(AscData data) {
@@ -57,9 +57,8 @@ public class EnvLayerLegend extends TileLayerLegend {
    * executed.
    */
   @Override
-  public void lookupValue(final LatLng point, final LegendCallback callback) {
-    DataSwitch.get().getValue(data.getId(), point.getLatitude(),
-            point.getLongitude(), new AsyncCallback<Double>() {
+  public void lookupValue(final LonLat point, final LegendCallback callback) {
+    DataSwitch.get().getValue(data.getId(),point.lon(), point.lat(), new AsyncCallback<Double>() {
               public void onFailure(Throwable caught) {
               }
 
@@ -74,11 +73,11 @@ public class EnvLayerLegend extends TileLayerLegend {
   }
 
   @Override
-  public void setDisplay(LatLng point, String value) {
+  public void setDisplay(LonLat point, String value) {
     if (value == null) {
       value = "";
     }
-    String pointText = point.getToUrlValue(7);
+    String pointText = point.lon()+";"+point.lat();//RORO.getToUrlValue(7);
     if (value.length() < 1) {
       valueHtml.setHTML("No Data @ " + pointText);
     } else {
