@@ -1,0 +1,10 @@
+WMSParams wmsParams = new WMSParams();
+wmsParams.setFormat("image/png");
+wmsParams.setLayers("workspace:nom_couche");
+wmsParams.setStyles("style dans geoserver ");
+wmsParams.setParameter("transparent", "true");
+WMSOptions wmsLayerParams = new WMSOptions();
+wmsLayerParams.setUntiled();
+wmsLayerParams.setProjection("projection_code");
+wmsLayerParams.setTransitionEffect(TransitionEffect.RESIZE);
+String wmsUrl = "http:localhost:port/geoserver/workspace/wms";
