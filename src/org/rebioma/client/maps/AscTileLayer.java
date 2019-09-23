@@ -60,11 +60,6 @@ public abstract class AscTileLayer {
    //RORO  imageMapTypeOptions = ImageMapTypeOptions.newInstance();
     imageOptions = new ImageOptions();
     imageOptions.setIsBaseLayer(false);
-   /* Bounds b=new Bounds(42.30124, -26.5823, 51.14843, -11.36225);
-	b.transform(new Projection("EPSG:4326"), new Projection("EPSG:900913"));
-    imageOptions.setMaxExtent(b);
-    imageOptions.setMaxResolution(6);
-    imageOptions.setNumZoomLevels(10);*/
     imageOptions.setDisplayInLayerSwitcher(false);
   }
 
@@ -76,8 +71,9 @@ public abstract class AscTileLayer {
   }*/
   public Image asOverlay() {
 	    if (overlay == null) {
-	    	Bounds b=new Bounds(42.30124, -26.5823, 51.14843, -11.36225);
+	    	Bounds b=new Bounds(-180.0,-85.05112877980659,180.0,85.05112877980659);
 	    	b.transform(new Projection("EPSG:4326"), new Projection("EPSG:900913"));
+	    	overlay = new Image("", baseUrl, b, new Size(256,256), imageOptions);
 	    	overlay = new Image("", baseUrl, b, new Size(256,256), imageOptions);
 	    		  }
 	    return overlay;
