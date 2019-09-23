@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.gwtopenmaps.openlayers.client.layer.Image;
+import org.gwtopenmaps.openlayers.client.layer.TMS;
 import org.gwtopenmaps.openlayers.client.layer.XYZ;
 import org.rebioma.client.MapView;
 import org.rebioma.client.maps.AscTileLayer.LayerInfo;
@@ -163,7 +164,7 @@ public abstract class TileLayerSelector extends ListBox {
       setSelectedIndex(selectionNames.get(layerSelected));
       layerInfo = layerInfos.get(layerSelected);
       selectedLayer = layerInfo.getInstance();
-      Image overlay = selectedLayer.asOverlay();
+      TMS overlay = selectedLayer.asOverlay();
      //RORO
       map.getMap().addLayer(overlay);//.getOverlayMapTypes().push(overlay);
       //RORO selectedLayer.setMapIndex(map.getOverlayMapTypes().getLength() - 1);

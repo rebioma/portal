@@ -15,86 +15,80 @@
  */
 package org.rebioma.client.maps;
 
-import org.gwtopenmaps.openlayers.client.Bounds;
-import org.gwtopenmaps.openlayers.client.Projection;
-import org.gwtopenmaps.openlayers.client.Size;
-import org.gwtopenmaps.openlayers.client.layer.Image;
-import org.gwtopenmaps.openlayers.client.layer.ImageOptions;
-import org.gwtopenmaps.openlayers.client.layer.XYZ;
-import org.gwtopenmaps.openlayers.client.layer.XYZOptions;
+import org.gwtopenmaps.openlayers.client.layer.TMS;
+import org.gwtopenmaps.openlayers.client.layer.TMSOptions;
 
 /**
  * An abstract class that represents ASC tile layers.
  */
 public abstract class AscTileLayer {
-	
-	//protected final ImageMapTypeOptions imageMapTypeOptions;
-	protected final ImageOptions imageOptions;
 
-  /**
-   * Allows {@link AscTileLayer} objects to be lazy loaded.
-   */
-  public abstract static class LayerInfo {
-    private AscTileLayer instance;
+	protected final TMSOptions imageOptions;
 
-    public AscTileLayer getInstance() {
-      if (instance == null) {
-        instance = get();
-      }
-      return instance;
-    }
+	/**
+	 * Allows {@link AscTileLayer} objects to be lazy loaded.
+	 */
+	public abstract static class LayerInfo {
+		private AscTileLayer instance;
 
-    public abstract String getName();
+		public AscTileLayer getInstance() {
+			if (instance == null) {
+				instance = get();
+			}
+			return instance;
+		}
 
-    protected abstract AscTileLayer get();
-  }
-  
-  private int mapIndex;
+		public abstract String getName();
 
-  protected String baseUrl;
+		protected abstract AscTileLayer get();
+	}
 
- //RORO protected ImageMapType overlay;
-  protected Image overlay;
-  public AscTileLayer() {
-    super();
-   //RORO  imageMapTypeOptions = ImageMapTypeOptions.newInstance();
-    imageOptions = new ImageOptions();
-    imageOptions.setIsBaseLayer(false);
-    imageOptions.setDisplayInLayerSwitcher(false);
-  }
+	private int mapIndex;
 
- /* public ImageMapType asOverlay() {
-    if (overlay == null) {
-      overlay = ImageMapType.newInstance(imageMapTypeOptions);
-    }
-    return overlay;
-  }*/
-  public Image asOverlay() {
-	    if (overlay == null) {
-	    	Bounds b=new Bounds(-180.0,-85.05112877980659,180.0,85.05112877980659);
-	    	b.transform(new Projection("EPSG:4326"), new Projection("EPSG:900913"));
-	    	overlay = new Image("", baseUrl, b, new Size(256,256), imageOptions);
-	    	overlay = new Image("", baseUrl, b, new Size(256,256), imageOptions);
-	    		  }
-	    return overlay;
-	  }
-  public abstract TileLayerLegend getLegend();
-  
-  public int getMapIndex(){
-	  return mapIndex;
-  }
-  /**
-   * On memorise l'index de l'imageMapType quand il est ajouté au map
-   * @param idx
-   */
-  public void setMapIndex(int idx){
-	  this.mapIndex = idx;
-  }
-  
- /* public ImageMapTypeOptions getImageMapTypeOptions(){
-	  return imageMapTypeOptions;
-  }*/
-  public ImageOptions getImageMapTypeOptions(){
-	  return imageOptions;
-  }
+	protected String baseUrl;
+
+	protected TMS overlay;
+
+	public AscTileLayer() {
+		super();
+		imageOptions = new TMSOptions();
+		imageOptions.setIsBaseLayer(false);
+		imageOptions.setDisplayInLayerSwitcher(false);
+		imageOptions.setProjection("EPSG:900913");
+	}
+
+	/*
+	 * public ImageMapType asOverlay() { if (overlay == null) { overlay =
+	 * ImageMapType.newInstance(imageMapTypeOptions); } return overlay; }
+	 */
+	public TMS asOverlay() {
+		if (overlay == null) {
+			overlay = new TMS("", baseUrl, imageOptions);
+		}
+		return overlay;
+	}
+
+	public abstract TileLayerLegend getLegend();
+
+	public int getMapIndex() {
+		return mapIndex;
+	}
+
+	/**
+	 * On memorise l'index de l'imageMapType quand il est ajouté au map
+	 * 
+	 * @param idx
+	 */
+	public void setMapIndex(int idx) {
+		this.mapIndex = idx;
+	}
+
+	/*
+	 * public ImageMapTypeOptions getImageMapTypeOptions(){ return
+	 * imageMapTypeOptions; }
+	 */
+	public TMSOptions getImageMapTypeOptions() {
+		return imageOptions;
+	}
+
 }
