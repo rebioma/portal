@@ -290,8 +290,8 @@ GraphicService {
 		List<Occurrence> list = new ArrayList<Occurrence>();
 		String sql = "select year, count(id),count(reviewed) as reviewed" +
 				" from Occurrence " +
-				"where validationerror is null or validationerror not like '%Invalid YearCollected%' " +
-				"and year is not null group by year";
+				"where reviewed and year is not null or" +
+				" year is not null and validationerror not like '%Invalid YearCollected%' group by year";
 		System.out.println(sql);
 		Session sess = null;		
 		Connection conn =null;
