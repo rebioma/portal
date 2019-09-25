@@ -20,4 +20,5 @@ public interface GraphicServiceAsync {
 	void getCountMSpeciesGpByKingdomAndIUCN_cat(String kingdom,AsyncCallback<List<Taxonomy>> asyncCallback);
 	void getOccurrenceByRegion(AsyncCallback<List<GraphicModel>> asyncCallback);
 	void getOccPerYear(AsyncCallback<List<Occurrence>> asyncCallback);
+	void getOccPerYearBetween2date(String year1,String year2,AsyncCallback<List<Occurrence>> asyncCallback);
 }

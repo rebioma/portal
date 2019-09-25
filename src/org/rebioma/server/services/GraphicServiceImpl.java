@@ -604,5 +604,60 @@ GraphicService {
 		}	
 	return list;
 	}
-
+	@Override
+	public List<Occurrence> getOccPerYearBetween2date(String year1,String year2) {
+		List<Occurrence> list = new ArrayList<Occurrence>();
+		String sql = "select year, count(id),count(reviewed) as reviewed" +
+				" from Occurrence " +
+				"where reviewed and year is not null and year between '"+year1+"' and '"+year2+"' or" +
+				" year is not null and validationerror not like '%Invalid YearCollected%' and year between '"+year1+"' and '"+year2+"' group by year";
+		System.out.println(sql);
+		Session sess = null;		
+		Connection conn =null;
+		Statement st=null;
+		ResultSet rst=null;
+		try {
+			sess=HibernateUtil.getSessionFactory().openSession();
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		    session.beginTransaction();
+			conn=sess.connection();		
+			st = conn.createStatement();
+			rst = st.executeQuery(sql);
+			while(rst.next()) {		
+				Occurrence obj = new Occurrence();
+					obj.setYear(rst.getString("year"));
+					obj.setCount(rst.getInt("count"));
+					obj.setCountreviewed(rst.getInt("reviewed"));
+					list.add(obj);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}finally {		
+			if(rst!=null) {
+				try {
+					rst.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(st!=null) {
+				try {
+					st.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {					
+					e.printStackTrace();
+				}
+			}
+			if(sess!=null)
+				sess.close();
+		}	
+	return list;
+	}
 }

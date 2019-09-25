@@ -47,6 +47,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -86,6 +88,26 @@ public class GraphicsView extends ComponentView implements ClickHandler,
 		final Button btAllspecies = new Button(constants.AllSpecies());
 		final Button btAllTspecies = new Button(constants.TerrestrialSpecies());
 		final Button btAllMspecies = new Button(constants.MarineSpecies());
+		Label lbyear=new Label("A partir de l'année:");
+		Label lba=new Label("jusqu'à:");
+		Button btsearch= new Button(constants.Search());
+		final TextBox txyear1=new TextBox();
+		final TextBox txyear2=new TextBox();
+		VerticalPanel vpyear=new VerticalPanel();
+		vpyear.add(new HTML("<h1 style='text-align: center;Font-weight: BOLD;Font-size: 20px;color: grey;'>"
+		+constants.Search()+"</h1>"));
+		vpyear.add(lbyear);
+		vpyear.add(txyear1);
+		vpyear.add(lba);
+		vpyear.add(txyear2);
+		vpyear.add(btsearch);
+		vpyear.setSpacing(5);
+		final VerticalPanel vpchartoccyear=new VerticalPanel();
+		//vpchartoccyear.setHeaderVisible(false);
+		vpchartoccyear.setWidth("100%");
+		final HorizontalPanel hloccyear = new HorizontalPanel();
+		hloccyear.add(vpyear);
+		hloccyear.add(vpchartoccyear);
 		AbsolutePanel h1 = new AbsolutePanel();
 		ContentPanel h = new ContentPanel();
 		h.setBodyStyle("backgroundColor:#bac6d2");
@@ -500,13 +522,92 @@ public class GraphicsView extends ComponentView implements ClickHandler,
 			@Override
 			public void onClick(ClickEvent arg0) {
 				hchart.clear();
+				vpchartoccyear.clear();
+				vpchartoccyear.add(createChart());
 				VerticalLayoutContainer vpocc = new VerticalLayoutContainer();
 				vpocc.add(createOccColumnChart(), new VerticalLayoutData(1,
 						405, new Margins(10)));
-				vpocc.add(createChart(), new VerticalLayoutData(1, 405,
+				vpocc.add(hloccyear, new VerticalLayoutData(1, 405,
 						new Margins(10)));
 				vpocc.setScrollMode(ScrollMode.AUTO);
 				hchart.add(vpocc);
+			}
+		});
+		btsearch.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				String year1=txyear1.getText();
+				String year2=txyear2.getText();
+				final Chart chart = new Chart()
+				.setType(Series.Type.AREA)
+				.setChartTitleText(constants.OccurrencePerYear())
+				.setAreaPlotOptions(
+						new AreaPlotOptions().setMarker(new Marker()
+								.setEnabled(false)
+								.setSymbol(Marker.Symbol.CIRCLE).setRadius(2)
+								.setHoverState(new Marker().setEnabled(true)))
+
+				).setToolTip(new ToolTip().setFormatter(new ToolTipFormatter() {
+					public String format(ToolTipData toolTipData) {
+						return toolTipData.getSeriesName() +constants.lbl_count()+
+								+ toolTipData.getYAsLong()
+								+ "</b><br/>"+constants.Year()
+								+ toolTipData.getXAsLong();
+					}
+				}));
+
+		graphicService.getOccPerYearBetween2date(year1, year2,new AsyncCallback<List<Occurrence>>() {
+			@Override
+			public void onFailure(Throwable arg0) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(List<Occurrence> rs) {
+				String s[] = new String[rs.size()];
+				Number[] c = new Number[rs.size()];
+				Number[] ca = new Number[rs.size()];
+				for (int j = 0; j < rs.size(); j++)
+					s[j] = rs.get(j).getYear();
+				for (int i = 0; i < rs.size(); i++)
+					c[i] = rs.get(i).getCount();
+				for (int i = 0; i < rs.size(); i++)
+					ca[i] = rs.get(i).getCountreviewed();
+				chart.getXAxis()
+						.setCategories(s)
+						.setLabels(
+								new XAxisLabels()
+										.setFormatter(new AxisLabelsFormatter() {
+											public String format(
+													AxisLabelsData axisLabelsData) {
+												// clean, unformatted number for
+												// year
+												return String.valueOf(axisLabelsData
+														.getValueAsLong());
+											}
+										}));
+
+				chart.getYAxis()
+						.setAxisTitleText(constants.lbl_count())
+						.setLabels(
+								new YAxisLabels()
+										.setFormatter(new AxisLabelsFormatter() {
+											public String format(
+													AxisLabelsData axisLabelsData) {
+												return axisLabelsData
+														.getValueAsLong()
+														/ 1000 + "k";
+											}
+										}));
+
+				chart.addSeries(chart.createSeries()
+						.setName(constants.alloccurrence()).setPoints(c));
+				chart.addSeries(chart.createSeries()
+						.setName(constants.allreliable()).setPoints(ca));
+			}
+		});
+		vpchartoccyear.clear();
+		vpchartoccyear.add(chart);
 			}
 		});
 		btspecies.addClickHandler(new ClickHandler() {
@@ -736,7 +837,6 @@ public class GraphicsView extends ComponentView implements ClickHandler,
 	}
 
 	public Chart createChart() {
-
 		final Chart chart = new Chart()
 				.setType(Series.Type.AREA)
 				.setChartTitleText(constants.OccurrencePerYear())
@@ -1028,7 +1128,6 @@ public class GraphicsView extends ComponentView implements ClickHandler,
 	}
 
 	public Chart createPieChartTspecies() {
-
 		final Chart chart = new Chart()
 				.setType(Series.Type.PIE)
 				.setChartTitleText(

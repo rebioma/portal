@@ -21,5 +21,6 @@ public interface GraphicService extends RemoteService {
 	List<Taxonomy> getCountSpeciesMarinGpByIUCN_Status();
 	List<Taxonomy> getCountMSpeciesGpByKingdomAndIUCN_cat(String kingdom);
 	List<Occurrence> getOccPerYear();
+	List<Occurrence> getOccPerYearBetween2date(String year1,String year2);
 	List<GraphicModel> getOccurrenceByRegion();
 }
