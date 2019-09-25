@@ -1770,7 +1770,7 @@ private static class MapGeocoderResult extends Composite {
 
 		WMSParams wmsParams = new WMSParams();
 		wmsParams.setFormat("image/png");
-		wmsParams.setLayers("portal:AP");
+		wmsParams.setLayers("portal:protected_areas");
 		//wmsParams.setStyles("AP_bycat_UICN_style");
 		wmsParams.setParameter("transparent", "true");
 		WMSOptions wmsLayerParams = new WMSOptions();
