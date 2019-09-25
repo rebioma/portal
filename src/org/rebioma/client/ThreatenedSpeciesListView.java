@@ -102,39 +102,42 @@ public class ThreatenedSpeciesListView extends ComponentView implements
 										@Override
 										public void onSuccess(List<Taxonomy> rs) {
 											flexTable.removeAllRows();
+											for (int col = 0; col < 8; col++) {
+												flexTable.getCellFormatter().addStyleName(0, col, "FlexTable_header");
+											}
 											for (int row = 1; row < (rs.size()+1); row++) {
-												flexTable.setText(0, 0,la.getText().toUpperCase());
+												flexTable.setText(0, 0,la.getText());
 												flexTable.setText(row, 0, rs.get(row-1)
-														.getAcceptedSpecies().toLowerCase());
+														.getAcceptedSpecies());
 												flexTable.setText(0, 1,
-													lk.getText().toUpperCase());
+													lk.getText());
 												flexTable.setText(row, 1, rs
-														.get(row-1).getKingdom().toLowerCase());
+														.get(row-1).getKingdom());
 												flexTable.setText(0, 2,
-													lp.getText().toUpperCase());
+													lp.getText());
 												flexTable.setText(row, 2, rs
-														.get(row-1).getPhylum().toLowerCase());
+														.get(row-1).getPhylum());
 												flexTable
-													.setText(0, 3, lc.getText().toUpperCase());
+													.setText(0, 3, lc.getText());
 												flexTable.setText(row, 3, rs
-														.get(row-1).getClass_().toLowerCase());
+														.get(row-1).getClass_());
 												flexTable
-													.setText(0, 4, lo.getText().toUpperCase());
+													.setText(0, 4, lo.getText());
 												flexTable.setText(row, 4, rs
-														.get(row-1).getOrder().toLowerCase());
+														.get(row-1).getOrder());
 												flexTable.setText(0, 5,
-													lf.getText().toUpperCase());
+													lf.getText());
 												flexTable.setText(row, 5, rs
-														.get(row-1).getFamily().toLowerCase());
+														.get(row-1).getFamily());
 												flexTable
-														.setText(0, 6, lg.getText().toUpperCase());
+														.setText(0, 6, lg.getText());
 												flexTable.setText(row, 6, rs
-														.get(row-1).getGenus().toLowerCase());
+														.get(row-1).getGenus());
 												flexTable.setText(0, 7,
-														ls.getText().toUpperCase());
+														ls.getText());
 												flexTable.setText(row, 7, rs
 														.get(row-1)
-														.getSpecificEpithet().toLowerCase());
+														.getSpecificEpithet());
 											}
 										}
 									});
