@@ -3356,4 +3356,13 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
 	  @Key("DeforestationMap")
 	  String DeforestationMap();
 	  
+	  @DefaultStringValue("From the year:")
+	  @Key("From_the_year")
+	  String From_the_year();
+	  
+	  @DefaultStringValue("until:")
+	  @Key("until")
+	  String until();
+	  
+	
 }

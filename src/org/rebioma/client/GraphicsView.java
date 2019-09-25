@@ -88,8 +88,8 @@ public class GraphicsView extends ComponentView implements ClickHandler,
 		final Button btAllspecies = new Button(constants.AllSpecies());
 		final Button btAllTspecies = new Button(constants.TerrestrialSpecies());
 		final Button btAllMspecies = new Button(constants.MarineSpecies());
-		Label lbyear=new Label("A partir de l'année:");
-		Label lba=new Label("jusqu'à:");
+		Label lbyear=new Label(constants.From_the_year());
+		Label lba=new Label(constants.until());
 		Button btsearch= new Button(constants.Search());
 		final TextBox txyear1=new TextBox();
 		final TextBox txyear2=new TextBox();
@@ -522,6 +522,8 @@ public class GraphicsView extends ComponentView implements ClickHandler,
 			@Override
 			public void onClick(ClickEvent arg0) {
 				hchart.clear();
+				txyear1.setText("");
+				txyear2.setText("");
 				vpchartoccyear.clear();
 				vpchartoccyear.add(createChart());
 				VerticalLayoutContainer vpocc = new VerticalLayoutContainer();
