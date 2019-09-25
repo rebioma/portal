@@ -24,8 +24,6 @@ import org.rebioma.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.maps.client.LoadApi;
-import com.google.gwt.maps.client.LoadApi.LoadLibrary;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -95,7 +93,7 @@ public class Portal implements EntryPoint {
 
   }
   
-  private void loadMapApi() {
+ /*RORO private void loadMapApi() {
 	  boolean sensor = true;
 
 	    // load all the libs for use in the maps
@@ -116,7 +114,7 @@ public class Portal implements EntryPoint {
 
 	    LoadApi.go(onLoad, loadLibraries, sensor);
   }
-
+*/
   /**
    * Checks the current session via RPC. Updates application state. Updates all
    * tab widgets with new application state.

@@ -123,7 +123,11 @@ Button:active {
 	Font-size: 20px;
 	color: grey;
 }
-
+.FlexTable_header {
+	Font-weight: BOLD;
+	Font-size: 18px;
+	border:1px;
+}
 .contentFooter{
 	background:#0B3B0B;
 }

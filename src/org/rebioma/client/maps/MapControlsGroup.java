@@ -3,7 +3,7 @@ package org.rebioma.client.maps;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.rebioma.client.maps.TileLayerSelector.TileLayerCallback;
 
-import com.google.gwt.maps.client.services.GeocoderRequestHandler;
+//RORO import com.google.gwt.maps.client.services.GeocoderRequestHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -18,11 +18,11 @@ public class MapControlsGroup extends VerticalPanel {
 	
 	private TileLayerSelector tileLayerSelector;
 	
-	public MapControlsGroup(TileLayerCallback callback, GeocoderRequestHandler requestHandler){
+	public MapControlsGroup(TileLayerCallback callback/*RORO , GeocoderRequestHandler requestHandler*/){
 		super();
-		this.geocoder = new GeocoderControl(requestHandler);
+		//RORO this.geocoder = new GeocoderControl(requestHandler);
 		this.tileLayerSelector = new EnvLayerSelector(callback);
-		this.add(geocoder);
+		//RORO this.add(geocoder);
 		this.add(tileLayerSelector);
 		this.setCellHorizontalAlignment(getTable(), ALIGN_LEFT);
 		this.addStyleName("table-right");

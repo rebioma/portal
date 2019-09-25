@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.rebioma.client.bean.ShapeFileInfo;
 
-import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

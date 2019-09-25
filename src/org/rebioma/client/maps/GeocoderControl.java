@@ -23,9 +23,6 @@ import org.gwtopenmaps.openlayers.client.layer.Markers;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.maps.client.services.Geocoder;
-import com.google.gwt.maps.client.services.GeocoderRequest;
-import com.google.gwt.maps.client.services.GeocoderRequestHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -60,14 +57,14 @@ public class GeocoderControl extends FlowPanel {
 	}
 
 	// private Map<String, LatLng> cache;
-	private final Geocoder geocoder;
+	/*RORO private final Geocoder geocoder;
 	private final GeocoderRequest geocoderRequest;
 	private final GeocoderRequestHandler geocoderRequestHandler;
 	private final TextBox addressBox = new TextBox();
-
+*/
 	private Button submit;
 
-	public GeocoderControl(GeocoderRequestHandler requestHandler) {
+/*	RORO public GeocoderControl(GeocoderRequestHandler requestHandler) {
 		super();
 		this.geocoderRequestHandler = requestHandler;
 		this.geocoderRequest = GeocoderRequest.newInstance();
@@ -101,11 +98,11 @@ public class GeocoderControl extends FlowPanel {
 			}
 		});
 		add(form);
-	}
+	}*/
 
-	public String getAddress() {
+	/* RORO public String getAddress() {
 		return addressBox.getText();
-	}
+	}*/
 
 	// public LatLng getCachedPoint(String address) {
 	// if (cache == null) {
@@ -115,16 +112,16 @@ public class GeocoderControl extends FlowPanel {
 	// }
 
 	public void lookupAddress(final String address) {
-		lookupAddress(address, this.geocoderRequestHandler);
+		//RORO lookupAddress(address, this.geocoderRequestHandler);
 	}
 
-	public void lookupAddress(final String address,
+	/*RORO public void lookupAddress(final String address,
 			GeocoderRequestHandler requestHandler) {
 		geocoderRequest.setAddress(address);
 		geocoder.geocode(geocoderRequest, requestHandler);
-	}
+	}*/
 
 	public void setAddress(String address) {
-		addressBox.setText(address);
+		//RORO addressBox.setText(address);
 	}
 }

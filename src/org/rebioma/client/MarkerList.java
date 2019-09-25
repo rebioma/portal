@@ -189,7 +189,7 @@ public class MarkerList extends Composite {
 
       vp.add(taxonimicValue);
       HorizontalPanel mainHp = new HorizontalPanel();
-      mainHp.add(checkBox);
+    //  mainHp.add(checkBox);
       mainHp.add(markerImg);
       mainHp.add(vp);
       mainHp.setSpacing(5);
@@ -219,8 +219,8 @@ public class MarkerList extends Composite {
       } else if (source == idLink) {
         fireOnSpeciesSelect(this);
       } else if (source == checkBox) {
-        showOrHideMarker();
-        fireOnCheckedSelect();
+    	        showOrHideMarker();
+    	        fireOnCheckedSelect();
       } else if (source == showLayersLink) {
         LayerInfoPopup layerInfoPopup = LayerInfoPopup.getInstance();
         layerInfoPopup.loadLayersInfo(occurrenceMarkerManager.getOccurrence());
@@ -244,9 +244,9 @@ public class MarkerList extends Composite {
      * otherwise.
      */
     private void showOrHideMarker() {
-      occurrenceMarkerManager.getMarkers().setIsVisible(checkBox.getValue());
+    		 occurrenceMarkerManager.getMarkers().setIsVisible(checkBox.getValue());
     }
-
+  
   }
 
   private static final String MARKER_ITEM_STYLE = "Marker-Item";

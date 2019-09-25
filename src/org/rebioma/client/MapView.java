@@ -31,7 +31,6 @@ package org.rebioma.client;
  * the License.
  */
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,16 +39,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.gwtopenmaps.openlayers.client.Bounds;
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.MapOptions;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.gwtopenmaps.openlayers.client.Marker;
 import org.gwtopenmaps.openlayers.client.OpenLayers;
 import org.gwtopenmaps.openlayers.client.Projection;
-import org.gwtopenmaps.openlayers.client.Size;
 import org.gwtopenmaps.openlayers.client.Style;
-import org.gwtopenmaps.openlayers.client.StyleMap;
 import org.gwtopenmaps.openlayers.client.control.DrawFeature;
 import org.gwtopenmaps.openlayers.client.control.DrawFeatureOptions;
 import org.gwtopenmaps.openlayers.client.control.LayerSwitcher;
@@ -59,28 +55,19 @@ import org.gwtopenmaps.openlayers.client.control.MousePositionOutput;
 import org.gwtopenmaps.openlayers.client.control.OverviewMap;
 import org.gwtopenmaps.openlayers.client.control.ScaleLine;
 import org.gwtopenmaps.openlayers.client.control.SelectFeature;
-import org.gwtopenmaps.openlayers.client.control.Snapping;
 import org.gwtopenmaps.openlayers.client.event.EventType;
 import org.gwtopenmaps.openlayers.client.event.FeatureHighlightedListener;
 import org.gwtopenmaps.openlayers.client.event.MapClickListener;
 import org.gwtopenmaps.openlayers.client.event.MapLayerChangedListener;
 import org.gwtopenmaps.openlayers.client.event.MapZoomListener;
 import org.gwtopenmaps.openlayers.client.event.MarkerBrowserEventListener;
-import org.gwtopenmaps.openlayers.client.event.VectorFeatureSelectedListener;
 import org.gwtopenmaps.openlayers.client.feature.VectorFeature;
-import org.gwtopenmaps.openlayers.client.filter.ComparisonFilter;
-import org.gwtopenmaps.openlayers.client.filter.ComparisonFilter.Types;
-import org.gwtopenmaps.openlayers.client.format.GeoJSON;
 import org.gwtopenmaps.openlayers.client.format.KML;
+import org.gwtopenmaps.openlayers.client.handler.PathHandler;
 import org.gwtopenmaps.openlayers.client.handler.PolygonHandler;
-import org.gwtopenmaps.openlayers.client.layer.EmptyLayer;
-import org.gwtopenmaps.openlayers.client.layer.EmptyLayer.Options;
 import org.gwtopenmaps.openlayers.client.layer.GoogleV3;
 import org.gwtopenmaps.openlayers.client.layer.GoogleV3MapType;
 import org.gwtopenmaps.openlayers.client.layer.GoogleV3Options;
-import org.gwtopenmaps.openlayers.client.layer.Image;
-import org.gwtopenmaps.openlayers.client.layer.ImageOptions;
-import org.gwtopenmaps.openlayers.client.layer.JsonLayerCreator;
 import org.gwtopenmaps.openlayers.client.layer.Layer;
 import org.gwtopenmaps.openlayers.client.layer.Markers;
 import org.gwtopenmaps.openlayers.client.layer.OSM;
@@ -95,14 +82,10 @@ import org.gwtopenmaps.openlayers.client.popup.Popup;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocol;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocolOptions;
 import org.gwtopenmaps.openlayers.client.protocol.Protocol;
-import org.gwtopenmaps.openlayers.client.protocol.WFSProtocol;
-import org.gwtopenmaps.openlayers.client.protocol.WFSProtocolOptions;
 import org.gwtopenmaps.openlayers.client.strategy.BBoxStrategy;
 import org.gwtopenmaps.openlayers.client.strategy.FixedStrategy;
 import org.gwtopenmaps.openlayers.client.strategy.RefreshStrategy;
 import org.gwtopenmaps.openlayers.client.strategy.Strategy;
-import org.gwtopenmaps.openlayers.client.style.Rule;
-import org.gwtopenmaps.openlayers.client.style.SymbolizerPolygon;
 import org.rebioma.client.DataPager.PageListener;
 import org.rebioma.client.DetailView.FieldConstants;
 import org.rebioma.client.MarkerList.CheckedSelectionListener;
@@ -117,9 +100,7 @@ import org.rebioma.client.bean.ShapeFileInfo;
 import org.rebioma.client.maps.AscTileLayer.LayerInfo;
 import org.rebioma.client.maps.GeocoderControl;
 import org.rebioma.client.maps.HideControl;
-import org.rebioma.client.maps.KmlGenerator;
 import org.rebioma.client.maps.MapControlsGroup;
-import org.rebioma.client.maps.MapDrawingControlListener;
 import org.rebioma.client.maps.ModelEnvLayer;
 import org.rebioma.client.maps.ModelingControl;
 import org.rebioma.client.maps.OccurrenceMarkerManager;
@@ -130,8 +111,6 @@ import org.rebioma.client.maps.TileLayerSelector;
 import org.rebioma.client.maps.TileLayerSelector.TileLayerCallback;
 import org.rebioma.client.services.MapGisService;
 import org.rebioma.client.services.MapGisServiceAsync;
-
-import com.google.gwt.ajaxloader.client.ArrayHelper;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.JsArray;
@@ -149,19 +128,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.maps.client.base.LatLng;
-import com.google.gwt.maps.client.mvc.MVCArray;
-import com.google.gwt.maps.client.mvc.MVCArrayCallback;
-import com.google.gwt.maps.client.overlays.InfoWindow;
-import com.google.gwt.maps.client.overlays.InfoWindowOptions;
-import com.google.gwt.maps.client.overlays.Polygon;
-import com.google.gwt.maps.client.overlays.PolygonOptions;
-import com.google.gwt.maps.client.services.GeocoderRequestHandler;
-import com.google.gwt.maps.client.services.GeocoderStatus;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -195,8 +161,6 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.Verti
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
-import org.gwtopenmaps.openlayers.client.handler.PathHandler;
-
 /**
  * A type of view that shows a Google map displaying pageable occurrence data
  * represented as markers.
@@ -204,8 +168,7 @@ import org.gwtopenmaps.openlayers.client.handler.PathHandler;
 public class MapView extends ComponentView implements CheckedSelectionListener,
 		DataRequestListener, PageClickListener, PageListener<Occurrence>,
 		TileLayerCallback, ItemSelectionListener, SelectionHandler<Widget>,
-		OccurrencePageSizeChangeHandler, GeocoderRequestHandler,
-		MapDrawingControlListener, AsyncCallback<String> {
+		OccurrencePageSizeChangeHandler,/*RORO GeocoderRequestHandler,*/AsyncCallback<String> {
 
 	/**
 	 * Manage history states of map View.
@@ -282,13 +245,13 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
 	}
 
-	private static class MapGeocoderResult extends Composite {
+private static class MapGeocoderResult extends Composite {
 		private final VerticalPanel vp = new VerticalPanel();
 
-		public MapGeocoderResult(LatLng point, String address) {
+		public MapGeocoderResult(LonLat point, String address) {
 			vp.add(new Label(address));
 			vp.setStyleName("address");
-			vp.add(new Label(point.getToUrlValue(7)));
+			vp.add(new Label(point.lon()+","+point.lat()));//RORO
 			vp.setStyleName("latlong");
 			initWidget(vp);
 		}
@@ -442,7 +405,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
 		private void clearThisOverlay() {
 			if (envLayer != null) {
-				map.getMap().removeLayer(envLayer.asOverlay());
+			//RORO	map.getMap().removeLayer(envLayer.asOverlay());
 			}
 
 		}
@@ -661,7 +624,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 			if (source == detailLink) {
 				if (occurrence != null) {
 					parent.switchView(DETAIL, false);
-					closeInfoWindows();
+					//RORO closeInfoWindows();
 					occurrenceListener.onOccurrenceSelected(occurrence);
 				}
 			} else if (source == showLayersLink) {
@@ -686,7 +649,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
 	private LonLat lookupPoint;
 
-	private final Set<InfoWindow> infoWindows = new HashSet<InfoWindow>();
+	//RORO private final Set<InfoWindow> infoWindows = new HashSet<InfoWindow>();
 
 	/**
 	 * Far enough out to show the entire country of Madagascar on a 800x600
@@ -911,7 +874,9 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 	private SelectFeature deleteFeatureControl = null;
 	private final VerticalPanel APPan = new VerticalPanel();
 	private final VerticalPanel deforestationPan = new VerticalPanel();
-	private VerticalPanel layerPan = new VerticalPanel();
+	private VerticalLayoutContainer layerPan = new VerticalLayoutContainer();
+	private HorizontalPanel hplayerPan = new HorizontalPanel();
+
 
 	private MapView(View parent, OccurrenceQuery query,
 			PageListener<Occurrence> pageListener, boolean isDefaultView,
@@ -943,7 +908,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 			}
 
 		};
-		this.controlsGroup = new MapControlsGroup(this, this);
+		this.controlsGroup = new MapControlsGroup(this);//RORO
 		envLayerSelector = controlsGroup.getLayerSelector();
 		geocoder = controlsGroup.getGeocoder();
 		initMap();
@@ -969,16 +934,33 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		// mdspanel.add(modelSearch);
 		HorizontalPanel hpAP = new HorizontalPanel();
 		HorizontalPanel hpd = new HorizontalPanel();
+		HorizontalPanel APhp=new HorizontalPanel();
+		HorizontalPanel hpFC=new HorizontalPanel();
+		Label lbap = new Label(constants.AP());
+		Label lbd = new Label(constants.DeforestationMap());
+		APhp.add(lbap);
+		APhp.add(new HTML("<a>Source: SAPM 2017</a>"));
+		APhp.setSpacing(10);
+		hpFC.add(lbd);
+		hpFC.add(new HTML("<a target='_blank' href='https://bioscenemada.cirad.fr/maps/'>Source</a>"));
+		hpFC.setSpacing(10);
 		hpAP.add(APPan);
 		hpd.add(deforestationPan);
 		APPan.setSpacing(5);
 		deforestationPan.setSpacing(5);
-		layerPan.add(hpAP);
-		layerPan.add(hpd);
+		layerPan.add(APhp, new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 0)));
+		layerPan.add(hpAP, new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 0)));
+		layerPan.add(hpFC, new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 0)));
+		layerPan.add(hpd, new VerticalLayoutData(1, 300, new Margins(
+				0, 0, 0, 0)));
+		hplayerPan.add(layerPan);
 		currentTab = mrspanel;
 		leftTab.add(mrspanel, markerTb);
 		leftTab.add(modelTab, modelTb);
-		leftTab.add(layerPan, constants.Layers());// Add Model Tab
+		leftTab.add(hplayerPan, constants.Layers());// Add Model Tab
 		setDateModel("String dmggfd");
 		// init model affichage
 		String modelSearchTerm = historyState.getHistoryParameters(
@@ -1004,7 +986,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		leftTab.setHeight(Window.getClientHeight() - 183);
 		// leftTab.setHeight(450);
 		leftTabPanel = new ContentPanel();
-		leftTabPanel.setHeaderVisible(false);
+		//leftTabPanel.setHeaderVisible(false);
 		// leftTabPanel.setHeadingHtml();
 		leftTabPanel.setBorders(false);
 		leftTabPanel.setBodyBorder(false);
@@ -1027,11 +1009,13 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		hpButtons = new HorizontalPanel();
 		vCOntrolMap.add(hpButtons);
 		panel.add(vCOntrolMap);
+		ContentPanel pan=new ContentPanel();
+		pan.add(panel);
 		hpButtons.add(drawPolygonButton);
 		hpButtons.add(navigateButton);
 		con.setWestWidget(leftTabPanel, westData);
 		con.setCenterWidget(mapPanel, centerData);
-		con.setEastWidget(panel, eastData);
+		con.setEastWidget(pan, eastData);
 		// HorizontalPanel toolHp = new HorizontalPanel();
 		toolHp = new ToolBar();
 		// {WD force toolbar layout view
@@ -1425,7 +1409,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 				.equalsIgnoreCase(MAP);
 	}
 
-	protected void mapGeocoderResult(
+	/* RORO protected void mapGeocoderResult(
 			JsArray<com.google.gwt.maps.client.services.GeocoderResult> results) {
 		String address = geocoder.getAddress();
 		StringBuilder sb = new StringBuilder();
@@ -1456,11 +1440,11 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 			 * infoWindows.add(content); } });
 			 */
 			// RORO geocoderMarkers.add(geocoderMarker);
-		}
+		/*RORO }
 		if (results.length() == 1 && point != null) {
 			// RORO map.setCenter(point);
 		}
-	}
+	}*/
 
 	protected void resetToDefaultState() {
 		historyState.clearChecksState();
@@ -1544,12 +1528,12 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 			map.getMap().getCenter().lat();
 			break;
 		case ADDRESS:
-			String address = geocoder.getAddress();
+			/*RORO String address = geocoder.getAddress();
 			if ((address != null) && (address.length() > 0)) {
 				query += geocoder.getAddress();
 			} else {
 				query = "";
-			}
+			}*/
 			break;
 		case LEFT_TAB:
 			int index = leftTab.getWidgetIndex(leftTab.getActiveWidget());// leftTab.getTabBar().getSelectedTab();
@@ -1743,24 +1727,6 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		return a;
 	}
 
-	private void drawPolygon(LatLng a[]) {
-
-		JsArray<LatLng> paths = ArrayHelper.toJsArray(a);
-
-		PolygonOptions pOpts = PolygonOptions.newInstance();
-		pOpts.setFillColor("#0000FF");
-		pOpts.setStrokeColor("FFFFFF");
-		pOpts.setFillOpacity(0.0);
-		pOpts.setStrokeOpacity(0.9d);
-		pOpts.setStrokeWeight(1);
-		pOpts.setPaths(paths);
-		// RORO pOpts.setMap(map);
-		@SuppressWarnings("unused")
-		Polygon polygon = Polygon.newInstance(pOpts);
-
-		// mapPanel.add(map);
-	}
-
 	private static final Projection DEFAULT_PROJECTION = new Projection(
 			"EPSG:4326");
 
@@ -1784,10 +1750,6 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		GoogleV3 gSatellite = new GoogleV3("Google Satellite",
 				gSatelliteOptions);
 		map.getMap().addLayers(new Layer[] { gHybrid, gSatellite });
-		Label lbap = new Label(constants.AP());
-		Label lbd = new Label(constants.DeforestationMap());
-		APPan.add(lbap);
-		deforestationPan.add(lbd);
 		// / Checkbox pour les autres couches
 		final CheckBox checkBoxAP = new CheckBox(constants.AP());
 		final CheckBox checkBoxfor1953 = new CheckBox(constants.DeforestationMap()+" 1953");
@@ -2177,14 +2139,14 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		map.getMap().addMapLayerChangedListener(mapTypeHandler);
 	}
 
-	private void closeInfoWindows() {
+/*RORO	private void closeInfoWindows() {
 		for (InfoWindow w : infoWindows) {
 			if (w != null) {
 				w.close();
 			}
 		}
 		infoWindows.clear();
-	}
+	}*/
 
 	private void mapOccurrenceMarkers(List<Occurrence> occurrences) {
 		OccurrenceMarkerManager.resetIcons();
@@ -2246,7 +2208,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		if (summaryContent == null) {
 			summaryContent = new OccurrenceSummaryContent();
 		}
-		closeInfoWindows();
+		//RORO closeInfoWindows();
 		summaryContent.loadOccurrenceInfo(occurrenceMarkerManager
 				.getOccurrence());
 		OptionsManager op = new OptionsManager();
@@ -2305,7 +2267,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 		return pager;
 	}
 
-	@Override
+	/*RORO @Override
 	public void onCallback(
 			JsArray<com.google.gwt.maps.client.services.GeocoderResult> results,
 			GeocoderStatus status) {
@@ -2320,7 +2282,7 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 				map.getMap().removeLayer(marker);
 			}
 		}
-	}
+	}*/
 
 	public void forceLayout() {
 		toolHp.forceLayout();
@@ -2339,77 +2301,6 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 				.getOccurrenceView();
 		occView.getSearchForm().search();
 	}
-
-	/**
-	 * appeler quand l'user a fini de dessiner un polygone sur le map (à l'aide
-	 * du control MapDrawingControl)
-	 */
-	@Override
-	public void polygonDrawingCompleteHandler(Polygon polygon) {
-		// final List<LatLng> coords = new ArrayList<LatLng>();
-		if (polygon != null) {
-			/*
-			 * polygon.getPath().forEach(new MVCArrayCallback<LatLng>() {
-			 * 
-			 * @Override public void forEach(LatLng arg0, int arg1) {
-			 * coords.add(arg0); } });
-			 */
-			final StringBuilder kmlBuilder = new StringBuilder();
-			kmlBuilder
-					.append("<Polygon><outerBoundaryIs><LinearRing><coordinates>");
-
-			MVCArray<LatLng> coords = polygon.getPath();
-			LatLng debutLatLng = coords.get(0);
-			coords.forEach(new MVCArrayCallback<LatLng>() {
-				@Override
-				public void forEach(LatLng latLng, int arg1) {
-					kmlBuilder.append(latLng.getLongitude()).append(",")
-							.append(latLng.getLatitude()).append(",0.0 ");
-				}
-			});
-			// on ferme le "LinearRing" en ajoutant les coordonnées de depart à
-			// la fin
-			kmlBuilder.append(debutLatLng.getLongitude()).append(",")
-					.append(debutLatLng.getLatitude()).append(",0.0 ");
-
-			kmlBuilder
-					.append("</coordinates></LinearRing></outerBoundaryIs></Polygon>");
-			kmlBuilder.toString();
-			String kml = kmlBuilder.toString();// RORO
-												// KmlGenerator.polygon2Kml(polygon);
-			GWT.log("Polygon completed paths=" + kml);
-			/*
-			 * Window.alert(" Representation en kml du polygon\n" + kml);
-			 * pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
-			 * pager.getQuery().getOccurrenceIdsFilter().add(115408);//teste
-			 * requestData(1);
-			 */
-			Mask.mask((XElement) map.getElement(), "Loading");
-			mapGisService.findOccurrenceIdByGeom(kml,
-					new AsyncCallback<List<Integer>>() {
-						@Override
-						public void onSuccess(List<Integer> result) {
-							reloadPageWithOccurrenceIds(result);
-							Mask.unmask((XElement) map.getElement());
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							Mask.unmask((XElement) map.getElement());
-							Window.alert("Failure =>" + caught.getMessage());
-						}
-					});
-		}
-	}
-
-	@Override
-	public void polygonDeletedHandler() {
-		pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
-		OccurrenceView occView = ApplicationView.getApplication()
-				.getOccurrenceView();
-		occView.getSearchForm().search();
-	}
-
 	private Map<String, List<Integer>> getTableGidsMap(
 			List<ShapeFileInfo> shapeFileInfos) {
 		Map<String, List<Integer>> tableGidsMap = new HashMap<String, List<Integer>>();
