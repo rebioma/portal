@@ -150,7 +150,7 @@ public abstract class TileLayerSelector extends ListBox {
     }
     LayerInfo layerInfo = null;
     if (selectedLayer != null) {
-    	//RORO map.getOverlayMapTypes().removeAt(selectedLayer.getMapIndex());
+    	 map.getMap().removeLayer(selectedLayer.asOverlay());
     }
     if (layerLegend != null) {
     	layerLegend.removeFromParent();
