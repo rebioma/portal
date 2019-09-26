@@ -575,8 +575,8 @@ private static class MapGeocoderResult extends Composite {
 			showLayersLink.setStyleName("showlayerslink");
 			VerticalPanel vp = new VerticalPanel();
 			vp.add(occurrenceInfo);
-			vp.add(showLayersLink);
-			vp.add(detailLink);
+			//vp.add(showLayersLink);
+			//vp.add(detailLink);
 			initWidget(vp);
 			detailLink.addClickHandler(this);
 			showLayersLink.addClickHandler(this);
@@ -775,7 +775,7 @@ private static class MapGeocoderResult extends Composite {
 		@Override
 		public void onClick(MapClickEvent mapClickEvent) {
 			if (envLayerInfo != null) {
-				LonLat point = mapClickEvent.getLonLat();// RORO.getMouseEvent().getLatLng();
+				LonLat point = mapClickEvent.getLonLat();
 				point.transform(map.getMap().getProjection(),
 						DEFAULT_PROJECTION.getProjectionCode());
 				TileLayerLegend legend = envLayerInfo.getInstance().getLegend();
