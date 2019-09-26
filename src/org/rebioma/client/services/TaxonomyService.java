@@ -12,4 +12,5 @@ public interface TaxonomyService extends RemoteService {
 	List<Taxonomy> getKingdom();
 	List<Taxonomy> getKingdomT();
 	List<Taxonomy> getKingdomM();
+	public void majstatut_iucn_occ();
 }

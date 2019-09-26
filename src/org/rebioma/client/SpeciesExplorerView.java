@@ -402,9 +402,20 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 											});
 								}
 							}
-							MessageBox messageBox = new MessageBox("Information");
-							messageBox.add(new HTML("<center>"+constants.update_IUCN_successful()+"</center>"));
-							messageBox.show();	
+							txService.majstatut_iucn_occ(new AsyncCallback<Void>(){
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert(constants.verifyConnection());
+								}
+
+								@Override
+								public void onSuccess(Void result) {
+									MessageBox messageBox = new MessageBox("Information");
+									messageBox.add(new HTML("<center>"+constants.update_IUCN_successful()+"</center>"));
+									messageBox.show();
+								}
+								
+							});	
 						} else {
 							Window.alert(constants.verifyConnection());
 						}

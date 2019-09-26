@@ -11,5 +11,6 @@ public interface TaxonomyServiceAsync {
 	 public void getKingdom(AsyncCallback<List<Taxonomy>> callback);
 	 public void getKingdomT(AsyncCallback<List<Taxonomy>> callback);
 	 public void getKingdomM(AsyncCallback<List<Taxonomy>> callback);
+	 public void majstatut_iucn_occ(AsyncCallback<Void> callback);
 }
 

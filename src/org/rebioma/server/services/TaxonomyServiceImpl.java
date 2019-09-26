@@ -317,4 +317,15 @@ public class TaxonomyServiceImpl extends RemoteServiceServlet implements
 		}	
 	return list;
 	}
+	public void majstatut_iucn_occ(){
+		try {
+			String sql = "UPDATE Occurrence set iucn_status=Taxonomy.iucn from Taxonomy where Taxonomy.acceptedspecies=concat(Occurrence.genus,' ',Occurrence.specificepithet)";
+			Session session = ManagedSession.createNewSessionAndTransaction();
+			pstm=session.connection().prepareStatement(sql);
+			pstm.executeUpdate();
+			ManagedSession.commitTransaction(session);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+}
 }
