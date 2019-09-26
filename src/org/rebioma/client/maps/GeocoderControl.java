@@ -57,18 +57,18 @@ public class GeocoderControl extends FlowPanel {
 	}
 
 	// private Map<String, LatLng> cache;
-	/*RORO private final Geocoder geocoder;
-	private final GeocoderRequest geocoderRequest;
-	private final GeocoderRequestHandler geocoderRequestHandler;
+	//private final Geocoder geocoder;
+	//private final GeocoderRequest geocoderRequest;
+	//private final GeocoderRequestHandler geocoderRequestHandler;
 	private final TextBox addressBox = new TextBox();
-*/
+
 	private Button submit;
 
-/*	RORO public GeocoderControl(GeocoderRequestHandler requestHandler) {
+ public GeocoderControl(/*GeocoderRequestHandler requestHandler*/) {
 		super();
-		this.geocoderRequestHandler = requestHandler;
-		this.geocoderRequest = GeocoderRequest.newInstance();
-		this.geocoder = Geocoder.newInstance();
+		//this.geocoderRequestHandler = requestHandler;
+		//this.geocoderRequest = GeocoderRequest.newInstance();
+		//this.geocoder = Geocoder.newInstance();
 		final FormPanel form = new FormPanel();
 		form.setAction("#");
 		Panel formElements = new FlowPanel();
@@ -98,11 +98,11 @@ public class GeocoderControl extends FlowPanel {
 			}
 		});
 		add(form);
-	}*/
+	}
 
-	/* RORO public String getAddress() {
+	 public String getAddress() {
 		return addressBox.getText();
-	}*/
+	}
 
 	// public LatLng getCachedPoint(String address) {
 	// if (cache == null) {
@@ -122,6 +122,6 @@ public class GeocoderControl extends FlowPanel {
 	}*/
 
 	public void setAddress(String address) {
-		//RORO addressBox.setText(address);
+		 addressBox.setText(address);
 	}
 }

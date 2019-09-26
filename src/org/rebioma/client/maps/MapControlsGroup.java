@@ -20,9 +20,9 @@ public class MapControlsGroup extends VerticalPanel {
 	
 	public MapControlsGroup(TileLayerCallback callback/*RORO , GeocoderRequestHandler requestHandler*/){
 		super();
-		//RORO this.geocoder = new GeocoderControl(requestHandler);
+		 this.geocoder = new GeocoderControl(/*RORO requestHandler*/);
 		this.tileLayerSelector = new EnvLayerSelector(callback);
-		//RORO this.add(geocoder);
+		this.add(geocoder);
 		this.add(tileLayerSelector);
 		this.setCellHorizontalAlignment(getTable(), ALIGN_LEFT);
 		this.addStyleName("table-right");
