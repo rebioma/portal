@@ -151,7 +151,7 @@ public abstract class TileLayerSelector extends ListBox {
     }
     LayerInfo layerInfo = null;
     if (selectedLayer != null) {
-    	 map.getMap().removeLayer(selectedLayer.asOverlay());
+    	// map.getMap().removeLayer(selectedLayer.asOverlay());
     }
     if (layerLegend != null) {
     	layerLegend.removeFromParent();
