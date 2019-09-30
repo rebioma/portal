@@ -77,6 +77,7 @@ public abstract class TileLayerSelector extends ListBox {
       return;
     }
     if (selectedLayer != null) {
+    	map.getMap().removeLayer(selectedLayer.asOverlay());
     	//RORO map.getOverlayMapTypes().removeAt(map.getOverlayMapTypes().getLength() - 1);
     }
     if (layerLegend != null) {
