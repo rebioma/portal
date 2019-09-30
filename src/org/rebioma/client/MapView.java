@@ -1472,9 +1472,7 @@ private static class MapGeocoderResult extends Composite {
 
 	private void clearOccurrenceMarkers() {
 		for (OccurrenceMarkerManager markerManager : occurrenceMarkers) {
-			// RORO markerManager.getMarker().setMap((MapWidget)null);
-	 map.getMap().removeLayer(markerManager.getMarkers());
-		//	map.getMap().removeOverlayLayers();
+			markerManager.getMarkers().clearMarkers();
 		}
 		occurrenceMarkers.clear();
 		markerList.clear();

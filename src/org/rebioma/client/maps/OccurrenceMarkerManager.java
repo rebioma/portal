@@ -29,7 +29,6 @@ import org.rebioma.client.bean.OccurrenceSummary.OccurrenceFieldItem;
 
 public class OccurrenceMarkerManager{
 	private static Marker marker;
-	private Markers markers;
 	public static class OptionsManager {
 		private static Map<String, String> speciesMarkerUrls = new HashMap<String, String>();
 		private static int index = 0;
@@ -143,17 +142,17 @@ public class OccurrenceMarkerManager{
 	}
 
 	private final Occurrence occurrence;
-
+	private final Markers markers;
 	protected OccurrenceMarkerManager(Occurrence occurrence) {
 		this.occurrence = occurrence;
-		Markers options = optionsManager.getOptions(occurrence);
+		this.markers = optionsManager.getOptions(occurrence);
 		LonLat point = getPoint(occurrence);
 		if(point == null){
 			point = new LonLat(0, 0);
 		}
 		//options.setPosition(point);
 		marker = new Marker(point,optionsManager.getIcon(occurrence));
-		options.addMarker(marker);
+		this.markers.addMarker(marker);
 //		super.addMarkerInfoWindowOpenHandler(new MarkerInfoWindowOpenHandler() {
 //			public void onInfoWindowOpen(MarkerInfoWindowOpenEvent event) {
 //				// TODO Auto-generated method stub
@@ -176,7 +175,6 @@ public class OccurrenceMarkerManager{
 	}
 	
 	public Markers getMarkers(){
-
 		return markers;
 	}
 	public Marker getMarker(){
