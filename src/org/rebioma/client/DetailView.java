@@ -2146,7 +2146,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			 * @param event
 			 */
 			public void onClose(CloseEvent<TreeItem> event) {
-				resize(Window.getClientWidth(), Window.getClientHeight());
+				//RORO resize(Window.getClientWidth(), Window.getClientHeight());
 			}
 
 		});
@@ -2222,7 +2222,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 			loadUserComment();
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 				public void execute() {
-					resize(Window.getClientWidth(), Window.getClientHeight());
+					//RORO resize(Window.getClientWidth(), Window.getClientHeight());
 				}
 			});
 
@@ -2261,7 +2261,7 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		}
 		// Resizes this the panel containing this tree when an item is expand or
 		// collapse to ensure consistent behavior on all browsers.
-		resize(Window.getClientWidth(), Window.getClientHeight());
+		//RORO resize(Window.getClientWidth(), Window.getClientHeight());
 	}
 
 	public void onPageClicked() {
