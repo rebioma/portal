@@ -291,7 +291,7 @@ GraphicService {
 		String sql = "select year, count(id),count(reviewed) as reviewed" +
 				" from Occurrence " +
 				"where reviewed and year is not null or" +
-				" year is not null and validationerror not like '%Invalid YearCollected%' group by year";
+				" year is not null and validationerror not like '%Invalid YearCollected%' group by year order by year";
 		System.out.println(sql);
 		Session sess = null;		
 		Connection conn =null;
