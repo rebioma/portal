@@ -318,7 +318,6 @@ private static class MapGeocoderResult extends Composite {
 			for (int i = 0; i < getChildCount(); i++) {
 				TreeItem treeItem = getChild(i);
 				if (treeItem instanceof ModelItem) {
-
 					((ModelItem) treeItem).clearThisOverlay();
 				}
 			}
@@ -331,7 +330,6 @@ private static class MapGeocoderResult extends Composite {
 							+ ascModel.getModelLocation() + "/"
 							+ itemLabel.getText() + "/"
 							+ ascModel.getIndexFile(), "_blank", null);
-
 		}
 
 		/**
@@ -356,7 +354,6 @@ private static class MapGeocoderResult extends Composite {
 		public void onFailure(Throwable caught) {
 			Window.alert(caught.getMessage());
 			GWT.log(caught.getMessage(), caught);
-
 		}
 
 		public void onSuccess(List<String> result) {
@@ -1476,8 +1473,8 @@ private static class MapGeocoderResult extends Composite {
 	private void clearOccurrenceMarkers() {
 		for (OccurrenceMarkerManager markerManager : occurrenceMarkers) {
 			// RORO markerManager.getMarker().setMap((MapWidget)null);
-		// map.getMap().removeLayer(markerManager.getMarkers());
-			map.getMap().removeOverlayLayers();
+	 map.getMap().removeLayer(markerManager.getMarkers());
+		//	map.getMap().removeOverlayLayers();
 		}
 		occurrenceMarkers.clear();
 		markerList.clear();
@@ -2121,10 +2118,6 @@ private static class MapGeocoderResult extends Composite {
 							drawPolygonButton.setValue(false);
 							drawFeature.deactivate();
 							deleteFeatureControl.activate();
-							pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
-							OccurrenceView occView = ApplicationView.getApplication()
-									.getOccurrenceView();
-							occView.getSearchForm().search();
 						} else {
 							deleteFeatureControl.deactivate();
 						}
@@ -2326,7 +2319,7 @@ private static class MapGeocoderResult extends Composite {
 		// suppression des layers existants
 		for (Vector layer : kmlLayers) {
 			if (layer != null) {
-				map.getMap().removeLayer(layer);
+				//map.getMap().removeLayer(layer);
 			}
 		}
 		// Chargement des layers kml
