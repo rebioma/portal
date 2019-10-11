@@ -578,7 +578,7 @@ public class ApplicationView extends View implements ClickHandler {
 	private ApplicationView() {
 		VerticalLayoutContainer layout = new VerticalLayoutContainer();
 		HorizontalLayoutContainer layouttab = new HorizontalLayoutContainer();
-		layouttab.add(tabPanel, new HorizontalLayoutData(1, 550, new Margins(0,
+		layouttab.add(tabPanel, new HorizontalLayoutData(Window.getClientWidth(), (Window.getClientHeight()*4)/5, new Margins(0,
 				0, 10, 0)));
 		FlowPanel container = new FlowPanel();
 		container.add(layout);
@@ -586,7 +586,9 @@ public class ApplicationView extends View implements ClickHandler {
 		container.setPixelSize(Window.getClientWidth(),
 				Window.getClientHeight());
 		layouttab.setScrollMode(ScrollMode.AUTO);
-		initWidget(container);
+		layout.setScrollMode(ScrollMode.AUTOY);
+		layout.setHeight(Window.getClientHeight());
+		layout.setWidth(Window.getClientWidth());
 		createTopPanel();
 		HorizontalPanel h = new HorizontalPanel();
 		h.setStyleName("contentFooter");
@@ -659,15 +661,16 @@ public class ApplicationView extends View implements ClickHandler {
 		footer.add(new HTML("<center><h1 style='color:#D6D9DC;'>"+ constants.copyright() + "</h1></center>"),
 				new VerticalLayoutData(1, 40, new Margins(20,0,0,0)));
 		h.add(footer);
-		vcontent.setScrollMode(ScrollMode.AUTOY);
-		vcontent.add(layouttab, new VerticalLayoutData(1,
-				550, new Margins(0, 0, 0, 0)));
-		vcontent.add(h, new VerticalLayoutData(1, 150,
+		vcontent.setScrollMode(ScrollMode.AUTO);
+		vcontent.add(layouttab, new VerticalLayoutData(Window.getClientWidth(),
+				(Window.getClientHeight()*4)/5, new Margins(0, 0, 0, 0)));
+		vcontent.add(h, new VerticalLayoutData(Window.getClientWidth(),Window.getClientHeight(),
 				new Margins(0, 0, 0, 0)));
-		layout.add(topPanel, new VerticalLayoutData(1, 1,
+		layout.add(topPanel, new VerticalLayoutData(Window.getClientWidth(), 1,
 				new Margins(0, 0, 0, 0)));
-		layout.add(vcontent, new VerticalLayoutData(1,
+		layout.add(vcontent, new VerticalLayoutData(Window.getClientWidth(),
 				Window.getClientHeight(), new Margins(0, 0, 0, 0)));
+		initWidget(layout);
 		tabPanel.setWidth("100%");
 		tabPanel.add(new VerticalPanel(), " ");
 		tabPanel.addStyleName("Application-bottom");

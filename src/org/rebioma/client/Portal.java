@@ -24,6 +24,7 @@ import org.rebioma.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -209,9 +210,11 @@ private void initApplication(User user) {
     } else {
         appView.init(true);
     }
+    appView.onResize(new ResizeEvent(Window.getClientWidth(), Window
+									.getClientHeight()) {
+							});
     RootPanel.get().clear();
-    RootPanel.get().add(appView);
-    
+    RootPanel.get().add(appView);   
   }
 
   /**
