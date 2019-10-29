@@ -2184,7 +2184,8 @@ private static class MapGeocoderResult extends Composite {
 								MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
 							showWindowInfo(markerManager);
 						}
-					});// marker.setMap(map);
+					});
+			// marker.setMap(map);
 			/*
 			 * marker.addClickHandler(new ClickMapHandler() {
 			 * 
@@ -2219,19 +2220,28 @@ private static class MapGeocoderResult extends Composite {
 		markers.addMarker(marker);
 		map.getMap().addLayer(markers);
 		try {
-			marker.addBrowserEventListener(EventType.MAP_CLICK,
-					new MarkerBrowserEventListener() {
-
-						public void onBrowserEvent(
-								MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
-							popup = new FramedCloud("id1", marker.getLonLat(),
-									null, "" + summaryContent, null, true);
-							popup.setPanMapIfOutOfView(true);
-							popup.setAutoSize(true);
-							map.getMap().addPopup(popup);
-						}
-
-					});
+			marker.addBrowserEventListener(EventType.MOUSE_OVER, new MarkerBrowserEventListener() {
+				 
+	            public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
+	            	popup = new FramedCloud("id1", marker.getLonLat(),
+							null, "" + summaryContent, null, true);
+					popup.setPanMapIfOutOfView(true);
+					popup.setAutoSize(true);
+					map.getMap().addPopup(popup);
+	            }
+	 
+	        });
+	 
+	        marker.addBrowserEventListener(EventType.MOUSE_OUT, new MarkerBrowserEventListener() {
+	 
+	            public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
+	                if(popup != null) {
+	                	map.getMap().removePopup(popup);
+	                    popup.destroy();
+	                }
+	            }
+	 
+	        });
 			popup = new FramedCloud("id1", marker.getLonLat(), null, ""
 					+ summaryContent, null, true);
 			popup.setPanMapIfOutOfView(true); 
