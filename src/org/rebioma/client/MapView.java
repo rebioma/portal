@@ -2325,7 +2325,6 @@ private static class MapGeocoderResult extends Composite {
 			}
 		}
 		// Chargement des layers kml
-
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			@Override
 			public void execute() {
