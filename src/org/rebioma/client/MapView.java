@@ -53,6 +53,8 @@ import org.gwtopenmaps.openlayers.client.control.MousePosition;
 import org.gwtopenmaps.openlayers.client.control.MousePositionOptions;
 import org.gwtopenmaps.openlayers.client.control.MousePositionOutput;
 import org.gwtopenmaps.openlayers.client.control.OverviewMap;
+import org.gwtopenmaps.openlayers.client.control.Panel;
+import org.gwtopenmaps.openlayers.client.control.PanelOptions;
 import org.gwtopenmaps.openlayers.client.control.ScaleLine;
 import org.gwtopenmaps.openlayers.client.control.SelectFeature;
 import org.gwtopenmaps.openlayers.client.event.EventType;
@@ -717,8 +719,8 @@ private static class MapGeocoderResult extends Composite {
 	/**
 	 * The Google map widget that initially displays the center of Madagascar.
 	 */
-	MapOptions defaultMapOptions = new MapOptions();
-	MapWidget map = new MapWidget("100%", "100%", defaultMapOptions);
+	static MapOptions defaultMapOptions = new MapOptions();
+	static MapWidget map = new MapWidget("100%", "100%", defaultMapOptions);
 	private Popup popup;
 	HorizontalPanel hpButtons;
 	public final static VerticalPanel vCOntrolMap = new VerticalPanel();
@@ -1474,10 +1476,22 @@ private static class MapGeocoderResult extends Composite {
 		for (OccurrenceMarkerManager markerManager : occurrenceMarkers) {
 			markerManager.getMarkers().clearMarkers();
 		}
+		 for (Marker m : markersOnMap) {
+	            this.markers.removeMarker(m);
+	        }
+	        markersOnMap.clear();
 		occurrenceMarkers.clear();
 		markerList.clear();
 	}
+	private ArrayList<Marker> markersOnMap = new ArrayList<Marker>();
+    private Markers markers;
 
+	public void removeAllMarkers() {
+        for (Marker m : this.markersOnMap) {
+            this.markers.removeMarker(m);
+        }
+        this.markersOnMap.clear();
+    }
 	/*
 	 * private MapTypeId getMapType(String type) { MapTypeId mapType =
 	 * MapTypeId.fromValue(type); if (mapType == null ||
@@ -2138,7 +2152,6 @@ private static class MapGeocoderResult extends Composite {
 		}
 		infoWindows.clear();
 	}*/
-
 	private void mapOccurrenceMarkers(List<Occurrence> occurrences) {
 		OccurrenceMarkerManager.resetIcons();
 		List<Occurrence> unmappableOccs = new ArrayList<Occurrence>();
@@ -2152,13 +2165,15 @@ private static class MapGeocoderResult extends Composite {
 			occurrenceMarkers.add(markerManager);
 			markerList.addItem(markerManager);
 			OptionsManager op = new OptionsManager();
-			Markers markers = op.getOptions(markerManager.getOccurrence());
+
+			markers = op.getOptions(markerManager.getOccurrence());
 			LonLat lonlat = markerManager.getPoint(markerManager
 					.getOccurrence());
 			lonlat.transform("EPSG:4326", map.getMap().getProjection());
-			map.getMap().addLayer(markers);
 			final Marker marker = new Marker(lonlat, op.getIcon(markerManager
 					.getOccurrence()));
+
+			markersOnMap.add(marker);
 			markers.addMarker(marker);
 			map.getMap().addLayer(markers);
 
@@ -2168,16 +2183,6 @@ private static class MapGeocoderResult extends Composite {
 						public void onBrowserEvent(
 								MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
 							showWindowInfo(markerManager);
-							popup = new FramedCloud(
-									"id1",
-									marker.getLonLat(),
-									null,
-									""
-											+ summaryContent,
-									null, true);
-							popup.setPanMapIfOutOfView(true);
-							popup.setAutoSize(true);
-							map.getMap().addPopup(popup);
 						}
 					});// marker.setMap(map);
 			/*
@@ -2208,12 +2213,11 @@ private static class MapGeocoderResult extends Composite {
 		LonLat lonlat = occurrenceMarkerManager
 				.getPoint(occurrenceMarkerManager.getOccurrence());
 		lonlat.transform("EPSG:4326", map.getMap().getProjection());
-		map.getMap().addLayer(markers);
 		final Marker marker = new Marker(lonlat,
 				op.getIcon(occurrenceMarkerManager.getOccurrence()));
+		markersOnMap.add(marker);
 		markers.addMarker(marker);
 		map.getMap().addLayer(markers);
-
 		try {
 			marker.addBrowserEventListener(EventType.MAP_CLICK,
 					new MarkerBrowserEventListener() {
@@ -2317,7 +2321,7 @@ private static class MapGeocoderResult extends Composite {
 		// suppression des layers existants
 		for (Vector layer : kmlLayers) {
 			if (layer != null) {
-				//map.getMap().removeLayer(layer);
+				map.getMap().removeLayer(layer);
 			}
 		}
 		// Chargement des layers kml
@@ -2330,7 +2334,7 @@ private static class MapGeocoderResult extends Composite {
 					kmlOptions
 							.setStrategies(new Strategy[] { new FixedStrategy() });
 					HTTPProtocolOptions protocolOptions = new HTTPProtocolOptions();
-					protocolOptions.setUrl(url);
+					protocolOptions.setUrl("url");
 					KML kml = new KML();
 					kml.setExtractStyles(true);
 					kml.setExtractAttributes(true);
