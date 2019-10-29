@@ -2334,7 +2334,7 @@ private static class MapGeocoderResult extends Composite {
 					kmlOptions
 							.setStrategies(new Strategy[] { new FixedStrategy() });
 					HTTPProtocolOptions protocolOptions = new HTTPProtocolOptions();
-					protocolOptions.setUrl("url");
+					protocolOptions.setUrl(url);
 					KML kml = new KML();
 					kml.setExtractStyles(true);
 					kml.setExtractAttributes(true);
