@@ -709,18 +709,18 @@ public class ApplicationView extends View implements ClickHandler {
 									.getClientHeight()) {
 							});
 					addHistoryItem(false);
-					if (selectedWidget instanceof HomeView
+					if (selectedWidget instanceof OccurrenceView
 							&& !isOccViewInitialized) {
 						activeViewInfo.getView().handleOnValueChange(
 								History.getToken());
 					}
 				}
-				if (selectedWidget instanceof HomeView && !isOccViewInitialized) {
+				if (selectedWidget instanceof OccurrenceView && !isOccViewInitialized) {
 					isOccViewInitialized = true;
 					try {
 						// fixing the statechanged issue on url re-established
 						// from navigator's history
-						((HomeView) activeViewInfo.getView())
+						((OccurrenceView) activeViewInfo.getView())
 								.onStateChanged(ApplicationView
 										.getCurrentState());
 					} catch (Exception e) {
