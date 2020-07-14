@@ -57,7 +57,7 @@ public class AscModelDbImpl implements AscModelDb {
   }
 
   public AscModelResult findAscModel(String acceptedSpecies, int start,
-      int limit) {
+	      int limit, int startM, int limitM) {
     log.debug("finding AscModels of " + acceptedSpecies);
     try {
       //Session session = HibernateUtil.getCurrentSession();
@@ -66,6 +66,7 @@ public class AscModelDbImpl implements AscModelDb {
       Criteria criteria = session.createCriteria(AscModel.class);
       criteria.add(Restrictions.ilike("acceptedSpecies", acceptedSpecies,
           MatchMode.ANYWHERE));
+      criteria.add(Restrictions.not(Restrictions.like("modelLocation", "Marines%")));
       criteria.setFirstResult(0);
       criteria.setProjection(Projections.count("id"));
       Integer count = (Integer) criteria.uniqueResult();
@@ -74,6 +75,20 @@ public class AscModelDbImpl implements AscModelDb {
       criteria.setFirstResult(start);
       criteria.setMaxResults(limit);
       List<AscModel> results = criteria.list();
+      
+      criteria = session.createCriteria(AscModel.class);
+      criteria.add(Restrictions.ilike("acceptedSpecies", acceptedSpecies,
+          MatchMode.ANYWHERE));
+      criteria.add(Restrictions.like("modelLocation", "Marines%"));
+      criteria.setFirstResult(0);
+      criteria.setProjection(Projections.count("id"));
+      Integer countM = (Integer) criteria.uniqueResult();
+      criteria.setProjection(null);
+      criteria.addOrder(Order.asc("acceptedSpecies"));
+      criteria.setFirstResult(startM);
+      criteria.setMaxResults(limitM);
+      List<AscModel> resultsM = criteria.list();
+      
       /*Tax: Reset the firstResult to 0 for the projection*/
       //if (isFirstTransaction) {
       //  HibernateUtil.commitCurrentTransaction();
@@ -83,7 +98,10 @@ public class AscModelDbImpl implements AscModelDb {
       int i_count;
       if(count == null)i_count = 0;
       else i_count = count.intValue();
-      AscModelResult ascres = new AscModelResult(results, i_count);
+      int i_countM;
+      if(countM == null)i_countM = 0;
+      else i_countM = countM.intValue();
+      AscModelResult ascres = new AscModelResult(results, i_count, resultsM, i_countM);
       return ascres;
     } catch (RuntimeException re) {
       log.error("find failed", re);
@@ -92,4 +110,5 @@ public class AscModelDbImpl implements AscModelDb {
       throw re;
     }
   }
+
 }

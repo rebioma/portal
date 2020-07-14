@@ -105,7 +105,7 @@ public class FileValidationServiceImpl implements FileValidationService {
 //    }
     
 //    /*
-	String fileLocation = "E:\\assign.txt";
+	String fileLocation = "G:\\assignation_hery_lisy.csv";
 	char delimiter = ',';
 	boolean isClearOldAssignments = false;
 //	*/
@@ -499,6 +499,7 @@ public class FileValidationServiceImpl implements FileValidationService {
     ZipOutputStream zipStream = new ZipOutputStream(new BufferedOutputStream(outputStream));
     byte data[] = new byte[buffer];
     for (File file : files) {
+    	System.out.println("path = " + file.getAbsolutePath());
       FileInputStream fi = new FileInputStream(file);
       sources = new BufferedInputStream(fi, buffer);
       ZipEntry entry = new ZipEntry(file.getName());

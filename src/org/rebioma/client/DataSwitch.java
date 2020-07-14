@@ -381,9 +381,9 @@ public class DataSwitch implements UserServiceAsync, OccurrenceServiceAsync,
         });
   }
 
-  public void findModelLocation(String acceptedSpecies, int start, int limit,
+  public void findModelLocation(String acceptedSpecies, int start, int limit, int startM, int limitM,
       AsyncCallback<AscModelResult> callback) {
-    modelService.findModelLocation(acceptedSpecies, start, limit, callback);
+    modelService.findModelLocation(acceptedSpecies, start, limit, startM, limitM, callback);
   }
 
   /*

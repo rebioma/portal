@@ -287,7 +287,8 @@ MapGisService {
 	public String getMUpdate(String url) {
 		try {
 			URLDataSource source = new URLDataSource(
-					new URL("http://localhost/ModelOutput"));
+					new URL("http://data.rebioma.net/ModelOutput/update.txt"));
+//					new URL("http://localhost/latestpg/ModelOutput/update.txt"));
 			BufferedReader stream = new BufferedReader(new InputStreamReader(
 					source.getInputStream()));
 			return stream.readLine();
@@ -295,7 +296,7 @@ MapGisService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return "";
 	}
 
 }

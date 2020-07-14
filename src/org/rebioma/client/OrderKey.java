@@ -33,7 +33,7 @@ public class OrderKey implements IsSerializable {
   }
 
   public String toString() {
-    return attributeName + (isAsc ? " asc" : "desc");
+    return attributeName + (isAsc ? " asc" : " desc");
   }
 
 }

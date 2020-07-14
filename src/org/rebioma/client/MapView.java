@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2008 University of California at Berkeley
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -59,9 +59,10 @@ import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -70,11 +71,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapTypeId;
@@ -89,6 +85,7 @@ import com.google.gwt.maps.client.events.maptypeid.MapTypeIdChangeMapHandler;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapEvent;
 import com.google.gwt.maps.client.events.zoom.ZoomChangeMapHandler;
 import com.google.gwt.maps.client.layers.KmlLayer;
+import com.google.gwt.maps.client.overlays.Circle;
 import com.google.gwt.maps.client.overlays.InfoWindow;
 import com.google.gwt.maps.client.overlays.InfoWindowOptions;
 import com.google.gwt.maps.client.overlays.Marker;
@@ -107,7 +104,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -254,7 +250,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 					checkbox.addStyleName("modeling_check_box");
 					envLayer = ModelEnvLayer.newInstance("ModelOutput/"
 							+ ascModel.getModelLocation() + "/" + itemLabel.getText() + "/"
-							+ ascModel.getModelLocation() + ".asc");
+							+ ascModel.getAcceptedSpecies().replaceAll(" ", "_")+ ".asc");
 				}
 				Label modelDate = new Label(""/*DateTimeFormat.getFormat("d/M/yyyy").format(new Date())*/);
 				modelDate.setStyleName("flou");
@@ -368,23 +364,44 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 
 	private class ModelSearch extends Composite implements KeyUpHandler,
 	OpenHandler<TreeItem>, AsyncCallback<AscModelResult>, ClickHandler {
-		private final TextBox searchBox;
+//		private final SearchPanel searchBox;
 		private final Tree resultTree;
+		private final Tree resultTreeMarine;
 		private final HTML next;
+		private final HTML nextM;
 		private final Label resultInfo;
+		private final Label resultMInfo;
 		private final HTML previous;
+		private final HTML previousM;
 		private int start = 0;
 		private int limit = 10;
+		private int startM = 0;
+		private int limitM = 10;
 		private String currentSearchTerm;
 		private AscModelResult currentResult;
+//		private HorizontalPanel sPanel;
+		private SearchPanel modelSearchPanel;
 
 		public ModelSearch() {
 			Label searchLabel = new Label(constants.ModelSearch());
 			VerticalPanel mainPanel = new VerticalPanel();
-			HorizontalPanel searchPanel = new HorizontalPanel();
+//			sPanel = new HorizontalPanel();
 			HorizontalPanel pagePanel = new HorizontalPanel();
-			searchBox = new TextBox();
+//			searchBox = new SearchPanel(this, "Search models...", "x-btn");
+//			searchBox.getSearchTextBox().setWidth("100%");Version 1.0.r1580
+			
+			modelSearchPanel = new SearchPanel(this, "Search models...", "rebioma-search");
+//			modelSearchPanel.getSearchTextBox().getElement().setPropertyString("placeholder", "Search models...");
+			modelSearchPanel.addStyleName("search-panel");
+			modelSearchPanel.addStyleName("search-m-panel");
+		    modelSearchPanel.addTextBoxStyleName("search-panel-textbox");
+		    modelSearchPanel.getSearchTextBox().setWidth("100%");
+		    modelSearchPanel.addButtonStyleName("search-panel-btn");
+		    modelSearchPanel.getSearchButton().addStyleName("ximg-btn");
+		    
+//			xButton = new Button();
 			resultTree = new Tree();
+			resultTreeMarine = new Tree();
 			next = new HTML("&nbsp;&#x203A;");
 			previous = new HTML("&#x2039;&nbsp;");
 			resultInfo = new Label();
@@ -394,27 +411,82 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			pagePanel.add(previous);
 			pagePanel.add(resultInfo);
 			pagePanel.add(next);
-			searchPanel.add(searchLabel);
-			searchPanel.add(searchBox);
-			mainPanel.add(searchPanel);
+//			s.add(searchLabel);
+//			sPanel.add(searchBox);
+//			sPanel.add(xButton);
+//			mainPanel.add(searchPanel);
+			
+			Label terrestrial = new Label("Terrestrial");
+			terrestrial.setStyleName("forLabel");
+			terrestrial.addStyleName("t-model");
+			mainPanel.add(terrestrial);
+			
 			mainPanel.add(pagePanel);
 			mainPanel.add(resultTree);
-			searchPanel.setSpacing(5);
+			
+			Label marine = new Label("Marine");
+			marine.setStyleName("forLabel");
+			marine.addStyleName("t-model");
+			
+			mainPanel.add(marine);
+			
+			HorizontalPanel pageMPanel = new HorizontalPanel();
+			nextM = new HTML("&nbsp;&#x203A;");
+			previousM = new HTML("&#x2039;&nbsp;");
+			resultMInfo = new Label();
+			nextM.setVisible(false);
+			previousM.setVisible(false);
+			pageMPanel.setSpacing(5);
+			pageMPanel.add(previousM);
+			pageMPanel.add(resultMInfo);
+			pageMPanel.add(nextM);
+			
+			mainPanel.add(pageMPanel);
+			mainPanel.add(resultTreeMarine);
+			
+//			searchPanel.setSpacing(5);
 			initWidget(mainPanel);
 			setStyleName("model_search");
 			searchLabel.addStyleName("label");
-			searchBox.addStyleName("search");
+//			searchBox.addStyleName("search");
 			next.addStyleName("link");
 			previous.addStyleName("link");
-			searchBox.addKeyUpHandler(this);
+//			searchBox.addKeyUpHandler(this);
 			resultTree.addOpenHandler(this);
 			next.addClickHandler(this);
 			previous.addClickHandler(this);
+			
+			nextM.addStyleName("link");
+			previousM.addStyleName("link");
+			resultTreeMarine.addOpenHandler(this);
+			nextM.addClickHandler(this);
+			previousM.addClickHandler(this);
+			modelSearchPanel.getSearchTextBox().addKeyUpHandler(this);
+
+			modelSearchPanel.getSearchButton().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent arg0) {
+					search("");
+					addHistoryItem(false);
+//					modelSearchPanel.reset();
+				}
+			});
+			
+		}
+		
+		public SearchPanel getSearchBox() {
+		    return modelSearchPanel;
+//			return searchBox;
 		}
 
 		public void clearOverLay() {
 			for (int i = 0; i < resultTree.getItemCount(); i++) {
 				ModelItem modelItem = (ModelItem) resultTree.getItem(i);
+				modelItem.clearOverLay();
+			}
+			for (int i = 0; i < resultTreeMarine.getItemCount(); i++) {
+				ModelItem modelItem = (ModelItem) resultTreeMarine.getItem(i);
 				modelItem.clearOverLay();
 			}
 
@@ -433,7 +505,13 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			} else if (source == previous) {
 				start -= 10;
 				search(currentSearchTerm);
-			}
+			} else  if (source == nextM) {
+				startM += 10;
+				search(currentSearchTerm);
+			} else if (source == previousM) {
+				startM -= 10;
+				search(currentSearchTerm);
+			} 
 
 		}
 
@@ -444,14 +522,16 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 
 		public void onKeyUp(KeyUpEvent event) {
 			Object source = event.getSource();
-			if (source == searchBox) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+			if (source == modelSearchPanel.getSearchTextBox()) {
+//				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					addHistoryItem(false);
-					String searchText = searchBox.getText().trim();
+					String searchText = modelSearchPanel.getSearchTextBox().getText().trim();
 					start = 0;
 					limit = 10;
+					startM = 0;
+					limitM = 10;
 					search(searchText);
-				}
+//				}
 			}
 		}
 
@@ -469,6 +549,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			currentResult = result;
 			if (currentResult != null) {
 				int count = result.getCount();
+				int countM = result.getCountM();
 				if (count > 0) {
 					int end = start + limit;
 					if (end > count) {
@@ -484,11 +565,36 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 						resultTree.addItem(item);
 					}
 				} else {
+					resultTree.clear();
 					resultInfo.setText(constants.NoSearchResults());
 				}
+
 				next.setVisible((start + count) >= (start + limit));
 				previous.setVisible(start >= 10);
 				next.setVisible(start + 10 < count);
+				
+				//pour les modèles marines
+				if (countM > 0) {
+					int end = startM + limitM;
+					if (end > countM) {
+						end = countM;
+					}
+					resultMInfo.setText((startM + 1) + " - " + end + " " + constants.Of()
+							+ " " + countM);
+					resultTreeMarine.clear();
+					for (AscModel ascModel : result.getResultsM()) {
+						ModelItem item = new ModelItem(ascModel.getAcceptedSpecies(),
+								ascModel, false, new DownloadAllClimatesCommand(ascModel));
+						item.addItem(constants.Loading());
+						resultTreeMarine.addItem(item);
+					}
+				} else {
+					resultTreeMarine.clear();
+					resultMInfo.setText(constants.NoSearchResults());
+				}
+				nextM.setVisible((startM + countM) >= (startM + limitM));
+				previousM.setVisible(startM >= 10);
+				nextM.setVisible(startM + 10 < countM);
 			} else {
 
 			}
@@ -497,17 +603,23 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 		public void setPage(int page) {
 			if (page < 0) {
 				start = 0;
+				startM = 0;
 			} else {
 				start = (page - 1) * limit;
+				startM = (page - 1) * limitM;
 			}
 		}
 
 		protected void search(String searchTerm) {
 			if (currentSearchTerm == null || !searchTerm.equals(currentSearchTerm)) {
 				currentSearchTerm = searchTerm;
-				searchBox.setText(searchTerm);
+				modelSearchPanel.getSearchTextBox().setText(searchTerm);
+//				DomEvent.fireNativeEvent(Document.get().createFocusEvent(), modelSearchPanel.getSearchTextBox());
 			}
-			DataSwitch.get().findModelLocation(searchTerm, start, limit, this);
+			DomEvent.fireNativeEvent(Document.get().createFocusEvent(), modelSearchPanel.getSearchTextBox());
+			DomEvent.fireNativeEvent(Document.get().createBlurEvent(), modelSearchPanel.getSearchTextBox());
+			
+			DataSwitch.get().findModelLocation(searchTerm, start, limit, startM, limitM, this);
 		}
 	}
 
@@ -835,6 +947,22 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 		TabItemConfig modelTb = new TabItemConfig(constants.ModelSearch());
 		ScrollPanel mrspanel = new ScrollPanel(markerList);
 		ScrollPanel mdspanel = new ScrollPanel(modelSearch);
+		modelSearch.setWidth("100%");
+		
+		VerticalLayoutContainer mdsPanel = new VerticalLayoutContainer();
+		ToolBar t = new ToolBar();
+		t.setBorders(false);
+		t.setStyleName("test");
+		SearchPanel tbSearch = modelSearch.getSearchBox();
+//		tbSearch.getSearchButton().setWidth("30px");
+//		tbSearch.setBorderWidth(0);
+		t.add(tbSearch);
+		tbSearch.setWidth("99%");
+//		tbSearch.getSearchTextBox().setStyleName("search-model");
+//		tbSearch.getSearchTextBox().getElement().setPropertyString("placeholder", "Search models...");
+		mdsPanel.add(t, new VerticalLayoutData(1, -1, new Margins(4, 4, 8, 4)));
+		
+		mdsPanel.add(mdspanel, new VerticalLayoutData(1, 1));
 		
 		modelTab = new TabPanel(GWT.<TabPanelAppearance> create(GrayTabPanelBottomAppearance.class));
 		modelTab.addStyleName("d-text");
@@ -842,7 +970,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 		modelTab.setBorders(false);
 		modelTab.getElement().getStyle().setBackgroundColor("white");
 		TabItemConfig dateModel = new TabItemConfig("__");
-		modelTab.add(mdspanel, dateModel); 
+		modelTab.add(mdsPanel, dateModel); 
 		modelTab.setHeight(modelTab.getOffsetHeight()-10);
 		//    mrspanel.add(markerList);
 		//    mdspanel.add(modelSearch);
@@ -850,7 +978,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 		currentTab = mrspanel;
 		leftTab.add(mrspanel, markerTb);
 		leftTab.add(modelTab, modelTb); // Add Model Tab
-		setDateModel("String dmggfd");
+		setDateModel("");
 		//init model affichage
 		String modelSearchTerm = historyState.getHistoryParameters(
 				UrlParam.M_SEARCH).toString();
@@ -1128,6 +1256,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 					}catch(Exception e){e.printStackTrace();};
 				}
 			}
+			modelTab.forceLayout();
 		}
 
 	}
@@ -1393,7 +1522,7 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			query += index;
 			break;
 		case M_SEARCH:
-			query += modelSearch.searchBox.getText().trim();
+			query += modelSearch.getSearchBox().getSearchTextBox().getText().trim();
 			break;
 		case M_PAGE:
 			query += modelSearch.getPage();
@@ -1745,6 +1874,10 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 	}
 
 	private void reloadPageWithOccurrenceIds(List<Integer> occurrenceIds){
+		if(occurrenceIds == null || occurrenceIds.isEmpty()){
+			occurrenceIds = new ArrayList<Integer>();
+			occurrenceIds.add(Integer.MIN_VALUE);
+		}
 		// on prepare le query
 		pager.getQuery().setOccurrenceIdsFilter(
 				new HashSet<Integer>());
@@ -1796,13 +1929,6 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 				}
 			});
 		}
-	}
-
-	@Override
-	public void polygonDeletedHandler() {
-		pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
-		OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
-		occView.getSearchForm().search();
 	}
 
 	private Map<String, List<Integer>> getTableGidsMap(List<ShapeFileInfo> shapeFileInfos){
@@ -1872,6 +1998,13 @@ GeocoderRequestHandler,	MapDrawingControlListener, AsyncCallback<String> {
 			}
 		});
 
+	}
+
+	@Override
+	public void polygonDeletedHandler() {
+		pager.getQuery().setOccurrenceIdsFilter(new HashSet<Integer>());
+		OccurrenceView occView = ApplicationView.getApplication().getOccurrenceView();
+		occView.getSearchForm().search();
 	}
 
 }

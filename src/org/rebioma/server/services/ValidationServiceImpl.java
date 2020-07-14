@@ -17,7 +17,6 @@ package org.rebioma.server.services;
 
 import java.awt.Polygon;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,7 +29,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.taskdefs.LoadProperties;
 import org.rebioma.client.bean.Occurrence;
 import org.rebioma.server.upload.Traitement;
 import org.taxonomy.Classification;
