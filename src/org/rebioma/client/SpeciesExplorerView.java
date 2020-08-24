@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rebioma.client.OccurrenceQuery.ResultFilter;
-import org.rebioma.client.View.ViewState;
 import org.rebioma.client.bean.SpeciesTreeModel;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.gxt.treegrid.SpeciesExplorerPanel;
@@ -17,6 +16,8 @@ import org.rebioma.client.gxt.treegrid.SpeciesStatistiqueDialog;
 import org.rebioma.client.gxt3.treegrid.CheckBoxTreeGridListener;
 import org.rebioma.client.services.SpeciesExplorerService;
 import org.rebioma.client.services.SpeciesExplorerServiceAsync;
+import org.rebioma.client.services.TaxonomyService;
+import org.rebioma.client.services.TaxonomyServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -26,9 +27,16 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -41,6 +49,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
 public class SpeciesExplorerView extends ComponentView implements ClickHandler, ChangeHandler, CheckBoxTreeGridListener<SpeciesTreeModel> {
@@ -64,8 +73,10 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 	private final ListBox resultFilterLb = new ListBox();
 	private final ListBox invalidatedLb = new ListBox();
 	private final ListBox sharedListBox = new ListBox();
-	private final HTML updateTaxonomieLink = new HTML(constants.LoadTaxonomyCsv());
+	private final HTML updateTaxonomieLink = new HTML(constants.LoadTaxonomyCsv() + "&nbsp;|&nbsp;");
+	private final HTML updateIUCNstatusLink = new HTML("");
 	private final SpeciesExplorerPanel speciesExplorerPanel;
+	private final TaxonomyServiceAsync txService = GWT.create(TaxonomyService.class);
 	//final SpeciesInfoPanel infoPanel;
 	
 	//boutons de recherche 
@@ -78,6 +89,8 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 	final FlowPanel mainHp;
 	
 	private final HorizontalPanel toolHp = new HorizontalPanel();
+	
+	private final HorizontalPanel adminHPanel = new HorizontalPanel();
 	
 	private final VerticalPanel verticalPanel;
 	
@@ -126,9 +139,8 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 
 				OccurrenceView.SearchForm.TAXO_ERROR);
 		typeIndexMap.put(OccurrenceView.SearchForm.TAXO_ERROR.toLowerCase(), 6);
-		updateTaxonomieLink.setStyleName("revalidatelink");
-
-		invalidatedLb.setStyleName("ResultFilter");
+		updateTaxonomieLink.setStyleName("spUpdatelink");
+		updateIUCNstatusLink.setStyleName("spUpdatelink");
 		invalidatedLb.setStyleName("ResultFilter");
 		searchTypeBox.setStyleName("TypeBox");
 		sharedListBox.setStyleName("SharedListBox");
@@ -148,11 +160,19 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		//initWidget(mainHp);
 		mainHp.setStyleName("Search-Form");
 		updateTaxonomieLink.addClickHandler(this);
+		updateIUCNstatusLink.addClickHandler(this);
+		adminHPanel.add(updateTaxonomieLink);
+		adminHPanel.add(updateIUCNstatusLink);
 		toolHp.add(mainHp);
-		toolHp.add(updateTaxonomieLink);
+		toolHp.add(adminHPanel);
 		toolHp.setWidth("100%");
 		//toolHp.setCellVerticalAlignment(updateTaxonomieLink, HasVerticalAlignment.ALIGN_MIDDLE);
-		toolHp.setCellHorizontalAlignment(updateTaxonomieLink, HasHorizontalAlignment.ALIGN_RIGHT);
+		toolHp.setCellVerticalAlignment(adminHPanel,
+				HasVerticalAlignment.ALIGN_MIDDLE);
+		toolHp.setCellHorizontalAlignment(adminHPanel,
+				HasHorizontalAlignment.ALIGN_RIGHT);
+//		toolHp.setCellHorizontalAlignment(updateTaxonomieLink, HasHorizontalAlignment.ALIGN_RIGHT);
+//		toolHp.setCellHorizontalAlignment(updateIUCNstatusLink, HasHorizontalAlignment.ALIGN_RIGHT);
 		toolHp.setCellVerticalAlignment(mainHp,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		toolHp.setStyleName("OccurrenceView-ToolBar");//on utilise le css de OccurrenceView
@@ -178,10 +198,11 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 	@Override
 	protected void resize(final int width, int height) {
 		int w = width - 20;
+		int h = height - speciesExplorerPanel.getTreeGrid().getAbsoluteTop() - 10 - 105;
 		toolHp.setWidth(w + "px");
 		verticalPanel.setWidth(w + "px");
 		speciesExplorerPanel.getTreeGrid().setWidth(w);
-		speciesExplorerPanel.getTreeGrid().setHeight(height - speciesExplorerPanel.getTreeGrid().getAbsoluteTop() - 10 );
+		speciesExplorerPanel.getTreeGrid().setHeight(h<1?1:h);
 		//infoPanel.setWidth(w);
 		Window.enableScrolling(toolHp.getOffsetWidth() - 10 > width);
 
@@ -317,20 +338,93 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 				listener.searchQuery(query, propertyMap);
 			}
 		}else if(source == updateTaxonomieLink){
-			if(updateTaxonomieLink.getHTML().equals(constants.LoadTaxonomyCsv())){
-				updateTaxonomieLink.setHTML(constants.Loading()+"...");
+			if(updateTaxonomieLink.getHTML().equals(constants.LoadTaxonomyCsv()+ "&nbsp;|&nbsp;")){
+				updateTaxonomieLink.setHTML(constants.Loading()+"...&nbsp;|&nbsp;");
 				speciesExplorerService.loadCsv(new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
-						updateTaxonomieLink.setHTML(constants.LoadTaxonomyCsv());
+						updateTaxonomieLink.setHTML(constants.LoadTaxonomyCsv() + "&nbsp;|&nbsp;");
 						Window.alert("Chargement du fichier csv effectué avec succès");
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						updateTaxonomieLink.setHTML(constants.LoadTaxonomyCsv());
+						updateTaxonomieLink.setHTML(constants.LoadTaxonomyCsv() + "&nbsp;|&nbsp;");
 						Window.alert(caught.getMessage());
 					}
 				});	
+			}
+		} else if(source == updateIUCNstatusLink){
+			PopupMessage.getInstance().showMessage("loading...");
+			String url = "http://apiv3.iucnredlist.org/api/v3/country/getspecies/MG?token=a670c99f2bd446865c436bbd8740c237b6d436ee92a7a088f23d81f7cc6bc61d";
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+					com.google.gwt.http.client.URL.encode(url));
+
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+
+					public void onError(Request request, Throwable exception) {
+						Window.alert(constants.verifyConnection());
+					}
+
+					@Override
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							JSONValue jsonValue = JSONParser
+									.parseStrict(response.getText());
+							if (jsonValue.isObject() != null) {
+								JSONArray rs = ((JSONObject) jsonValue)
+										.get("result").isArray().isArray();
+								for (int i = 0; i < rs.size(); i++) {
+									JSONObject childJSONObject = (JSONObject) rs
+											.get(i);
+									// Hoan'ny scientific_name
+									JSONValue scientific_name = childJSONObject
+											.get("scientific_name");
+									// Hoan'ny category
+									JSONValue category = childJSONObject
+											.get("category");
+
+									txService.maj(category.toString(),
+											scientific_name.toString()
+											.replaceAll("'", ""),
+											new AsyncCallback<Void>() {
+
+										@Override
+										public void onFailure(
+												Throwable caught) {
+											Window.alert(constants.verifyConnection());
+										}
+
+										@Override
+										public void onSuccess(
+												Void result) {
+										}
+
+									});
+								}
+							}
+							txService.majstatut_iucn_occ(new AsyncCallback<Void>(){
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert(constants.verifyConnection());
+								}
+
+								@Override
+								public void onSuccess(Void result) {
+									MessageBox messageBox = new MessageBox("Information");
+									messageBox.add(new HTML("<center>"+constants.update_IUCN_successful()+"</center>"));
+									messageBox.show();
+								}
+
+							});	
+						} else {
+							Window.alert(constants.verifyConnection());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(constants.verifyConnection());
 			}
 		} else if(source == uncheckAllButton){
 			speciesExplorerPanel.getTreeGrid().unCheckAll();
@@ -378,6 +472,8 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		typeIndexMap.put(OccurrenceView.ALL_OCC, searchTypeBox.getItemCount() - 1);
 		updateTaxonomieLink.setHTML("");
 		updateTaxonomieLink.setStyleName("");
+		updateIUCNstatusLink.setHTML("");
+		updateIUCNstatusLink.setStyleName("");
 		switch (state) {
 		case SUPERADMIN:
 		case UNAUTHENTICATED:
@@ -390,8 +486,10 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 		// My Occurrences
 		// Occurrences to Review
 		case ADMIN:
-			updateTaxonomieLink.setHTML(constants.LoadTaxonomyCsv());
-			updateTaxonomieLink.setStyleName("revalidatelink");
+			updateTaxonomieLink.setHTML(constants.LoadTaxonomyCsv() + "&nbsp;|&nbsp;");
+			updateTaxonomieLink.setStyleName("spUpdatelink");
+			updateIUCNstatusLink.setHTML(constants.update_IUCN());
+			updateIUCNstatusLink.setStyleName("spUpdatelink");
 		case REVIEWER:
 			// // Occurrences to Review
 			searchTypeBox.addItem(constants.OccurrencesToReview(),

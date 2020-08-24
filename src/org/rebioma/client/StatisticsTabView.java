@@ -150,11 +150,11 @@ public class StatisticsTabView extends ComponentView implements ClickHandler, Ch
 	@Override
 	protected void resize(final int width, int height) {
 		int w = width - 18;
-		int h = height - mainVp.getAbsoluteTop() - 35;
+		int h = height - mainVp.getAbsoluteTop() - 35 - 110;
 //		mainVp.setWidth(w + "px");
 //		mainVp.setHeight(h + "px");
 		statisticsPanelW.setWidth(w+ "px");
-		statisticsPanelW.setHeight(h + "px");
+		statisticsPanelW.setHeight(h<1? 1 + "px": h + "px");
 		//infoPanel.setWidth(w);
 		Window.enableScrolling(mainVp.getOffsetWidth() - 10 > width);
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {

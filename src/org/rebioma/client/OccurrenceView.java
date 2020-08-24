@@ -1421,7 +1421,7 @@ PageListener<Occurrence>, ClickHandler, OccurrenceSearchListener, ShapeSelection
 		}
 		int w = width - 20;
 		toolHp.setWidth(w + "px");
-		height = height - mainSp.getAbsoluteTop();
+		height = height - mainSp.getAbsoluteTop()-105;
 		if (height <= 0) {
 			height = 1;
 		}

@@ -287,7 +287,7 @@ MapGisService {
 	public String getMUpdate(String url) {
 		try {
 			URLDataSource source = new URLDataSource(
-					new URL("http://data.rebioma.net/ModelOutput/update.txt"));
+					new URL(url+"ModelOutput/update.txt"));
 //					new URL("http://localhost/latestpg/ModelOutput/update.txt"));
 			BufferedReader stream = new BufferedReader(new InputStreamReader(
 					source.getInputStream()));

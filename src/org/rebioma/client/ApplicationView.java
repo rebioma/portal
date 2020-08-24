@@ -23,15 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.rebioma.client.View.ViewInfo;
 import org.rebioma.client.bean.Role;
 import org.rebioma.client.bean.User;
 import org.rebioma.client.forms.ChangePasswordForm;
 import org.rebioma.client.forms.ForgotPasswordForm;
 import org.rebioma.client.forms.Form;
+import org.rebioma.client.forms.Form.FormListener;
 import org.rebioma.client.forms.RegisterForm;
 import org.rebioma.client.forms.SignInForm;
-import org.rebioma.client.forms.Form.FormListener;
 import org.rebioma.client.i18n.AppConstants;
 import org.rebioma.client.i18n.LocaleListBox;
 
@@ -43,7 +42,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.maps.client.events.resize.ResizeEventFormatter;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
@@ -52,15 +50,22 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.sencha.gxt.core.client.util.Margins;
+import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 
 public class ApplicationView extends View implements ClickHandler {
 
@@ -260,10 +265,12 @@ public class ApplicationView extends View implements ClickHandler {
   protected static final String USER_MANAGEMENT = "Management";
   protected static final String SPECIES_EXPLORER = "spec_expl";
   protected static final String MAILING = "Mailing";
-  
-  
+  protected static final String HOME = "Home";
+  protected static final String GRAPHICS = "Graphics";
+  protected static final String THREATENED_SPECIES = "Threatened_species";
   protected static final String STATS_TAB = "stats_tab";
 //  protected static final String MAIL_TAB = "mail_tab";
+  
   public static ApplicationView getApplication() {
     if (instance == null) {
       instance = new ApplicationView();
@@ -409,7 +416,9 @@ public class ApplicationView extends View implements ClickHandler {
   private HorizontalPanel linksPanel;
 
   private FlexTable topPanel;
-
+  
+//  private FlexTable footerPanel;
+  private FlexTable footerPanel;
   public static final String SESSION_ID_NAME = "sid";
 
   /**
@@ -427,6 +436,20 @@ public class ApplicationView extends View implements ClickHandler {
   
   private static final String WEB_PORTAL_URL = "<a target='_blank' href='http://www.rebioma.net'>"
       + "REBIOMA" + "</a>";
+  
+  private static final String HowToUpload_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/francais#up' style='color:#D6D9DC;'>"
+			+ constants.HowToUpload() + "</a>";
+	private static final String PrivacyPolicy_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#privacy' style='color:#D6D9DC;'>"
+			+ constants.PrivacyPolicy() + "</a>";
+	private static final String DataSharingAgreement_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#datasharing' style='color:#D6D9DC;'>"
+			+ constants.DataSharingAgreement() + "</a>";
+	private static final String TermsConditions_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#datause' style='color:#D6D9DC;'>"
+			+ constants.TermsConditions() + "</a>";
+	private static final String ContactUs_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/francais#contact' style='color:#D6D9DC;'>"
+			+ constants.ContactUs() + "</a>";
+	private static final String TRB_URL = "<a target='_blank' href='http://rebioma.net/index.php/fr/biodiversite/experts' style='color:#D6D9DC;'>"
+			+ constants.TRB() + "</a>";
+
 
   private static final String DEFAULT_STYLE_NAME = "Application";
 
@@ -548,11 +571,13 @@ public class ApplicationView extends View implements ClickHandler {
     // layout.setWidth("100%");
     initWidget(layout);
     createTopPanel();
+    createFooterPanel();
     layout.add(topPanel);
     tabPanel.setWidth("100%");
     tabPanel.add(new VerticalPanel(), " ");
     tabPanel.addStyleName("Application-bottom");
     layout.add(tabPanel);
+    layout.add(footerPanel);
     tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
       public void onSelection(SelectionEvent<Integer> event) {
         int selectedIndex = tabPanel.getTabBar().getSelectedTab();
@@ -655,7 +680,7 @@ public class ApplicationView extends View implements ClickHandler {
       initViews();
       isInitialized = true;
       if (loadDefaultView) {
-        switchView(OCCURRENCES);
+        switchView(HOME);
       }
     }
   }
@@ -669,7 +694,7 @@ public class ApplicationView extends View implements ClickHandler {
     } else if (sender == signOutLink) {
       signOutUser(true);
     } else if (sender == homeLink) {
-      switchView(OCCURRENCES);
+      switchView(HOME);
     } /*
        * else if (sender == changePassLink) { switchView(CHANGE_PASS); } else if
        * (sender == editCollaboratorsLink) { switchView(EDIT_COLLABORATORS); }
@@ -722,6 +747,13 @@ public class ApplicationView extends View implements ClickHandler {
 	  return occView;
   }
 
+  ///RORO
+  protected HomeView getHomeView() {
+	  ViewInfo viewInfo = viewInfos.get(HOME.toLowerCase());
+	  HomeView homeView = (HomeView) viewInfo.getView();
+	  return homeView;
+  }
+
   /**
    * Switches child view to the given view if the child view is not the same as
    * active view nor active view is null. When a view is switch change the links
@@ -734,7 +766,7 @@ public class ApplicationView extends View implements ClickHandler {
     view = view.toLowerCase();
     ViewInfo switchViewInfo = viewInfos.get(view);
     if (switchViewInfo == null) {
-      switchViewInfo = viewInfos.get(OCCURRENCES.toLowerCase());
+      switchViewInfo = viewInfos.get(HOME.toLowerCase());
     } else {
       view = switchViewInfo.getHisTokenName();
     }
@@ -742,9 +774,9 @@ public class ApplicationView extends View implements ClickHandler {
         || !activeViewInfo.getHisTokenName().equalsIgnoreCase(view)) {
       tabPanel.clear();
       if (activeViewInfo != null
-          && activeViewInfo.getHisTokenName().equals(OCCURRENCES)) {
-        OccurrenceView oView = (OccurrenceView) activeViewInfo.getView();
-        oView.setVisible(false);
+          && activeViewInfo.getHisTokenName().equals(HOME)) {
+        HomeView hView = (HomeView) activeViewInfo.getView();
+        hView.setVisible(false);
       }
       //pour cacher les CustomPopupPanel (map et list view ) de OccurrenceView 
       ViewInfo occViewInfo = viewInfos.get(OCCURRENCES.toLowerCase());
@@ -754,6 +786,12 @@ public class ApplicationView extends View implements ClickHandler {
       ViewInfo spExpViewInfo = viewInfos.get(SPECIES_EXPLORER.toLowerCase());
       SpeciesExplorerView spExpView = (SpeciesExplorerView)spExpViewInfo.getView();
       spExpView.addOccurrenceSearchListener((OccurrenceSearchListener)occView);
+      
+      //RORO
+      ViewInfo homeViewInfo = viewInfos.get(HOME.toLowerCase());
+      HomeView homeView = (HomeView) homeViewInfo.getView();
+      homeView.addOccurrenceSearchListener((OccurrenceSearchListener) occView);
+		
 //      ViewInfo statViewInfo = viewInfos.get(STATS_TAB.toLowerCase());
 //      StatisticsTabView statsView = (StatisticsTabView) statViewInfo.getView();
       
@@ -767,106 +805,147 @@ public class ApplicationView extends View implements ClickHandler {
       int selectedTabIndex = 0;
       boolean isSignedIn = currentState != ViewState.UNAUTHENTICATED;
       String linksGroup = LinksGroup.HOME.toString() + isSignedIn;
-      if (view.equalsIgnoreCase(OCCURRENCES)) {
-        currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-        currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-        currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
-        
-        if (isSignedIn) {
-          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-          // currentTabs.add(viewInfos.get(arg0))
-        }
-        if (isAdmin()) {
-          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-        }
+      if (view.equalsIgnoreCase(HOME)) {
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+
+    	  if (isSignedIn) {
+    		  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    		  // currentTabs.add(viewInfos.get(arg0))
+    	  }
+    	  if (isAdmin()) {
+    		  currentTabs
+    		  .add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    		  // currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    		  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  }
+      } else if (view.equalsIgnoreCase(OCCURRENCES)) {
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+
+    	  if (isSignedIn) {
+    		  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    		  // currentTabs.add(viewInfos.get(arg0))
+    	  }
+    	  if (isAdmin()) {
+    		  currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    		  //          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    		  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  }
+    	  selectedTabIndex = 1;
       } else if(view.equalsIgnoreCase(SPECIES_EXPLORER)){
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
     	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
-//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-          if (isSignedIn) {
-	          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-	          // currentTabs.add(viewInfos.get(arg0))
-          }
-          if (isAdmin()) {
-	          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-	          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-          }
-          selectedTabIndex = 1;
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+    	  //          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    	  if (isSignedIn) {
+    		  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    		  // currentTabs.add(viewInfos.get(arg0))
+    	  }
+    	  if (isAdmin()) {
+    		  currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    		  //	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    		  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  }
+    	  selectedTabIndex = 2;
       } else if(view.equalsIgnoreCase(STATS_TAB)){
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
     	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
-//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-          if (isSignedIn) {
-	          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-	          // currentTabs.add(viewInfos.get(arg0))
-          }
-          if (isAdmin()) {
-	          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-	          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-          }
-          selectedTabIndex = 2;
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+    	  //          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    	  if (isSignedIn) {
+    		  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    		  // currentTabs.add(viewInfos.get(arg0))
+    	  }
+    	  if (isAdmin()) {
+    		  currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    		  //	          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    		  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  }
+    	  selectedTabIndex = 3;
       } else if (view.equalsIgnoreCase(USER_PROFILES) && isSignedIn) {
-          currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-          if (isAdmin()) {
-            currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//            currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-            currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-          }
-          selectedTabIndex = 3;
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    	  if (isAdmin()) {
+    		  currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    		  //            currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    		  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  }
+    	  selectedTabIndex = 4;
       } else if (view.equalsIgnoreCase(USER_MANAGEMENT) && isAdmin()) {
-          currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-          selectedTabIndex = 4;
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    	  //          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  selectedTabIndex = 5;
       } else if (view.equalsIgnoreCase(MAILING) && isAdmin()) {
-          currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-          currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-//          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
-          currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-          selectedTabIndex = 5;
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    	  //          currentTabs.add(viewInfos.get(MAIL_TAB.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  selectedTabIndex = 6;
       } else if (view.equalsIgnoreCase(SIGN_IN)) {
-        currentTabs.add(viewInfos.get(SIGN_IN.toLowerCase()));
-        currentTabs.add(viewInfos.get(FORGET_PASS.toLowerCase()));
-        linksGroup = LinksGroup.SIGN_IN + "";
+    	  currentTabs.add(viewInfos.get(SIGN_IN.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(FORGET_PASS.toLowerCase()));
+    	  linksGroup = LinksGroup.SIGN_IN + "";
+
       } else if (view.equalsIgnoreCase(CHANGE_PASS)) {
-        currentTabs.add(viewInfos.get(CHANGE_PASS.toLowerCase()));
-        linksGroup = LinksGroup.CHANGE_PASS + "";
+    	  currentTabs.add(viewInfos.get(CHANGE_PASS.toLowerCase()));
+    	  linksGroup = LinksGroup.CHANGE_PASS + "";
       } else if (view.equalsIgnoreCase(REGISTER)) {
-        currentTabs.add(viewInfos.get(REGISTER.toLowerCase()));
-        linksGroup = LinksGroup.REGISTER + "";
+    	  currentTabs.add(viewInfos.get(REGISTER.toLowerCase()));
+    	  linksGroup = LinksGroup.REGISTER + "";
       } else if (view.equalsIgnoreCase(FORGET_PASS)) {
-        currentTabs.add(viewInfos.get(SIGN_IN.toLowerCase()));
-        currentTabs.add(viewInfos.get(FORGET_PASS.toLowerCase()));
-        linksGroup = LinksGroup.SIGN_IN + "";
-        selectedTabIndex = 1;
+    	  currentTabs.add(viewInfos.get(SIGN_IN.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(FORGET_PASS.toLowerCase()));
+    	  linksGroup = LinksGroup.SIGN_IN + "";
+    	  selectedTabIndex = 1;
       } else {
-          currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
-          currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
-          currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
-          
-          if (isSignedIn) {
-            currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
-          }
-          if (isAdmin()) {
-            currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
-            currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
-          }
+    	  currentTabs.add(viewInfos.get(HOME.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(OCCURRENCES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(SPECIES_EXPLORER.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(THREATENED_SPECIES.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(GRAPHICS.toLowerCase()));
+    	  currentTabs.add(viewInfos.get(STATS_TAB.toLowerCase()));
+
+    	  if (isSignedIn) {
+    		  currentTabs.add(viewInfos.get(USER_PROFILES.toLowerCase()));
+    	  }
+    	  if (isAdmin()) {
+    		  currentTabs.add(viewInfos.get(USER_MANAGEMENT.toLowerCase()));
+    		  currentTabs.add(viewInfos.get(MAILING.toLowerCase()));
+    	  }
       }
       for (ViewInfo viewInfo : currentTabs) {
         addTab(viewInfo);
@@ -876,6 +955,7 @@ public class ApplicationView extends View implements ClickHandler {
       activeViewInfo = switchViewInfo;
       links.showLinks(linksGroup);
       activeViewInfo.getView().onShow();
+      
     }
     if (addHistory) {
       addHistoryItem(false);
@@ -933,6 +1013,94 @@ public class ApplicationView extends View implements ClickHandler {
         HasVerticalAlignment.ALIGN_TOP);
     topPanel.getRowFormatter().setVerticalAlign(1,
         HasVerticalAlignment.ALIGN_TOP);
+  }
+
+  private void createFooterPanel() {
+	  HorizontalLayoutContainer hlog = new HorizontalLayoutContainer();
+		//Les bailleurs
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='https://www.macfound.org/'>"
+								+ new Image(Resources.INSTANCE
+										.MacArth_primary_logo()) + "</a>"),
+				new HorizontalLayoutData(0.2, 1, new Margins(5, 5, 5, 5)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='http://jrsbiodiversity.org/'>"
+								+ new Image(Resources.INSTANCE.jrs_logo())
+								+ "</a>"), new HorizontalLayoutData(0.2, 1,
+						new Margins(5, 5, 5, 5)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='https://www.start.org/'>"
+								+ new Image(Resources.INSTANCE.start_logo())
+								+ "</a>"), new HorizontalLayoutData(0.2, 1,
+						new Margins(5, 5, 5, 5)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='http://www.cepf.net/'"
+								+ new Image(Resources.INSTANCE.cepf_logo())
+								+ "</a>"), new HorizontalLayoutData(0.2, 1,
+						new Margins(5, 5, 5, 5)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='https://www.ffem.fr/fr'>"
+								+ new Image(Resources.INSTANCE.ffem_logo())
+								+ "</a>"), new HorizontalLayoutData(0.1, 1,
+						new Margins(5, 5, 5, 5)));
+		hlog.add(
+				new HTML(
+						"<a target='_blank' href='http://www.fondationbiodiversite.fr/fr/'>"
+								+ new Image(Resources.INSTANCE.frb_logo())
+								+ "</a>"), new HorizontalLayoutData(0.1, 1,
+						new Margins(5, 5, 5, 5)));
+		ContentPanel plogoDonate = new ContentPanel();
+		plogoDonate.setHeaderVisible(false);
+		plogoDonate.add(hlog);
+		HorizontalLayoutContainer hlc = new HorizontalLayoutContainer();
+		VerticalLayoutContainer vh = new VerticalLayoutContainer();
+		VerticalLayoutContainer vhlink = new VerticalLayoutContainer();
+		VerticalLayoutContainer vhplogoDonate = new VerticalLayoutContainer();
+		vh.add(new HTML(HowToUpload_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vh.add(new HTML(PrivacyPolicy_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vh.add(new HTML(DataSharingAgreement_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhlink.add(new HTML(TermsConditions_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhlink.add(new HTML(ContactUs_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhlink.add(new HTML(TRB_URL), new VerticalLayoutData(1, 20, new Margins(
+				0, 0, 0, 50)));
+		vhplogoDonate.add(new HTML("<center><h1 style='color:#D6D9DC;'>"+ constants.donors() + "</h1></center>"),
+				new VerticalLayoutData(1, 20, new Margins(5, 150, 5, 150)));
+		vhplogoDonate.add(plogoDonate, new VerticalLayoutData(1, 70,new Margins(10, 50, 5, 0)));
+		hlc.add(vh,new HorizontalLayoutData(0.2, 1, new Margins(40,0,10,10)));
+		hlc.add(vhlink, new HorizontalLayoutData(0.2, 1, new Margins(40,5,10,5)));
+		hlc.add(vhplogoDonate, new HorizontalLayoutData(0.4, 1, new Margins(10,10,10,0)));
+
+		footerPanel =  new FlexTable();
+		
+		footerPanel.setCellPadding(0);
+		footerPanel.setCellSpacing(0);
+		footerPanel.setCellSpacing(0);
+		footerPanel.setStyleName(DEFAULT_STYLE_NAME + "-top contentFooter");
+
+	    FlexCellFormatter formatter = footerPanel.getFlexCellFormatter();
+
+	    footerPanel.setWidget(0, 0, vh);
+	    footerPanel.setWidget(0, 1, vhlink);
+	    footerPanel.setWidget(0, 2, vhplogoDonate);
+//	    formatter.setStyleName(0, 0, DEFAULT_STYLE_NAME + "-links");
+//	    formatter.setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
+	    formatter.setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+	    
+	    setTitleWidget(null);
+	    formatter.setStyleName(1, 0, "footer-ctext");
+	    formatter.setColSpan(1, 0, 3);
+//		footerPanel.add(hlc, new VerticalLayoutData(1, 95, new Margins(0, 0, 10, 0)));
+		footerPanel.setWidget(1, 0, new HTML("<center>"+ constants.copyright() + "</center>"));
   }
 
   private String getUrlToken(UrlParam urlParam) {
@@ -1037,7 +1205,7 @@ public class ApplicationView extends View implements ClickHandler {
             } else {
               User user = (User) result;
               handleAuthenticatedUser(user);
-              switchView(OCCURRENCES);
+              switchView(HOME);
               fireOnStateChange(currentState);
               // pager.init();
               // View view = occurrenceViewInfo.getInstance();
@@ -1119,9 +1287,15 @@ public class ApplicationView extends View implements ClickHandler {
 //        	.mailingSystem(), MAIL_TAB);
     ViewInfo mailingViewInfo = MailingTabView.init(this, constants
         	.mailing(), MAILING);
+	ViewInfo homeViewInfo = HomeView.init(this, constants.Home(), HOME);
+	ViewInfo graphicsViewInfo = GraphicsView.init(this, constants.Graphics(), GRAPHICS);
+	ViewInfo theatenedSpeciesListViewInfo = ThreatenedSpeciesListView.init(this, constants.TreatenedSpecies(), THREATENED_SPECIES);
+	addViewInfo(homeViewInfo);
     addViewInfo(occurrenveViewInfo);
     addViewInfo(speciesExplorerViewInfo);
+	addViewInfo(theatenedSpeciesListViewInfo);
     addViewInfo(statsViewInfo);
+	addViewInfo(graphicsViewInfo);// RORO
 //    addViewInfo(mailViewInfo);
     addViewInfo(forgetPassViewInfo);
     addViewInfo(signinViewInfo);
@@ -1158,7 +1332,7 @@ public class ApplicationView extends View implements ClickHandler {
     links.removeEmail();
     links.showLinks(LinksGroup.HOME.toString() + false);
     activeViewInfo = null;
-    switchView(OCCURRENCES);
+    switchView(HOME);
     fireOnStateChange(currentState);
 
     // HACK: UserProfilesView maintains a final User reference that is set when

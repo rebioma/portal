@@ -140,6 +140,7 @@ public class RegisterForm extends Form {
     addInput(email);
     addInput(confirmEmail);
     addInput(institution);
+    
   }
 
   @Override

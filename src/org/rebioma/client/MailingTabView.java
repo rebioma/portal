@@ -52,9 +52,10 @@ public class MailingTabView extends ComponentView implements ClickHandler {
 	@Override
 	protected void resize(final int width, int height) {
 		int w = width - 20;
+		int h = height - mailingTabW.getAbsoluteTop() - 5 - 110;
 		verticalPanel.setWidth(w + "px");
 //		mailingTab.getWidget().setWidth(w  + "px");
-		mailingTabW.setPixelSize(w, height - mailingTabW.getAbsoluteTop() - 5 );
+		mailingTabW.setPixelSize(w, h<1? 1: h);
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 
             @Override

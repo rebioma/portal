@@ -1,6 +1,5 @@
 package org.rebioma.client.i18n;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * Interface to represent the constants contained in resource bundle:
@@ -3059,7 +3058,6 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @DefaultStringValue("Data dashboard")
   @Key("statistics")
   String Statistics();
-
   
   @DefaultStringValue("Show Statistic")
   @Key("ShowStatistic")
@@ -3158,4 +3156,213 @@ public interface AppConstants extends com.google.gwt.i18n.client.ConstantsWithLo
   @Key("shapefileList")
   String shapefileList();
   
+	String lblNewLabel_text();
+	String lblNewLabel_1_text();
+	String lblRequired_text();
+	String lblNewLabel_text_1();
+	String lblNewLabel_1_text_1();
+	String lblNewLabel_2_text();
+	String lblNewLabel_3_text();
+	String lblGeospatialExtension_text();
+	
+
+	  @DefaultStringValue("Welcome to the REBIOMA data portal. " +
+	  		"The REBIOMA portal was created to facilitate the communication and " +
+	  		"exchange of information related to Madagascar's biodiversity. " +
+	  		"It allows the sharing of species observation data as well as ecological niche " +
+	  		"models developed for fauna and flora of the island, both marine and terrestrial.")
+	  @Key("welcome")
+	  String welcome();
+
+	  @DefaultStringValue("Copyright : 2019 REBIOMA Webportal - All Rights Reserved")
+	  @Key("copyright")
+	  String copyright();
+
+	  @DefaultStringValue("DONORS")
+	  @Key("donors")
+	  String donors();
+	  
+	  @DefaultStringValue("How To Upload")
+	  @Key("HowToUpload")
+	  String HowToUpload();
+	  
+	  @DefaultStringValue("Privacy Policy")
+	  @Key("PrivacyPolicy")
+	  String PrivacyPolicy();
+	  
+	  @DefaultStringValue("Data Sharing Agreement")
+	  @Key("DataSharingAgreement")
+	  String DataSharingAgreement();
+	  
+	  @DefaultStringValue("Terms & Conditions")
+	  @Key("TermsConditions")
+	  String TermsConditions();
+
+	  @DefaultStringValue("Contact Us")
+	  @Key("ContactUs")
+	  String ContactUs();
+	  
+	  @DefaultStringValue("Darwincore Format")
+	  @Key("FormatDarwincore")
+	  String FormatDarwincore();
+	  
+	  @DefaultStringValue("Recorded occurrences")
+	  @Key("lbl_observationsaved")
+	  String lbl_observationsaved();
+	  
+	  @DefaultStringValue("Registered species")
+	  @Key("lbl_speciessaved")
+	  String lbl_speciessaved();
+
+	  @DefaultStringValue("People have registered")
+	  @Key("lbl_usersaved")
+	  String lbl_usersaved();
+	  
+	  @DefaultStringValue("Occurrences")
+	  @Key("lbl_Observation")
+	  String lbl_Observation();
+	  
+	  @DefaultStringValue("Species")
+	  @Key("lbl_species")
+	  String lbl_species();
+	  
+	  @DefaultStringValue("User")
+	  @Key("lbl_user")
+	  String lbl_user();
+	  
+	  @DefaultStringValue("Add Observations")
+	  @Key("lbl_addObservation")
+	  String lbl_addObservation();
+	  
+	  @DefaultStringValue("More...")
+	  @Key("more")
+	  String more();
+	  
+	  @DefaultStringValue("REBIOMA Taxonomy Review Board")
+	  @Key("TRB")
+	  String TRB();
+	  
+	  @DefaultStringValue("Registered users only")
+	  @Key("lbl_registerUserOnly")
+	  String lbl_registerUserOnly();
+	  
+	  @DefaultStringValue("Please login or register first")
+	  @Key("lbl_PleaseLogin")
+	  String lbl_PleaseLogin();
+	  
+	  
+	  @DefaultStringValue("Search for Occurrences")
+	  @Key("searchForOccurrence")
+	  String searchForOccurrence();
+	  
+	  @DefaultStringValue("Verify or establish connection")
+	  @Key("verifyConnection")
+	  String verifyConnection();
+	 
+	  @DefaultStringValue("Update IUCN Status")
+	  @Key("update_IUCN")
+	  String update_IUCN();
+	  
+	  @DefaultStringValue("Successful updates with success")
+	  @Key("update_IUCN_successful")
+	  String update_IUCN_successful();
+	  
+	  @DefaultStringValue("IUCN status")
+	  @Key("IUCN_status")
+	  String IUCN_status();
+	  
+	  
+	  @DefaultStringValue("Threatened Species")
+	  @Key("TreatenedSpecies")
+	  String TreatenedSpecies();
+
+	  
+	  @DefaultStringValue("List of Threatened Species")
+	  @Key("ThreatenedSpeciesList")
+	  String ThreatenedSpeciesList();
+	  
+	  @DefaultStringValue("Graphics")
+	  @Key("Graphics")
+	  String Graphics();
+		
+	  @DefaultStringValue("All species")
+	  @Key("AllSpecies")
+	  String AllSpecies();
+	  
+	  @DefaultStringValue("Terrestrial species")
+	  @Key("TerrestrialSpecies")
+	  String TerrestrialSpecies();
+	  
+	  
+	  @DefaultStringValue("Marine species")
+	  @Key("MarineSpecies")
+	  String MarineSpecies();
+	  
+	  @DefaultStringValue("Statistics of all species")
+	  @Key("StatisticsOfAllSpecies")
+	  String StatisticsOfAllSpecies();
+	  
+	  @DefaultStringValue("Statistics of species according to IUCN status")
+	  @Key("SpeciesAccordingIUCNstatus")
+	  String SpeciesAccordingIUCNstatus();
+	  
+	  
+	  @DefaultStringValue("Terrestrial species statistics by IUCN status")
+	  @Key("TerrestrialSpeciesAccordingIUCNStatus")
+	  String TerrestrialSpeciesAccordingIUCNStatus();
+	  
+	  
+	  @DefaultStringValue("Marine species statistics by IUCN status")
+	  @Key("MarineSpeciesAccordingIUCNStatus")
+	  String MarineSpeciesAccordingIUCNStatus();
+	  
+	  @DefaultStringValue("Occurrence per year")
+	  @Key("OccurrencePerYear")
+	  String OccurrencePerYear();
+	  
+	  @DefaultStringValue("Occurrences by region")
+	  @Key("OccurrencesByRegion")
+	  String OccurrencesByRegion();
+	  
+	  @DefaultStringValue("Count")
+	  @Key("lbl_count")
+	  String lbl_count();
+	  
+	  @DefaultStringValue("All occurrences")
+	  @Key("alloccurrence")
+	  String alloccurrence();
+	  
+	  @DefaultStringValue("All reliable reviews")
+	  @Key("allreliable")
+	  String allreliable();
+	  
+	  @DefaultStringValue("Layers")
+	  @Key("Layers")
+	  String Layers();
+	  
+	  @DefaultStringValue("Draw")
+	  @Key("Draw")
+	  String Draw();
+	  
+	  @DefaultStringValue("Navigate")
+	  @Key("Navigate")
+	  String Navigate();
+	  
+	  @DefaultStringValue("Protected areas")
+	  @Key("AP")
+	  String AP();
+	  
+	  @DefaultStringValue("Forest cover")
+	  @Key("DeforestationMap")
+	  String DeforestationMap();
+	  
+	  @DefaultStringValue("From the year:")
+	  @Key("From_the_year")
+	  String From_the_year();
+	  
+	  @DefaultStringValue("until:")
+	  @Key("until")
+	  String until();
+	  
+	
 }

@@ -295,6 +295,9 @@ public class Occurrence implements java.io.Serializable {
 	private String accessRights;
 	private String license;
 	private String references;
+	private String iucn_status;
+	private int count;
+	private int countreviewed;
 
 	public Occurrence() {
 	}
@@ -2615,6 +2618,32 @@ public class Occurrence implements java.io.Serializable {
 		  		return this.getOwnerEmail();
 		  	else return ApplicationView.getConstants().EmailNotShow();
 	  }
+
+	public String getIucn_status() {
+		return iucn_status;
+	}
+
+	public void setIucn_status(String iucn_status) {
+		this.iucn_status = iucn_status;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public int getCountreviewed() {
+		return countreviewed;
+	}
+
+	public void setCountreviewed(int countreviewed) {
+		this.countreviewed = countreviewed;
+	}
 	  
 	  //WD}
+	  
+	  
 }

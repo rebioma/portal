@@ -43,5 +43,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-exec-1.2.jar"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/org.moxieapps.gwt.highcharts-1.5.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-openlayers-client-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

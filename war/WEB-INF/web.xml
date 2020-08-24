@@ -139,7 +139,14 @@
     <servlet-name>AscDataService</servlet-name>
     <url-pattern>/rebioma/ascDataService</url-pattern>
   </servlet-mapping>
-
+	<servlet>
+    <servlet-name>HomestatService</servlet-name>
+    <servlet-class>org.rebioma.server.services.HomestatServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HomestatService</servlet-name>
+    <url-pattern>/rebioma/HomestatService</url-pattern>
+  </servlet-mapping>
   <servlet>
     <servlet-name>ASCGMapsTileRenderer</servlet-name>
     <servlet-class>org.rebioma.server.overlays.ASCGMapsTileRenderer
@@ -199,5 +206,20 @@
     <servlet-name>ModelServlet</servlet-name>
     <url-pattern>/rebioma/model</url-pattern>
   </servlet-mapping>
-  
+  <servlet>
+    <servlet-name>TaxonomyService</servlet-name>
+    <servlet-class>org.rebioma.server.services.TaxonomyServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TaxonomyService</servlet-name>
+    <url-pattern>/rebioma/TaxonomyService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>GraphicService</servlet-name>
+    <servlet-class>org.rebioma.server.services.GraphicServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GraphicService</servlet-name>
+    <url-pattern>/rebioma/GraphicService</url-pattern>
+  </servlet-mapping>
 </web-app>

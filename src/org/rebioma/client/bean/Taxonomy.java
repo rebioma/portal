@@ -2,7 +2,6 @@ package org.rebioma.client.bean;
 
 // Generated 26 ao�t 2012 20:34:47 by Hibernate Tools 3.3.0.GA
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -70,8 +69,8 @@ public class Taxonomy implements java.io.Serializable {
 	private String acceptedNameUsage;
 	private String basisOfRecord;
 	private String higherClassification;
-	
-	
+	private String iucn;
+	private int count;
 	public static List<String> COLONNE_DOUBLE = Arrays.asList("Stability", "IsTerrestrial", "IsMarine","TaId","IdAccepted", "AcceptedNameUsageID");
 	public static List<String> COLONNE_DATE = Arrays.asList("ValidationDate", "ChangeDate");
 
@@ -101,7 +100,7 @@ public class Taxonomy implements java.io.Serializable {
 			String reviewedBy, String reviewDate, String notes, String status,
 			String changedBy, Date changeDate, String validation,
 			String validatedBy, Date validationDate, Double stability,
-			Double acceptedNameUsageID, String acceptedNameUsage, String higherClassification, String basisOfRecord) {
+			Double acceptedNameUsageID, String acceptedNameUsage, String higherClassification, String basisOfRecord, String iucn) {
 		this.id = id;
 		this.taId = taId;
 		this.idAccepted = idAccepted;
@@ -159,6 +158,7 @@ public class Taxonomy implements java.io.Serializable {
 		this.acceptedNameUsage = acceptedNameUsage;
 		this.basisOfRecord = basisOfRecord;
 		this.higherClassification = higherClassification;
+		this.iucn = iucn;
 	}
 
 	public int getId() {
@@ -615,6 +615,22 @@ public class Taxonomy implements java.io.Serializable {
 
 	public void setHigherClassification(String higherClassification) {
 		this.higherClassification = higherClassification;
+	}
+
+	public String getIucn() {
+		return iucn;
+	}
+
+	public void setIucn(String iucn) {
+		this.iucn = iucn;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 }

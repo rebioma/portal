@@ -467,7 +467,7 @@ public class UserProfilesView extends ComponentView {
   @Override
   protected void resize(int width, int height) {
     int pWidth = width - mainHp.getOffsetWidth();
-    int pHeight = height - mainHp.getAbsoluteTop();
+    int pHeight = height - mainHp.getAbsoluteTop() -115;
     if (pWidth < width) {
       pWidth = width;
     }

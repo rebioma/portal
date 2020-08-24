@@ -557,6 +557,18 @@ body {
   padding: 0px 0px 0px 20px;
   margin-right: 0.25em;
 }
+.spUpdatelink{
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  /*color:#FFD838;*/
+  color:blue;
+  display: inline;
+  vertical-align: middle;
+  padding: 0px 0px 0px 0px;
+  margin-right: 0.25em;
+}
 
 .actionlink{
   background: url("images/activity.png") no-repeat;
@@ -691,6 +703,7 @@ text-decoration: none;
 */
 .View-Content {
   border-color: #ECE9D8;
+  background: whitesmoke;
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   /*width: 100%;*/

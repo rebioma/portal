@@ -8,16 +8,19 @@
 	<inherits name='org.form.Form'/>
  	<inherits name='edu.berkeley.mvz.rebioma.ModelBuilder' /> 
 
+	<inherits name="org.moxieapps.gwt.highcharts.Highcharts"/>
 	<inherits name='com.google.gwt.user.theme.standard.Standard' />
 	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
 	<!-- Other module inherits                                      -->
 	<inherits name="com.google.gwt.maps.Maps" />
+	<inherits name='org.gwtopenmaps.openlayers.OpenLayers'/>
 <!--	<inherits name="org.form.FormWidget" />-->
   	<inherits name="com.sencha.gxt.ui.GXT" />
   	
   	<stylesheet src="reset.css" />
+  	<stylesheet src="style.css" />
 	<inherits name="com.sencha.gxt.theme.gray.Gray" />
   	
 	<!--

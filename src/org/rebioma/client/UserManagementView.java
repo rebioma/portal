@@ -7,6 +7,7 @@ import org.rebioma.client.bean.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -217,12 +218,14 @@ public class UserManagementView extends ComponentView implements ClickHandler {
    * 
    * @see org.rebioma.client.ComponentView#historyToken()
    */
+  
+  VerticalPanel mainContainer = new VerticalPanel();
 
   public UserManagementView(View parent) {
     super(parent, false);
     // TODO Auto-generated constructor stub
     HorizontalPanel mainHp = new HorizontalPanel();
-    VerticalPanel mainContainer = new VerticalPanel();
+    
     mainHp.setSpacing(5);
     VerticalPanel searchPanel = new VerticalPanel();
     // assignmentLink = new Label(constants.assignReviewers());
@@ -438,5 +441,20 @@ public class UserManagementView extends ComponentView implements ClickHandler {
     }
     usersTable.resetTable();
   }
+  
+  @Override
+	public void onResize(ResizeEvent event) {
+		resize(event.getWidth(), event.getHeight());
+	}
+	
+	@Override
+	protected void resize(final int width, int height) {
+		int w = width - 20;
+		int h = height - mainContainer.getAbsoluteTop() - 10 - 105;
+		mainContainer.setWidth(w + "px");
+		mainContainer.setWidth(w +"px");
+		mainContainer.setHeight(h<1?1+"px":h+"px");
+
+	}
 
 }

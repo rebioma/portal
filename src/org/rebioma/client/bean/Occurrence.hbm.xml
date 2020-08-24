@@ -2235,6 +2235,12 @@
 
             <column name="resourceRelationshipID" />
         </property>
+        <property
+            name="iucn_status"
+            type="string" >
+
+            <column name="iucn_status" />
+        </property>
     </class>
 
 </hibernate-mapping>

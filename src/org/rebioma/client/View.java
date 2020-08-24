@@ -340,7 +340,7 @@ public abstract class View extends Composite implements
      * Gets all values of the given {@link UrlParam}.
      * 
      * @param urlParam
-     * @return a {@link List} of Integer from a {@link UrlParam
+     * @return a {@link List} of Integer from a {@link UrlParam
      */
     protected List<String> listValue(UrlParam urlParam) {
       return ApplicationView.getHistoryTokenParamValues(historyToken, urlParam
