@@ -1498,9 +1498,9 @@ public class DetailView extends ComponentView implements OpenHandler<TreeItem>,
 		 * Initializes smalll map and center it at Madagascar.
 		 */
 		public SmallMap() {
-			OSM osmMapnik = OSM.Mapnik("Mapnik");
-			osmMapnik.setIsBaseLayer(true);
-			map.getMap().addLayer(osmMapnik);
+			OSM osm= new OSM();
+			osm.setIsBaseLayer(true);
+			map.getMap().addLayer(osm);
 			 LonLat lonLat = new LonLat(47, -19);
 		        lonLat.transform(new Projection(
 	                "EPSG:4326").getProjectionCode(), map.getMap().getProjection());

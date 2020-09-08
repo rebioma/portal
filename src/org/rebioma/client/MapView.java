@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 University of California at Berkeley
+0 * Copyright 2008 University of California at Berkeley
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -833,7 +833,7 @@ private static class MapGeocoderResult extends Composite {
 	 * For some reason when make this static it cause a weird infinite
 	 * initializing, so make it non-static to solve this problem.
 	 */
-	private OSM osm = OSM.Mapnik("OpenStreetMap");
+	private OSM osm = new OSM();
 	private final Layer DEFAULT_MAP_TYPE = osm;// .TERRAIN;
 	private static final String DEFAULT_STYLE = "OccurrenceMapView";
 
@@ -1745,7 +1745,7 @@ private static class MapGeocoderResult extends Composite {
 		defaultMapOptions.setProjection("EPSG:4326");
 		defaultMapOptions.setDisplayProjection(new Projection("EPSG:4326"));
 		defaultMapOptions.setNumZoomLevels(16);
-		OSM osm_1 = OSM.Mapnik("OpenStreetMap");
+		OSM osm_1 = new OSM();
 		osm_1.setIsBaseLayer(true);
 		map.getMap().addLayer(osm_1);
 		GoogleV3Options gHybridOptions = new GoogleV3Options();
