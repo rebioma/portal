@@ -9,23 +9,22 @@ select {
 	border-radius: 4px;
 	box-sizing: border-box;
 }
-
 input[type=password] {
-	height: 20px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	box-sizing: border-box;
-	padding: 2px;
 }
-
 input[type=text] {
-	height: 20px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	box-sizing: border-box;
-	padding: 2px;
 }
-
+Button {
+	background: #ededed;
+	border-radius: 5px;
+	border: none;
+}
+/*
 Button {
 	-moz-box-shadow: 3px 4px 0px 0px #899599;
 	-webkit-box-shadow: 3px 4px 0px 0px #899599;
@@ -51,8 +50,8 @@ Button {
 	font-size: 12px;
 	text-decoration: none;
 	text-shadow: 0px 1px 0px #e1e2ed;
-}
-
+}*/
+/*
 Button:hover {
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bab1ba
 		), color-stop(1, #ededed) );
@@ -65,7 +64,7 @@ Button:hover {
 		endColorstr='#ededed', GradientType=0 );
 	background-color: #bab1ba;
 }
-
+*/
 Button:active {
 	position: relative;
 	top: 1px;
@@ -108,6 +107,7 @@ Button:active {
 	flex: 4;
 	padding: 20px 30px;
 	justify-content: center;
+	border : 1px solid lightgray;
 }
 
 .box1 {
@@ -130,6 +130,15 @@ Button:active {
 }
 .contentFooter{
 	background:#0B3B0B;
+	position : relative;
+	top : -18px;
+	margin-bottom: 4px;
+	
+}
+.footer-ctext {
+	margin: 10px;
+	font-weight: normal;
+	color:#D6D9DC;
 }
 
 .tgbtstyle {
