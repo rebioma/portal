@@ -44,6 +44,7 @@ import org.gwtopenmaps.openlayers.client.MapOptions;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.gwtopenmaps.openlayers.client.Marker;
 import org.gwtopenmaps.openlayers.client.OpenLayers;
+import org.gwtopenmaps.openlayers.client.Pixel;
 import org.gwtopenmaps.openlayers.client.Projection;
 import org.gwtopenmaps.openlayers.client.Style;
 import org.gwtopenmaps.openlayers.client.control.DrawFeature;
@@ -134,6 +135,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
@@ -723,8 +725,8 @@ private static class MapGeocoderResult extends Composite {
 	static MapWidget map = new MapWidget("100%", "100%", defaultMapOptions);
 	private Popup popup;
 	HorizontalPanel hpButtons;
-	public final static VerticalPanel vCOntrolMap = new VerticalPanel();
-
+	//public final static VerticalPanel vCOntrolMap = new VerticalPanel();
+	public final static AbsolutePanel panelMap = new AbsolutePanel();
 	/**
 	 * The text box on the map that allows users to search for addresses in
 	 * Madagascar. If a match is found, the map is re-centered on the address
@@ -995,27 +997,19 @@ private static class MapGeocoderResult extends Composite {
 		mapPanel.setHeight(Window.getClientHeight() - 183);
 		// mapPanel.setHeight(450);
 		mapPanel.add(map);
-		BorderLayoutData eastData = new BorderLayoutData(500);
-		eastData.setMinSize(200);
-		eastData.setCollapsible(true);
-		eastData.setSplit(true);
-		eastData.setCollapseMini(true);
-		eastData.setMargins(new Margins(5, 5, 5, 5));
-		// //////////////////RORO END CODE
-		mapPanel.add(map);
-		HorizontalPanel panel = new HorizontalPanel();
-		// panel.setHeight("450px");
+		panelMap.setSize("100%", "100%"); //give it the same size as the MapWidget
+		panelMap.add(map, 0, 0); //add the MapWidget to the AbsolutePanel
 		hpButtons = new HorizontalPanel();
-		vCOntrolMap.add(hpButtons);
-		panel.add(vCOntrolMap);
-		ContentPanel pan=new ContentPanel();
-		pan.add(panel);
+		LonLat llbtn=new LonLat(60,-17);
+		llbtn.transform(DEFAULT_PROJECTION.getProjectionCode(),
+                map.getMap().getProjection());
+		Pixel pxLonLat = map.getMap().getPixelFromLonLat(llbtn); //calculate px coordinates from lonLat
+		panelMap.add(hpButtons,pxLonLat.x(), pxLonLat.y());
+		mapPanel.add(panelMap);
 		hpButtons.add(drawPolygonButton);
 		hpButtons.add(navigateButton);
 		con.setWestWidget(leftTabPanel, westData);
 		con.setCenterWidget(mapPanel, centerData);
-		con.setEastWidget(pan, eastData);
-		// HorizontalPanel toolHp = new HorizontalPanel();
 		toolHp = new ToolBar();
 		// {WD force toolbar layout view
 		pager.setToolBar(toolHp);
@@ -1509,8 +1503,11 @@ private static class MapGeocoderResult extends Composite {
 				// + modelControlWidget.getOffsetWidth() + 10, modelControl
 				// .getYOffset());
 				HideControl hideControl = new HideControl();
-				vCOntrolMap.add(hideControl);
-				// RORO map.setControls(ControlPosition.TOP_RIGHT, hideControl);
+				LonLat llhc=new LonLat(89,-20);
+				llhc.transform(DEFAULT_PROJECTION.getProjectionCode(),
+                        map.getMap().getProjection());
+				Pixel pxLonLat = map.getMap().getPixelFromLonLat(llhc); //calculate px coordinates from lonLat
+				panelMap.add(hideControl,pxLonLat.x(), pxLonLat.y());
 				hideControl.addControlWidgetToHide(modelControl);
 				hideControl.addControlWidgetToHide(geocoder);
 				hideControl.addControlWidgetToHide(envLayerSelector);
@@ -1985,7 +1982,7 @@ private static class MapGeocoderResult extends Composite {
 	      lonlat.transform(new Projection("EPSG:32738").getProjectionCode(), new Projection("EPSG:32738").getProjectionCode());
 	      */
 		/// System.out.println(""+ lonlat.lon()+","+lonlat.lat());
-		LonLat lonLat=new LonLat(47,-19);
+		final LonLat lonLat=new LonLat(47,-19);
 		lonLat.transform(new Projection("EPSG:4326").getProjectionCode(), map.getMap().getProjection());
 		map.getMap().setCenter(lonLat, DEFAULT_ZOOM);
 		// map.getMap().setCenter(new LonLat(47.3318, -18.8296), 6);
@@ -2001,8 +1998,16 @@ private static class MapGeocoderResult extends Composite {
 			@Override
 			public void execute() {
 				HideControl hideControl = new HideControl();
-				vCOntrolMap.add(hideControl);
-				vCOntrolMap.add(controlsGroup);
+				LonLat llhideControl=new LonLat(89,-20);
+				llhideControl.transform(DEFAULT_PROJECTION.getProjectionCode(),
+                        map.getMap().getProjection());
+				LonLat llcontrolsGroup=new LonLat(75,-21);
+				llcontrolsGroup.transform(DEFAULT_PROJECTION.getProjectionCode(),
+                        map.getMap().getProjection());
+				Pixel pxLonLat = map.getMap().getPixelFromLonLat(llhideControl); //calculate px coordinates from lonLat
+				Pixel px = map.getMap().getPixelFromLonLat(llcontrolsGroup); //calculate px coordinates from lonLat
+				panelMap.add(hideControl,pxLonLat.x(), pxLonLat.y());
+				panelMap.add(controlsGroup,px.x(), px.y());
 				controlsGroup.setMap(map);
 
 				// map.setControls(ControlPosition.TOP_RIGHT, geocoder);

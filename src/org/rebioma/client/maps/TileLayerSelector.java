@@ -172,7 +172,7 @@ public abstract class TileLayerSelector extends ListBox {
       layerLegend = layerInfos.get(layerSelected).getInstance().getLegend();
       if (layerLegend != null) {
     	  //RORO map.setControls(ControlPosition.RIGHT_BOTTOM, layerLegend);
-    	MapView.vCOntrolMap.add(layerLegend);
+    	MapView.panelMap.add(layerLegend);
       }
       callback.onLayerSelected(layerInfo);
     }
