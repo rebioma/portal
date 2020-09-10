@@ -136,10 +136,29 @@ Button:active {
 .contentFooter {
 	background: #0B3B0B;
 	position: relative;
-	top: -18px;
-	margin-bottom: 4px;
+	width:100%;
+	padding: 10px 20px;
 }
-
+.footer_section{	
+	background-color: #0B3B0B;
+	display: inline-block;
+	decoration:none;
+}
+.donate_section{
+	background-color: White;
+	decoration:none;
+	padding: 10px 10px;
+	margin-top:10px;
+}
+.footer_link{
+	margin-bottom:10px;
+	decoration:none;
+}
+.footer-ctext {
+	margin: 10px;
+	font-weight: normal;
+	color: #D6D9DC;
+}
 .footer-ctext {
 	margin: 10px;
 	font-weight: normal;

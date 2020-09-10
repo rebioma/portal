@@ -11,8 +11,6 @@ import org.rebioma.client.bean.User;
 import org.rebioma.client.i18n.AppConstants;
 import org.rebioma.client.services.HomestatService;
 import org.rebioma.client.services.HomestatServiceAsync;
-import org.rebioma.client.services.TaxonomyService;
-import org.rebioma.client.services.TaxonomyServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -24,16 +22,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
+import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -82,6 +72,18 @@ public class HomeView extends ComponentView implements ClickHandler,
 	VerticalLayoutContainer hsideright = new VerticalLayoutContainer();
 	VerticalLayoutContainer layoutuser = new VerticalLayoutContainer();
 	VerticalLayoutContainer layoutsp = new VerticalLayoutContainer();
+	private static final String HowToUpload_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/francais#up' style='color:#D6D9DC;'>"
+			+ constants.HowToUpload() + "</a>";
+	private static final String PrivacyPolicy_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#privacy' style='color:#D6D9DC;'>"
+			+ constants.PrivacyPolicy() + "</a>";
+	private static final String DataSharingAgreement_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#datasharing' style='color:#D6D9DC;'>"
+			+ constants.DataSharingAgreement() + "</a>";
+	private static final String TermsConditions_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/english#datause' style='color:#D6D9DC;'>"
+			+ constants.TermsConditions() + "</a>";
+	private static final String ContactUs_URL = "<a target='_blank' href='https://sites.google.com/site/rebiomahelp/home/francais#contact' style='color:#D6D9DC;'>"
+			+ constants.ContactUs() + "</a>";
+	private static final String TRB_URL = "<a target='_blank' href='http://rebioma.net/index.php/fr/biodiversite/experts' style='color:#D6D9DC;'>"
+			+ constants.TRB() + "</a>";
 	private final HomestatServiceAsync statService = GWT
 			.create(HomestatService.class);
 	public HomeView(final View parent) {
@@ -197,7 +199,7 @@ public class HomeView extends ComponentView implements ClickHandler,
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(""+constants.verifyConnection());
+				Window.alert(""+constants.verifyConnection() + caught.getMessage());
 			}
 
 			@Override
@@ -284,9 +286,9 @@ public class HomeView extends ComponentView implements ClickHandler,
 		pspecies.add(lbs);
 		pspecies.add(lbCountSpecies);
 		pspecies.add(new HTML("<center><h1>" + constants.lbl_speciessaved() + "</h1></center>"));
-		puser.setStyleName("box1");
-		pobservation.setStyleName("box1");
-		pspecies.setStyleName("box1");
+		puser.setStyleName("box1 border");
+		pobservation.setStyleName("box1 border");
+		pspecies.setStyleName("box1 border");
 		final HTML l = new HTML(
 				constants.welcome()
 						+ " "
@@ -304,20 +306,81 @@ public class HomeView extends ComponentView implements ClickHandler,
 				new Margins(0, 10, 0, 10)));
 		hstat.add(pspecies, new HorizontalLayoutData(0.33, 80,
 				new Margins(0, 10, 0, 10)));
-		hContent.add(hsideright, new HorizontalLayoutData(0.25, 500,
+		hContent.add(hsideright, new HorizontalLayoutData(0.25, 400,
 				new Margins(10, 10, 10, 10)));
-		hContent.add(h1, new HorizontalLayoutData(0.75, 500, new Margins(10, 10,
-				10, 20)));
+		hContent.add(h1, new HorizontalLayoutData(0.75, 400, new Margins(10, 10,
+				10, 10)));
 		ContentPanel pContent = new ContentPanel();
 		pContent.setBodyStyle("background: #E1F5A9");
 		pContent.add(hContent);
 		pContent.setHeaderVisible(false);
-		vlc.add(pContent, new VerticalLayoutData(1, 500, new Margins(0)));
+		vlc.add(pContent, new VerticalLayoutData(1, 1, new Margins(0)));
 		vlc.setScrollMode(ScrollMode.AUTO);
+		HorizontalPanel panelfooter = new HorizontalPanel();
+		VerticalPanel section1footer = new VerticalPanel();
+		VerticalPanel section2footer = new VerticalPanel();
+		VerticalPanel section3footer = new VerticalPanel();
+		HorizontalPanel donatefooter = new HorizontalPanel();
+		VerticalPanel panfooter=new VerticalPanel();
+		section1footer.add(new HTML(HowToUpload_URL));
+		section1footer.add(new HTML(PrivacyPolicy_URL));
+		section1footer.add(new HTML(DataSharingAgreement_URL));
+		section2footer.add(new HTML(TermsConditions_URL));
+		section2footer.add(new HTML(ContactUs_URL));
+		section2footer.add(new HTML(TRB_URL));
+
+		section3footer.add(new HTML("<center><h1 style='color:#D6D9DC;'>"
+				+ constants.donors() + "</h1></center>"));
+		section3footer.add(donatefooter);
+		donatefooter
+				.add(new HTML(
+						"<a target='_blank' href='https://www.macfound.org/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE
+										.MacArth_primary_logo()) + "</a>"));
+		donatefooter
+				.add(new HTML(
+						"<a target='_blank' href='http://jrsbiodiversity.org/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.jrs_logo())
+								+ "</a>"));
+		donatefooter
+				.add(new HTML(
+						"<a target='_blank' href='https://www.start.org/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.start_logo())
+								+ "</a>"));
+		donatefooter
+				.add(new HTML(
+						"<a target='_blank' href='http://www.cepf.net/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.cepf_logo())
+								+ "</a>"));
+		donatefooter
+				.add(new HTML(
+						"<a target='_blank' href='https://www.ffem.fr/fr' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.ffem_logo())
+								+ "</a>"));
+		donatefooter
+				.add(new HTML(
+						"<a target='_blank' href='http://www.fondationbiodiversite.fr/fr/' style:'width:10px;height:10px;'>"
+								+ new Image(Resources.INSTANCE.frb_logo())
+								+ "</a>"));
+
+		panelfooter.add(section1footer);
+		panelfooter.add(section2footer);
+		panelfooter.add(section3footer);
+		panelfooter.setStyleName("contentFooter");
+		section1footer.setStylePrimaryName("footer_section");
+		section2footer.setStylePrimaryName("footer_section");
+		section3footer.setStylePrimaryName("footer_section");
+		donatefooter.setStylePrimaryName("donate_section");
+		panfooter.setStyleName("contentFooter");
+		panfooter.add(panelfooter);
+		panfooter.add(new HTML("<center><h1 style='color:#D6D9DC;'>"+ constants.copyright() + "</h1></center>"));		
+		VerticalPanel pan=new VerticalPanel();
 		panel = new ContentPanel();
 		panel.setHeaderVisible(false);
 		panel.add(vlc);
-		initWidget(panel);	
+		pan.add(panel);
+		pan.add(panfooter);
+		initWidget(pan);;	
 	}
 
 	public void addOccurrenceSearchListener(OccurrenceSearchListener listener) {
@@ -692,4 +755,27 @@ public class HomeView extends ComponentView implements ClickHandler,
 	public static AppConstants getConstants() {
 		return constants;
 	}	
+	
+	@Override
+	public void onResize(ResizeEvent event) {
+		resize(event.getWidth(), event.getHeight());
+
+	}
+	
+	@Override
+	protected void resize(final int width, int height) {
+		int w = width - 20;
+		height = height - panel.getAbsoluteTop()-155 -10;
+		if (height <= 0) {
+			height = 1;
+		}
+		
+//		hContent.getWidget(0).setLayoutData(new HorizontalLayoutData(0.25, height -20, new Margins(10, 10, 10, 10)));
+//		hContent.getWidget(1).setLayoutData(new HorizontalLayoutData(0.75, height -20, new Margins(10, 10, 10, 10)));
+//		panel.getWidget(0).setLayoutData(new VerticalLayoutData(1, height, new Margins(0)));
+		panel.getWidget(0).setWidth(w +"px");
+		panel.setPixelSize(w, height);
+//		Window.enableScrolling(panel.getOffsetWidth() - 10 > w);
+
+	}
 }
