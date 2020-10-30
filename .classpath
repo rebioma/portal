@@ -41,8 +41,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-ajaxloader.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-exec-1.2.jar"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/Rosine/workspace/portal/war/WEB-INF/lib/postgresql-42.2.5.jar"/>
-	<classpathentry kind="lib" path="D:/Rosine/workspace/portal/war/WEB-INF/lib/org.moxieapps.gwt.highcharts-1.5.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
@@ -51,5 +49,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-openlayers-client-1.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/org.moxieapps.gwt.highcharts-1.5.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
