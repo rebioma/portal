@@ -8,8 +8,10 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AscModelResult implements IsSerializable {
 
-  private List<AscModel> results;
-  private int count;
+	private List<AscModel> results;
+	private int count;
+	private List<AscModel> resultsM;
+	private int countM;
 
   public AscModelResult() {
 
@@ -19,6 +21,12 @@ public class AscModelResult implements IsSerializable {
     super();
     this.results = results;
     this.count = count;
+  }
+
+  public AscModelResult(List<AscModel> results, int count, List<AscModel> resultsM, int countM) {
+	this(results, count);
+	this.resultsM = resultsM;
+	this.countM = countM;
   }
 
   /**
@@ -48,5 +56,21 @@ public class AscModelResult implements IsSerializable {
   public void setResults(List<AscModel> results) {
     this.results = results;
   }
-
+  
+  public List<AscModel> getResultsM() {
+	  return resultsM;
+  }
+	
+  public void setResultsM(List<AscModel> resultsM) {
+	  this.resultsM = resultsM;
+  }
+	
+  public int getCountM() {
+	  return countM;
+  }
+	
+  public void setCountM(int countM) {
+	  this.countM = countM;
+  }
+  
 }

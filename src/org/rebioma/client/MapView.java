@@ -119,8 +119,10 @@ import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -415,23 +417,41 @@ private static class MapGeocoderResult extends Composite {
 
 	private class ModelSearch extends Composite implements KeyUpHandler,
 			OpenHandler<TreeItem>, AsyncCallback<AscModelResult>, ClickHandler {
-		private final TextBox searchBox;
+//		private final SearchPanel searchBox;
 		private final Tree resultTree;
+		private final Tree resultTreeMarine;
 		private final HTML next;
+		private final HTML nextM;
 		private final Label resultInfo;
+		private final Label resultMInfo;
 		private final HTML previous;
+		private final HTML previousM;
 		private int start = 0;
 		private int limit = 10;
+		private int startM = 0;
+		private int limitM = 10;
 		private String currentSearchTerm;
 		private AscModelResult currentResult;
+		private SearchPanel modelSearchPanel;
 
 		public ModelSearch() {
 			Label searchLabel = new Label(constants.ModelSearch());
 			VerticalPanel mainPanel = new VerticalPanel();
-			HorizontalPanel searchPanel = new HorizontalPanel();
+//			HorizontalPanel searchPanel = new HorizontalPanel();
 			HorizontalPanel pagePanel = new HorizontalPanel();
-			searchBox = new TextBox();
+//			searchBox = new TextBox();
+			modelSearchPanel = new SearchPanel(this, "Search models...", "rebioma-search");
+//			modelSearchPanel.getSearchTextBox().getElement().setPropertyString("placeholder", "Search models...");
+			modelSearchPanel.addStyleName("search-panel");
+			modelSearchPanel.addStyleName("search-m-panel");
+		    modelSearchPanel.addTextBoxStyleName("search-panel-textbox");
+		    modelSearchPanel.getSearchTextBox().setWidth("100%");
+		    modelSearchPanel.addButtonStyleName("search-panel-btn");
+		    modelSearchPanel.getSearchButton().addStyleName("ximg-btn");
+		    
 			resultTree = new Tree();
+			resultTreeMarine = new Tree();
+			
 			next = new HTML("&nbsp;&#x203A;");
 			previous = new HTML("&#x2039;&nbsp;");
 			resultInfo = new Label();
@@ -441,22 +461,71 @@ private static class MapGeocoderResult extends Composite {
 			pagePanel.add(previous);
 			pagePanel.add(resultInfo);
 			pagePanel.add(next);
-			searchPanel.add(searchLabel);
-			searchPanel.add(searchBox);
-			mainPanel.add(searchPanel);
+//			searchPanel.add(searchLabel);
+//			searchPanel.add(searchBox);
+//			mainPanel.add(modelSearchPanel);
+			
+			Label terrestrial = new Label("Terrestrial");
+			terrestrial.setStyleName("forLabel");
+			terrestrial.addStyleName("t-model");
+			mainPanel.add(terrestrial);
+			
 			mainPanel.add(pagePanel);
 			mainPanel.add(resultTree);
-			searchPanel.setSpacing(5);
+			
+			Label marine = new Label("Marine");
+			marine.setStyleName("forLabel");
+			marine.addStyleName("t-model");
+			
+			mainPanel.add(marine);
+			
+			HorizontalPanel pageMPanel = new HorizontalPanel();
+			nextM = new HTML("&nbsp;&#x203A;");
+			previousM = new HTML("&#x2039;&nbsp;");
+			resultMInfo = new Label();
+			nextM.setVisible(false);
+			previousM.setVisible(false);
+			pageMPanel.setSpacing(5);
+			pageMPanel.add(previousM);
+			pageMPanel.add(resultMInfo);
+			pageMPanel.add(nextM);
+			
+			mainPanel.add(pageMPanel);
+			mainPanel.add(resultTreeMarine);
+			
+//			searchPanel.setSpacing(5);
 			initWidget(mainPanel);
 			setStyleName("model_search");
 			searchLabel.addStyleName("label");
-			searchBox.addStyleName("search");
+//			searchBox.addStyleName("search");
 			next.addStyleName("link");
 			previous.addStyleName("link");
-			searchBox.addKeyUpHandler(this);
+//			searchBox.addKeyUpHandler(this);
 			resultTree.addOpenHandler(this);
 			next.addClickHandler(this);
 			previous.addClickHandler(this);
+			
+			nextM.addStyleName("link");
+			previousM.addStyleName("link");
+			resultTreeMarine.addOpenHandler(this);
+			nextM.addClickHandler(this);
+			previousM.addClickHandler(this);
+			modelSearchPanel.getSearchTextBox().addKeyUpHandler(this);
+			
+			modelSearchPanel.getSearchButton().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent arg0) {
+					search("");
+					addHistoryItem(false);
+//					modelSearchPanel.reset();
+				}
+			});
+		}
+		
+		public SearchPanel getSearchBox() {
+		    return modelSearchPanel;
+//			return searchBox;
 		}
 
 		public void clearOverLay() {
@@ -464,7 +533,10 @@ private static class MapGeocoderResult extends Composite {
 				ModelItem modelItem = (ModelItem) resultTree.getItem(i);
 				modelItem.clearOverLay();
 			}
-
+			for (int i = 0; i < resultTreeMarine.getItemCount(); i++) {
+				ModelItem modelItem = (ModelItem) resultTreeMarine.getItem(i);
+				modelItem.clearOverLay();
+			}
 		}
 
 		public int getPage() {
@@ -480,6 +552,12 @@ private static class MapGeocoderResult extends Composite {
 			} else if (source == previous) {
 				start -= 10;
 				search(currentSearchTerm);
+			} else  if (source == nextM) {
+				startM += 10;
+				search(currentSearchTerm);
+			} else if (source == previousM) {
+				startM -= 10;
+				search(currentSearchTerm);
 			}
 
 		}
@@ -491,14 +569,16 @@ private static class MapGeocoderResult extends Composite {
 
 		public void onKeyUp(KeyUpEvent event) {
 			Object source = event.getSource();
-			if (source == searchBox) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+			if (source == modelSearchPanel.getSearchTextBox()) {
+//				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					addHistoryItem(false);
-					String searchText = searchBox.getText().trim();
+					String searchText = modelSearchPanel.getSearchTextBox().getText().trim();
 					start = 0;
 					limit = 10;
+					startM = 0;
+					limitM = 10;
 					search(searchText);
-				}
+//				}
 			}
 		}
 
@@ -516,27 +596,52 @@ private static class MapGeocoderResult extends Composite {
 			currentResult = result;
 			if (currentResult != null) {
 				int count = result.getCount();
+				int countM = result.getCountM();
 				if (count > 0) {
 					int end = start + limit;
 					if (end > count) {
 						end = count;
 					}
-					resultInfo.setText((start + 1) + " - " + end + " "
-							+ constants.Of() + " " + count);
+					resultInfo.setText((start + 1) + " - " + end + " " + constants.Of()
+							+ " " + count);
 					resultTree.clear();
 					for (AscModel ascModel : result.getResults()) {
-						ModelItem item = new ModelItem(
-								ascModel.getAcceptedSpecies(), ascModel, false,
-								new DownloadAllClimatesCommand(ascModel));
+						ModelItem item = new ModelItem(ascModel.getAcceptedSpecies(),
+								ascModel, false, new DownloadAllClimatesCommand(ascModel));
 						item.addItem(constants.Loading());
 						resultTree.addItem(item);
 					}
 				} else {
+					resultTree.clear();
 					resultInfo.setText(constants.NoSearchResults());
 				}
+
 				next.setVisible((start + count) >= (start + limit));
 				previous.setVisible(start >= 10);
 				next.setVisible(start + 10 < count);
+				
+				//pour les modèles marines
+				if (countM > 0) {
+					int end = startM + limitM;
+					if (end > countM) {
+						end = countM;
+					}
+					resultMInfo.setText((startM + 1) + " - " + end + " " + constants.Of()
+							+ " " + countM);
+					resultTreeMarine.clear();
+					for (AscModel ascModel : result.getResultsM()) {
+						ModelItem item = new ModelItem(ascModel.getAcceptedSpecies(),
+								ascModel, false, new DownloadAllClimatesCommand(ascModel));
+						item.addItem(constants.Loading());
+						resultTreeMarine.addItem(item);
+					}
+				} else {
+					resultTreeMarine.clear();
+					resultMInfo.setText(constants.NoSearchResults());
+				}
+				nextM.setVisible((startM + countM) >= (startM + limitM));
+				previousM.setVisible(startM >= 10);
+				nextM.setVisible(startM + 10 < countM);
 			} else {
 
 			}
@@ -545,18 +650,23 @@ private static class MapGeocoderResult extends Composite {
 		public void setPage(int page) {
 			if (page < 0) {
 				start = 0;
+				startM = 0;
 			} else {
 				start = (page - 1) * limit;
+				startM = (page - 1) * limitM;
 			}
 		}
 
 		protected void search(String searchTerm) {
-			if (currentSearchTerm == null
-					|| !searchTerm.equals(currentSearchTerm)) {
+			if (currentSearchTerm == null || !searchTerm.equals(currentSearchTerm)) {
 				currentSearchTerm = searchTerm;
-				searchBox.setText(searchTerm);
+				modelSearchPanel.getSearchTextBox().setText(searchTerm);
+//				DomEvent.fireNativeEvent(Document.get().createFocusEvent(), modelSearchPanel.getSearchTextBox());
 			}
-			DataSwitch.get().findModelLocation(searchTerm, start, limit, this);
+			DomEvent.fireNativeEvent(Document.get().createFocusEvent(), modelSearchPanel.getSearchTextBox());
+			DomEvent.fireNativeEvent(Document.get().createBlurEvent(), modelSearchPanel.getSearchTextBox());
+			
+			DataSwitch.get().findModelLocation(searchTerm, start, limit, startM, limitM, this);
 		}
 	}
 
@@ -659,6 +769,8 @@ private static class MapGeocoderResult extends Composite {
 	private static final int DEFAULT_ZOOM = 5;
 
 	private Set<Vector> kmlLayers = new HashSet<Vector>();
+	
+	private String wmsUrl = GWT.getHostPageBaseURL() +"geoserver/portal/wms";
 
 	/**
 	 * Display field for map info window.
@@ -921,6 +1033,22 @@ private static class MapGeocoderResult extends Composite {
 		TabItemConfig modelTb = new TabItemConfig(constants.ModelSearch());
 		ScrollPanel mrspanel = new ScrollPanel(markerList);
 		ScrollPanel mdspanel = new ScrollPanel(modelSearch);
+		modelSearch.setWidth("100%");
+		
+		VerticalLayoutContainer mdsPanel = new VerticalLayoutContainer();
+		ToolBar t = new ToolBar();
+		t.setBorders(false);
+		t.setStyleName("test");
+		SearchPanel tbSearch = modelSearch.getSearchBox();
+//		tbSearch.getSearchButton().setWidth("30px");
+//		tbSearch.setBorderWidth(0);
+		t.add(tbSearch);
+		tbSearch.setWidth("99%");
+//		tbSearch.getSearchTextBox().setStyleName("search-model");
+//		tbSearch.getSearchTextBox().getElement().setPropertyString("placeholder", "Search models...");
+		mdsPanel.add(t, new VerticalLayoutData(1, -1, new Margins(4, 4, 8, 4)));
+		
+		mdsPanel.add(mdspanel, new VerticalLayoutData(1, 1));
 
 		modelTab = new TabPanel(
 				GWT.<TabPanelAppearance> create(GrayTabPanelBottomAppearance.class));
@@ -929,7 +1057,7 @@ private static class MapGeocoderResult extends Composite {
 		modelTab.setBorders(false);
 		modelTab.getElement().getStyle().setBackgroundColor("white");
 		TabItemConfig dateModel = new TabItemConfig("__");
-		modelTab.add(mdspanel, dateModel);
+		modelTab.add(mdsPanel, dateModel);
 		modelTab.setHeight(modelTab.getOffsetHeight() - 10);
 		// mrspanel.add(markerList);
 		// mdspanel.add(modelSearch);
@@ -958,11 +1086,12 @@ private static class MapGeocoderResult extends Composite {
 		layerPan.add(hpd, new VerticalLayoutData(1, 300, new Margins(
 				0, 0, 0, 0)));
 		hplayerPan.add(layerPan);
+		
 		currentTab = mrspanel;
 		leftTab.add(mrspanel, markerTb);
 		leftTab.add(modelTab, modelTb);
 		leftTab.add(hplayerPan, constants.Layers());// Add Model Tab
-		setDateModel("String dmggfd");
+		setDateModel("");
 		// init model affichage
 		String modelSearchTerm = historyState.getHistoryParameters(
 				UrlParam.M_SEARCH).toString();
@@ -973,11 +1102,11 @@ private static class MapGeocoderResult extends Composite {
 		// hsp = new HorizontalSplitPanel();
 		con = new BorderLayoutContainer();
 
-		BorderLayoutData westData = new BorderLayoutData(400);
+		BorderLayoutData westData = new BorderLayoutData(360);
 		westData.setMinSize(200);
-		westData.setCollapsible(true);
-		westData.setSplit(true);
-		westData.setCollapseMini(true);
+		westData.setCollapsible(false);
+		westData.setSplit(false);
+		westData.setCollapseMini(false);
 		westData.setMargins(new Margins(5, 5, 5, 0));
 
 		MarginData centerData = new MarginData();
@@ -987,7 +1116,7 @@ private static class MapGeocoderResult extends Composite {
 		leftTab.setHeight(Window.getClientHeight() - 183);
 		// leftTab.setHeight(450);
 		leftTabPanel = new ContentPanel();
-		//leftTabPanel.setHeaderVisible(false);
+		leftTabPanel.setHeaderVisible(false);
 		// leftTabPanel.setHeadingHtml();
 		leftTabPanel.setBorders(false);
 		leftTabPanel.setBodyBorder(false);
@@ -1113,7 +1242,7 @@ private static class MapGeocoderResult extends Composite {
 	private void getUpdateDate() {
 		mapGisService.getMUpdate(GWT.getHostPageBaseURL(), this);
 
-		// try {
+		// try {longitude
 		// new RequestBuilder(RequestBuilder.GET,
 		// "ModelOutput/update.txt").sendRequest("", new RequestCallback() {
 		// @Override
@@ -1549,7 +1678,7 @@ private static class MapGeocoderResult extends Composite {
 			query += index;
 			break;
 		case M_SEARCH:
-			query += modelSearch.searchBox.getText().trim();
+			query += modelSearch.getSearchBox().getSearchTextBox().getText().trim();
 			break;
 		case M_PAGE:
 			query += modelSearch.getPage();
@@ -1783,7 +1912,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams.setUntiled();
 		wmsLayerParams.setProjection("EPSG:3857");
 		wmsLayerParams.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrl = "http://localhost:8086/geoserver/portal/wms";
+//		String wmsUrl = "http://localhost:8086/geoserver/portal/wms";
 		final WMS wmsLayer = new WMS(constants.AP(), wmsUrl, wmsParams,
 				wmsLayerParams);
 		checkBoxAP.addClickHandler(new ClickHandler() {
@@ -1804,7 +1933,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParamstif.setUntiled();
 		wmsLayerParamstif.setProjection("EPSG:3857");
 		wmsLayerParamstif.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrltif = "http://localhost:8086/geoserver/portal/wms";
+		String wmsUrltif = wmsUrl;
 		final WMS wmsLayertif = new WMS(constants.DeforestationMap()+" 1953", wmsUrltif,
 				wmsParamstif, wmsLayerParamstif);
 		checkBoxfor1953.addClickHandler(new ClickHandler() {
@@ -1825,7 +1954,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams1973.setUntiled();
 		wmsLayerParams1973.setProjection("EPSG:3857");
 		wmsLayerParams1973.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrltif1973 = "http://localhost:8086/geoserver/portal/wms";
+		String wmsUrltif1973 = wmsUrl;
 		final WMS wmsLayertif1973 = new WMS(constants.DeforestationMap()+" 1973",
 				wmsUrltif1973, wmsParams1973, wmsLayerParams1973);
 		checkBoxfor1973.addClickHandler(new ClickHandler() {
@@ -1848,7 +1977,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams1990.setUntiled();
 		wmsLayerParams1990.setProjection("EPSG:3857");
 		wmsLayerParams1990.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrltif1990 = "http://localhost:8086/geoserver/portal/wms";
+		String wmsUrltif1990 = wmsUrl;
 		final WMS wmsLayertif1990 = new WMS(constants.DeforestationMap()+" 1990",
 				wmsUrltif1990, wmsParams1990, wmsLayerParams1990);
 		checkBoxfor1990.addClickHandler(new ClickHandler() {
@@ -1871,7 +2000,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2000.setUntiled();
 		wmsLayerParams2000.setProjection("EPSG:3857");
 		wmsLayerParams2000.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrltif2000 = "http://localhost:8086/geoserver/portal/wms";
+		String wmsUrltif2000 = wmsUrl;
 		final WMS wmsLayertif2000 = new WMS(constants.DeforestationMap()+" 2000",
 				wmsUrltif2000, wmsParams2000, wmsLayerParams2000);
 		checkBoxfor2000.addClickHandler(new ClickHandler() {
@@ -1893,7 +2022,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2005.setUntiled();
 		wmsLayerParams2005.setProjection("EPSG:3857");
 		wmsLayerParams2005.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrltif2005 = "http://localhost:8086/geoserver/portal/wms";
+		String wmsUrltif2005 = wmsUrl;
 		final WMS wmsLayertif2005 = new WMS(constants.DeforestationMap()+" 2005",
 				wmsUrltif2005, wmsParams2005, wmsLayerParams2005);
 		checkBoxfor2005.addClickHandler(new ClickHandler() {
@@ -1916,7 +2045,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2010.setUntiled();
 		wmsLayerParams2010.setProjection("EPSG:3857");
 		wmsLayerParams2010.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrltif2010 = "http://localhost:8086/geoserver/portal/wms";
+		String wmsUrltif2010 = wmsUrl;
 		final WMS wmsLayertif2010 = new WMS(constants.DeforestationMap()+" 2010",
 				wmsUrltif2010, wmsParams2010, wmsLayerParams2010);
 		checkBoxfor2010.addClickHandler(new ClickHandler() {
@@ -1939,7 +2068,7 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2014.setUntiled();
 		wmsLayerParams2014.setProjection("EPSG:900913");
 		wmsLayerParams2014.setTransitionEffect(TransitionEffect.RESIZE);
-		String wmsUrltif2014 = "http://localhost:8086/geoserver/portal/wms";
+		String wmsUrltif2014 = wmsUrl;
 		final WMS wmsLayertif2014 = new WMS(constants.DeforestationMap()+" 2014",
 				wmsUrltif2014, wmsParams2014, wmsLayerParams2014);
 		checkBoxfor2014.addClickHandler(new ClickHandler() {
@@ -1959,9 +2088,9 @@ private static class MapGeocoderResult extends Composite {
 			public String format(LonLat lonLat,
 					org.gwtopenmaps.openlayers.client.Map map) {
 				String out = "";
-				out += "<b>longitude </b> ";
+//				out += "<b>longitude </b> ";
 				out += lonLat.lon();
-				out += "<b>latitude</b> ";
+				out += ", ";
 				out += lonLat.lat();
 				return out;
 			}

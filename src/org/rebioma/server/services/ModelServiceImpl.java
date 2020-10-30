@@ -42,8 +42,8 @@ public class ModelServiceImpl extends RemoteServiceServlet implements
   private final AscModelDb ascModelDb = DBFactory.getAscModelDb();
 
   public AscModelResult findModelLocation(String acceptedSpecies, int start,
-      int limit) {
-    return ascModelDb.findAscModel(acceptedSpecies, start, limit);
+      int limit, int startM, int limitM) {
+    return ascModelDb.findAscModel(acceptedSpecies, start, limit, startM, limitM);
   }
 
   /*

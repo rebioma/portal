@@ -14,5 +14,5 @@ public interface AscModelDb {
    * @param limit
    * @return AscModelResult
    */
-  AscModelResult findAscModel(String acceptedSpecies, int start, int limit);
+  AscModelResult findAscModel(String acceptedSpecies, int start, int limit, int startM, int limitM);
 }
