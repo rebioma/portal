@@ -29,9 +29,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LabelBase;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -321,50 +323,53 @@ public class HomeView extends ComponentView implements ClickHandler,
 		VerticalPanel section2footer = new VerticalPanel();
 		VerticalPanel section3footer = new VerticalPanel();
 		HorizontalPanel donatefooter = new HorizontalPanel();
+		
 		VerticalPanel panfooter=new VerticalPanel();
+		
+		section1footer.add(new HTML("<center><h1>&nbsp;</h1></center>"));
 		section1footer.add(new HTML(HowToUpload_URL));
 		section1footer.add(new HTML(PrivacyPolicy_URL));
 		section1footer.add(new HTML(DataSharingAgreement_URL));
+		section2footer.add(new HTML("<center><h1>&nbsp;</h1></center>"));
 		section2footer.add(new HTML(TermsConditions_URL));
 		section2footer.add(new HTML(ContactUs_URL));
 		section2footer.add(new HTML(TRB_URL));
-
 		section3footer.add(new HTML("<center><h1 style='color:#D6D9DC;'>"
 				+ constants.donors() + "</h1></center>"));
 		section3footer.add(donatefooter);
 		donatefooter
 				.add(new HTML(
-						"<a target='_blank' href='https://www.macfound.org/' style:'width:10px;height:10px;'>"
+						"<a target='_blank' href='https://www.macfound.org/' style='display: block; margin: 0px 10px;'>"
 								+ new Image(Resources.INSTANCE
 										.MacArth_primary_logo()) + "</a>"));
 		donatefooter
 				.add(new HTML(
-						"<a target='_blank' href='http://jrsbiodiversity.org/' style:'width:10px;height:10px;'>"
+						"<a target='_blank' href='http://jrsbiodiversity.org/' style='display: block; margin: 0px 10px;'>"
 								+ new Image(Resources.INSTANCE.jrs_logo())
 								+ "</a>"));
 		donatefooter
 				.add(new HTML(
-						"<a target='_blank' href='https://www.start.org/' style:'width:10px;height:10px;'>"
+						"<a target='_blank' href='https://www.start.org/' style='display: block; margin: 0px 10px;'>"
 								+ new Image(Resources.INSTANCE.start_logo())
 								+ "</a>"));
 		donatefooter
 				.add(new HTML(
-						"<a target='_blank' href='http://www.cepf.net/' style:'width:10px;height:10px;'>"
+						"<a target='_blank' href='http://www.cepf.net/' style='display: block; margin: 0px 10px;'>"
 								+ new Image(Resources.INSTANCE.cepf_logo())
 								+ "</a>"));
 		donatefooter
 				.add(new HTML(
-						"<a target='_blank' href='https://www.ffem.fr/fr' style:'width:10px;height:10px;'>"
+						"<a target='_blank' href='https://www.ffem.fr/fr' style='display: block; margin: 0px 10px;'>"
 								+ new Image(Resources.INSTANCE.ffem_logo())
 								+ "</a>"));
 		donatefooter
 				.add(new HTML(
-						"<a target='_blank' href='http://www.fondationbiodiversite.fr/fr/' style:'width:10px;height:10px;'>"
+						"<a target='_blank' href='http://www.fondationbiodiversite.fr/fr/' style='display: block; margin: 0px 10px;'>"
 								+ new Image(Resources.INSTANCE.frb_logo())
 								+ "</a>"));
-
 		panelfooter.add(section1footer);
 		panelfooter.add(section2footer);
+		panelfooter.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		panelfooter.add(section3footer);
 		panelfooter.setStyleName("contentFooter");
 		section1footer.setStylePrimaryName("footer_section");
@@ -373,7 +378,8 @@ public class HomeView extends ComponentView implements ClickHandler,
 		donatefooter.setStylePrimaryName("donate_section");
 		panfooter.setStyleName("contentFooter");
 		panfooter.add(panelfooter);
-		panfooter.add(new HTML("<center><h1 style='color:#D6D9DC;'>"+ constants.copyright() + "</h1></center>"));		
+		panfooter.add(new HTML("<center><a style='color:#D6D9DC;'>"+ constants.copyright() + "</a></center>"));		
+		
 		VerticalPanel pan=new VerticalPanel();
 		panel = new ContentPanel();
 		panel.setHeaderVisible(false);
