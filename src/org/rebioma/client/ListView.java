@@ -414,6 +414,7 @@ public class ListView extends ComponentView implements
     table = new Grid<Occurrence>(store, cm);
     table.getView().setAdjustForHScroll(true);
     table.setSelectionModel(OccurrenceSummary.sm);
+    table.getView().setStripeRows(true);
     
     OccurrenceSummary.sm.addSelectionHandler(new SelectionHandler<Occurrence>() {
 		

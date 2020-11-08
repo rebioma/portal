@@ -168,7 +168,7 @@
         <property name="acceptedNameUsageID" type="java.lang.Double">
             <column name="acceptednameusageid" precision="22" scale="0" />
         </property>
-		<property name="acceptedNameUsage" type="string">
+				<property name="acceptedNameUsage" type="string">
             <column name="acceptednameusage" />
         </property>
         <property name="higherClassification" type="string">

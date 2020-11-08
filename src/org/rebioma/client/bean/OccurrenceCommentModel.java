@@ -1,9 +1,5 @@
 package org.rebioma.client.bean;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 @SuppressWarnings("serial")
 public class OccurrenceCommentModel implements java.io.Serializable {

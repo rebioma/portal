@@ -297,9 +297,8 @@ private static class MapGeocoderResult extends Composite {
 					checkbox.addValueChangeHandler(this);
 					checkbox.addStyleName("modeling_check_box");
 					envLayer = ModelEnvLayer.newInstance("ModelOutput/"
-							+ ascModel.getModelLocation() + "/"
-							+ itemLabel.getText() + "/"
-							+ ascModel.getModelLocation() + ".asc");
+							+ ascModel.getModelLocation() + "/" + itemLabel.getText() + "/"
+							+ ascModel.getAcceptedSpecies().replaceAll(" ", "_")+ ".asc");
 				}
 				Label modelDate = new Label(""/*
 											 * DateTimeFormat.getFormat("d/M/yyyy"

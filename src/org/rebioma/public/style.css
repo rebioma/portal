@@ -6,20 +6,20 @@
 select {
 	height: 25px;
 	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
+/* 	border-radius: 4px; */
+/* 	box-sizing: border-box; */
 }
 
 input[type=password] {
 	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
+/* 	border-radius: 4px; */
+/* 	box-sizing: border-box; */
 }
 
 input[type=text] {
 	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
+/* 	border-radius: 4px; */
+/* 	box-sizing: border-box; */
 }
 
 Button {
@@ -86,7 +86,7 @@ Button:active {
 }
 
 .box1-content,.box1-side,.box2-content,.box2-side {
-	transition: all .3s ease-out; " + "
+	transition: all .3s ease-out; 
 	color: darkslategray;
 	overflow: hidden;
 }

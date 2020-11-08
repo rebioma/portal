@@ -362,6 +362,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 
 					public void onError(Request request, Throwable exception) {
 						Window.alert(constants.verifyConnection());
+						exception.printStackTrace();
 					}
 
 					@Override
@@ -392,6 +393,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 												public void onFailure(
 														Throwable caught) {
 													Window.alert(constants.verifyConnection());
+													caught.printStackTrace();
 												}
 
 												@Override
@@ -406,6 +408,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 								@Override
 								public void onFailure(Throwable caught) {
 									Window.alert(constants.verifyConnection());
+									caught.printStackTrace();
 								}
 
 								@Override
@@ -423,6 +426,7 @@ public class SpeciesExplorerView extends ComponentView implements ClickHandler, 
 				});
 			} catch (RequestException e) {
 				Window.alert(constants.verifyConnection());
+				e.printStackTrace();
 			}
 		}else if(source == uncheckAllButton){
 			speciesExplorerPanel.getTreeGrid().unCheckAll();
