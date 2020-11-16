@@ -1057,7 +1057,7 @@ private static class MapGeocoderResult extends Composite {
 		modelTab.getElement().getStyle().setBackgroundColor("white");
 		TabItemConfig dateModel = new TabItemConfig("__");
 		modelTab.add(mdsPanel, dateModel);
-		modelTab.setHeight(modelTab.getOffsetHeight() - 10);
+		//modelTab.setHeight(modelTab.getOffsetHeight()-10);
 		// mrspanel.add(markerList);
 		// mdspanel.add(modelSearch);
 		HorizontalPanel hpAP = new HorizontalPanel();
