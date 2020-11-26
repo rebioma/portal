@@ -174,7 +174,8 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 public class MapView extends ComponentView implements CheckedSelectionListener,
 		DataRequestListener, PageClickListener, PageListener<Occurrence>,
 		TileLayerCallback, ItemSelectionListener, SelectionHandler<Widget>,
-		OccurrencePageSizeChangeHandler,/*RORO GeocoderRequestHandler,*/AsyncCallback<String> {
+		OccurrencePageSizeChangeHandler,/* RORO GeocoderRequestHandler, */
+		AsyncCallback<String> {
 
 	/**
 	 * Manage history states of map View.
@@ -251,13 +252,13 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 
 	}
 
-private static class MapGeocoderResult extends Composite {
+	private static class MapGeocoderResult extends Composite {
 		private final VerticalPanel vp = new VerticalPanel();
 
 		public MapGeocoderResult(LonLat point, String address) {
 			vp.add(new Label(address));
 			vp.setStyleName("address");
-			vp.add(new Label(point.lon()+","+point.lat()));//RORO
+			vp.add(new Label(point.lon() + "," + point.lat()));// RORO
 			vp.setStyleName("latlong");
 			initWidget(vp);
 		}
@@ -297,8 +298,12 @@ private static class MapGeocoderResult extends Composite {
 					checkbox.addValueChangeHandler(this);
 					checkbox.addStyleName("modeling_check_box");
 					envLayer = ModelEnvLayer.newInstance("ModelOutput/"
-							+ ascModel.getModelLocation() + "/" + itemLabel.getText() + "/"
-							+ ascModel.getAcceptedSpecies().replaceAll(" ", "_")+ ".asc");
+							+ ascModel.getModelLocation()
+							+ "/"
+							+ itemLabel.getText()
+							+ "/"
+							+ ascModel.getAcceptedSpecies()
+									.replaceAll(" ", "_") + ".asc");
 				}
 				Label modelDate = new Label(""/*
 											 * DateTimeFormat.getFormat("d/M/yyyy"
@@ -407,7 +412,7 @@ private static class MapGeocoderResult extends Composite {
 
 		private void clearThisOverlay() {
 			if (envLayer != null) {
-			//RORO	map.getMap().removeLayer(envLayer.asOverlay());
+				// RORO map.getMap().removeLayer(envLayer.asOverlay());
 			}
 
 		}
@@ -416,7 +421,7 @@ private static class MapGeocoderResult extends Composite {
 
 	private class ModelSearch extends Composite implements KeyUpHandler,
 			OpenHandler<TreeItem>, AsyncCallback<AscModelResult>, ClickHandler {
-//		private final SearchPanel searchBox;
+		// private final SearchPanel searchBox;
 		private final Tree resultTree;
 		private final Tree resultTreeMarine;
 		private final HTML next;
@@ -436,21 +441,23 @@ private static class MapGeocoderResult extends Composite {
 		public ModelSearch() {
 			Label searchLabel = new Label(constants.ModelSearch());
 			VerticalPanel mainPanel = new VerticalPanel();
-//			HorizontalPanel searchPanel = new HorizontalPanel();
+			// HorizontalPanel searchPanel = new HorizontalPanel();
 			HorizontalPanel pagePanel = new HorizontalPanel();
-//			searchBox = new TextBox();
-			modelSearchPanel = new SearchPanel(this, "Search models...", "rebioma-search");
-//			modelSearchPanel.getSearchTextBox().getElement().setPropertyString("placeholder", "Search models...");
+			// searchBox = new TextBox();
+			modelSearchPanel = new SearchPanel(this, "Search models...",
+					"rebioma-search");
+			// modelSearchPanel.getSearchTextBox().getElement().setPropertyString("placeholder",
+			// "Search models...");
 			modelSearchPanel.addStyleName("search-panel");
 			modelSearchPanel.addStyleName("search-m-panel");
-		    modelSearchPanel.addTextBoxStyleName("search-panel-textbox");
-		    modelSearchPanel.getSearchTextBox().setWidth("100%");
-		    modelSearchPanel.addButtonStyleName("search-panel-btn");
-		    modelSearchPanel.getSearchButton().addStyleName("ximg-btn");
-		    
+			modelSearchPanel.addTextBoxStyleName("search-panel-textbox");
+			modelSearchPanel.getSearchTextBox().setWidth("100%");
+			modelSearchPanel.addButtonStyleName("search-panel-btn");
+			modelSearchPanel.getSearchButton().addStyleName("ximg-btn");
+
 			resultTree = new Tree();
 			resultTreeMarine = new Tree();
-			
+
 			next = new HTML("&nbsp;&#x203A;");
 			previous = new HTML("&#x2039;&nbsp;");
 			resultInfo = new Label();
@@ -460,24 +467,24 @@ private static class MapGeocoderResult extends Composite {
 			pagePanel.add(previous);
 			pagePanel.add(resultInfo);
 			pagePanel.add(next);
-//			searchPanel.add(searchLabel);
-//			searchPanel.add(searchBox);
-//			mainPanel.add(modelSearchPanel);
-			
+			// searchPanel.add(searchLabel);
+			// searchPanel.add(searchBox);
+			// mainPanel.add(modelSearchPanel);
+
 			Label terrestrial = new Label("Terrestrial");
 			terrestrial.setStyleName("forLabel");
 			terrestrial.addStyleName("t-model");
 			mainPanel.add(terrestrial);
-			
+
 			mainPanel.add(pagePanel);
 			mainPanel.add(resultTree);
-			
+
 			Label marine = new Label("Marine");
 			marine.setStyleName("forLabel");
 			marine.addStyleName("t-model");
-			
+
 			mainPanel.add(marine);
-			
+
 			HorizontalPanel pageMPanel = new HorizontalPanel();
 			nextM = new HTML("&nbsp;&#x203A;");
 			previousM = new HTML("&#x2039;&nbsp;");
@@ -488,43 +495,44 @@ private static class MapGeocoderResult extends Composite {
 			pageMPanel.add(previousM);
 			pageMPanel.add(resultMInfo);
 			pageMPanel.add(nextM);
-			
+
 			mainPanel.add(pageMPanel);
 			mainPanel.add(resultTreeMarine);
-			
-//			searchPanel.setSpacing(5);
+
+			// searchPanel.setSpacing(5);
 			initWidget(mainPanel);
 			setStyleName("model_search");
 			searchLabel.addStyleName("label");
-//			searchBox.addStyleName("search");
+			// searchBox.addStyleName("search");
 			next.addStyleName("link");
 			previous.addStyleName("link");
-//			searchBox.addKeyUpHandler(this);
+			// searchBox.addKeyUpHandler(this);
 			resultTree.addOpenHandler(this);
 			next.addClickHandler(this);
 			previous.addClickHandler(this);
-			
+
 			nextM.addStyleName("link");
 			previousM.addStyleName("link");
 			resultTreeMarine.addOpenHandler(this);
 			nextM.addClickHandler(this);
 			previousM.addClickHandler(this);
 			modelSearchPanel.getSearchTextBox().addKeyUpHandler(this);
-			
-			modelSearchPanel.getSearchButton().addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent arg0) {
-					search("");
-					addHistoryItem(false);
-//					modelSearchPanel.reset();
-				}
-			});
+
+			modelSearchPanel.getSearchButton().addClickHandler(
+					new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent arg0) {
+							search("");
+							addHistoryItem(false);
+							// modelSearchPanel.reset();
+						}
+					});
 		}
-		
+
 		public SearchPanel getSearchBox() {
-		    return modelSearchPanel;
-//			return searchBox;
+			return modelSearchPanel;
+			// return searchBox;
 		}
 
 		public void clearOverLay() {
@@ -551,7 +559,7 @@ private static class MapGeocoderResult extends Composite {
 			} else if (source == previous) {
 				start -= 10;
 				search(currentSearchTerm);
-			} else  if (source == nextM) {
+			} else if (source == nextM) {
 				startM += 10;
 				search(currentSearchTerm);
 			} else if (source == previousM) {
@@ -569,15 +577,16 @@ private static class MapGeocoderResult extends Composite {
 		public void onKeyUp(KeyUpEvent event) {
 			Object source = event.getSource();
 			if (source == modelSearchPanel.getSearchTextBox()) {
-//				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					addHistoryItem(false);
-					String searchText = modelSearchPanel.getSearchTextBox().getText().trim();
-					start = 0;
-					limit = 10;
-					startM = 0;
-					limitM = 10;
-					search(searchText);
-//				}
+				// if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+				addHistoryItem(false);
+				String searchText = modelSearchPanel.getSearchTextBox()
+						.getText().trim();
+				start = 0;
+				limit = 10;
+				startM = 0;
+				limitM = 10;
+				search(searchText);
+				// }
 			}
 		}
 
@@ -601,12 +610,13 @@ private static class MapGeocoderResult extends Composite {
 					if (end > count) {
 						end = count;
 					}
-					resultInfo.setText((start + 1) + " - " + end + " " + constants.Of()
-							+ " " + count);
+					resultInfo.setText((start + 1) + " - " + end + " "
+							+ constants.Of() + " " + count);
 					resultTree.clear();
 					for (AscModel ascModel : result.getResults()) {
-						ModelItem item = new ModelItem(ascModel.getAcceptedSpecies(),
-								ascModel, false, new DownloadAllClimatesCommand(ascModel));
+						ModelItem item = new ModelItem(
+								ascModel.getAcceptedSpecies(), ascModel, false,
+								new DownloadAllClimatesCommand(ascModel));
 						item.addItem(constants.Loading());
 						resultTree.addItem(item);
 					}
@@ -618,19 +628,20 @@ private static class MapGeocoderResult extends Composite {
 				next.setVisible((start + count) >= (start + limit));
 				previous.setVisible(start >= 10);
 				next.setVisible(start + 10 < count);
-				
-				//pour les modèles marines
+
+				// pour les modèles marines
 				if (countM > 0) {
 					int end = startM + limitM;
 					if (end > countM) {
 						end = countM;
 					}
-					resultMInfo.setText((startM + 1) + " - " + end + " " + constants.Of()
-							+ " " + countM);
+					resultMInfo.setText((startM + 1) + " - " + end + " "
+							+ constants.Of() + " " + countM);
 					resultTreeMarine.clear();
 					for (AscModel ascModel : result.getResultsM()) {
-						ModelItem item = new ModelItem(ascModel.getAcceptedSpecies(),
-								ascModel, false, new DownloadAllClimatesCommand(ascModel));
+						ModelItem item = new ModelItem(
+								ascModel.getAcceptedSpecies(), ascModel, false,
+								new DownloadAllClimatesCommand(ascModel));
 						item.addItem(constants.Loading());
 						resultTreeMarine.addItem(item);
 					}
@@ -657,15 +668,20 @@ private static class MapGeocoderResult extends Composite {
 		}
 
 		protected void search(String searchTerm) {
-			if (currentSearchTerm == null || !searchTerm.equals(currentSearchTerm)) {
+			if (currentSearchTerm == null
+					|| !searchTerm.equals(currentSearchTerm)) {
 				currentSearchTerm = searchTerm;
 				modelSearchPanel.getSearchTextBox().setText(searchTerm);
-//				DomEvent.fireNativeEvent(Document.get().createFocusEvent(), modelSearchPanel.getSearchTextBox());
+				// DomEvent.fireNativeEvent(Document.get().createFocusEvent(),
+				// modelSearchPanel.getSearchTextBox());
 			}
-			DomEvent.fireNativeEvent(Document.get().createFocusEvent(), modelSearchPanel.getSearchTextBox());
-			DomEvent.fireNativeEvent(Document.get().createBlurEvent(), modelSearchPanel.getSearchTextBox());
-			
-			DataSwitch.get().findModelLocation(searchTerm, start, limit, startM, limitM, this);
+			DomEvent.fireNativeEvent(Document.get().createFocusEvent(),
+					modelSearchPanel.getSearchTextBox());
+			DomEvent.fireNativeEvent(Document.get().createBlurEvent(),
+					modelSearchPanel.getSearchTextBox());
+
+			DataSwitch.get().findModelLocation(searchTerm, start, limit,
+					startM, limitM, this);
 		}
 	}
 
@@ -685,8 +701,8 @@ private static class MapGeocoderResult extends Composite {
 			showLayersLink.setStyleName("showlayerslink");
 			VerticalPanel vp = new VerticalPanel();
 			vp.add(occurrenceInfo);
-			//vp.add(showLayersLink);
-			//vp.add(detailLink);
+			// vp.add(showLayersLink);
+			// vp.add(detailLink);
 			initWidget(vp);
 			detailLink.addClickHandler(this);
 			showLayersLink.addClickHandler(this);
@@ -734,7 +750,7 @@ private static class MapGeocoderResult extends Composite {
 			if (source == detailLink) {
 				if (occurrence != null) {
 					parent.switchView(DETAIL, false);
-					//RORO closeInfoWindows();
+					// RORO closeInfoWindows();
 					occurrenceListener.onOccurrenceSelected(occurrence);
 				}
 			} else if (source == showLayersLink) {
@@ -759,7 +775,8 @@ private static class MapGeocoderResult extends Composite {
 
 	private LonLat lookupPoint;
 
-	//RORO private final Set<InfoWindow> infoWindows = new HashSet<InfoWindow>();
+	// RORO private final Set<InfoWindow> infoWindows = new
+	// HashSet<InfoWindow>();
 
 	/**
 	 * Far enough out to show the entire country of Madagascar on a 800x600
@@ -768,8 +785,8 @@ private static class MapGeocoderResult extends Composite {
 	private static final int DEFAULT_ZOOM = 5;
 
 	private Set<Vector> kmlLayers = new HashSet<Vector>();
-	
-	private String wmsUrl = GWT.getHostPageBaseURL() +"geoserver/portal/wms";
+
+	private String wmsUrl = GWT.getHostPageBaseURL() + "geoserver/portal/wms";
 
 	/**
 	 * Display field for map info window.
@@ -836,7 +853,7 @@ private static class MapGeocoderResult extends Composite {
 	static MapWidget map = new MapWidget("100%", "100%", defaultMapOptions);
 	private Popup popup;
 	HorizontalPanel hpButtons;
-	//public final static VerticalPanel vCOntrolMap = new VerticalPanel();
+	// public final static VerticalPanel vCOntrolMap = new VerticalPanel();
 	public final static AbsolutePanel panelMap = new AbsolutePanel();
 	/**
 	 * The text box on the map that allows users to search for addresses in
@@ -979,8 +996,10 @@ private static class MapGeocoderResult extends Composite {
 	 *            selection.
 	 */
 	// ////////////////////////////////////////////////////////////////
-	private final ToggleButton drawPolygonButton = new ToggleButton(constants.Draw());
-	private final ToggleButton navigateButton = new ToggleButton(constants.Navigate());
+	private final ToggleButton drawPolygonButton = new ToggleButton(
+			constants.Draw());
+	private final ToggleButton navigateButton = new ToggleButton(
+			constants.Navigate());
 	// the DrawFeature and DeleteFeature controls
 	private DrawFeature drawLineFeatureControl = null;
 	private SelectFeature deleteFeatureControl = null;
@@ -988,7 +1007,6 @@ private static class MapGeocoderResult extends Composite {
 	private final VerticalPanel deforestationPan = new VerticalPanel();
 	private VerticalLayoutContainer layerPan = new VerticalLayoutContainer();
 	private HorizontalPanel hplayerPan = new HorizontalPanel();
-
 
 	private MapView(View parent, OccurrenceQuery query,
 			PageListener<Occurrence> pageListener, boolean isDefaultView,
@@ -1020,7 +1038,7 @@ private static class MapGeocoderResult extends Composite {
 			}
 
 		};
-		this.controlsGroup = new MapControlsGroup(this);//RORO
+		this.controlsGroup = new MapControlsGroup(this);// RORO
 		envLayerSelector = controlsGroup.getLayerSelector();
 		geocoder = controlsGroup.getGeocoder();
 		initMap();
@@ -1033,20 +1051,21 @@ private static class MapGeocoderResult extends Composite {
 		ScrollPanel mrspanel = new ScrollPanel(markerList);
 		ScrollPanel mdspanel = new ScrollPanel(modelSearch);
 		modelSearch.setWidth("100%");
-		
+
 		VerticalLayoutContainer mdsPanel = new VerticalLayoutContainer();
 		ToolBar t = new ToolBar();
 		t.setBorders(false);
 		t.setStyleName("test");
 		SearchPanel tbSearch = modelSearch.getSearchBox();
-//		tbSearch.getSearchButton().setWidth("30px");
-//		tbSearch.setBorderWidth(0);
+		// tbSearch.getSearchButton().setWidth("30px");
+		// tbSearch.setBorderWidth(0);
 		t.add(tbSearch);
 		tbSearch.setWidth("99%");
-//		tbSearch.getSearchTextBox().setStyleName("search-model");
-//		tbSearch.getSearchTextBox().getElement().setPropertyString("placeholder", "Search models...");
+		// tbSearch.getSearchTextBox().setStyleName("search-model");
+		// tbSearch.getSearchTextBox().getElement().setPropertyString("placeholder",
+		// "Search models...");
 		mdsPanel.add(t, new VerticalLayoutData(1, -1, new Margins(4, 4, 8, 4)));
-		
+
 		mdsPanel.add(mdspanel, new VerticalLayoutData(1, 1));
 
 		modelTab = new TabPanel(
@@ -1057,35 +1076,36 @@ private static class MapGeocoderResult extends Composite {
 		modelTab.getElement().getStyle().setBackgroundColor("white");
 		TabItemConfig dateModel = new TabItemConfig("__");
 		modelTab.add(mdsPanel, dateModel);
-		//modelTab.setHeight(modelTab.getOffsetHeight()-10);
+		// modelTab.setHeight(modelTab.getOffsetHeight()-10);
 		// mrspanel.add(markerList);
 		// mdspanel.add(modelSearch);
 		HorizontalPanel hpAP = new HorizontalPanel();
 		HorizontalPanel hpd = new HorizontalPanel();
-		HorizontalPanel APhp=new HorizontalPanel();
-		HorizontalPanel hpFC=new HorizontalPanel();
+		HorizontalPanel APhp = new HorizontalPanel();
+		HorizontalPanel hpFC = new HorizontalPanel();
 		Label lbap = new Label(constants.AP());
 		Label lbd = new Label(constants.DeforestationMap());
 		APhp.add(lbap);
 		APhp.add(new HTML("<a>Source: SAPM 2017</a>"));
 		APhp.setSpacing(10);
 		hpFC.add(lbd);
-		hpFC.add(new HTML("<a target='_blank' href='https://bioscenemada.cirad.fr/maps/'>Source</a>"));
+		hpFC.add(new HTML(
+				"<a target='_blank' href='https://bioscenemada.cirad.fr/maps/'>Source</a>"));
 		hpFC.setSpacing(10);
 		hpAP.add(APPan);
 		hpd.add(deforestationPan);
 		APPan.setSpacing(5);
 		deforestationPan.setSpacing(5);
-		layerPan.add(APhp, new VerticalLayoutData(1, 20, new Margins(
-				0, 0, 0, 0)));
-		layerPan.add(hpAP, new VerticalLayoutData(1, 20, new Margins(
-				0, 0, 0, 0)));
-		layerPan.add(hpFC, new VerticalLayoutData(1, 20, new Margins(
-				0, 0, 0, 0)));
-		layerPan.add(hpd, new VerticalLayoutData(1, 300, new Margins(
-				0, 0, 0, 0)));
+		layerPan.add(APhp, new VerticalLayoutData(1, 20,
+				new Margins(0, 0, 0, 0)));
+		layerPan.add(hpAP, new VerticalLayoutData(1, 20,
+				new Margins(0, 0, 0, 0)));
+		layerPan.add(hpFC, new VerticalLayoutData(1, 20,
+				new Margins(0, 0, 0, 0)));
+		layerPan.add(hpd, new VerticalLayoutData(1, 300,
+				new Margins(0, 0, 0, 0)));
 		hplayerPan.add(layerPan);
-		
+
 		currentTab = mrspanel;
 		leftTab.add(mrspanel, markerTb);
 		leftTab.add(modelTab, modelTb);
@@ -1125,14 +1145,18 @@ private static class MapGeocoderResult extends Composite {
 		mapPanel.setHeight(Window.getClientHeight() - 183);
 		// mapPanel.setHeight(450);
 		mapPanel.add(map);
-		panelMap.setSize("100%", "100%"); //give it the same size as the MapWidget
-		panelMap.add(map, 0, 0); //add the MapWidget to the AbsolutePanel
+		panelMap.setSize("100%", "100%"); // give it the same size as the
+											// MapWidget
+		panelMap.add(map, 0, 0); // add the MapWidget to the AbsolutePanel
 		hpButtons = new HorizontalPanel();
-		LonLat llbtn=new LonLat(60,-17);
-		llbtn.transform(DEFAULT_PROJECTION.getProjectionCode(),
-                map.getMap().getProjection());
-		Pixel pxLonLat = map.getMap().getPixelFromLonLat(llbtn); //calculate px coordinates from lonLat
-		panelMap.add(hpButtons,pxLonLat.x(), pxLonLat.y());
+		LonLat llbtn = new LonLat(60, -17);
+		llbtn.transform(DEFAULT_PROJECTION.getProjectionCode(), map.getMap()
+				.getProjection());
+		Pixel pxLonLat = map.getMap().getPixelFromLonLat(llbtn); // calculate px
+																	// coordinates
+																	// from
+																	// lonLat
+		panelMap.add(hpButtons, pxLonLat.x(), pxLonLat.y());
 		mapPanel.add(panelMap);
 		hpButtons.add(drawPolygonButton);
 		hpButtons.add(navigateButton);
@@ -1530,42 +1554,32 @@ private static class MapGeocoderResult extends Composite {
 				.equalsIgnoreCase(MAP);
 	}
 
-	/* RORO protected void mapGeocoderResult(
-			JsArray<com.google.gwt.maps.client.services.GeocoderResult> results) {
-		String address = geocoder.getAddress();
-		StringBuilder sb = new StringBuilder();
-		LatLng point = null;
-		for (int i = 0; i < results.length(); i++) {
-			com.google.gwt.maps.client.services.GeocoderResult geoResult = results
-					.get(i);
-			point = geoResult.getGeometry().getLocation();
-			MapGeocoderResult result = new MapGeocoderResult(point, address);
-			sb.append(result);
-			InfoWindowOptions contentOptions = InfoWindowOptions.newInstance();
-			contentOptions.setContent(result);
-			contentOptions.setPosition(point);
-			final InfoWindow content = InfoWindow.newInstance(contentOptions);
-			if (geocoderMarkers != null) {
-				for (Markers marker : geocoderMarkers) {
-					map.getMap().removeLayer(marker);
-					// RORO marker.setMap((MapWidget)null);
-				}
-			}
-			/*
-			 * RORO Marker geocoderMarker = GeocoderControl.createMarker(point,
-			 * address); //RORO geocoderMarker.setMap(map);
-			 * geocoderMarker.addClickHandler(new ClickMapHandler() {
-			 * 
-			 * @Override public void onEvent(ClickMapEvent event) {
-			 * closeInfoWindows(); //RORO content.open(map);
-			 * infoWindows.add(content); } });
-			 */
-			// RORO geocoderMarkers.add(geocoderMarker);
-		/*RORO }
-		if (results.length() == 1 && point != null) {
-			// RORO map.setCenter(point);
-		}
-	}*/
+	/*
+	 * RORO protected void mapGeocoderResult(
+	 * JsArray<com.google.gwt.maps.client.services.GeocoderResult> results) {
+	 * String address = geocoder.getAddress(); StringBuilder sb = new
+	 * StringBuilder(); LatLng point = null; for (int i = 0; i <
+	 * results.length(); i++) {
+	 * com.google.gwt.maps.client.services.GeocoderResult geoResult = results
+	 * .get(i); point = geoResult.getGeometry().getLocation(); MapGeocoderResult
+	 * result = new MapGeocoderResult(point, address); sb.append(result);
+	 * InfoWindowOptions contentOptions = InfoWindowOptions.newInstance();
+	 * contentOptions.setContent(result); contentOptions.setPosition(point);
+	 * final InfoWindow content = InfoWindow.newInstance(contentOptions); if
+	 * (geocoderMarkers != null) { for (Markers marker : geocoderMarkers) {
+	 * map.getMap().removeLayer(marker); // RORO marker.setMap((MapWidget)null);
+	 * } } /* RORO Marker geocoderMarker = GeocoderControl.createMarker(point,
+	 * address); //RORO geocoderMarker.setMap(map);
+	 * geocoderMarker.addClickHandler(new ClickMapHandler() {
+	 * 
+	 * @Override public void onEvent(ClickMapEvent event) { closeInfoWindows();
+	 * //RORO content.open(map); infoWindows.add(content); } });
+	 */
+	// RORO geocoderMarkers.add(geocoderMarker);
+	/*
+	 * RORO } if (results.length() == 1 && point != null) { // RORO
+	 * map.setCenter(point); } }
+	 */
 
 	protected void resetToDefaultState() {
 		historyState.clearChecksState();
@@ -1598,22 +1612,22 @@ private static class MapGeocoderResult extends Composite {
 		for (OccurrenceMarkerManager markerManager : occurrenceMarkers) {
 			markerManager.getMarkers().clearMarkers();
 		}
-		 for (Marker m : markersOnMap) {
-	            this.markers.removeMarker(m);
-	        }
-	        markersOnMap.clear();
+		for (Marker m : markerOnMap) {
+			this.markers.removeMarker(m);
+		}
+		for (Markers m : markersOnMap) {
+			map.getMap().removeLayer(m);
+		}
+		markerOnMap.clear();
+		markersOnMap.clear();
 		occurrenceMarkers.clear();
 		markerList.clear();
 	}
-	private ArrayList<Marker> markersOnMap = new ArrayList<Marker>();
-    private Markers markers;
 
-	public void removeAllMarkers() {
-        for (Marker m : this.markersOnMap) {
-            this.markers.removeMarker(m);
-        }
-        this.markersOnMap.clear();
-    }
+	private ArrayList<Marker> markerOnMap = new ArrayList<Marker>();
+	private ArrayList<Markers> markersOnMap = new ArrayList<Markers>();
+	private Markers markers;
+
 	/*
 	 * private MapTypeId getMapType(String type) { MapTypeId mapType =
 	 * MapTypeId.fromValue(type); if (mapType == null ||
@@ -1631,11 +1645,15 @@ private static class MapGeocoderResult extends Composite {
 				// + modelControlWidget.getOffsetWidth() + 10, modelControl
 				// .getYOffset());
 				HideControl hideControl = new HideControl();
-				LonLat llhc=new LonLat(89,-20);
-				llhc.transform(DEFAULT_PROJECTION.getProjectionCode(),
-                        map.getMap().getProjection());
-				Pixel pxLonLat = map.getMap().getPixelFromLonLat(llhc); //calculate px coordinates from lonLat
-				panelMap.add(hideControl,pxLonLat.x(), pxLonLat.y());
+				LonLat llhc = new LonLat(89, -20);
+				llhc.transform(DEFAULT_PROJECTION.getProjectionCode(), map
+						.getMap().getProjection());
+				Pixel pxLonLat = map.getMap().getPixelFromLonLat(llhc); // calculate
+																		// px
+																		// coordinates
+																		// from
+																		// lonLat
+				panelMap.add(hideControl, pxLonLat.x(), pxLonLat.y());
 				hideControl.addControlWidgetToHide(modelControl);
 				hideControl.addControlWidgetToHide(geocoder);
 				hideControl.addControlWidgetToHide(envLayerSelector);
@@ -1662,12 +1680,11 @@ private static class MapGeocoderResult extends Composite {
 			map.getMap().getCenter().lat();
 			break;
 		case ADDRESS:
-			/*RORO String address = geocoder.getAddress();
-			if ((address != null) && (address.length() > 0)) {
-				query += geocoder.getAddress();
-			} else {
-				query = "";
-			}*/
+			/*
+			 * RORO String address = geocoder.getAddress(); if ((address !=
+			 * null) && (address.length() > 0)) { query +=
+			 * geocoder.getAddress(); } else { query = ""; }
+			 */
 			break;
 		case LEFT_TAB:
 			int index = leftTab.getWidgetIndex(leftTab.getActiveWidget());// leftTab.getTabBar().getSelectedTab();
@@ -1677,7 +1694,8 @@ private static class MapGeocoderResult extends Composite {
 			query += index;
 			break;
 		case M_SEARCH:
-			query += modelSearch.getSearchBox().getSearchTextBox().getText().trim();
+			query += modelSearch.getSearchBox().getSearchTextBox().getText()
+					.trim();
 			break;
 		case M_PAGE:
 			query += modelSearch.getPage();
@@ -1745,119 +1763,119 @@ private static class MapGeocoderResult extends Composite {
 
 	private LonLat[] marineLatLng() {
 		LonLat[] a = new LonLat[60];
-		a[0] = new LonLat(47.101136,-24.821639);
-		a[1] = new LonLat(46.518860,-25.065697);
-		a[2] = new LonLat(46.051941,-25.234758);
-		a[3] = new LonLat(45.634461,-25.497827);
-		a[4] = new LonLat(45.208740,-25.547397);
-		a[5] = new LonLat(44.714355,-25.284438);
-		a[6] = new LonLat(44.266663,-25.110472);
-		a[7] = new LonLat(44.093628,-24.961160);
-		a[8] = new LonLat(43.972779,-24.612064);
-		a[9] = new LonLat(43.720093,-24.352101);
-		a[10] = new LonLat(43.807983,-23.503552);
-		a[11] = new LonLat(43.769531,-23.322080);
-		a[12] = new LonLat(43.500366,-22.907803);
-		a[13] = new LonLat(43.341065,-22.593726);
-		a[14] = new LonLat(43.352051,-22.100909);
-		a[15] = new LonLat(43.500366,-21.672743);
-		a[16] = new LonLat(43.549805,-21.361013);
-		a[17] = new LonLat(43.862915,-21.243303);
-		a[18] = new LonLat(43.983764,-20.843412);
-		a[19] = new LonLat(44.555053,-20.014645);
-		a[20] = new LonLat(44.467163,-19.777043);
-		a[21] = new LonLat(44.538574,-19.445874);
-		a[22] = new LonLat(44.302368,-19.067310);
-		a[23] = new LonLat(44.318847,-18.823117);
-		a[24] = new LonLat(44.088134,-18.396230);
-		a[25] = new LonLat(44.071656,-18.004856);
-		a[26] = new LonLat(44.085388,-17.748687);
-		a[27] = new LonLat(43.975525,-17.488221);
-		a[28] = new LonLat(44.497376,-16.636192);
-		a[29] = new LonLat(44.501495,-16.301688);
-		a[30] = new LonLat(45.271911,-16.212038);
-		a[31] = new LonLat(46.485901,-16.035255);
-		a[32] = new LonLat(47.210999,-15.482799);
-		a[33] = new LonLat(47.614746,-15.149020);
-		a[34] = new LonLat(48.034973,-14.743011);
-		a[35] = new LonLat(48.084412,-14.277692);
-		a[36] = new LonLat(48.180542,-13.928736);
-		a[37] = new LonLat(48.386536,-13.800741);
-		a[38] = new LonLat(48.820496,-13.459080);
-		a[39] = new LonLat(48.935852,-13.068777);
-		a[40] = new LonLat(48.988037,-12.771625);
-		a[41] = new LonLat(49.029236,-12.517028);
-		a[42] = new LonLat(49.202270,-12.366831);
-		a[43] = new LonLat(49.537353,-12.736801);
-		a[44] = new LonLat(49.794159,-12.957580);
-		a[45] = new LonLat(49.891662,-13.285392);
-		a[46] = new LonLat(50.092163,-13.982046);
-		a[47] = new LonLat(50.136109,-14.626109);
-		a[48] = new LonLat(50.405273,-15.331870);
-		a[49] = new LonLat(50.141602,-15.874168);
-		a[50] = new LonLat(49.883423,-15.371599);
-		a[51] = new LonLat(49.627991,-15.416615);
-		a[52] = new LonLat(49.570312,-15.660065);
-		a[53] = new LonLat(49.740601,-16.507199);
-		a[54] = new LonLat(49.369812,-17.363746);
-		a[55] = new LonLat(49.438477,-17.719910);
-		a[56] = new LonLat(49.309387,-18.140632);
-		a[57] = new LonLat(48.729859,-19.804983);
-		a[58] = new LonLat(48.202515,-21.490058);
-		a[59] = new LonLat(47.098389,-24.819146);
+		a[0] = new LonLat(47.101136, -24.821639);
+		a[1] = new LonLat(46.518860, -25.065697);
+		a[2] = new LonLat(46.051941, -25.234758);
+		a[3] = new LonLat(45.634461, -25.497827);
+		a[4] = new LonLat(45.208740, -25.547397);
+		a[5] = new LonLat(44.714355, -25.284438);
+		a[6] = new LonLat(44.266663, -25.110472);
+		a[7] = new LonLat(44.093628, -24.961160);
+		a[8] = new LonLat(43.972779, -24.612064);
+		a[9] = new LonLat(43.720093, -24.352101);
+		a[10] = new LonLat(43.807983, -23.503552);
+		a[11] = new LonLat(43.769531, -23.322080);
+		a[12] = new LonLat(43.500366, -22.907803);
+		a[13] = new LonLat(43.341065, -22.593726);
+		a[14] = new LonLat(43.352051, -22.100909);
+		a[15] = new LonLat(43.500366, -21.672743);
+		a[16] = new LonLat(43.549805, -21.361013);
+		a[17] = new LonLat(43.862915, -21.243303);
+		a[18] = new LonLat(43.983764, -20.843412);
+		a[19] = new LonLat(44.555053, -20.014645);
+		a[20] = new LonLat(44.467163, -19.777043);
+		a[21] = new LonLat(44.538574, -19.445874);
+		a[22] = new LonLat(44.302368, -19.067310);
+		a[23] = new LonLat(44.318847, -18.823117);
+		a[24] = new LonLat(44.088134, -18.396230);
+		a[25] = new LonLat(44.071656, -18.004856);
+		a[26] = new LonLat(44.085388, -17.748687);
+		a[27] = new LonLat(43.975525, -17.488221);
+		a[28] = new LonLat(44.497376, -16.636192);
+		a[29] = new LonLat(44.501495, -16.301688);
+		a[30] = new LonLat(45.271911, -16.212038);
+		a[31] = new LonLat(46.485901, -16.035255);
+		a[32] = new LonLat(47.210999, -15.482799);
+		a[33] = new LonLat(47.614746, -15.149020);
+		a[34] = new LonLat(48.034973, -14.743011);
+		a[35] = new LonLat(48.084412, -14.277692);
+		a[36] = new LonLat(48.180542, -13.928736);
+		a[37] = new LonLat(48.386536, -13.800741);
+		a[38] = new LonLat(48.820496, -13.459080);
+		a[39] = new LonLat(48.935852, -13.068777);
+		a[40] = new LonLat(48.988037, -12.771625);
+		a[41] = new LonLat(49.029236, -12.517028);
+		a[42] = new LonLat(49.202270, -12.366831);
+		a[43] = new LonLat(49.537353, -12.736801);
+		a[44] = new LonLat(49.794159, -12.957580);
+		a[45] = new LonLat(49.891662, -13.285392);
+		a[46] = new LonLat(50.092163, -13.982046);
+		a[47] = new LonLat(50.136109, -14.626109);
+		a[48] = new LonLat(50.405273, -15.331870);
+		a[49] = new LonLat(50.141602, -15.874168);
+		a[50] = new LonLat(49.883423, -15.371599);
+		a[51] = new LonLat(49.627991, -15.416615);
+		a[52] = new LonLat(49.570312, -15.660065);
+		a[53] = new LonLat(49.740601, -16.507199);
+		a[54] = new LonLat(49.369812, -17.363746);
+		a[55] = new LonLat(49.438477, -17.719910);
+		a[56] = new LonLat(49.309387, -18.140632);
+		a[57] = new LonLat(48.729859, -19.804983);
+		a[58] = new LonLat(48.202515, -21.490058);
+		a[59] = new LonLat(47.098389, -24.819146);
 
 		return a;
 	}
 
 	private LonLat[] terrestrialLatLng() {
 		LonLat[] a = new LonLat[47];
-		a[0] = new LonLat(49.553833,-17.977411);
-		a[1] = new LonLat(47.189026,-25.107900);
-		a[2] = new LonLat(45.703125,-25.562265);
-		a[3] = new LonLat(45.175781,-25.641526);
-		a[4] = new LonLat(44.692383,-25.373810);
-		a[5] = new LonLat(44.307861,-25.344027);
-		a[6] = new LonLat(43.989258,-25.045792);
-		a[7] = new LonLat(43.879395,-24.676970);
-		a[8] = new LonLat(43.648682,-24.357105);
-		a[9] = new LonLat(43.593750,-23.563987);
-		a[10] = new LonLat(43.374023,-23.019076);
-		a[11] = new LonLat(43.154297,-22.030911);
-		a[12] = new LonLat(43.330078,-21.657428);
-		a[13] = new LonLat(43.494873,-21.268900);
-		a[14] = new LonLat(43.769531,-21.217701);
-		a[15] = new LonLat(43.901367,-20.756114);
-		a[16] = new LonLat(44.450683,-19.951405);
-		a[17] = new LonLat(44.346313,-19.766704);
-		a[18] = new LonLat(44.428711,-19.435514);
-		a[19] = new LonLat(44.176025,-19.051734);
-		a[20] = new LonLat(44.208984,-18.791918);
-		a[21] = new LonLat(43.978271,-18.375379);
-		a[22] = new LonLat(43.978271,-17.748687);
-		a[23] = new LonLat(43.879395,-17.476432);
-		a[24] = new LonLat(44.411545,-16.627639);
-		a[25] = new LonLat(44.375152,-16.152028);
-		a[26] = new LonLat(44.846191,-16.183024);
-		a[27] = new LonLat(45.225219,-15.903226);
-		a[28] = new LonLat(46.538086,-15.421910);
-		a[29] = new LonLat(47.416992,-14.689881);
-		a[30] = new LonLat(47.776795,-13.581921);
-		a[31] = new LonLat(48.208008,-13.154376);
-		a[32] = new LonLat(48.672180,-12.358783);
-		a[33] = new LonLat(49.262695,-11.872726);
-		a[34] = new LonLat(50.020752,-13.052723);
-		a[35] = new LonLat(50.520630,-15.268288);
-		a[36] = new LonLat(50.419006,-15.725770);
-		a[37] = new LonLat(50.202027,-16.045814);
-		a[38] = new LonLat(49.976806,-15.876809);
-		a[39] = new LonLat(49.910889,-15.665222);
-		a[40] = new LonLat(49.806519,-15.543668);
-		a[41] = new LonLat(49.652710,-15.591293);
-		a[42] = new LonLat(49.768067,-15.910895);
-		a[43] = new LonLat(49.748841,-16.086531);
-		a[44] = new LonLat(49.905396,-16.230498);
-		a[45] = new LonLat(50.064697,-16.736167);
-		a[46] = new LonLat(49.839477,-17.164223);
+		a[0] = new LonLat(49.553833, -17.977411);
+		a[1] = new LonLat(47.189026, -25.107900);
+		a[2] = new LonLat(45.703125, -25.562265);
+		a[3] = new LonLat(45.175781, -25.641526);
+		a[4] = new LonLat(44.692383, -25.373810);
+		a[5] = new LonLat(44.307861, -25.344027);
+		a[6] = new LonLat(43.989258, -25.045792);
+		a[7] = new LonLat(43.879395, -24.676970);
+		a[8] = new LonLat(43.648682, -24.357105);
+		a[9] = new LonLat(43.593750, -23.563987);
+		a[10] = new LonLat(43.374023, -23.019076);
+		a[11] = new LonLat(43.154297, -22.030911);
+		a[12] = new LonLat(43.330078, -21.657428);
+		a[13] = new LonLat(43.494873, -21.268900);
+		a[14] = new LonLat(43.769531, -21.217701);
+		a[15] = new LonLat(43.901367, -20.756114);
+		a[16] = new LonLat(44.450683, -19.951405);
+		a[17] = new LonLat(44.346313, -19.766704);
+		a[18] = new LonLat(44.428711, -19.435514);
+		a[19] = new LonLat(44.176025, -19.051734);
+		a[20] = new LonLat(44.208984, -18.791918);
+		a[21] = new LonLat(43.978271, -18.375379);
+		a[22] = new LonLat(43.978271, -17.748687);
+		a[23] = new LonLat(43.879395, -17.476432);
+		a[24] = new LonLat(44.411545, -16.627639);
+		a[25] = new LonLat(44.375152, -16.152028);
+		a[26] = new LonLat(44.846191, -16.183024);
+		a[27] = new LonLat(45.225219, -15.903226);
+		a[28] = new LonLat(46.538086, -15.421910);
+		a[29] = new LonLat(47.416992, -14.689881);
+		a[30] = new LonLat(47.776795, -13.581921);
+		a[31] = new LonLat(48.208008, -13.154376);
+		a[32] = new LonLat(48.672180, -12.358783);
+		a[33] = new LonLat(49.262695, -11.872726);
+		a[34] = new LonLat(50.020752, -13.052723);
+		a[35] = new LonLat(50.520630, -15.268288);
+		a[36] = new LonLat(50.419006, -15.725770);
+		a[37] = new LonLat(50.202027, -16.045814);
+		a[38] = new LonLat(49.976806, -15.876809);
+		a[39] = new LonLat(49.910889, -15.665222);
+		a[40] = new LonLat(49.806519, -15.543668);
+		a[41] = new LonLat(49.652710, -15.591293);
+		a[42] = new LonLat(49.768067, -15.910895);
+		a[43] = new LonLat(49.748841, -16.086531);
+		a[44] = new LonLat(49.905396, -16.230498);
+		a[45] = new LonLat(50.064697, -16.736167);
+		a[46] = new LonLat(49.839477, -17.164223);
 		return a;
 	}
 
@@ -1886,13 +1904,20 @@ private static class MapGeocoderResult extends Composite {
 		map.getMap().addLayers(new Layer[] { gHybrid, gSatellite });
 		// / Checkbox pour les autres couches
 		final CheckBox checkBoxAP = new CheckBox(constants.AP());
-		final CheckBox checkBoxfor1953 = new CheckBox(constants.DeforestationMap()+" 1953");
-		final CheckBox checkBoxfor1973 = new CheckBox(constants.DeforestationMap()+" 1973");
-		final CheckBox checkBoxfor1990 = new CheckBox(constants.DeforestationMap()+" 1990");
-		final CheckBox checkBoxfor2000 = new CheckBox(constants.DeforestationMap()+" 2000");
-		final CheckBox checkBoxfor2005 = new CheckBox(constants.DeforestationMap()+" 2005");
-		final CheckBox checkBoxfor2010 = new CheckBox(constants.DeforestationMap()+" 2010");
-		final CheckBox checkBoxfor2014 = new CheckBox(constants.DeforestationMap()+" 2014");
+		final CheckBox checkBoxfor1953 = new CheckBox(
+				constants.DeforestationMap() + " 1953");
+		final CheckBox checkBoxfor1973 = new CheckBox(
+				constants.DeforestationMap() + " 1973");
+		final CheckBox checkBoxfor1990 = new CheckBox(
+				constants.DeforestationMap() + " 1990");
+		final CheckBox checkBoxfor2000 = new CheckBox(
+				constants.DeforestationMap() + " 2000");
+		final CheckBox checkBoxfor2005 = new CheckBox(
+				constants.DeforestationMap() + " 2005");
+		final CheckBox checkBoxfor2010 = new CheckBox(
+				constants.DeforestationMap() + " 2010");
+		final CheckBox checkBoxfor2014 = new CheckBox(
+				constants.DeforestationMap() + " 2014");
 		APPan.add(checkBoxAP);
 		deforestationPan.add(checkBoxfor1953);
 		deforestationPan.add(checkBoxfor1973);
@@ -1905,13 +1930,13 @@ private static class MapGeocoderResult extends Composite {
 		WMSParams wmsParams = new WMSParams();
 		wmsParams.setFormat("image/png");
 		wmsParams.setLayers("portal:protected_areas");
-		//wmsParams.setStyles("AP_bycat_UICN_style");
+		// wmsParams.setStyles("AP_bycat_UICN_style");
 		wmsParams.setParameter("transparent", "true");
 		WMSOptions wmsLayerParams = new WMSOptions();
 		wmsLayerParams.setUntiled();
 		wmsLayerParams.setProjection("EPSG:3857");
 		wmsLayerParams.setTransitionEffect(TransitionEffect.RESIZE);
-//		String wmsUrl = "http://localhost:8086/geoserver/portal/wms";
+		// String wmsUrl = "http://localhost:8086/geoserver/portal/wms";
 		final WMS wmsLayer = new WMS(constants.AP(), wmsUrl, wmsParams,
 				wmsLayerParams);
 		checkBoxAP.addClickHandler(new ClickHandler() {
@@ -1933,8 +1958,8 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParamstif.setProjection("EPSG:3857");
 		wmsLayerParamstif.setTransitionEffect(TransitionEffect.RESIZE);
 		String wmsUrltif = wmsUrl;
-		final WMS wmsLayertif = new WMS(constants.DeforestationMap()+" 1953", wmsUrltif,
-				wmsParamstif, wmsLayerParamstif);
+		final WMS wmsLayertif = new WMS(constants.DeforestationMap() + " 1953",
+				wmsUrltif, wmsParamstif, wmsLayerParamstif);
 		checkBoxfor1953.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1954,8 +1979,8 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams1973.setProjection("EPSG:3857");
 		wmsLayerParams1973.setTransitionEffect(TransitionEffect.RESIZE);
 		String wmsUrltif1973 = wmsUrl;
-		final WMS wmsLayertif1973 = new WMS(constants.DeforestationMap()+" 1973",
-				wmsUrltif1973, wmsParams1973, wmsLayerParams1973);
+		final WMS wmsLayertif1973 = new WMS(constants.DeforestationMap()
+				+ " 1973", wmsUrltif1973, wmsParams1973, wmsLayerParams1973);
 		checkBoxfor1973.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1977,8 +2002,8 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams1990.setProjection("EPSG:3857");
 		wmsLayerParams1990.setTransitionEffect(TransitionEffect.RESIZE);
 		String wmsUrltif1990 = wmsUrl;
-		final WMS wmsLayertif1990 = new WMS(constants.DeforestationMap()+" 1990",
-				wmsUrltif1990, wmsParams1990, wmsLayerParams1990);
+		final WMS wmsLayertif1990 = new WMS(constants.DeforestationMap()
+				+ " 1990", wmsUrltif1990, wmsParams1990, wmsLayerParams1990);
 		checkBoxfor1990.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -2000,8 +2025,8 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2000.setProjection("EPSG:3857");
 		wmsLayerParams2000.setTransitionEffect(TransitionEffect.RESIZE);
 		String wmsUrltif2000 = wmsUrl;
-		final WMS wmsLayertif2000 = new WMS(constants.DeforestationMap()+" 2000",
-				wmsUrltif2000, wmsParams2000, wmsLayerParams2000);
+		final WMS wmsLayertif2000 = new WMS(constants.DeforestationMap()
+				+ " 2000", wmsUrltif2000, wmsParams2000, wmsLayerParams2000);
 		checkBoxfor2000.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -2022,8 +2047,8 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2005.setProjection("EPSG:3857");
 		wmsLayerParams2005.setTransitionEffect(TransitionEffect.RESIZE);
 		String wmsUrltif2005 = wmsUrl;
-		final WMS wmsLayertif2005 = new WMS(constants.DeforestationMap()+" 2005",
-				wmsUrltif2005, wmsParams2005, wmsLayerParams2005);
+		final WMS wmsLayertif2005 = new WMS(constants.DeforestationMap()
+				+ " 2005", wmsUrltif2005, wmsParams2005, wmsLayerParams2005);
 		checkBoxfor2005.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -2045,8 +2070,8 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2010.setProjection("EPSG:3857");
 		wmsLayerParams2010.setTransitionEffect(TransitionEffect.RESIZE);
 		String wmsUrltif2010 = wmsUrl;
-		final WMS wmsLayertif2010 = new WMS(constants.DeforestationMap()+" 2010",
-				wmsUrltif2010, wmsParams2010, wmsLayerParams2010);
+		final WMS wmsLayertif2010 = new WMS(constants.DeforestationMap()
+				+ " 2010", wmsUrltif2010, wmsParams2010, wmsLayerParams2010);
 		checkBoxfor2010.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -2068,8 +2093,8 @@ private static class MapGeocoderResult extends Composite {
 		wmsLayerParams2014.setProjection("EPSG:900913");
 		wmsLayerParams2014.setTransitionEffect(TransitionEffect.RESIZE);
 		String wmsUrltif2014 = wmsUrl;
-		final WMS wmsLayertif2014 = new WMS(constants.DeforestationMap()+" 2014",
-				wmsUrltif2014, wmsParams2014, wmsLayerParams2014);
+		final WMS wmsLayertif2014 = new WMS(constants.DeforestationMap()
+				+ " 2014", wmsUrltif2014, wmsParams2014, wmsLayerParams2014);
 		checkBoxfor2014.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -2087,7 +2112,7 @@ private static class MapGeocoderResult extends Composite {
 			public String format(LonLat lonLat,
 					org.gwtopenmaps.openlayers.client.Map map) {
 				String out = "";
-//				out += "<b>longitude </b> ";
+				// out += "<b>longitude </b> ";
 				out += lonLat.lon();
 				out += ", ";
 				out += lonLat.lat();
@@ -2106,12 +2131,15 @@ private static class MapGeocoderResult extends Composite {
 													// to display the
 													// overviewmap
 		map.getMap().addControl(new ScaleLine()); // Display the scaleline
-		/*LonLat lonlat=new LonLat(5232016.0665556,-1920825.0401101);
-	      lonlat.transform(new Projection("EPSG:32738").getProjectionCode(), new Projection("EPSG:32738").getProjectionCode());
-	      */
-		/// System.out.println(""+ lonlat.lon()+","+lonlat.lat());
-		final LonLat lonLat=new LonLat(47,-19);
-		lonLat.transform(new Projection("EPSG:4326").getProjectionCode(), map.getMap().getProjection());
+		/*
+		 * LonLat lonlat=new LonLat(5232016.0665556,-1920825.0401101);
+		 * lonlat.transform(new Projection("EPSG:32738").getProjectionCode(),
+		 * new Projection("EPSG:32738").getProjectionCode());
+		 */
+		// / System.out.println(""+ lonlat.lon()+","+lonlat.lat());
+		final LonLat lonLat = new LonLat(47, -19);
+		lonLat.transform(new Projection("EPSG:4326").getProjectionCode(), map
+				.getMap().getProjection());
 		map.getMap().setCenter(lonLat, DEFAULT_ZOOM);
 		// map.getMap().setCenter(new LonLat(47.3318, -18.8296), 6);
 		map.getElement().getFirstChildElement().getStyle().setZIndex(0);
@@ -2126,16 +2154,24 @@ private static class MapGeocoderResult extends Composite {
 			@Override
 			public void execute() {
 				HideControl hideControl = new HideControl();
-				LonLat llhideControl=new LonLat(89,-20);
+				LonLat llhideControl = new LonLat(89, -20);
 				llhideControl.transform(DEFAULT_PROJECTION.getProjectionCode(),
-                        map.getMap().getProjection());
-				LonLat llcontrolsGroup=new LonLat(75,-21);
-				llcontrolsGroup.transform(DEFAULT_PROJECTION.getProjectionCode(),
-                        map.getMap().getProjection());
-				Pixel pxLonLat = map.getMap().getPixelFromLonLat(llhideControl); //calculate px coordinates from lonLat
-				Pixel px = map.getMap().getPixelFromLonLat(llcontrolsGroup); //calculate px coordinates from lonLat
-				panelMap.add(hideControl,pxLonLat.x(), pxLonLat.y());
-				panelMap.add(controlsGroup,px.x(), px.y());
+						map.getMap().getProjection());
+				LonLat llcontrolsGroup = new LonLat(75, -21);
+				llcontrolsGroup.transform(DEFAULT_PROJECTION
+						.getProjectionCode(), map.getMap().getProjection());
+				Pixel pxLonLat = map.getMap().getPixelFromLonLat(llhideControl); // calculate
+																					// px
+																					// coordinates
+																					// from
+																					// lonLat
+				Pixel px = map.getMap().getPixelFromLonLat(llcontrolsGroup); // calculate
+																				// px
+																				// coordinates
+																				// from
+																				// lonLat
+				panelMap.add(hideControl, pxLonLat.x(), pxLonLat.y());
+				panelMap.add(controlsGroup, px.x(), px.y());
 				controlsGroup.setMap(map);
 
 				// map.setControls(ControlPosition.TOP_RIGHT, geocoder);
@@ -2271,20 +2307,16 @@ private static class MapGeocoderResult extends Composite {
 
 			}
 		});
-			// map.checkResizeAndCenter();
+		// map.checkResizeAndCenter();
 		map.getMap().addMapClickListener(mapClickHandler);
 		map.getMap().addMapZoomListener(mapZoomHandler);
 		map.getMap().addMapLayerChangedListener(mapTypeHandler);
 	}
 
-/*RORO	private void closeInfoWindows() {
-		for (InfoWindow w : infoWindows) {
-			if (w != null) {
-				w.close();
-			}
-		}
-		infoWindows.clear();
-	}*/
+	/*
+	 * RORO private void closeInfoWindows() { for (InfoWindow w : infoWindows) {
+	 * if (w != null) { w.close(); } } infoWindows.clear(); }
+	 */
 	private void mapOccurrenceMarkers(List<Occurrence> occurrences) {
 		OccurrenceMarkerManager.resetIcons();
 		List<Occurrence> unmappableOccs = new ArrayList<Occurrence>();
@@ -2306,7 +2338,8 @@ private static class MapGeocoderResult extends Composite {
 			final Marker marker = new Marker(lonlat, op.getIcon(markerManager
 					.getOccurrence()));
 
-			markersOnMap.add(marker);
+			markerOnMap.add(marker);
+			markersOnMap.add(markers);
 			markers.addMarker(marker);
 			map.getMap().addLayer(markers);
 
@@ -2337,7 +2370,7 @@ private static class MapGeocoderResult extends Composite {
 		if (summaryContent == null) {
 			summaryContent = new OccurrenceSummaryContent();
 		}
-		//RORO closeInfoWindows();
+		// RORO closeInfoWindows();
 		summaryContent.loadOccurrenceInfo(occurrenceMarkerManager
 				.getOccurrence());
 		OptionsManager op = new OptionsManager();
@@ -2348,7 +2381,8 @@ private static class MapGeocoderResult extends Composite {
 		lonlat.transform("EPSG:4326", map.getMap().getProjection());
 		final Marker marker = new Marker(lonlat,
 				op.getIcon(occurrenceMarkerManager.getOccurrence()));
-		markersOnMap.add(marker);
+		markerOnMap.add(marker);
+		markersOnMap.add(markers);
 		markers.addMarker(marker);
 		map.getMap().addLayer(markers);
 		try {
@@ -2367,7 +2401,7 @@ private static class MapGeocoderResult extends Composite {
 					});
 			popup = new FramedCloud("id1", marker.getLonLat(), null, ""
 					+ summaryContent, null, true);
-			popup.setPanMapIfOutOfView(true); 
+			popup.setPanMapIfOutOfView(true);
 			popup.setAutoSize(true);
 			map.getMap().addPopup(popup);
 
@@ -2395,22 +2429,16 @@ private static class MapGeocoderResult extends Composite {
 		return pager;
 	}
 
-	/*RORO @Override
-	public void onCallback(
-			JsArray<com.google.gwt.maps.client.services.GeocoderResult> results,
-			GeocoderStatus status) {
-		if (GeocoderStatus.OK.equals(status)) {
-			mapGeocoderResult(results);
-			handleHistoryEvent();
-		} else if (GeocoderStatus.ZERO_RESULTS.equals(status)) {
-			Window.confirm("Address not found. Add to the Madagascar Gazeteer?");
-		} else { // failure
-			for (Markers marker : geocoderMarkers) {
-				// RORO marker.setMap((MapWidget)null);
-				map.getMap().removeLayer(marker);
-			}
-		}
-	}*/
+	/*
+	 * RORO @Override public void onCallback(
+	 * JsArray<com.google.gwt.maps.client.services.GeocoderResult> results,
+	 * GeocoderStatus status) { if (GeocoderStatus.OK.equals(status)) {
+	 * mapGeocoderResult(results); handleHistoryEvent(); } else if
+	 * (GeocoderStatus.ZERO_RESULTS.equals(status)) {
+	 * Window.confirm("Address not found. Add to the Madagascar Gazeteer?"); }
+	 * else { // failure for (Markers marker : geocoderMarkers) { // RORO
+	 * marker.setMap((MapWidget)null); map.getMap().removeLayer(marker); } } }
+	 */
 
 	public void forceLayout() {
 		toolHp.forceLayout();
@@ -2429,6 +2457,7 @@ private static class MapGeocoderResult extends Composite {
 				.getOccurrenceView();
 		occView.getSearchForm().search();
 	}
+
 	private Map<String, List<Integer>> getTableGidsMap(
 			List<ShapeFileInfo> shapeFileInfos) {
 		Map<String, List<Integer>> tableGidsMap = new HashMap<String, List<Integer>>();
