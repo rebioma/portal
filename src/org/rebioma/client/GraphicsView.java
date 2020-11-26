@@ -527,9 +527,9 @@ public class GraphicsView extends ComponentView implements ClickHandler,
 				vpchartoccyear.clear();
 				vpchartoccyear.add(createChart());
 				VerticalLayoutContainer vpocc = new VerticalLayoutContainer();
-				vpocc.add(createOccColumnChart(), new VerticalLayoutData(1,
+				vpocc.add(hloccyear, new VerticalLayoutData(1,
 						405, new Margins(10)));
-				vpocc.add(hloccyear, new VerticalLayoutData(1, 405,
+				vpocc.add(createOccColumnChart(), new VerticalLayoutData(1, 405,
 						new Margins(10)));
 				vpocc.setScrollMode(ScrollMode.AUTO);
 				hchart.add(vpocc);
