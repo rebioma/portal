@@ -2278,8 +2278,13 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 				map.getMap().addControl(drawFeature);
 
 				map.getMap().addControl(drawLineFeatureControl);
+
+				drawPolygonButton.setStyleName("tgbtstyle");
+				navigateButton.setStyleName("tgbtstyleable");
 				drawPolygonButton.addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
+						navigateButton.setStyleName("tgbtstyle");
+						drawPolygonButton.setStyleName("tgbtstyleable");
 						if (drawPolygonButton.isDown()) {
 							navigateButton.setValue(false);
 							deleteFeatureControl.deactivate();
@@ -2291,10 +2296,10 @@ public class MapView extends ComponentView implements CheckedSelectionListener,
 						}
 					}
 				});
-				drawPolygonButton.setStyleName("tgbtstyle");
-				navigateButton.setStyleName("tgbtstyle");
 				navigateButton.addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
+						drawPolygonButton.setStyleName("tgbtstyle");
+						navigateButton.setStyleName("tgbtstyleable");
 						if (navigateButton.isDown()) {
 							drawPolygonButton.setValue(false);
 							drawFeature.deactivate();
